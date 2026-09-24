@@ -1,0 +1,104 @@
+# Dungeons
+status: LOCKED
+
+## Scope
+Defines dungeon identity, membership, entry, stages, checkpoints, wipe, reconnect, completion, rewards, cleanup, recovery.
+
+## Identity / Types
+Stable `dungeon_id`/`stage_id`; runtime `dungeon_instance_id`/`map_instance_id`. Types SOLO and PARTY; PARTY `1..5` according to content.
+
+Each launch dungeon uses its `dungeon_id` as geometry `space_id` and has exact bounds plus a distinct `layout_profile` in `../07_content/dungeon_catalog.md` (ADR-0046). Bounds are an outer envelope; stage topology and exported collision define the walkable shape.
+
+## Difficulty
+Launch supports exactly `NORMAL`. There is no generic Challenge/Hard difficulty at launch. Max-level PvE uses configured Level-60 NORMAL dungeons/bosses with endgame reward tables and mechanics. A future challenge mode requires a separate explicit rules update and meaningful mechanics, not stat inflation.
+
+## Entry / Membership
+Validate unlock/alive/not in combat/requirements/player count/transition. Membership snapshots approved members at creation and is independent of later party mutation. No new member after ACTIVE; original snapshot members may first-enter until final encounter engagement.
+
+## States / Stages
+```text
+CREATING -> READY -> ACTIVE -> COMPLETED/FAILED -> CLOSING -> CLOSED
+```
+Ordered main path with optional short rejoining side routes. Encounters may be combat/objective/survival/boss.
+
+## PARTY Encounter Scaling
+A PARTY dungeon remains playable with `1..5` members without requiring separate difficulty modes.
+
+At the start of each configured major combat encounter/final boss:
+```text
+n = count of snapshot members who are currently inside the dungeon,
+    alive or eligible to respawn, and not ABANDONED
+n = clamp(n, 1, 5)
+```
+Freeze `n` for that encounter attempt.
+
+Default launch scaling:
+```text
+hp_multiplier     = 1 + 0.55 * (n - 1)
+damage_multiplier = 1 + 0.04 * (n - 1)
+```
+Therefore:
+```text
+n=1 -> HP 1.00x, damage 1.00x
+n=5 -> HP 3.20x, damage 1.16x
+```
+
+Content may explicitly opt out or use a different authored multiplier only when the encounter definition declares it.
+
+Rules:
+- current HP percentage is preserved if an encounter explicitly resamples before activation; active attempts do not live-rescale
+- a reconnect during an active attempt does not change `n`
+- after a wipe/reset, the next attempt samples `n` again
+- disconnecting/leaving cannot reduce the already-active boss HP multiplier
+- add count/mechanics do not automatically multiply with `n`; encounter content owns them
+
+This scaling applies to combat durability, not reward count. Reward eligibility remains per character.
+
+## Checkpoints / Death / Wipe
+Internal checkpoints never overwrite world checkpoint. Default death: `5s` then latest dungeon checkpoint full HP/MP, no progression/item/currency loss. Wipe resets current encounter, preserves prior completed stages, no default life counter.
+
+## Completion / Eligibility
+Completion requires mandatory stages/final objective. Reward key = `dungeon_instance_id + character_id`. Eligible member entered, contributed to mandatory content, and did not abandon. Disconnect grace `120s`.
+
+## Reward Slots
+Canonical reward-slot meanings:
+```text
+REPEAT      -> every eligible completion; includes character EXP (see dungeon_catalog.md dungeon_repeat_exp table)
+FIRST_CLEAR -> once per character for that configured content definition, lifetime until migrated/reset explicitly
+DAILY_FIRST -> once per character per UTC day
+```
+
+Repeat completion of a dungeon grants character EXP via the `DUNGEON_REPEAT` channel (18% of the act EXP budget). The per-act `dungeon_repeat_exp` values are derived in `dungeon_catalog.md` and must be used by the settlement system.
+
+`FIRST_CLEAR` and `DAILY_FIRST` are reward gates only; neither is an entry lockout.
+
+A dungeon may expose any subset of these slots. Retry/reconnect/restart must be idempotent per slot.
+
+## Rewards
+Personal configured EXP/common/bound/material/consumable/equipment/progression rewards. Boss rewards are separate unless content explicitly combines them. Earned bundles that cannot fit use `../03_systems/reward_claims.md`.
+
+Default lockout = `NONE`.
+
+## Re-entry / Cleanup
+Membership survives disconnect; guaranteed same-instance grace `120s`. Voluntary exit may re-enter before terminal lock; `ABANDON` removes completion eligibility. Empty instance `10m` -> FAILED. Completion closing = `120s` then transfer out.
+
+## Restart
+Active runtime instances are not reconstructed initially; incomplete run fails/closes, committed rewards remain, no duplicate settlement.
+
+## Target Session
+`15-25m`; normally `2-4` meaningful stages + final boss + optional short secret. Avoid trash corridors/backtracking.
+
+## Invariants
+```text
+PARTY capacity <= 5
+launch difficulty = NORMAL only
+each launch dungeon resolves exact bounds + one layout_profile
+PARTY encounter scaling samples once per attempt
+Lv60 endgame may use NORMAL endgame-tagged dungeons
+party membership != dungeon membership
+lockout = NONE
+FIRST_CLEAR != DAILY_FIRST
+first/daily reward gate != entry lockout
+REPEAT includes character EXP (DUNGEON_REPEAT channel)
+earned overflow -> reward_claims
+```

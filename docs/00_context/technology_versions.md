@@ -1,0 +1,211 @@
+# Technology Versions
+status: LOCKED
+verified_at: 2026-09-20
+
+## Scope
+Canonical exact launch toolchain and approved core dependency versions.
+
+AI implementation agents **must use these versions**. Do not independently choose a newer/older version, substitute library, preview build, or additional framework.
+
+Version-policy decision: `../11_decisions/0010-exact-technology-version-pinning.md`.
+
+# Unity Client
+
+| Component | Canonical version / setting | Rule |
+|---|---|---|
+| Unity Editor | `6000.6.1f1` | Exact editor pin = installed Hub editor. |
+| Unity Hub | `3.21.3` | Developer install/bootstrap version. |
+| C# language | `C# 9.0` | Use the language level supported by the pinned Unity editor; do not force a newer LangVersion. |
+| Unity API compatibility | `.NET Standard 2.1` | Cross-platform project API profile. |
+| Release scripting backend | `IL2CPP` | Production PC/mobile player builds unless a target platform explicitly requires another supported backend. |
+| Render pipeline | `com.unity.render-pipelines.universal 17.6.0` | Canonical URP for Unity 6000.6.1f1 (editor PackageManager manifest). Do not override independently. |
+| SRP Core | `com.unity.render-pipelines.core 17.6.0` | Core dependency aligned with URP 17.6.0 / Unity 6000.6.1f1. |
+| Shader Graph | `com.unity.shadergraph 17.6.0` | Use only if shader authoring needs it; version remains editor/URP-aligned. |
+| Input System | `com.unity.inputsystem 1.20.0` | Shared keyboard/mouse/gamepad/touch input layer. |
+| 2D Animation | `com.unity.2d.animation 16.0.0` | Character rig/2D animation package for Unity 6000.6.1f1. |
+| PSD Importer | `com.unity.2d.psdimporter 15.0.0` | Approved layered PSB/PSD authoring importer. |
+| Addressables | `com.unity.addressables 2.11.2` | Canonical asset loading, bundle/catalog management, local/remote presentation delivery. |
+| Localization | `com.unity.localization 1.5.12` | Canonical string/asset localization; `vi-VN` (default) and `en-US` required launch locales. |
+| Protocol Buffers C# runtime | `Google.Protobuf 3.36.2` | Generated network/data messages only; this does not enable gRPC. |
+
+Unity project lock requirements:
+```text
+ProjectSettings/ProjectVersion.txt -> 6000.6.1f1
+Packages/manifest.json             -> exact direct package versions
+Packages/packages-lock.json        -> committed transitive lock
+```
+
+Do not float the editor (`6000.6`, `6000.6.1`, `latest`). The pin is the installed editor `6000.6.1f1`.
+
+Development/test packages are also pinned when used:
+
+| Component | Canonical version | Rule |
+|---|---|---|
+| Unity Test Framework | editor-bound core package from `6000.6.1f1` | Do not install a preview/alternate Test Framework line; resolved version is locked by the editor/project package lock. |
+| Performance Test Framework | `com.unity.test-framework.performance 6.6.0` | Canonical Unity performance regression package for this editor. |
+| Memory Profiler | `com.unity.memoryprofiler 1.1.12` | Canonical memory snapshot/profiling package for client leak/mobile analysis. |
+| Profile Analyzer | `com.unity.performance.profile-analyzer 1.4.0` | Canonical multi-frame CPU profile comparison tool. |
+
+Unity core graphics packages are still editor-coupled: the exact project resolution in `Packages/packages-lock.json` must agree with these pins. AI agents must not change URP/SRP/Shader Graph independently to a newer package line.
+
+Addressables `2.11.2` is the canonical content-delivery package for this launch branch. Localization `1.5.12` is the canonical presentation string/asset localization package. Do not replace it with raw AssetBundle code, a custom patcher, or a different Addressables line without updating ADR-0014 and this matrix.
+
+# Backend
+
+| Component | Canonical version | Rule |
+|---|---|---|
+| Go toolchain | `1.27.1` | Exact CI/developer/server build toolchain. |
+| PostgreSQL | `18.6` | Production stable database. PostgreSQL 19 beta/prerelease is forbidden for launch. |
+| pgx | `github.com/jackc/pgx/v5 v5.11.0` | Canonical PostgreSQL driver/pool. Prefer native pgx/pgxpool. |
+| WebSocket | `github.com/coder/websocket v1.8.15` | Canonical Go WSS library. Do not substitute Gorilla/random WS package. |
+| DB migrations | `github.com/golang-migrate/migrate/v4 v4.20.1` | Canonical schema migration tool/library. |
+| Protocol Buffers Go runtime | `google.golang.org/protobuf v1.36.12` | Canonical protobuf runtime. |
+| Protocol Buffers Go generator | `protoc-gen-go v1.36.12` | Generator must match this pin. |
+| OpenTelemetry Go | `go.opentelemetry.io/otel v1.46.0` | Canonical observability API/SDK family. |
+| OpenTelemetry HTTP instrumentation | `go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0` | HTTP instrumentation pin. |
+| Unicode normalization / case folding | `golang.org/x/text v0.42.0` | Canonical NFC + Unicode case-fold implementation for authoritative player text. |
+| Password hashing | `golang.org/x/crypto v0.57.0` | Argon2id only (`golang.org/x/crypto/argon2`, ADR-0051). Latest stable 2026-09-08; requires Go >= 1.26 and `golang.org/x/text v0.42.0` (matches the pin). Transitive `x/sys v0.48.0`, `x/term v0.46.0`, `x/net v0.58.0` come only from this module's go.mod and are locked in `go.sum`. |
+| Unicode grapheme segmentation | `github.com/clipperhouse/uax29/v2 v2.7.0` | Canonical UAX #29 Unicode-17 grapheme segmentation/counting. |
+
+Go standard-library defaults:
+```text
+HTTP server/client -> net/http
+structured logging -> log/slog
+context/deadlines -> context
+crypto/TLS         -> crypto/* + crypto/tls
+```
+
+Do not add a third-party HTTP router, logger framework, ORM, DI framework, event bus, Redis client, Kafka client, generic service framework, or alternate Unicode/text-normalization library unless a canonical architecture change explicitly approves and pins it.
+
+When implementation creates `go.mod`:
+- it must target the canonical Go 1.27.1 toolchain,
+- every direct module is exact in `go.mod`,
+- `go.sum` is committed,
+- CI fails on uncommitted module drift.
+
+# Network / Code Generation
+
+| Component | Canonical version |
+|---|---|
+| Protocol Buffers compiler `protoc` | `36.2` |
+| C# protobuf runtime | `Google.Protobuf 3.36.2` |
+| Go protobuf runtime | `google.golang.org/protobuf v1.36.12` |
+| Go protobuf generator | `protoc-gen-go v1.36.12` |
+
+Rules:
+- committed `.proto` files are the wire-schema source of truth,
+- generated C# and Go outputs must be reproducible from the pins above,
+- generator/version drift fails CI,
+- gRPC is **not selected**; do not add `Grpc.Tools`, grpc-go, or a gRPC service layer unless architecture is intentionally changed,
+- gameplay transport remains WSS as defined in `../05_network/protocol.md`.
+
+# Database
+
+Production database:
+```text
+PostgreSQL 18.6
+UTF-8
+UTC server-owned timestamps
+schema changes via golang-migrate 4.20.1
+Go access via pgx/v5 5.11.0
+```
+
+Do not:
+- deploy PostgreSQL beta/RC for production,
+- use an ORM as an implicit alternative to pgx/explicit SQL,
+- let migration tooling auto-upgrade itself,
+- depend on extensions without explicitly pinning/approving them.
+
+
+# CI Tooling
+
+| Component | Canonical version | Rule |
+|---|---|---|
+| GitHub Actions `actions/checkout` | `v4.2.2` (`11bd71901bbe5b1630ceea73d27597364c9af683`) | Pin tag and commit SHA. Floating `@v4` forbidden. |
+| GitHub Actions `actions/setup-go` | `v5.3.0` (`f111f3307d8850f501ac008e886eec1fd1932a34`) | Pin tag and commit SHA; exact Go `1.27.1`. |
+| GitHub Actions `actions/upload-artifact` | `v4.6.2` (`ea165f8d65b6e75b540449e92b4886f43607fa02`) | Upload verify-report.json. Floating `@v4` forbidden. |
+| Server runtime packaging | static binary + systemd unit | No container base image in production (`../08_scale_ops/deployment.md`). |
+| TLS root CA bundle | Mozilla via curl.se `cacert-2026-08-13.pem`, SHA-256 `f66dff1bdf8f96060b8177976f8b7d9254bc89bc4db933d769f7384d28480bc9` | Committed at `deploy/prod/cacert.pem`; verify hash in Q1; refresh only by updating this row. |
+| GitHub Actions `actions/create-github-app-token` | `v3.2.0` (`bcd2ba49218906704ab6c1aa796996da409d3eb1`) | App token for post-merge revert PRs (ADR-0057). |
+| GitHub CLI `gh` | `2.101.0` | PR, auto-merge, run download, rulesets evidence. |
+| Git for Windows | `2.55.0.windows.5` | Git + Git Bash; Git Bash runs only local `.devin` hooks (exempt from the no-Bash CI rule). |
+| `jq` | `1.8.2` | JSON in local hooks and CI scripts. |
+| Google Cloud SDK `gcloud` | `586.0.0` | `gcloud firebase test android run --type game-loop` in the scheduled `device-perf` workflow. |
+| PostgreSQL test server | `postgresql-18.6-1-windows-x64-binaries.zip` (https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip) | Official EDB Windows binaries; SHA-256 recorded by IMP-000 in `server/internal/stackpin/`; `verify.ps1` unpacks into ignored `tools/`, starts on a random port, exports `THINHTHAN_TEST_PG_DSN`. No container runtime. |
+
+CI runs only on a cloud Windows VM registered as a self-hosted runner with the pinned Unity editor (`UNITY_EDITOR_PATH`), Go, Git for Windows, `gh`, `jq` and `gcloud` installed (ADR-0050, ADR-0057; Owner Setup in `../10_implementation/audit_gates.md`). Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. `scripts/verify.ps1` must not call `python`.
+# Pinned Content System Constants
+
+These constants are fixed at project initialization and must never change after any content using them has been shipped. Changing a namespace UUID retroactively invalidates every idempotency key previously derived from it.
+
+| Constant | Value | Rule |
+|---|---|---|
+| `CONTENT_GRANT_NAMESPACE_UUID` | `f7a3d2b1-4e8c-4a2f-9b3e-6d1c5f8e7a2b` | UUID v5 namespace for all deterministic content-grant idempotency keys (seasonal cosmetics, Atlas reward tiers, Guild Stone completions, and any future one-time content delivery). Generated once with `crypto/rand`. **Immutable** — changing this value breaks every previously issued grant key. Do not rotate, substitute, or regenerate. See `../06_data/ids.md` "Deterministic Content-Grant Idempotency Keys". |
+
+# Verified Stable Choices
+As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta.
+
+# Version Verification
+When refreshing this matrix, verify candidate versions against the technology vendor's official release channel or canonical package registry. Record a new `verified_at` date. Do not infer "best" from version number alone: production selects the newest compatible **stable/LTS** release after compatibility review, not preview/beta/RC merely because it is newer.
+
+The repository pin remains authoritative until an explicit tested update commits a new value; discovering a newer release on the internet does not authorize an implementation agent to upgrade itself.
+
+# Version Selection Rules
+
+## Exact Means Exact
+Forbidden examples:
+```text
+latest
+*
+1.x
+>= 1.2
+preview
+beta
+rc
+nightly
+main/master HEAD
+unpinned Git URL
+```
+
+A native ecosystem may record transitive constraints internally, but repository-controlled direct dependencies/toolchains remain exact and the resolved lockfile is committed.
+
+## New Dependencies
+Before adding any dependency not listed here:
+1. prove the standard library/current stack cannot reasonably cover the need,
+2. define ownership/use in the relevant architecture spec,
+3. select one exact stable version,
+4. add it here,
+5. add license/security/compatibility checks,
+6. add/update tests.
+
+AI agents must not solve a local coding task by silently expanding the technology stack.
+
+## Upgrade Cadence
+Check for updates intentionally:
+- critical security fix: immediately evaluate,
+- normal patch/minor: batch into explicit dependency-update work,
+- Unity LTS editor: patch upgrades only after project/package/build smoke tests,
+- Go/PostgreSQL major changes: explicit compatibility/migration review,
+- no automatic production upgrade from a floating tag.
+
+# Reproducibility Gate
+A build/release fails when:
+- toolchain version differs from this file,
+- Unity project version differs,
+- direct dependency pin differs,
+- lockfile/module checksum drift is uncommitted,
+- protobuf generated output differs after regeneration with pinned tools,
+- a prerelease dependency appears without explicit approval,
+- an unlisted runtime/framework/infrastructure dependency is introduced.
+
+# Invariants
+```text
+Unity = 6000.6.1f1
+Go = 1.27.1
+PostgreSQL = 18.6
+protoc = 36.2
+no floating versions
+no agent-selected dependency substitutions
+version change is an explicit reviewed repository change
+CONTENT_GRANT_NAMESPACE_UUID = f7a3d2b1-4e8c-4a2f-9b3e-6d1c5f8e7a2b (pinned immutable; never rotate)
+```
