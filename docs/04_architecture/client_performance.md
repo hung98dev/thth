@@ -70,7 +70,7 @@ ANDROID_MIN-class device, 30 FPS cap                  average CPU utilisation <=
 A battery-saver toggle caps FPS at 30 on any tier.
 
 ## Measurement and Gates
-- Desktop: PlayMode performance tests run the hotspot scene with `FrameTimingManager`/`ProfilerRecorder` on the cloud Windows runner, which must have a GPU at `DESKTOP_MIN` level or better (Owner Setup, `../10_implementation/audit_gates.md`); a runner without such a GPU makes the gate an `OPS` blocker, never a skipped pass.
+- Desktop: PlayMode performance tests run the hotspot scene with `FrameTimingManager`/`ProfilerRecorder` on the cloud Windows runner, which must have a hardware GPU at `DESKTOP_MIN` level or better from IMP-095 on (Owner Setup, `../10_implementation/audit_gates.md`); a runner without such a GPU makes the gate an `OPS` blocker, never a skipped pass. Software rendering (WARP) is never valid for these measurements.
 - Every PR, device-independent budgets (runs on the Windows runner, always required once the owning task is DONE):
   ```text
   managed GC allocation per frame in the hotspot scene       = 0 bytes

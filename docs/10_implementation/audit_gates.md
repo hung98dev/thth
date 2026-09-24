@@ -14,9 +14,13 @@ The repository owner is the only human in the process. Before `IMP-000` the owne
 ```text
 repository         GitHub repo with docs/ pushed to main; forking disabled; allow auto-merge; delete branch on merge
 runner             cloud Windows VM registered as self-hosted runner, labels [self-hosted, windows, thinhthan],
-                   runner slots declared (default 2); GPU at DESKTOP_MIN level or better (Intel UHD 620 class);
+                   runner slots declared (default 2); a hardware GPU at DESKTOP_MIN level or better (Intel UHD 620 class)
+                   is required before IMP-095 (wave 13); until then a GPU-less VM is allowed (renderer policy below);
                    installed: Unity 6000.6.1f1 + active licence (UNITY_EDITOR_PATH), Go 1.27.1, Git for Windows, gh, jq, gcloud
-                   (no GPU => the client performance gate is an OPS-xxx blocker)
+                   (no hardware GPU when IMP-095 starts => the client performance gate is an OPS-xxx blocker)
+renderer policy    GPU-less VM: Unity runs Go/EditMode/PlayMode with -batchmode -nographics; Visual Review screenshots
+                   render on the Windows software rasterizer (WARP, Unity -force-d3d11) and record renderer=WARP;
+                   WARP output is valid for image review only, never for timing/performance gates
 android devices    Google Cloud project on the free Firebase Spark plan with Test Lab enabled; one ANDROID_MIN-class and
                    one ANDROID_REC-class physical device model recorded here; service-account key stored as a runner
                    secret usable only by CI. Android performance = Unity game-loop tests via
