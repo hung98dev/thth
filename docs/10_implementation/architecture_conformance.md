@@ -86,7 +86,7 @@ IMP-000 materialize verifier (`server/internal/conformance/gates/`); IMP-083 s�
 6. **One production main:** chỉ `cmd/server`. Chỉ ba tool main được phép thêm là compiler/verify/migrate; mọi main khác bị từ chối.
 7. **Generated source:** `.pb.go` phải reference proto source, không chỉ header DO NOT EDIT.
 8. **Schema:** cấm `item_instances.durability` và `global_leader_lease`.
-9. **asmdef:** không cycle; IMP-000 sở hữu các asmdef `ThinhThan.Core/Net/Systems/UI/App/Tests.EditMode/Tests.PlayMode`; `ThinhThan.App` là composition root (IMP-067) và không assembly nào tham chiếu nó; `ThinhThan.Protocol` không tham chiếu assembly nào của dự án.
+9. **asmdef:** không cycle; IMP-000 sở hữu cả 13 asmdef và reference graph của `repository_layout.md` § Mandatory Assemblies (ADR-0068); mọi asmdef lệch khỏi bảng đó bị từ chối; `ThinhThan.App` là composition root (IMP-067) và chỉ `ThinhThan.Tests.PlayMode` tham chiếu nó; `ThinhThan.Protocol` không tham chiếu assembly nào của dự án.
 10. **Observability:** `server/internal/observability/` được mọi runtime package import, nhưng không import `sim`, `edge`, `durable`, `global`.
 11. **Test placement:** Go test nằm trong chính package được test; Unity test nằm trong `client/Assets/Tests/{EditMode|PlayMode}/<Feature>/` thuộc owned_paths của packet (`repository_layout.md` § Ownership Rules).
 12. **Code quality (IMP-000, `server/internal/conformance/style/`):** C# style, `.editorconfig`/`.gitattributes` keys, `csc.rsp`, `gofmt -l`, `go vet`, pinned `staticcheck` (`engineering_conventions.md` §1.1, §2.7; `CODE-001..003`).

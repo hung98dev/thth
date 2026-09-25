@@ -1,6 +1,8 @@
 # ADR-0046: Reference Viewport, Entity Scale, and Map Geometry
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0068)**: item 6 geometry is exported from collision-only authoring scenes `client/Assets/Scenes/Collision/<space_id>.unity` by `ThinhThan.Core.Geometry.Editor.GeometryExporter` (both IMP-062); visual scenes carry no `ServerGeometry` colliders.
+
 > **AMENDMENT NOTICE (ADR-0055)**: px values remain reference px at 50 px/m; textures are authored at 2x and imported at 100 PPU, with a mandatory cutout quality gate.
 
 ## Context
@@ -16,7 +18,7 @@ Without one conversion rule, an agent could treat pixels as physics units, resiz
 3. The baseline character silhouette is at most `64x96px` in idle/run/jump reference frames. Its collider remains `0.8m x 1.8m` (`40x90px` at reference scale). Weapon trails and skill VFX are separate presentation bounds.
 4. Every non-player entity resolves to exactly one canonical profile: `MONSTER_SMALL`, `MONSTER_MEDIUM`, `MONSTER_ELITE`, `BOSS_LARGE`, or `WORLD_BOSS`. Catalogs own the exact resolution; runtime may not infer it from textures, names, or Transform scale.
 5. Every playable space owns a rectangular outer bounds envelope and a topology profile. Normal-world maps are `2.0..5.0` reference viewports wide; all 24 use distinct width-height span pairs and distinct layout profiles. The full rectangle is not implicitly walkable: exported collision, platforms, branches, loops, and vertical tiers implement the named topology.
-6. Geometry files use a generic `space_id` and `space_kind`, because the same exporter serves normal maps, dungeons, the finale, PvP, and Guild War. Output is `server/internal/sim/spatial/maps/<space_id>.geom.json`.
+6. Geometry files use a generic `space_id` and `space_kind`, because the same exporter serves normal maps, dungeons, the finale, PvP, and Guild War. Output is `server/internal/sim/spatial/maps/<space_id>.geom.json`, exported from collision-only authoring scenes (ADR-0068).
 7. The default desktop player window is `1280x720`. Larger native/fullscreen resolutions are supported without changing world-space scale or gameplay simulation.
 
 ## Consequences

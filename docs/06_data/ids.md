@@ -51,7 +51,7 @@ Generation:
 - client may carry an assigned ID but cannot choose ownership by submitting an arbitrary UUID,
 - no third-party UUID library is required.
 
-Applies to at least account_id, character_id, session_id, guild_id, item_instance_id, reward_claim_id, auction_listing_id, auction_proceeds_id, trade_id, durable instance_id, operation_id, and audit_event_id.
+Applies to at least account_id, character_id, session_id, guild_id, item_instance_id, reward_claim_id, auction_listing_id, auction_proceeds_id, trade_id, durable instance_id and audit_event_id. `operation_id` generation follows § Operation IDs.
 
 A durable UUID is never reused after deletion.
 
@@ -68,10 +68,20 @@ Canonical text form is lowercase 8-4-4-4-12 UUID.
 
 PostgreSQL stores native uuid, not varchar(36).
 
-Protobuf may encode durable UUIDs as validated 16 bytes or canonical lowercase string. Pick one representation per shared schema and do not mix representations for the same ID type.
+Protobuf encodes every UUID as exactly 16 bytes (`bytes`, network order; `../05_network/protobuf_conventions.md` § 6, ADR-0064); HTTPS JSON uses the canonical lowercase text form.
 
 # Operation IDs
 Every retriable value-changing operation has one stable UUID generated once and reused across retries.
+
+Generator (ADR-0065):
+```text
+client-initiated request (C2S message / HTTPS mutation)  client generates UUID v4 once per user intent and reuses it on retry;
+                                                          server rejects nil, non-v4 or malformed IDs (`PROTOCOL_MALFORMED`)
+server-initiated job / admin / webhook                    authoritative Go code, crypto/rand UUID v4 persisted before first attempt
+simulation settlement                                     deterministic UUID v5 (save_rules.md)
+content grant                                             deterministic UUID v5 (§ Deterministic Content-Grant Idempotency Keys)
+```
+Uniqueness scope is `(operation_family, owner_id, operation_id)` (`data_model.md` § operations), so a client-chosen ID can never match another owner's operation.
 
 Same operation ID + same operation family:
 - same committed request -> return/reconstruct prior outcome,

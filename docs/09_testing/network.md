@@ -25,7 +25,7 @@ Fixtures cover:
 - unsupported major -> PROTOCOL_UNSUPPORTED,
 - build below minimum -> CLIENT_UPDATE_REQUIRED,
 - content schema/revision incompatibility -> CONTENT_INCOMPATIBLE,
-- rolling server cohort compatibility.
+- client build older than the restarted server but inside the supported protocol range after a maintenance restart (ADR-0052).
 
 ## Sequence / Duplicate
 Inject:

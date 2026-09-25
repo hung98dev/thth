@@ -51,3 +51,6 @@ This is the canonical entity capacity benchmark validating `MAX_ENTITIES_PER_CHA
 - The three AI classes reduce wasted decision budget on idle and simple entities while preserving full decision rate for boss phases.
 - `MAX_ENTITIES_PER_CHANNEL = 80` gives a deterministic rejection boundary at spawn, preventing silent tick-budget overrun.
 - Both constants are release gates; failing either benchmark blocks the 10k CCU milestone.
+
+## Amendment — Forced-placement worst case (ADR-0066)
+`MAX_ENTITIES_PER_CHANNEL = 80` now reserves 22 player slots (`FORCED_PLACEMENT_HARD_CAP`, ADR-0061); at most 58 non-player entities (42 monsters + 16 projectiles/transients) share the cap, player placement is never refused by it, and the canonical hotspot benchmark uses 42 named-mechanic monsters + 22 players (`../04_architecture/realtime_loop.md` § Entity Capacity Model).

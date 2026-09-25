@@ -14,7 +14,7 @@ guild_id
 
 Guild name rules:
 ```text
-1..24 visible Unicode grapheme clusters
+1..24 visible Unicode grapheme clusters and <= 96 UTF-8 bytes (../06_data/text.md § Name Limits)
 canonical trim + NFC
 must contain at least one non-whitespace grapheme
 globally unique by canonical server-computed name_key

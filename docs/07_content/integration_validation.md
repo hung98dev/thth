@@ -300,8 +300,8 @@ For every persistent spawn group:
 - ELITE group resolves only ELITE monsters,
 - `max_alive = 20` for launch NORMAL groups and `2` for launch ELITE groups,
 - any INSTANCED space granting kill EXP, a dungeon completion granting EXP other than `dungeon_repeat_exp(min(character_act, dungeon_tier_act + 1))`, an ELITE_BOSS PUBLIC-boss share outside Acts III/VI, a Spirit Surge grant not using `min(character_act, region_act + 1)`, or a seasonal Atlas tier granting `currency.special`,
-- launch NORMAL respawn resolves to `10..16s`,
-- launch ELITE respawn resolves to `45..75s`,
+- launch NORMAL respawn resolves to `10..14s`,
+- launch ELITE respawn resolves to `35..60s`,
 - launch NIGHT_RARE respawn resolves to `240..360s` (authored NIGHT_RARE band; monsters in this band appear only during server night cycle),
 - population and expanded runtime fields satisfy `spawning.md`.
 

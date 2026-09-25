@@ -7,7 +7,21 @@ Defines mandatory launch logs, metrics, traces, correlation context, dashboards,
 ## Principles
 Observability must explain authority/value failures without logging secrets or requiring packet capture.
 
-Use vendor-neutral instrumentation. OpenTelemetry-compatible traces/metrics/log correlation is preferred; storage/visualization vendor is not canonical.
+Instrumentation is OpenTelemetry (vendor-neutral); the launch storage, dashboard and alerting stack is fixed below.
+
+## Launch Telemetry Stack (ADR-0066)
+Versions: `../00_context/technology_versions.md` § Production Operations.
+```text
+server metrics + traces  OTel SDK -> OTLP/HTTP -> Collector on the world host (127.0.0.1:4318, OTEL_EXPORTER_OTLP_ENDPOINT)
+metrics                  Collector prometheus exporter -> Prometheus on the ops host (15 s scrape, 90-day retention)
+host / DB metrics        node_exporter on every host, postgres_exporter on the PostgreSQL host -> Prometheus
+traces                   Collector file exporter on the world host, JSON, rotated at 14 days
+logs                     log/slog JSON to stdout -> journald on the world host (MaxRetentionSec=90day)
+audit / security events  audit_events in PostgreSQL (../06_data/data_model.md), 3-year retention
+dashboards               Grafana on the ops host, the seven § Required Dashboards provisioned from deploy/prod/grafana/
+alerts                   Prometheus rules (deploy/prod/prometheus/rules/) -> Alertmanager
+```
+Alertmanager receivers: `ops-critical` (every § Alerts critical example; page the operator), `ops-warning` (warnings; daily digest) and `security-queue` (every § Alerts security alert; page the operator and keep the alert history for 3 years). Receiver endpoints (email/webhook) are deploy-environment configuration injected at runtime, never committed. A telemetry pipeline outage never blocks the server: the SDK drops on a full export queue and counts the drops.
 
 ## Correlation Context
 Where applicable include:
@@ -89,7 +103,7 @@ Launch dashboards:
 Metric class covering simulation and world-system health:
 
 - **AOI entity shedding rate**: count of clients per channel that have hit `MAX_ENTITIES_IN_AOI_PER_CLIENT = 40` and are receiving a reduced entity set; shed entities are invisible to those clients. Alert condition: any client in a contested channel sustaining the cap for >10s is a warning; the shed count per channel tick is a standing metric. This indicates the density-increase has saturated the AOI budget.
-- **WorldConsequence load delay**: time taken to load the WorldConsequence aggregate before a partition accepts its first player. Warn when this exceeds 500ms; partition-start rejection due to timeout or missing aggregate is a critical alert.
+- **WorldConsequence load delay**: time taken to load the WorldConsequence aggregate before a partition accepts its first player. Warn when this exceeds 500ms; partition-start rejection due to `WORLD_CONSEQUENCE_LOAD_TIMEOUT = 5 s` or an unreadable/invalid aggregate (`../06_data/data_model.md` § Boss Aftermath Relic) is a critical alert; zero rows is valid and never alerts.
 - **Spirit Surge 3-region coordination failure**: count of UTC hours where fewer than 3 regions activated (coordinator failure, region eligibility exhaustion, or deterministic assignment fault). Any non-zero count in a production hour is a warning; two consecutive hours is critical.
 - **Anti-RMT rolling-window query rate/latency**: query rate and p95/p99 latency for the anti-RMT rolling-window aggregation query. Warn when p95 exceeds 50ms or query rate exceeds a configured threshold indicating it is becoming a database hotspot; alert when p99 exceeds 200ms or a single query causes lock waits.
 
@@ -102,12 +116,12 @@ Critical examples:
 - dual-ownership invariant violation,
 - reward/economy reconciliation mismatch,
 - backup/PITR failure,
-- WorldConsequence aggregate absent/zeroed at partition start,
+- WorldConsequence aggregate unreadable, invalid or over `WORLD_CONSEQUENCE_LOAD_TIMEOUT` at partition start (zero rows is valid),
 - Spirit Surge coordination failure for 2+ consecutive hours,
 - error budget burn rate > 10x over 1 hour for any SLO below,
 - `DURABLE_BACKPRESSURE` active on any partition > 60s.
 
-Security alerts (to the security queue):
+Security alerts (Alertmanager receiver `security-queue`):
 - password/login failures per IP or `username_key` above 10x the 7-day baseline,
 - `SESSION_REPLACED` rate per account > 10/hour,
 - refresh-credential reuse detection (any),

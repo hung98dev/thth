@@ -17,10 +17,11 @@ Normal map channels keep the canonical:
 ```text
 channels_per_map         = 30
 soft threshold / channel = 18 players
-hard cap / channel       = 18 players   (reduced from 20; ADR-0035 resolved)
-total map capacity       = 540 players  (30 × 18)
+hard cap / channel       = 18 players   (player-initiated entry; reduced from 20; ADR-0035 resolved)
+forced placement cap     = 22 players   (server-initiated placement only; ../02_world/world_rules.md § Forced Placement, ADR-0061)
+total map capacity       = 540 players  (30 × 18) for player-initiated entry; 660 (30 × 22) absolute
 ```
-from world rules, ADR-0020, and ADR-0035. Instanced activities scale independently by instance partitions.
+from world rules, ADR-0020, ADR-0035 and ADR-0061. Every per-channel worst case below (tick, entity, AOI, bandwidth) uses 22 players; 18 stays the admission cap (ADR-0066). Instanced activities scale independently by instance partitions.
 
 ## Headroom
 Normal production planning keeps at least:
@@ -62,7 +63,7 @@ server -> client p95 <= 25 KiB/s sustained
 
 Short combat/spawn bursts may exceed these values. AOI and delta replication must prevent sustained map-wide fanout.
 
-**Note:** The `server -> client p95 <= 25 KiB/s` figure predates the density increase and was not derived against `MAX_ENTITIES_IN_AOI_PER_CLIENT = 40`. It must be re-measured before the 10k CCU gate using a load scenario that saturates the AOI cap per client (see `../09_testing/load.md`). Until re-measured, the 25 KiB/s figure is a placeholder bound, not a validated release target.
+**Note:** The `server -> client p95 <= 25 KiB/s` figure predates the density increase and was not derived against `MAX_ENTITIES_IN_AOI_PER_CLIENT = 40`. It is re-measured by `../09_testing/load.md` scenario 13 (AOI cap saturated) before the 10k CCU gate; scenario 13's measured p95 plus 20% becomes the release gate value and replaces 25 KiB/s in this section through a spec change. Until then 25 KiB/s is a placeholder bound, reported but not gated.
 
 ## PostgreSQL Capacity
 PostgreSQL connections are pooled by backend processes, never one connection per player.
@@ -80,7 +81,7 @@ The world process's configured pool maximum plus ops/migration tooling must rema
 ## Process Capacity
 Do not hard-code a players-per-process number; the single world process is sized by the measured `WORLD_CCU_CAP` and `MAX_PARTITIONS_PER_PROCESS` (ADR-0052).
 
-Benchmark each deployable role on production-like hardware using:
+Benchmark the single world process on production-like hardware using:
 - Edge connections,
 - active simulation partitions/entities,
 - world boss/event density,
@@ -90,15 +91,15 @@ Benchmark each deployable role on production-like hardware using:
 
 Partition placement inside the process uses measured safe capacity, not theoretical goroutine counts. There is no autoscaling of worlds (ADR-0052).
 
-`MAX_PARTITIONS_PER_PROCESS` is a **benchmark-derived release gate**: the maximum number of World Simulation partitions that may be co-hosted in one Go process while satisfying the p95 tick SLO under sustained load. It must be measured before the 10k CCU gate on production-like hardware and recorded in deployment configuration. At 10k CCU with 18 players per channel there are approximately 556 active normal-map channels; all of them plus active instances run in the single world process (ADR-0052), so the release gate requires measured `MAX_PARTITIONS_PER_PROCESS >= 556 + peak concurrent instances`. `WORLD_CCU_CAP` is set from the measured result; logins above it wait in the login queue.
+`MAX_PARTITIONS_PER_PROCESS` is a **benchmark-derived release gate**: the maximum number of World Simulation partitions that may be co-hosted in one Go process while satisfying the p95 tick SLO under sustained load. It must be measured before the 10k CCU gate on production-like hardware and recorded in deployment configuration. Normal-map channel partitions start lazily and stop when empty (`sharding.md` § Channel Partition Lifecycle), so the number of running normal partitions varies; the gate uses the bound where every channel of every normal map runs: `MAX_PARTITIONS_PER_PROCESS >= 720 (24 maps × 30 channels) + peak concurrent instances` measured in `../09_testing/load.md` scenario 3. All of them run in the single world process (ADR-0052). `WORLD_CCU_CAP` is set from the measured result; logins above it wait in the login queue.
 
 **CI enforcement:** The 10k load scenario fails if deployment configuration does not carry a numeric `MAX_PARTITIONS_PER_PROCESS` value together with a `measured_at` timestamp on production-like hardware. An absent or placeholder value is a test-blocking defect, not a warning. No interim ceiling is assumed; admission control must refuse to exceed an unset value rather than substituting infinity.
 
 ## Hotspot Tests
 
 Release tests include:
-- 18-player full channel (hard cap) with peak combat,
-- **42 AI_CLASS_NAMED_MECHANIC monsters plus 18 players in sustained combat in one channel; p95 tick runtime must remain under 35ms** (this is the canonical entity capacity benchmark validating MAX_ENTITIES_PER_CHANNEL = 80 and the current spawn density; player count updated from 20 to match the revised hard cap),
+- 18-player full channel (admission cap) with peak combat,
+- **42 AI_CLASS_NAMED_MECHANIC monsters plus 22 players in sustained combat in one channel; p95 tick runtime must remain under 35ms** (canonical entity capacity benchmark validating MAX_ENTITIES_PER_CHANNEL = 80 and the current spawn density at the forced-placement cap; ADR-0066),
 - multi-channel map fill toward 540 players,
 - public boss with maximum effective participants,
 - Spirit Surge on populated map with all 3 concurrent regions active,
@@ -109,7 +110,7 @@ Release tests include:
 
 
 ## Hot-Path Allocation Budgets
-Exact allocs/op gates (`testing.AllocsPerRun`, 1,000 runs, build tag `!race`) on the steady-state fixture, which models one hotspot channel: 60 replicated actors (18 player slots and 42 monster slots) receiving intents every tick. Measurement starts after a 200-tick warm-up, and no spawn, despawn or AOI membership change happens in the measured window. IMP-079 creates the fixture. Every later per-tick sim system (movement, combat, effects, AI) adds its own `TestAllocs_<System>Tick` with a budget of 0 on this fixture; the reviewer checklist enforces this. Test and benchmark rules: `../10_implementation/engineering_conventions.md` §1.7 (ADR-0059).
+Exact allocs/op gates (`testing.AllocsPerRun`, 1,000 runs, build tag `!race`) on the steady-state fixture, which models one hotspot channel: 64 replicated actors (22 player slots and 42 monster slots) receiving intents every tick. Measurement starts after a 200-tick warm-up, and no spawn, despawn or AOI membership change happens in the measured window. IMP-079 creates the fixture. Every later per-tick sim system (movement, combat, effects, AI) adds its own `TestAllocs_<System>Tick` with a budget of 0 on this fixture; the reviewer checklist enforces this. Test and benchmark rules: `../10_implementation/engineering_conventions.md` §1.7 (ADR-0059).
 
 ```text
 path                                                       allocs/op   package (owner)
@@ -122,7 +123,7 @@ Q3 runs `Benchmark*` in these packages with `-benchtime=200x` and reports ns/op,
 ## 10k Release Gate
 A candidate is 10k-ready only when a production-like soak at >=10,000 CCU-equivalent:
 - satisfies tick/durable SLOs,
-- has >=30% planned headroom or documented safe scaling path,
+- has >=30% planned headroom on the single world host (no scale-out path exists, ADR-0052),
 - creates no unbounded queue/goroutine/memory growth,
 - maintains PostgreSQL pool/lock health,
 - preserves reward/economy idempotency,
@@ -137,7 +138,7 @@ A candidate is 10k-ready only when a production-like soak at >=10,000 CCU-equiva
 
 ## Invariants
 - 10k CCU is a measured release gate.
-- Channel hard cap = 18; map hard cap = 540 (30 x 18).
+- Channel admission cap = 18; map admission cap = 540 (30 x 18); forced-placement cap = 22; per-channel worst cases use 22 players.
 - MAX_ENTITIES_PER_CHANNEL = 80 (release gate; benchmarked before 10k CCU gate).
 - MAX_PARTITIONS_PER_PROCESS is benchmark-derived (release gate; must be measured and recorded before 10k CCU gate).
 - No DB connection per player.

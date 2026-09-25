@@ -158,6 +158,12 @@ runtime cores IMP-078/079/080/081/082/097/098
 IMP-078 collision core -> IMP-013 movement and IMP-062 exporter parity
   Rationale: removes the former IMP-013 <-> IMP-062 geometry cycle.
 
+IMP-062 collision-only scenes + exported geometry -> IMP-018 map runtime (ADR-0068)
+  Rationale: map bounds/collision come from geometry, never from final art (IMP-072/IMP-105).
+
+guild.EventSink / guild.WarRegistrationGuard (IMP-036) <- boss, dungeon, Surge, bonfire, Guild War producers,
+  wired by IMP-069 (ADR-0068); producers never import guild policy.
+
 C2S_MOVEMENT_EDGE (IMP-013, ADR-0038) + heartbeat RTT (IMP-081)
   -> Just Guard and latency model (IMP-014, ADR-0034)
   Rationale: Just Guard requires an uncoalesced server-side movement edge; without it

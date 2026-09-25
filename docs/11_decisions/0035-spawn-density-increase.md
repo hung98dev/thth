@@ -53,3 +53,7 @@ The `WORLD_EVENT` Spirit Surge channel (12% of total EXP at 2,000 hours) uses `H
 ## Amendment — ELITE respawn band (ADR-0061)
 
 > ELITE `max_alive = 2` is confirmed. The ELITE respawn band changes from `75..120s` to `45..75s` so that 2 alive per group still meets ELITE demand (authored mean 60s → 120 kills/hour; slowest 75s → 96/hour vs 90/hour demand). Canonical values: `07_content/map_spawn_catalog.md`.
+
+## Amendment — Supply sized at forced-placement cap (ADR-0062)
+
+> Demand is sized at `FORCED_PLACEMENT_HARD_CAP = 22`: NORMAL band `10..14s` (floor 10,286/hour vs 9,900), ELITE band `35..60s` (floor 120/hour vs 110). Canonical values: `07_content/map_spawn_catalog.md`.

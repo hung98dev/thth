@@ -5,7 +5,7 @@ status: LOCKED
 Defines runtime partitioning/routing and the launch durable-data sharding decision.
 
 ## Runtime Partitioning
-Simulation scales horizontally by ownership partitions:
+Simulation is split into ownership partitions inside the single world process (ADR-0052):
 ```text
 normal world -> map_id + channel_id
 instanced content -> instance_id
@@ -21,6 +21,23 @@ Channels are capacity partitions of one logical world, not separate progression 
 Persistent character/economy/guild state is shared through the durable domain regardless of channel.
 
 Public-boss generation semantics remain logical across channels where owning boss specs require it.
+
+### Channel Partition Lifecycle (ADR-0066)
+```text
+CHANNEL_IDLE_STOP = 600 s
+start   on the first placement into a stopped channel (player-initiated or forced). Automatic placement
+        prefers running channels (world_rules.md order) and starts the lowest-index stopped channel only
+        when no running channel can take the player; map/channel selection lists all 30 channels
+        (a stopped channel shows 0 players)
+startup load active world_consequence rows (../04_architecture/realtime_loop.md § Restart), receive the
+        current Spirit Surge activation and any OPEN PUBLIC boss generation from Ephemeral Global
+        (../04_architecture/service_boundaries.md), spawn every spawn group in its initial state, then accept players
+stop    player_count = 0 continuously for CHANNEL_IDLE_STOP and no transfer into the channel in flight:
+        emit pending durable commands and wait for their commits, then discard transient state (monsters,
+        projectiles, boss copies; a discarded PUBLIC copy is terminal for its generation, ../02_world/bosses.md)
+restart after a process restart every normal channel is stopped until its first placement
+```
+Durable per-channel rows (`world_consequence_relics`, `region_di_tich_markers`) outlive a stopped partition and expire by time in PostgreSQL. `MAX_PARTITIONS_PER_PROCESS >= 720 + peak instances` (`capacity.md`) guarantees that starting a normal channel is never refused; instance creation beyond the measured cap is refused with `SERVER_OVERLOADED`.
 
 ## Instance Placement
 Dungeon/finale/PvP/Guild-War instances receive one in-process simulation owner for their runtime lifetime.
@@ -58,7 +75,7 @@ A future durable-data shard key/migration requires an ADR because it affects tra
 ## Hotspots
 Runtime hotspot mitigation order:
 1. enforce map channel hard caps,
-2. create/route additional normal-map channels under world rules,
+2. route to (or start) another of the map's 30 channels under world rules,
 3. rebalance whole partitions between in-process simulation owners,
 4. reduce non-critical replication cost,
 5. admit new logins through the `WORLD_CCU_CAP` login queue (ADR-0052); no additional worlds.

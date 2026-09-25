@@ -64,6 +64,7 @@ Addressables `2.11.2` is the canonical content-delivery package for this launch 
 | Protocol Buffers Go generator | `protoc-gen-go v1.36.12` | Generator must match this pin. |
 | OpenTelemetry Go | `go.opentelemetry.io/otel v1.46.0` | Canonical observability API/SDK family. |
 | OpenTelemetry HTTP instrumentation | `go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0` | HTTP instrumentation pin. |
+| OpenTelemetry SDK + OTLP exporters | `go.opentelemetry.io/otel/sdk v1.46.0`, `go.opentelemetry.io/otel/sdk/metric v1.46.0`, `go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.46.0`, `go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0` | Metrics and traces over OTLP/HTTP to the local Collector (`../08_scale_ops/observability.md` § Launch Telemetry Stack, ADR-0066). Logs stay `log/slog` JSON to stdout (journald); no OTLP log exporter. |
 | Unicode normalization / case folding | `golang.org/x/text v0.42.0` | Canonical NFC + Unicode case-fold implementation for authoritative player text. |
 | Password hashing | `golang.org/x/crypto v0.57.0` | Argon2id only (`golang.org/x/crypto/argon2`, ADR-0051). Latest stable 2026-09-08; requires Go >= 1.26 and `golang.org/x/text v0.42.0` (matches the pin). Transitive `x/sys v0.48.0`, `x/term v0.46.0`, `x/net v0.58.0` come only from this module's go.mod and are locked in `go.sum`. |
 | Unicode grapheme segmentation | `github.com/clipperhouse/uax29/v2 v2.7.0` | Canonical UAX #29 Unicode-17 grapheme segmentation/counting. |
@@ -128,13 +129,13 @@ Do not:
 | Server runtime packaging | static binary + systemd unit | No container base image in production (`../08_scale_ops/deployment.md`). |
 | TLS root CA bundle | Mozilla via curl.se `cacert-2026-08-13.pem`, SHA-256 `f66dff1bdf8f96060b8177976f8b7d9254bc89bc4db933d769f7384d28480bc9` | Committed at `deploy/prod/cacert.pem`; verify hash in Q1; refresh only by updating this row. |
 | GitHub Actions `actions/create-github-app-token` | `v3.2.0` (`bcd2ba49218906704ab6c1aa796996da409d3eb1`) | Merge-guard App token for post-merge revert PRs (ADR-0057, ADR-0058). |
-| GitHub CLI `gh` | `2.101.0` | PR, auto-merge, run download, rulesets evidence. |
+| GitHub CLI `gh` | `2.101.0` | PR, auto-merge, run download, rulesets evidence. CI installs the release asset `gh_2.101.0_linux_amd64.tar.gz` (SHA-256 `9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8`) / `gh_2.101.0_windows_amd64.zip` (SHA-256 `bc6c814367b193cd8e713611d61e36013c0ef843b8f516458fe3eda039192794`) from `https://github.com/cli/cli/releases/download/v2.101.0/`; the runner's preinstalled `gh` is never used. |
 | Git for Windows | `2.55.0.windows.5` | Local Windows agent machines only: Git + Git Bash for `.devin` hooks (not a CI verify/codegen wrapper). |
-| `jq` | `1.8.2` | JSON in local hooks and CI scripts. |
+| `jq` | `1.8.2` | JSON in local hooks and CI scripts. CI installs `jq-linux-amd64` (SHA-256 `b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f`) / `jq-windows-amd64.exe` (SHA-256 `a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627`) from `https://github.com/jqlang/jq/releases/download/jq-1.8.2/`; the preinstalled `jq` is never used. |
 | Google Cloud SDK `gcloud` | `586.0.0` | `gcloud firebase test android run --type game-loop` in the scheduled `device-perf` workflow. |
 | PostgreSQL test server (Windows) | `postgresql-18.6-1-windows-x64-binaries.zip` (https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip) | Windows CI job and local Windows: official EDB binaries; SHA-256 recorded by IMP-000 in `server/internal/stackpin/`; `verify.ps1` unpacks into ignored `tools/`, starts on a random port, exports `THINHTHAN_TEST_PG_DSN` unless it is already set. |
 | GitHub-hosted runner images | `ubuntu-24.04`, `windows-2022` | Only runners allowed (ADR-0058). `*-latest`, self-hosted, GPU and larger runners are forbidden. `windows-2022` matches the ltsc2022 GameCI Windows images. |
-| PowerShell | `7.6.6` (`pwsh`) | Runs `scripts/verify.ps1` / `scripts/codegen.ps1` on Linux and Windows; workflow steps use `shell: pwsh`. Windows PowerShell 5.1 is not a supported host. |
+| PowerShell | `7.6.6` (`pwsh`) | Runs `scripts/verify.ps1` / `scripts/codegen.ps1` on Linux and Windows; workflow steps use `shell: pwsh`. Windows PowerShell 5.1 is not a supported host. CI installs `powershell-7.6.6-linux-x64.tar.gz` (SHA-256 `ddbc4a2d113bbd46d283cfedcbcd117a70caefd7673f41f2b4e0000badf103bc`) / `PowerShell-7.6.6-win-x64.zip` (SHA-256 `02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860`) from `https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/` in a `bash`/`cmd` bootstrap step before any `shell: pwsh` step and prepends it to `PATH`; the preinstalled `pwsh` is never used. |
 | GitHub Actions `actions/cache` | `v6.1.0` (`55cc8345863c7cc4c66a329aec7e433d2d1c52a9`) | Unity `client/Library` cache per OS, keyed on `packages-lock.json` + `ProjectVersion.txt`. |
 | GitHub Actions `game-ci/unity-test-runner` | `v4.3.2` (`fa6ced25861c16ef56187828c43f76d00df43a23`) | Unity EditMode/PlayMode in CI; `customImage` set to a digest-pinned image below. |
 | GitHub Actions `game-ci/unity-builder` | `v6.0.0` (`eb1b9fba120c6e62c9fb7a7a81d6c107ce004c45`) | IL2CPP Windows/Android player builds (IMP-067). |
@@ -146,6 +147,25 @@ Do not:
 | Staticcheck | `2026.2.1` (module `honnef.co/go/tools v0.8.1`, released 2026-08-21, supports Go 1.27) | Q4 `CODE-003`: installed by `go install honnef.co/go/tools/cmd/staticcheck@v0.8.1` (checksum-database verified) into an ignored tool dir; never added to `server/go.mod`. Default check set, no `staticcheck.conf` (`../10_implementation/engineering_conventions.md` §1.1). |
 
 CI runs only on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners; each job installs the pinned Go, `pwsh`, `gh`, `jq` and `gcloud` and runs Unity in the digest-pinned GameCI images above (ADR-0058; Owner Setup in `../10_implementation/audit_gates.md`). Every Action is pinned by commit SHA and every container image by digest. Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. C# style and the client API fence are checked by the Go verifier; no .NET SDK, Roslyn analyzer or C# formatter is pinned or installed (ADR-0059). `scripts/verify.ps1` must not call `python`.
+
+# Production Operations (ADR-0066)
+
+Hosts and operations tooling for the one-world production deployment (`../08_scale_ops/deployment.md`, `../08_scale_ops/observability.md`, `../08_scale_ops/backup_recovery.md`). Linux amd64 release tarballs are verified against the SHA-256 below before install; PGDG packages are installed with exact `=version` pins from `apt.postgresql.org` (`noble-pgdg`).
+
+| Component | Canonical version | Install source / SHA-256 | Rule |
+|---|---|---|---|
+| Production host OS | Ubuntu Server 24.04 LTS (`noble`), amd64 | official image; security updates via `unattended-upgrades` | World host, PostgreSQL host and ops host. No container runtime or Kubernetes (ADR-0052). |
+| PostgreSQL server package | `postgresql-18=18.6-1.pgdg24.04+2` | PGDG apt | Same server version as the matrix pin `18.6`. |
+| pgBackRest | `2.59.1` (`pgbackrest=2.59.1-1.pgdg24.04+1`) | PGDG apt | WAL archiving, full/differential backups and PITR to the S3-compatible repository configured in Owner Setup. |
+| OpenTelemetry Collector (contrib) | `0.161.0` | `otelcol-contrib_0.161.0_linux_amd64.tar.gz` `778c689efa681ff6e4722ce9f66b9b7f57c3ba009ab2e2b43dc2e0315862c731` | Runs on the world host; OTLP/HTTP receiver on `127.0.0.1:4318`; exports traces to its local file exporter (14-day rotation) and metrics to Prometheus. |
+| Prometheus | `3.14.0` | `prometheus-3.14.0.linux-amd64.tar.gz` `f665c6da19eb7ba399c915d30c7d9793c9b417bf8a749b504bc470678631478d` | Ops host; scrapes the Collector, node_exporter and postgres_exporter; 90-day retention. |
+| Alertmanager | `0.34.1` | `alertmanager-0.34.1.linux-amd64.tar.gz` `265b9d1e55ef0d5306a436018af6d2b686c2ce051f03d968f7464ecb1372a7e8` | Ops host; receivers `ops-critical`, `ops-warning`, `security-queue`. |
+| Grafana OSS | `13.2.2` | `grafana-13.2.2.linux-amd64.tar.gz` `9662c838a09824fdb072e5f6fbdd45b62cf541b20f3d609ea5011e6e5f544c8f` | Ops host; the seven launch dashboards are provisioned from `deploy/prod/grafana/`. |
+| node_exporter | `1.12.1` | `node_exporter-1.12.1.linux-amd64.tar.gz` `b51d8a76aa2a9156a55d501aca6276fae09e262259a5e4e831d2c2222f084e63` | Every host. |
+| postgres_exporter | `0.20.1` | `postgres_exporter-0.20.1.linux-amd64.tar.gz` `89d4f7e7920cad48fdc3133f789556ef5253c330a9f5fdace3bdb6344c0a8b5a` | PostgreSQL host. |
+
+These binaries are operations infrastructure, not part of the `thinhthan-server` artifact; the server binary imports none of them. Their configuration files live in `deploy/prod/` and are checked by the IMP-048 release tests.
+
 # Pinned Content System Constants
 
 These constants are fixed at project initialization and must never change after any content using them has been shipped. Changing a namespace UUID retroactively invalidates every idempotency key previously derived from it.
@@ -155,7 +175,7 @@ These constants are fixed at project initialization and must never change after 
 | `CONTENT_GRANT_NAMESPACE_UUID` | `f7a3d2b1-4e8c-4a2f-9b3e-6d1c5f8e7a2b` | UUID v5 namespace for all deterministic content-grant idempotency keys (seasonal cosmetics, Atlas reward tiers, Guild Stone completions, and any future one-time content delivery). Generated once with `crypto/rand`. **Immutable** — changing this value breaks every previously issued grant key. Do not rotate, substitute, or regenerate. See `../06_data/ids.md` "Deterministic Content-Grant Idempotency Keys". |
 
 # Verified Stable Choices
-As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta. CI tooling rows added by ADR-0058 were verified on `2026-09-25`. Staticcheck `2026.2.1` (ADR-0059) was verified against the GitHub release and the Go module proxy on `2026-09-25`.
+As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta. CI tooling rows added by ADR-0058 were verified on `2026-09-25`; `gh`/`jq`/`pwsh` release-asset SHA-256 values were read from the GitHub release API on `2026-09-25` (ADR-0068). Staticcheck `2026.2.1` (ADR-0059) was verified against the GitHub release and the Go module proxy on `2026-09-25`. Production Operations rows (ADR-0066) were verified on `2026-09-25` against each project's latest non-prerelease GitHub release, its published SHA-256 file, the Go module proxy (OTel modules) and the PGDG `noble-pgdg` package index.
 
 # Version Verification
 When refreshing this matrix, verify candidate versions against the technology vendor's official release channel or canonical package registry. Record a new `verified_at` date. Do not infer "best" from version number alone: production selects the newest compatible **stable/LTS** release after compatibility review, not preview/beta/RC merely because it is newer.

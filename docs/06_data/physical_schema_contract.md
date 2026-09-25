@@ -20,8 +20,8 @@ Tài liệu này đảm bảo hai AI agent triển khai các task persistence đ
 |---|---|---|
 | **Primary Key / Durable UUID** | `UUID NOT NULL` | Sinh bằng RFC 4122 UUID v4 (`crypto/rand`). Cấm dùng `SERIAL` hay số tự tăng cho ID bền vững. |
 | **Stable Content ID** | `VARCHAR(64) NOT NULL` | Chữ thường ASCII, chấm, gạch dưới (e.g. `monster.lang_da.chuot_dong`). |
-| **Normalized Name Key** | `VARCHAR(64) NOT NULL` | Canonical Unicode NFC + Case-folded. Có ràng buộc `UNIQUE`. |
-| **Display Text / Player Names** | `VARCHAR(64) NOT NULL` | Chuỗi hiển thị giữ nguyên hoa/thường và dấu tiếng Việt (tối đa 16 graphemes). |
+| **Normalized Name Key** | `VARCHAR(256) NOT NULL` | Canonical Unicode NFC + Case-folded (case-fold may expand code points). Có ràng buộc `UNIQUE`. |
+| **Display Text / Player Names** | `VARCHAR(64) NOT NULL` (guild: `VARCHAR(96)`) | Chuỗi hiển thị giữ nguyên hoa/thường và dấu tiếng Việt; giới hạn grapheme và byte theo `text.md` § Name Limits (nhân vật 16 graphemes ≤ 64 byte UTF-8; guild 24 graphemes ≤ 96 byte). |
 | **Currency Balances** | `BIGINT NOT NULL` | Số nguyên 64-bit có dấu. Bắt buộc có `CHECK (balance >= 0)`. |
 | **Total Cumulative EXP** | `INTEGER NOT NULL` | Số nguyên 32-bit theo `data_model.md`; bắt buộc `CHECK (current_exp >= 0 AND current_exp <= 702100000)`. |
 | **Levels / Item Counts / Slots** | `INTEGER NOT NULL` | Số nguyên 32-bit. Bắt buộc `CHECK (level >= 1)` hoặc `CHECK (quantity > 0)`. |
@@ -33,27 +33,28 @@ Tài liệu này đảm bảo hai AI agent triển khai các task persistence đ
 
 Chưa có migration nào tồn tại. IMP-005 tạo baseline `server/migrations/000001_baseline_schema.up.sql` và snapshot `server/migrations/schema_snapshot.sql`; baseline tạo **mọi bảng khai báo trong `data_model.md`** (kể cả `characters.updated_at`); danh sách dưới đây là các bảng cần lưu ý đặc biệt về kiểu dữ liệu/ràng buộc, không phải danh sách giới hạn:
 
-1. `accounts` — Tài khoản người chơi, trạng thái `ACTIVE`, `TOMBSTONE_ERASED`; không có cột điểm hoàn tiền IAP (điểm được suy ra từ `account_refund_consumed_events` trong 180 ngày, ADR-0060).
-2. `account_identities` — Liên kết OAuth bên thứ ba (Apple, Google, Steam), ràng buộc `ON DELETE RESTRICT`.
+1. `accounts` — Tài khoản người chơi, trạng thái `ACTIVE`, `TOMBSTONE_ERASED`; không có cột điểm hoàn tiền IAP (điểm được suy ra từ `account_refund_consumed_events` trong 180 ngày, ADR-0060). Baseline chèn sẵn hàng `TOMBSTONE_ACCOUNT_ID` (`data_model.md`, ADR-0065); cột `erased_at`, `credential_guard_until`, `economy_review_flagged_at`.
+2. `account_identities` — Liên kết OAuth bên thứ ba (Apple, Google, Steam), PK `(provider_id, provider_subject)`, ràng buộc `ON DELETE RESTRICT`; `account_login_history` — tín hiệu đăng nhập 90 ngày (ADR-0065).
    `account_password_credentials` — Username/email/Argon2id hash cho provider `password` (ADR-0051); `UNIQUE(username_key)`, `UNIQUE(email_key)`.
 3. `characters` — Nhân vật người chơi (tối đa 3 nhân vật, cấp 1..60, tên định danh duy nhất `name_key`); `current_exp INTEGER`, `created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()` và `updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`. `updated_at` chỉ ghi lần sửa gần nhất của chính hàng `characters`, theo `data_model.md`.
-4. `operations` — Nhật ký idempotency chống xử lý lặp lại giao dịch tài sản.
+4. `operations` — Nhật ký idempotency chống xử lý lặp lại giao dịch tài sản. PK `(operation_family, owner_id, operation_id)` (ADR-0065).
 5. `character_currencies` — Số dư 3 loại tiền (`common`, `bound`, `special`) có ràng buộc `>= 0`.
 6. `item_instances` & `item_locations` — Thực thể vật phẩm, cấp cường hóa 0..16, và vị trí duy nhất.
 7. `account_iap_entitlements` & `account_refund_consumed_events` — Quyền sở hữu IAP (`grant_state` gồm `REJECTED` kèm `reject_reason`, cột `platform`) và nhật ký sự kiện hoàn tiền trong cửa sổ 180 ngày.
 8. `economy_account_daily_rollups` & `economy_character_daily_rollups` — Bảng tổng hợp luồng tiền và khối lượng giao dịch đối tác (`trade_partner_volumes`).
-9. `world_consequence_relics` & `region_di_tich_markers` — Trạng thái thế giới sau khi diệt boss Di Tích (khóa `(map_id, channel_id, relic_id)`).
-10. `rate_limit_counters` — Bộ đếm giới hạn tần suất L2 trên PostgreSQL (không dùng Redis).
-11. `iap_notification_dedup` — Chống xử lý trùng lặp webhook thông báo từ Apple/Google.
+9. `world_consequence_relics` & `region_di_tich_markers` — Trạng thái thế giới sau khi diệt boss Di Tích (khóa `(map_id, channel_id, relic_id)`; partial index `(relic_id) WHERE relic_active`).
+10. `rate_limit_counters` & `auth_failure_backoff` — Bộ đếm giới hạn tần suất L2 (cửa sổ trượt 2 cửa sổ) và backoff lũy tiến đăng nhập sai trên PostgreSQL (không dùng Redis; schema: `../07_security/external_integrations.md` § 3, ADR-0064).
+11. `iap_notification_dedup` — Chống xử lý trùng lặp thông báo Apple/Google/Steam, PK `(provider, notification_key)`; `iap_provider_cursors` — con trỏ GetReport của Steam.
 12. `audit_events` — Nhật ký kiểm toán an ninh và truy vết thao tác.
 13. `character_inventories` — Metadata kho đồ nhân vật: capacity, revision.
 14. `account_cosmetic_entitlements` (có `first_equipped_at`) & `account_entitlement_claims` — Quyền sở hữu mỹ phẩm IAP cấp account (per `data_model.md`).
     `character_cosmetic_entitlements` & `character_cosmetic_equips` — Mỹ phẩm cấp nhân vật và slot đang trang bị (ADR-0060).
-15. `auth_session_families`, `auth_refresh_credentials`, `auth_revocations` — Phiên xác thực và thu hồi (`../07_security/auth.md`).
+15. `auth_session_families`, `auth_refresh_credentials`, `auth_revocations` — Phiên xác thực và thu hồi (schema: `data_model.md` § Auth sessions; access token, gameplay ticket, resume credential chỉ nằm trong bộ nhớ tiến trình).
 16. `boss_chest_eligibility` — Quyền mở rương boss PUBLIC theo nhân vật (ADR-0053); `public_boss_schedules` — vòng đời generation boss PUBLIC, CHECK trạng thái `SCHEDULED`/`OPEN` (ADR-0061).
 17. `character_feats` & `character_feat_milestones` — Feat và mốc thưởng (`../03_systems/cosmetics.md`).
 18. `character_souls` — Soul instance, cấp, EXP, `contracted_item_instance_id UNIQUE` (ADR-0060); `character_soul_resonance` — bộ đếm cộng hưởng ký ức theo `(character_id, soul_id)`.
 19. `character_beasts`, `character_beast_food_daily`, `beast_equipment_locations` — Linh Thú và bộ đếm điểm thức ăn theo ngày UTC.
+20. `reward_claims`, `reward_claim_lines`, `reward_claim_contributions`; `auction_listings`, `auction_proceeds`, `trade_settlement_records`; bảng guild (`guilds`, `guild_memberships`, `guild_member_contributions`, `guild_invites`, `guild_applications`, `guild_progression`, `guild_ritual_cycles`, `guild_blessing_votes`, `guild_storage_claims`, `guild_storage_audit`) — schema trong `data_model.md` (ADR-0065).
 
 ## 4. Ràng buộc Toàn vẹn & Hành vi Khóa Ngoại (Foreign Keys)
 
@@ -61,11 +62,13 @@ Chưa có migration nào tồn tại. IMP-005 tạo baseline `server/migrations/
    - Mặc định tuyệt đối: `ON DELETE RESTRICT`. Ngăn chặn việc xóa vô tình dữ liệu cha khi còn dữ liệu con.
    - Trường hợp ngoại lệ duy nhất dùng `ON DELETE CASCADE`: Các bảng phiên làm việc ngắn hạn (`auth_refresh_credentials` thuộc `auth_session_families`).
    - Tuyệt đối cấm `ON DELETE CASCADE` trên các bảng tài sản: `characters`, `character_inventories`, `character_currencies`, `item_instances`.
+   - **ON UPDATE:** mặc định `NO ACTION`; không dùng `ON UPDATE CASCADE`. Ngoại lệ duy nhất: hai composite FK của `account_entitlement_claims` khai báo `DEFERRABLE INITIALLY IMMEDIATE` để giao dịch erasure (`SET CONSTRAINTS ALL DEFERRED`) trỏ lại `account_id` của cha và con sang `TOMBSTONE_ACCOUNT_ID` (`data_model.md` § Account Erasure, ADR-0065).
+   - Cột tham chiếu account/character trong bảng log không mang FK: `operations.owner_id`, `audit_events.*_id`, `auth_revocations.account_id`.
 2. **Ràng buộc Miền Giá trị (`CHECK` Constraints):**
    - Mọi cột số dư tài sản phải có `CHECK (amount >= 0)`.
    - Mọi cột enum lưu dưới dạng `VARCHAR` phải có ràng buộc `CHECK (col IN ('VAL1', 'VAL2', ...))`.
 3. **Đảm bảo Duy nhất (Unique Constraints):**
-   - `operations(operation_id)`: Đảm bảo tính duy nhất của mọi thao tác thay đổi trạng thái bền vững.
+   - `operations(operation_family, owner_id, operation_id)` (PK): Đảm bảo tính duy nhất của mọi thao tác thay đổi trạng thái bền vững theo phạm vi chủ sở hữu (ADR-0065).
    - `account_iap_entitlements(platform_receipt)`: Chống nạp lặp biên lai IAP.
    - `characters(name_key)`: Đảm bảo tính duy nhất của tên nhân vật trên toàn thế giới logic.
 ## 5. Giao dịch & Thứ tự Khóa Tránh Deadlock (Lock Ordering)

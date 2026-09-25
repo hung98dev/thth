@@ -16,7 +16,12 @@ Launch platforms: Windows desktop and Android. iOS is not a launch target (CI bu
 Quality presets `LOW / MEDIUM / HIGH` are chosen automatically at first launch from a 5-second GPU/CPU benchmark and can be changed in settings. They control only presentation: render scale (`LOW` 0.75, others 1.0), active point Light2D budget (`LOW` 4, `MEDIUM` 8, `HIGH` 16), particle budget, parallax layers shown (`LOW` hides `L3`), and post-processing (bloom only on `HIGH`). Presets never change world scale, colliders, hitboxes or telegraph visibility.
 
 ## Frame Pacing
-Measured in the canonical hotspot scene (18 players + 42 `AI_CLASS_NAMED_MECHANIC` monsters + skill VFX, `../09_testing/load.md` scenario 11) for 5 minutes:
+Measured in the canonical client hotspot scene for 5 minutes. A client never renders more than the AOI cap (`MAX_ENTITIES_IN_AOI_PER_CLIENT = 40`, `../05_network/synchronization.md`), so the scene is the worst visible set at the forced-placement channel cap (22 players, `../02_world/world_rules.md` § Forced Placement; ADR-0066):
+```text
+client hotspot scene = local player + 21 remote players + 19 AI_CLASS_NAMED_MECHANIC monsters (40 replicated entities),
+                       all in sustained combat with skill VFX, driven by the recorded hotspot stream (§ Smoothness by Construction item 9)
+```
+The server-side channel worst case (22 players + 42 monsters) is `../09_testing/load.md` scenario 11.
 
 ```text
 tier           target   p95 frame     p99 frame     hitches (>50 ms)
@@ -24,7 +29,7 @@ DESKTOP_MIN    60 FPS   <= 16.7 ms    <= 25 ms      0 per 5 min in combat   (des
 ANDROID_REC    60 FPS   <= 16.7 ms    <= 25 ms      <= 1 per 5 min
 ANDROID_MIN    30 FPS   <= 33.3 ms    <= 45 ms      <= 1 per 5 min
 ```
-Desktop CPU budget (`PERF-002`, CI-gated): hotspot scene with `-batchmode -nographics` on the Linux CI job, 3 repetitions of 100 s each after a 10 s warm-up (§ Measurement and Gates), main-thread CPU time per frame (`PlayerLoop` excluding GPU/present waits, `ProfilerRecorder`) p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms. Desktop GPU frame pacing is an accepted gap: hosted CI has no GPU (ADR-0058); it is mitigated by the `PERF-006` draw budgets, the `PERF-016` overdraw/pass budgets, the `PERF-017` adaptive governor and the `PERF-003` Android GPU device runs (ADR-0059).
+Desktop CPU budget (`PERF-002`, CI-gated): hotspot scene rendered under xvfb with Mesa llvmpipe on the Linux CI job (render loop and render thread active, so culling, sorting and SRP batching count; vSync off, `targetFrameRate` unset, `LP_NUM_THREADS=2`), 3 repetitions of 100 s each after a 10 s warm-up (§ Measurement and Gates). Per frame, main-thread CPU time = `PlayerLoop` marker time minus the main-thread wait markers `Gfx.WaitForPresentOnGfxThread`, `Gfx.WaitForRenderThread` and `WaitForTargetFPS`, all read with `ProfilerRecorder` (no `FrameTimingManager`): p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms. Render-thread and GPU time are excluded. Desktop GPU frame pacing is an accepted gap: hosted CI has no GPU (ADR-0058); it is mitigated by the `PERF-006` draw budgets, the `PERF-016` overdraw/pass budgets, the `PERF-017` adaptive governor and the `PERF-003` Android GPU device runs (ADR-0059).
 
 Frame budget on `ANDROID_MIN` (33.3 ms): scripts <= 10 ms, rendering <= 12 ms, remainder for OS/GPU. Batches <= 150 on mobile (SpriteAtlas per region/actor group, no per-frame material instancing). Frame-rate control: § Smoothness by Construction item 3.
 
@@ -33,8 +38,9 @@ Frame budget on `ANDROID_MIN` (33.3 ms): scripts <= 10 ms, rendering <= 12 ms, r
 managed GC allocation per frame in steady gameplay (movement, combat, UI HUD) = 0 bytes (main-thread frame code)
 network receive/decode (background task)                                     <= PERF-024 budget
 allocations allowed only at load, scene transfer, and opening/closing full-screen UI
-total resident memory: ANDROID_MIN <= 1.3 GB, DESKTOP_MIN <= 2.5 GB
+total resident memory: ANDROID_MIN <= 1.3 GB, DESKTOP_MIN <= 2.5 GB (player process)
 ```
+Desktop CI proxy (`PERF-005` desktop): PlayMode runs inside the editor process, so resident memory is not measurable there. The Linux job gates the growth of Unity-tracked memory instead: `ProfilerRecorder` counters `Total Used Memory` and `Gfx Used Memory` (category `Memory`) are sampled in the empty bootstrap scene right before the hotspot scene loads (baseline) and every second during the run; peak minus baseline <= 1.5 GB for `Total Used Memory` and <= 1.0 GB for `Gfx Used Memory`. The 2.5 GB desktop resident target stays a design target; resident memory is gated only on Android device runs.
 Incremental GC is on with a 1 ms time slice (`GarbageCollector.incrementalTimeSliceNanoseconds = 1_000_000`); `GC.Collect` runs only on loading screens. Pooling rules: `../10_implementation/engineering_conventions.md` §2.3. Addressables group budgets: `../07_content/presentation_asset_manifest.md` §1.
 
 ## Load and Transfer Times
@@ -45,6 +51,7 @@ map transfer, same region             <= 3 s
 map transfer, new region (bundles)    <= 6 s
 reconnect resume to controllable      <= 5 s after connection is restored
 ```
+Start and end markers (`PERF-007`): cold start = process launch to first interactive login-screen frame (Android device run only; desktop cold start is a design target, not CI-gated, because CI runs no Windows player); login to in-world = `C2S_CHARACTER_ATTACH` sent to the first `IN_WORLD` frame with a controllable local player; map transfer = transfer command received to the first controllable frame on the destination map; reconnect = WSS reconnected to the first controllable frame. The desktop CI run measures the last three in PlayMode on the Linux job with Addressables play mode `Use Existing Build` (bundles built for the Linux player target in the same job) against the PlayMode harness server.
 Every wait longer than 0.5 s shows a progress screen or indicator; no frozen frame longer than 100 ms during loading (async Addressables + incremental instantiation).
 
 ## Input Responsiveness
@@ -127,12 +134,13 @@ Canonical runtime architecture that keeps frames smooth without GPU timing in CI
    - Decoded messages go to a bounded queue; `NetReceive` applies them on the main thread with 0 allocation.
    - Unity APIs are never called off the main thread.
    ```text
-   decode allocation      <= 64 KB per second of the recorded hotspot stream (60 entities, 10 Hz), exact for the fixture
+   decode allocation      <= 64 KB per second of the recorded hotspot stream, exact for the fixture
    framing / buffers      0 bytes (pooled)
    ```
+   Hotspot stream fixture (registered in `../09_testing/test_and_release_evidence.md` §3): 60 s of the client hotspot scene's replication at the AOI cap (40 replicated entities + local player), 10 Hz snapshot/delta envelopes in the `../05_network/synchronization.md` shapes, produced by a seeded deterministic generator in the PlayMode test assembly (IMP-065) from generated protobuf messages; the same file drives the hotspot scene.
 
 ## Measurement and Gates
-- Desktop (every PR, Linux job, GitHub-hosted, no GPU; ADR-0058): PlayMode tests in category `Performance` run the hotspot scene with `FrameTimingManager`/`ProfilerRecorder`. CPU timing (`PERF-002`) runs with `-nographics`; draw/memory/load measurements render under xvfb with Mesa llvmpipe. GPU frame time is never measured or gated in CI, so a missing GPU is neither a failure nor an `OPS` blocker.
+- Desktop (every PR, Linux job, GitHub-hosted, no GPU; ADR-0058, ADR-0066): PlayMode tests in category `Performance` run the hotspot scene under xvfb with Mesa llvmpipe and read every metric through `ProfilerRecorder`; CPU timing (`PERF-002`) excludes render-thread/GPU waits by marker (§ Frame Pacing). GPU frame time is never measured or gated in CI, so a missing GPU is neither a failure nor an `OPS` blocker.
 - Every PR, device-independent budgets (Linux job, always required once the owning task is DONE):
   ```text
   managed GC allocation per frame in the hotspot scene       = 0 bytes
@@ -158,9 +166,9 @@ Every ID below must be named in at least one task packet's acceptance and covere
 | `PERF-002` | desktop CPU budget: main-thread p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms (Frame Pacing) | every PR (Linux job) |
 | `PERF-003` | ANDROID_MIN and ANDROID_REC frame pacing (Frame Pacing) | device run |
 | `PERF-004` | 0 bytes managed GC per frame in steady gameplay (Memory and GC) | every PR |
-| `PERF-005` | resident memory caps per tier (Memory and GC) | every PR (desktop) + device run |
+| `PERF-005` | Android resident memory caps; desktop tracked-memory growth <= 1.5 GB total / 1.0 GB Gfx over baseline (Memory and GC) | every PR (desktop proxy) + device run |
 | `PERF-006` | batches <= 150, SetPass <= 60, light/particle budgets per preset (Measurement) | every PR |
-| `PERF-007` | cold start, login, map transfer and reconnect times (Load and Transfer Times) | every PR (desktop) + device run |
+| `PERF-007` | login, map transfer and reconnect times with defined markers; cold start on Android only (Load and Transfer Times) | every PR (desktop, no cold start) + device run |
 | `PERF-008` | progress shown for waits > 0.5 s; no frozen frame > 100 ms while loading | every PR |
 | `PERF-009` | input -> first visual response <= 1 frame; confirmed result <= RTT + 50 ms (Input Responsiveness) | every PR |
 | `PERF-010` | interpolation/extrapolation/correction values (Network Smoothness) | every PR |
@@ -177,7 +185,7 @@ Every ID below must be named in at least one task packet's acceptance and covere
 | `PERF-021` | rendering discipline: SRP-Batcher compatible materials, transparency sort axis, Tight mesh rule, animator culling, no runtime material instances (item 6) | every PR |
 | `PERF-022` | UI: dirty flags applied once per frame, static/dynamic Canvas split, 0-alloc HUD value updates, raycast targets off on non-interactive graphics (item 8) | every PR |
 | `PERF-023` | camera: critically damped follow 0.12 s without overshoot, one move per frame, map-bounds clamp, snap on transfer/hard reconciliation (item 2) | every PR |
-| `PERF-024` | network decode <= 64 KB/s on the hotspot stream fixture, 0-byte framing/buffers, main-thread apply 0 bytes (item 9) | every PR |
+| `PERF-024` | network decode <= 64 KB/s on the 40-entity hotspot stream fixture, 0-byte framing/buffers, main-thread apply 0 bytes (item 9) | every PR |
 
 ## Invariants
 ```text

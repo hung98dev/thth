@@ -31,7 +31,7 @@ ThinhThan.App        composition root (creates FrameLoop + services); nothing re
 ThinhThan.Tests.*    EditMode / PlayMode
 ```
 
-Never create an asmdef dependency cycle. `Assets/Scripts/Protocol/` is generated — never hand-edit.
+Never create or edit an asmdef or `client/ProjectSettings/` entry: IMP-000 authors all 13 asmdefs and the ProjectSettings baseline (`docs/10_implementation/repository_layout.md` § Mandatory Assemblies, § ProjectSettings Baseline; ADR-0068); only IMP-095 edits `QualitySettings.asset`. A missing reference is a `BLK-xxx`. `Assets/Scripts/Protocol/` is generated — never hand-edit.
 
 ## Authority boundary (hard rule)
 

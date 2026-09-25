@@ -60,7 +60,7 @@ PvP/Guild-War disconnect handling uses their owning gameplay rules; network reco
 ## Reconnect Flow
 1. Unity detects transport loss.
 2. Client stops treating predicted state as final.
-3. Client reconnects to bootstrap/Edge with resume credential.
+3. Client opens `wss` and sends `C2S_HELLO` with its resume credential (no HTTPS step); if the credential expired (`RESUME_EXPIRED`) it refreshes and requests a new gameplay ticket (`../07_security/auth.md` § HTTPS Endpoints).
 4. Server authenticates and creates a newer valid session epoch.
 5. Routing resolves current simulation ownership.
 6. If previous live partition is recoverable, attach to it.

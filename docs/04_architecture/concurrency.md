@@ -41,6 +41,7 @@ per-character discrete-intent queue    = 8
 per-partition command queue            = 256
 per-partition durable-result queue     = 64
 telemetry queue                        = 128
+per-connection outbound queue          = 256 frames / 1 MiB (slow-consumer rule: ../05_network/protocol.md § Connection Backpressure)
 ```
 
 No unbounded goroutine-per-message fanout.

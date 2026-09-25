@@ -91,14 +91,15 @@ The realtime loop may continue unrelated simulation while a durable operation is
 Canonical constants:
 ```text
 MAX_ENTITIES_PER_CHANNEL        = 80
-  (covers 42 monsters at current NORMAL/ELITE spawn density + 18 players
-   + headroom for projectiles and transient entities)
+  PLAYER_SLOTS_RESERVED         = 22  (FORCED_PLACEMENT_HARD_CAP, ../02_world/world_rules.md)
+  MAX_NON_PLAYER_ENTITIES       = 58  (80 - 22: monsters, bosses, event spawns, projectiles, transients)
+  worst case = 22 players + 42 monsters (NORMAL/ELITE density) + 16 projectiles/transients (ADR-0066)
 MAX_ENTITIES_IN_AOI_PER_CLIENT  = 40
 ```
 
 These constants are release gates. Before the 10k CCU gate, measure tick CPU consumption per entity class under worst-case channel load and confirm `MAX_ENTITIES_PER_CHANNEL` entities complete a 50ms tick within the p95 warning threshold.
 
-A channel must reject entity spawns that would exceed `MAX_ENTITIES_PER_CHANNEL` rather than silently degrading tick budget.
+Player placement is bounded only by the channel player caps and is never refused by the entity cap. A channel rejects a non-player spawn that would exceed `MAX_NON_PLAYER_ENTITIES` rather than silently degrading tick budget; a rejected projectile/transient is not created (the owning action still resolves its hit test), and a rejected spawn-group monster retries at its next respawn time.
 
 `MAX_ENTITIES_IN_AOI_PER_CLIENT` bounds the per-client replication payload; entities beyond it are culled from AOI snapshots by relevance (distance and threat priority) before packet build.
 
@@ -171,7 +172,7 @@ Do not depend on Go map iteration order, goroutine completion order, OS wall-clo
 - PostgreSQL is not in the per-entity per-tick path,
 - catch-up work is bounded,
 - authoritative gameplay phases are never skipped to hide overload,
-- MAX_ENTITIES_PER_CHANNEL = 80 (release gate; must be benchmarked before 10k CCU gate),
+- MAX_ENTITIES_PER_CHANNEL = 80 (release gate; must be benchmarked before 10k CCU gate) with 22 player slots reserved and at most 58 non-player entities,
 - MAX_ENTITIES_IN_AOI_PER_CLIENT = 40,
 - AI decision rates: PASSIVE = 2 Hz, NAMED_MECHANIC = 5 Hz, BOSS_PHASE = 10 Hz,
 - movement/projectile/hit/status resolution always 20 Hz regardless of AI class,

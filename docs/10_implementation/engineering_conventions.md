@@ -62,13 +62,13 @@ Mục tiêu: Đảm bảo mọi AI agent khi sinh code đều tuân thủ cùng 
 - **Style:** Allman brace style (dấu `{` ở dòng riêng), 4 spaces cho thụt lề, PascalCase cho Types và Methods, camelCase cho biến cục bộ và parameters, `_camelCase` cho private fields.
 
 ### 2.2 Assembly Definitions (.asmdef)
-Mọi code C# phải nằm dưới các assembly definition được cô lập rõ ràng:
+Mọi code C# phải nằm dưới các assembly definition được cô lập rõ ràng. Danh sách đầy đủ 13 assembly và reference graph chính xác là canonical tại `repository_layout.md` § Mandatory Assemblies (IMP-000 tạo toàn bộ, ADR-0068); các mục dưới chỉ mô tả trách nhiệm:
 - `ThinhThan.Protocol.asmdef`: Chỉ chứa code sinh tự động từ protobuf; không tham chiếu tới bất kỳ Unity assembly nào khác.
 - `ThinhThan.Core.asmdef`: Chứa math, UUID utilities, text normalization, pure domain models, and the frame runtime (`Core/Runtime/`: `FrameLoop`, `FrameTime`, `FrameBudget`, `Pool<T>`, `Log`, `PresentationRandom`).
 - `ThinhThan.Net.asmdef`: WSS client (`System.Net.WebSockets.ClientWebSocket`, background receive task), session state machine, serialization handling.
 - `ThinhThan.Systems.asmdef`: Gameplay presentation, movement interpolation, combat controllers.
 - `ThinhThan.UI.asmdef`: HUD, menu screens, input overlays.
-- `ThinhThan.App.asmdef`: composition root (IMP-067); creates `FrameLoop` and every service; no assembly references it.
+- `ThinhThan.App.asmdef`: composition root (IMP-067); creates `FrameLoop` and every service; only `ThinhThan.Tests.PlayMode` references it.
 - `ThinhThan.Tests.EditMode.asmdef` và `ThinhThan.Tests.PlayMode.asmdef`: Thư mục test riêng.
 Cấm circular dependencies giữa các asmdef.
 

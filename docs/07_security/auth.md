@@ -24,6 +24,47 @@ Characters, currencies, cosmetics, account storage, and other persistent ownersh
 
 Realtime gameplay packets never carry a password or long-lived refresh credential.
 
+## HTTPS Endpoints (ADR-0064)
+Control plane only (never gameplay). Bodies are JSON (UTF-8); UUIDs are canonical lowercase strings and timestamps are int64 Unix milliseconds on this surface. `Bearer` = `Authorization: Bearer <access_token>`.
+```text
+endpoint                                   auth     request body                                      response
+POST /api/v1/auth/login/{provider}         none     provider_token, device_id, client_build, platform  TokenResponse
+     provider = apple | google | steam              (apple: identity token JWT; google: OIDC ID token;
+                                                     steam: auth session ticket, hex)
+POST /api/v1/auth/password/register        none     username, password, email, device_id,             TokenResponse
+                                                     client_build, platform
+POST /api/v1/auth/password/login           none     username, password, device_id, client_build,       TokenResponse
+                                                     platform
+POST /api/v1/auth/refresh                  none     refresh_token, device_id                           TokenResponse
+POST /api/v1/auth/logout                   Bearer   scope : SESSION | ALL                              204
+POST /api/v1/auth/password/change          Bearer   current_password, new_password                     TokenResponse
+POST /api/v1/auth/link/{provider}          Bearer   provider_token, current_password (password         providers
+                                                     accounts only)
+POST /api/v1/auth/unlink/{provider}        Bearer   current_password or provider_token of another      providers
+                                                     linked provider (reauthentication)
+GET  /api/v1/account                       Bearer   -                                                  account_id, providers,
+                                                                                                       status, pending_deletion,
+                                                                                                       deletion_scheduled_at
+POST /api/v1/gameplay/ticket               Bearer   client_build, platform, protocol_major,            ticket, ticket_expires_at,
+                                                     protocol_minor, content_revision                  wss_url, protocol_minor_min,
+                                                                                                       client_build_min,
+                                                                                                       content_revision
+POST /api/v1/account/delete                Bearer   ../07_security/data_protection.md § Erasure        data_protection.md
+POST /api/v1/iap/verify, /iap/steam/init   Bearer   validation.md § IAP Receipt Verification           validation.md
+```
+`TokenResponse` = `account_id, access_token, access_expires_at, refresh_token, refresh_expires_at, is_new_account`. `providers` = list of `{provider_id, linked_at}`.
+
+Rules:
+- Federated login with an unknown `provider_id + provider_subject` creates a new account (federated sign-up); a known one logs into its account.
+- `link` fails `PROVIDER_ALREADY_LINKED` when the subject belongs to another account; `unlink` fails `LAST_LOGIN_METHOD` when it would leave no usable login method; both fail `CREDENTIAL_CHANGE_LOCKED` while `accounts.credential_guard_until > now` unless `current_password` is supplied (`anti_cheat.md` § Account takeover).
+- `refresh` rotates per § Refresh Rotation; reuse of a rotated token returns `AUTH_INVALID` and revokes the family.
+- `gameplay/ticket` returns `CLIENT_UPDATE_REQUIRED`, `CONTENT_INCOMPATIBLE`, `SERVER_DRAINING`, `ACCOUNT_BANNED`, `ACCOUNT_SUSPENDED`, or `SERVER_OVERLOADED` with `queue_position` and `retry_after_ms` (login queue, `session.md`); a pending-deletion account still gets a ticket (attach then returns `ACCOUNT_PENDING_DELETION`).
+- Errors: HTTP 400 validation (`USERNAME_INVALID`, `EMAIL_INVALID`, `PASSWORD_INVALID`), 401 `AUTH_INVALID` / `AUTH_EXPIRED`, 403 `ACCOUNT_BANNED` / `ACCOUNT_SUSPENDED` / `CREDENTIAL_CHANGE_LOCKED`, 409 `USERNAME_TAKEN` / `EMAIL_TAKEN` / `PROVIDER_ALREADY_LINKED` / `LAST_LOGIN_METHOD`, 426 `CLIENT_UPDATE_REQUIRED` / `CONTENT_INCOMPATIBLE`, 429 `RATE_LIMITED`, 503 `SERVER_OVERLOADED` / `SERVER_DRAINING` / `TEMPORARY_DEPENDENCY_FAILURE`. Body: `error_code, retryability, retry_after_ms, queue_position, safe_message_key` (`../05_network/errors.md`).
+- Character create/list/select are WSS messages 12..14 and 6 (`../05_network/messages.md`); the resume credential is presented only in `C2S_HELLO`.
+
+### Device ID
+`device_id` = a random UUID v4 the client generates on first launch and keeps in local app storage (never a hardware fingerprint). It is a risk signal only (`session.md` § Device Metadata): the server stores `SHA-256(ACCOUNT_SIGNAL_SALT || device_id)` and the salted /16 IPv4 or /48 IPv6 prefix hash in `account_login_history` (`../06_data/data_model.md`, 90-day retention; one row per successful login, refresh excluded).
+
 ## Credential Types
 Launch defaults:
 ```text
@@ -66,8 +107,8 @@ Provider id `password`. Enabled at launch beside `apple`, `google`, `steam`.
 
 HTTPS endpoints (same TLS/HTTPS surface as federated login):
 ```text
-POST /api/v1/auth/password/register   body: username, password, email
-POST /api/v1/auth/password/login      body: username, password
+POST /api/v1/auth/password/register   body: username, password, email (+ device_id, client_build, platform; § HTTPS Endpoints)
+POST /api/v1/auth/password/login      body: username, password (+ device_id, client_build, platform)
 ```
 Both return the same access + rotating refresh credentials as federated login (steps 5-7 of the HTTPS Login Flow).
 

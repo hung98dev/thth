@@ -4,7 +4,7 @@ Use ADRs only for decisions that materially affect architecture, data contracts,
 
 File: `NNNN-short-name.md`.
 
-ADR numbers are unique and monotonic. Before creating a new ADR, list this directory and use the next unused number; never create a second file with an existing ADR number.
+ADR numbers are unique and monotonic. Before creating a new ADR, list this directory and use the next number after the highest existing one (skipped numbers such as 0067 are never assigned); never create a second file with an existing ADR number.
 
 Use `docs/templates/adr.md`.
 
@@ -46,18 +46,18 @@ Use `docs/templates/adr.md`.
 | 0032 | Seven-Channel EXP Source Portfolio | ACCEPTED |
 | 0033 | Skill Unlock Schedule Remap and Lv55/Lv60 Bonus Skill Points | ACCEPTED |
 | 0034 | Just Guard Edge-Trigger, Streak Mechanic, and Revised Mitigation Budget | ACCEPTED |
-| 0035 | Spawn Density Increase and Channel-Capacity Implications _(amended: channel cap 20→18)_ _(amended by ADR-0061)_ | ACCEPTED |
+| 0035 | Spawn Density Increase and Channel-Capacity Implications _(amended: channel cap 20→18)_ _(amended by ADR-0061, ADR-0062)_ | ACCEPTED |
 | 0036 | Seasons as Launch Infrastructure | ACCEPTED |
 | 0037 | Reflect, Lifesteal, Absorb, Heal-Reduction Stats | ACCEPTED |
 | 0038 | Discrete Movement-Edge Input Message | ACCEPTED |
-| 0039 | Entity Capacity Model and AI Budget Classes | ACCEPTED |
+| 0039 | Entity Capacity Model and AI Budget Classes _(amended by ADR-0066)_ | ACCEPTED |
 | 0040 | WorldConsequence Durable Aggregate _(amended by ADR-0053)_ | ACCEPTED |
 | 0041 | Anti-RMT Trade Gates and IAP Entitlement Integrity _(amended by ADR-0060, ADR-0063)_ | ACCEPTED |
 | 0042 | Atlas Roster Expansion to 104 Launch Pages | ACCEPTED |
 | 0043 | Spirit Beast Instance Identity | ACCEPTED |
 | 0044 | Launch Topology — One Process Hosting Edge, Sim, Durable and Global _(amended by ADR-0052)_ | ACCEPTED |
 | 0045 | CI Evidence Without Self-Referential Commit SHA _(amended by ADR-0057)_ | ACCEPTED |
-| 0046 | Reference Viewport, Entity Scale, and Map Geometry _(amended by ADR-0055)_ | ACCEPTED |
+| 0046 | Reference Viewport, Entity Scale, and Map Geometry _(amended by ADR-0055, ADR-0068)_ | ACCEPTED |
 | 0047 | Skill Reach Budget and Collider-Aware Resolution | ACCEPTED |
 | 0048 | Character Row Update Timestamp _(amended: included in baseline 000001)_ | ACCEPTED |
 | 0049 | Guild Storage Same-Account Transfer Prohibition | ACCEPTED |
@@ -68,9 +68,15 @@ Use `docs/templates/adr.md`.
 | 0054 | Wire Message Completion | ACCEPTED |
 | 0055 | 2x Texture Authoring and Cutout Quality Gate | ACCEPTED |
 | 0056 | Volumetric Art Direction and URP 2D Lighting | ACCEPTED |
-| 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics _(amended by ADR-0058)_ | ACCEPTED |
+| 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics _(amended by ADR-0058, ADR-0068)_ | ACCEPTED |
 | 0058 | Public Repository on GitHub-Hosted Linux and Windows Runners | ACCEPTED |
 | 0059 | Client Smoothness by Construction and Machine-Enforced Code Quality | ACCEPTED |
-| 0060 | Wire and Durable Contract Completion for Gameplay, World and Systems | ACCEPTED |
-| 0061 | World Lifecycle and Content Reconciliation | ACCEPTED |
+| 0060 | Wire and Durable Contract Completion for Gameplay, World and Systems _(amended by ADR-0062)_ | ACCEPTED |
+| 0061 | World Lifecycle and Content Reconciliation _(amended by ADR-0062)_ | ACCEPTED |
+| 0062 | World and Systems Regression Fixes | ACCEPTED |
 | 0063 | Economy Contract Reconciliation | ACCEPTED |
+| 0064 | Session Handshake, Wire Scalar Types and Result Contract | ACCEPTED |
+| 0065 | Data Schema Completion, Erasure and Retention | ACCEPTED |
+| 0066 | Measurable Client Gates, Forced-Cap Worst Case, Drain and Operations Stack | ACCEPTED |
+| 0067 | _Number not used; never assign_ | — |
+| 0068 | Implementation Packet Readiness Corrections | ACCEPTED |

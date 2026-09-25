@@ -35,8 +35,8 @@ Night rare groups use `max_alive = 1` (unchanged).
 
 Respawn bands:
 ```text
-NORMAL     = 10..16s
-ELITE      = 45..75s   (ADR-0061)
+NORMAL     = 10..14s   (ADR-0062)
+ELITE      = 35..60s   (ADR-0062)
 NIGHT_RARE = 240..360s   (added; existing night-group respawn_seconds = 300 is within this band)
 ```
 
@@ -47,15 +47,17 @@ Supply vs. demand per channel per field map:
 NORMAL supply: 2 groups × max_alive 20 = 40 alive; avg respawn ≈ 13s
   throughput ≈ 40 / 13 × 3600 ≈ 11,077 kills/hour
 
-ELITE supply:  1 group × max_alive 2 = 2 alive; authored avg respawn = 60s
-  throughput ≈ 2 / 60 × 3600 = 120 kills/hour (slowest 75s: 96/hour)
-  (ELITE demand: 18 players × 5 ELITE kills/hour = 90/hour; ratio ≈ 1.33× authored, 1.07× floor)
+ELITE supply:  1 group × max_alive 2 = 2 alive; authored avg respawn = 48s
+  throughput ≈ 2 / 48 × 3600 = 150 kills/hour (slowest 60s: 120/hour)
+  (ELITE demand sized at FORCED_PLACEMENT_HARD_CAP: 22 players × 5 ELITE kills/hour = 110/hour;
+   ratio ≈ 1.36× authored, 1.09× floor; at 18 players 90/hour -> 1.33× floor)
 
-Total per channel: ≈ 11,197 kills/hour
+Total per channel: ≈ 11,227 kills/hour
 
-Demand (realistic sustained): MAX_PLAYERS_PER_CHANNEL = SOFT_THRESHOLD_CHANNEL = 18 players × 450 kills/hour = 8,100/hour
-Conservative supply floor (40 alive, slowest 16s respawn):  ~9,000/hour  → ratio ≈ 1.11× ✓
-Expected operating supply  (40 alive, avg 13s respawn):     ~11,077/hour → ratio ≈ 1.37× ✓
+Demand (realistic sustained), sized at FORCED_PLACEMENT_HARD_CAP (ADR-0062):
+  22 players × 450 kills/hour = 9,900/hour (18 players: 8,100/hour)
+Conservative supply floor (40 alive, slowest 14s respawn):  ~10,286/hour → ratio ≈ 1.04× at 22, 1.27× at 18 ✓
+Expected operating supply  (40 alive, avg 13s respawn):     ~11,077/hour → ratio ≈ 1.12× at 22, 1.37× at 18 ✓
 
 600 kills/hour is the peak-optimal rate (one kill every 6s uninterrupted) and must not be
 used as the planning average. 450 kills/hour is the realistic sustained rate once travel,
@@ -122,7 +124,7 @@ spawn.lang_da.bo_ruong.normal_02 @ anchor.spawn.bo_ruong.02
 spawn.lang_da.bo_ruong.elite_01 @ anchor.spawn.bo_ruong.elite
   pool = hon_xo_non
   max_alive = 2
-  respawn = 55s
+  respawn = 44s
 ```
 
 ## `map.lang_da.ben_da`
@@ -140,7 +142,7 @@ spawn.lang_da.ben_da.normal_02 @ anchor.spawn.ben_da.02
 spawn.lang_da.ben_da.elite_01 @ anchor.spawn.ben_da.elite
   pool = ma_xo
   max_alive = 2
-  respawn = 55s
+  respawn = 44s
 ```
 
 ## `map.lang_da.go_ma`
@@ -158,7 +160,7 @@ spawn.lang_da.go_ma.normal_02 @ anchor.spawn.go_ma.02
 spawn.lang_da.go_ma.elite_01 @ anchor.spawn.go_ma.elite
   pool = ma_xo
   max_alive = 2
-  respawn = 60s
+  respawn = 48s
 ```
 
 # ACT II — Rừng U Minh
@@ -178,7 +180,7 @@ spawn.rung_u_minh.loi_tram.normal_02 @ anchor.spawn.loi_tram.02
 spawn.rung_u_minh.loi_tram.elite_01 @ anchor.spawn.loi_tram.elite
   pool = ma_tranh
   max_alive = 2
-  respawn = 50s
+  respawn = 40s
 ```
 
 ## `map.rung_u_minh.rung_sau`
@@ -196,7 +198,7 @@ spawn.rung_u_minh.rung_sau.normal_02 @ anchor.spawn.rung_sau.02
 spawn.rung_u_minh.rung_sau.elite_01 @ anchor.spawn.rung_sau.elite
   pool = moc_tinh
   max_alive = 2
-  respawn = 60s
+  respawn = 48s
 ```
 
 ## `map.rung_u_minh.mieu_bo_hoang`
@@ -215,7 +217,7 @@ spawn.rung_u_minh.mieu_bo_hoang.elite_01 @ anchor.spawn.mieu_bo_hoang.elite
   pool = ma_tranh, moc_tinh
   selection = uniform_one_on_respawn
   max_alive = 2
-  respawn = 65s
+  respawn = 52s
 ```
 
 # ACT III — Bến Nước Đen
@@ -235,7 +237,7 @@ spawn.ben_nuoc_den.bai_lau.normal_02 @ anchor.spawn.bai_lau.02
 spawn.ben_nuoc_den.bai_lau.elite_01 @ anchor.spawn.bai_lau.elite
   pool = ma_da_gia
   max_alive = 2
-  respawn = 50s
+  respawn = 40s
 ```
 
 ## `map.ben_nuoc_den.duong_ngap`
@@ -253,7 +255,7 @@ spawn.ben_nuoc_den.duong_ngap.normal_02 @ anchor.spawn.duong_ngap.02
 spawn.ben_nuoc_den.duong_ngap.elite_01 @ anchor.spawn.duong_ngap.elite
   pool = thuy_quai
   max_alive = 2
-  respawn = 60s
+  respawn = 48s
 ```
 
 ## `map.ben_nuoc_den.ben_do_cu`
@@ -272,7 +274,7 @@ spawn.ben_nuoc_den.ben_do_cu.elite_01 @ anchor.spawn.ben_do_cu.elite
   pool = ma_da_gia, thuy_quai
   selection = uniform_one_on_respawn
   max_alive = 2
-  respawn = 65s
+  respawn = 52s
 ```
 
 # ACT IV — Đèo Mây
@@ -292,7 +294,7 @@ spawn.deo_may.duong_rung.normal_02 @ anchor.spawn.duong_rung.02
 spawn.deo_may.duong_rung.elite_01 @ anchor.spawn.duong_rung.elite
   pool = ma_tranh_gia
   max_alive = 2
-  respawn = 55s
+  respawn = 44s
 ```
 
 ## `map.deo_may.khe_da`
@@ -310,7 +312,7 @@ spawn.deo_may.khe_da.normal_02 @ anchor.spawn.khe_da.02
 spawn.deo_may.khe_da.elite_01 @ anchor.spawn.khe_da.elite
   pool = ho_tinh_ve
   max_alive = 2
-  respawn = 60s
+  respawn = 48s
 ```
 
 ## `map.deo_may.rung_cam`
@@ -329,7 +331,7 @@ spawn.deo_may.rung_cam.elite_01 @ anchor.spawn.rung_cam.elite
   pool = ma_tranh_gia, ho_tinh_ve
   selection = uniform_one_on_respawn
   max_alive = 2
-  respawn = 70s
+  respawn = 56s
 ```
 
 # ACT V — Thành Cổ
@@ -349,7 +351,7 @@ spawn.thanh_co.duong_da.normal_02 @ anchor.spawn.duong_da.02
 spawn.thanh_co.duong_da.elite_01 @ anchor.spawn.duong_da.elite
   pool = thach_ve
   max_alive = 2
-  respawn = 55s
+  respawn = 44s
 ```
 
 ## `map.thanh_co.hao_can`
@@ -367,7 +369,7 @@ spawn.thanh_co.hao_can.normal_02 @ anchor.spawn.hao_can.02
 spawn.thanh_co.hao_can.elite_01 @ anchor.spawn.hao_can.elite
   pool = hon_tuong
   max_alive = 2
-  respawn = 60s
+  respawn = 48s
 ```
 
 ## `map.thanh_co.den_tran`
@@ -386,7 +388,7 @@ spawn.thanh_co.den_tran.elite_01 @ anchor.spawn.den_tran.elite
   pool = thach_ve, hon_tuong
   selection = uniform_one_on_respawn
   max_alive = 2
-  respawn = 70s
+  respawn = 56s
 ```
 
 # ACT VI — Núi Thiêng
@@ -406,7 +408,7 @@ spawn.nui_thieng.rung_may.normal_02 @ anchor.spawn.rung_may.02
 spawn.nui_thieng.rung_may.elite_01 @ anchor.spawn.rung_may.elite
   pool = linh_ve
   max_alive = 2
-  respawn = 55s
+  respawn = 44s
 ```
 
 ## `map.nui_thieng.suon_da`
@@ -424,7 +426,7 @@ spawn.nui_thieng.suon_da.normal_02 @ anchor.spawn.suon_da.02
 spawn.nui_thieng.suon_da.elite_01 @ anchor.spawn.suon_da.elite
   pool = bong_vong
   max_alive = 2
-  respawn = 65s
+  respawn = 52s
 ```
 
 ## `map.nui_thieng.cong_co`
@@ -443,7 +445,7 @@ spawn.nui_thieng.cong_co.elite_01 @ anchor.spawn.cong_co.elite
   pool = linh_ve, bong_vong
   selection = uniform_one_on_respawn
   max_alive = 2
-  respawn = 70s
+  respawn = 56s
 ```
 
 # Logical Pool Resolution
@@ -492,7 +494,7 @@ NORMAL max_alive > 20
 ELITE max_alive > 2
 NIGHT_RARE max_alive > 1
 respawn_seconds outside configured launch band
-  (NORMAL 10..16s | ELITE 45..75s | NIGHT_RARE 240..360s)
+  (NORMAL 10..14s | ELITE 35..60s | NIGHT_RARE 240..360s)
 spawn anchor inside portal/checkpoint safety radius
 public boss anchor overlapping normal spawn safety envelope
 ```
@@ -506,8 +508,8 @@ persistent field spawn groups = 54
 NORMAL max_alive = 20 per group (40 total per map per channel)
 ELITE max_alive = 2 per group
 NIGHT_RARE max_alive = 1 per group (not counted in 54 persistent groups)
-NORMAL respawn band = 10..16s
-ELITE respawn band = 45..75s
+NORMAL respawn band = 10..14s
+ELITE respawn band = 35..60s
 NIGHT_RARE respawn band = 240..360s
 public bosses use separate generation logic
 runtime coordinates belong to map assets; stable logical anchors belong to content data

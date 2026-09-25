@@ -48,7 +48,7 @@ Flag for manual economy review when:
 net_outflow_7d > 20,000,000 common   AND
 account is in the top 1% of net_outflow_7d across all accounts active in that window
 ```
-A flagged account enters `ECONOMY_REVIEW` signal state. This is not a ban; it is a queue entry for the economy/security team to examine the trade graph. The flag clears automatically if net_outflow_7d drops below threshold.
+A flagged account enters `ECONOMY_REVIEW` signal state (`accounts.economy_review_flagged_at`, `../06_data/data_model.md`). This is not a ban; it is a queue entry for the economy/security team to examine the trade graph. The flag clears automatically if net_outflow_7d drops below threshold.
 
 Rationale: 20 M common in 7 days is well above normal player spending rates but reachable by active farmers. Combined with the top-1% percentile gate this minimises false positives from players who are legitimately buying from the AH heavily in one week.
 
@@ -81,9 +81,11 @@ AND coefficient of variation of inter-action intervals < 0.05 over the last 1,00
 
 **Account takeover — per login**
 ```text
-password login from a device fingerprint and /16 IPv4 (/48 IPv6) never seen on the account in 90 days
+login (any provider) whose device_id and /16 IPv4 (/48 IPv6) prefix pair is unseen on the account in 90 days
+  (account_login_history.is_new_origin, ../06_data/data_model.md; device_id = auth.md § Device ID, not a fingerprint)
 AND a password change or federated unlink within 1 hour of that login
--> revoke all other session families, require the old password for further credential changes for 24 h, emit ACCOUNT_SECURITY_REVIEW
+-> revoke all other session families, set accounts.credential_guard_until = now + 24 h (credential changes then need the
+   current password, else CREDENTIAL_CHANGE_LOCKED), emit ACCOUNT_SECURITY_REVIEW
 ```
 Thresholds are runtime security config; the values above are launch defaults.
 

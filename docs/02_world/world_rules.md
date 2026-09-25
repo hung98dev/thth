@@ -42,8 +42,8 @@ ADR-0035 rationale: 18 was already the soft threshold; aligning the hard cap eli
 
 **Spawn supply/demand model (per channel, per hour — both figures from ADR-0035):**
 - Demand — realistic sustained: **450 kills/hour** once travel, looting, death, and idle time are counted. 600 kills/hour is the peak-optimal rate (one kill every 6 seconds, continuously) and must not be used as the planning average.
-- Supply — conservative planning floor (slowest 16s respawn): ~40 alive monsters × (3,600 / 16) ≈ **9,000 kills/hour**. At 18 players × 450 = 8,100/hour demand, supply/demand ratio ≈ 1.11×.
-- Supply — expected operating figure (average 13s respawn): ~40 × (3,600 / 13) ≈ **11,077 kills/hour**, giving a ratio of ~1.37× against realistic demand. The difference between 9,000 and 11,077 comes solely from respawn cadence assumptions; 9,000 is the planning floor and 11,077 is the expected operating supply.
+- Supply — conservative planning floor (slowest 14s respawn, ADR-0062): ~40 alive monsters × (3,600 / 14) ≈ **10,286 kills/hour**. Demand is sized at `FORCED_PLACEMENT_HARD_CAP`: 22 players × 450 = 9,900/hour → ratio ≈ 1.04× (18 players: 8,100/hour → 1.27×).
+- Supply — expected operating figure (average 13s respawn): ~40 × (3,600 / 13) ≈ **11,077 kills/hour**, giving a ratio of ~1.37× against realistic demand. The difference between 10,286 and 11,077 comes solely from respawn cadence assumptions; 10,286 is the planning floor and 11,077 is the expected operating supply.
 
 Load status thresholds:
 - `1..11 players`: Normal (Bình thường)
@@ -62,10 +62,19 @@ FORCED_PLACEMENT_HARD_CAP = 22 players per channel (MAX_PLAYERS_PER_CHANNEL + 4)
     respawn: current channel if the checkpoint is on the same map (else none); instance exit/return: the
     recorded entry channel; reconnect: previous channel; first login: none
 2 else the least-populated channel with player_count < 22 (tie -> lowest channel index)
-3 else (all 30 channels at 22): retry the placement every 5s; meanwhile the character stays where it is
-    (dead at the death position with respawn pending, or inside the closing instance, which stays open
-    for it; login/reconnect waits in the login queue of ../07_security/session.md)
+3 else (all 30 channels at 22): placement pending; the server sends S2C_PLACEMENT_PENDING
+    {reason : RESPAWN | INSTANCE_RETURN | RECONNECT | FIRST_LOGIN, retry_after_ms = 5000} and repeats
+    steps 1..3 every 5s until placed; the normal transfer/respawn/attach messages then follow
 ```
+While placement is pending (ADR-0062):
+```text
+RESPAWN          character stays dead at the death position; UI/chat allowed; no further penalty
+INSTANCE_RETURN  character stays in the closing/FAILED instance; the instance stays open (no combat,
+                 no empty-instance timeout) until its last pending member is placed
+RECONNECT        session attached, character in no world partition; client shows the loading screen
+FIRST_LOGIN      same as RECONNECT
+```
+Placement pending is not the CCU login queue of `../07_security/session.md` (that queue applies only at `WORLD_CCU_CAP` before a session attaches); a placement-pending session counts toward CCU. Disconnecting while pending leaves the character at its last authoritative position (reconnect rules apply).
 A channel above 18 shows Full and keeps rejecting player-initiated arrivals until it drops below 18. No player is evicted to restore 18.
 ## Party Cohesion
 When entering a normal world map together, party members should be routed to the same map instance when capacity allows.

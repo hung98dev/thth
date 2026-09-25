@@ -19,6 +19,7 @@ Kills inside INSTANCED spaces (dungeons, finale) grant no kill EXP; dungeon EXP 
 delta = monster_level - character_level
 exp_multiplier = clamp(1.0 + 0.05 * delta, 0.25, 1.25)
 di_tich_bonus = 1.05 if any buff.di_tich.* relic buff is active in this map/channel, else 1.00
+               (pacing baselines assume 1.00; INSTANCED and seasonal relics are limited to one active per relic_id world-wide)
 solo_final_exp(character) = floor(base_exp * exp_multiplier * di_tich_bonus)
 ```
 `base_exp` is authored at the ×100 EXP scale (ADR-0031). The rounded mean of each act's NORMAL `base_exp` values (field roster, excluding seasonal variants) equals that act's FIELD_COMBAT EXP/kill reference in `../07_content/progression_route.md` (Act I: 570); individual monsters may sit below or above it. All intermediate products and final values remain positive integers; no fractional EXP exists. The `floor()` in `solo_final_exp` is the sole rounding point — do not round `exp_multiplier` or `di_tich_bonus` individually. The `di_tich_bonus` is awarded only in the channel where the relic is active (`../02_world/bosses.md`).
@@ -56,7 +57,7 @@ member_exp_i = floor(solo_final_exp(i) * (1.00 - 0.05 * (N - 1)))
 N=1 → 100% of that member's solo EXP. N=5 → 80%. Loot stays PERSONAL. Maximum N follows party cap.
 
 ## Loot
-Loot is PERSONAL. Each eligible character gets independent server rolls. Earned reward bundles that cannot fit inventory go to the canonical pending reward system in `../03_systems/reward_claims.md`; they are never destroyed or left dependent on a despawning monster runtime.
+Loot is PERSONAL. Each eligible character gets independent server rolls. Earned reward bundles that cannot fit inventory go to the canonical pending reward system in `../03_systems/reward_claims.md`; they are never destroyed or left dependent on a despawning monster runtime. A character at the Reward Claim hard ceiling (`500`) gets no item rolls until below it (`../03_systems/reward_claims.md` § Capacity / Abuse).
 
 ELITE may add configured EXP/material/equipment rolls without making NORMAL monsters pointless.
 

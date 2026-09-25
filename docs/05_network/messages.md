@@ -38,11 +38,52 @@ ID   Name
 9    S2C_SERVER_DRAINING
 10   C2S_CHARACTER_DETACH
 11   S2C_CHARACTER_DETACH_OK
+12   C2S_CHARACTER_CREATE
+13   S2C_CHARACTER_CREATE_RESULT
+14   S2C_CHARACTER_LIST
+15   S2C_PLACEMENT_PENDING
+16..99   (reserved, unassigned)
 ```
 
-These validate authentication/session/protocol state before gameplay dispatch.
+These validate authentication/session/protocol state before gameplay dispatch. Handshake order and pre-session rules: `protocol.md` § Handshake. Account login, refresh and the gameplay ticket are HTTPS (`../07_security/auth.md` § HTTPS Endpoints). Wire scalar types (UUID = 16-byte `bytes`, timestamps = int64 Unix ms UTC, `error_code` enum): `protobuf_conventions.md` § 6.
 
-`C2S_CHARACTER_DETACH` (10) returns the attached character to `OFFLINE` on this session. Success is `S2C_CHARACTER_DETACH_OK` (11). Attaching another character without this detach is `CHARACTER_ALREADY_ACTIVE`.
+Session field lists (ADR-0064):
+```text
+1  C2S_HELLO                  credential (oneof): gameplay_ticket (string, from POST /api/v1/gameplay/ticket)
+                              | resume_credential (string, from the last S2C_HELLO_OK); client_build, platform : WINDOWS | ANDROID,
+                              content_revision, device_id (16 bytes, auth.md § Device ID), locale : vi-VN | en-US.
+                              Envelope: session_epoch = 0, client_seq = 1.
+2  S2C_HELLO_OK               session_id, session_epoch (uint64), account_id, server_time_ms, heartbeat_interval_ms (5000),
+                              connection_timeout_ms (15000), resume_credential, resume_expires_at_ms, protocol_minor (server),
+                              content_revision, pending_deletion (bool; ACCOUNT_PENDING_DELETION flow, data_protection.md),
+                              resumed_character_id (16 bytes; set only when a resume re-attached the character inside grace,
+                              followed by 7 without a 6 request)
+3  S2C_ERROR                  error_code, retryability (errors.md § Retryability), retry_after_ms (uint32), queue_position (uint32;
+                              login queue only), safe_message_key, close_after (bool: the server closes the socket after sending).
+                              Envelope correlation_id = client_seq of the rejected frame (0 if none).
+6  C2S_CHARACTER_ATTACH       character_id
+7  S2C_CHARACTER_ATTACH_OK    character_id, ownership_epoch (uint64), map_id, channel_index (uint32), instance_id (16 bytes,
+                              empty in the normal world), content_revision; followed by S2C_WORLD_BASELINE (300) and every state push
+                              (432..438, 515, 607, 616, 619, 628). Rejections use S2C_ERROR: CHARACTER_ALREADY_ACTIVE, NOT_OWNER,
+                              ACCOUNT_PENDING_DELETION, SERVER_OVERLOADED (login queue, session.md). A forced-placement wait answers
+                              with 15 instead (world_rules.md § Forced Placement).
+8  S2C_SESSION_REPLACED       reason : NEWER_SESSION | REVOKED; the server closes the socket after sending
+9  S2C_SERVER_DRAINING        reason : MAINTENANCE, drain_deadline_ms (int64 absolute), reconnect_after_ms (uint32)
+10 C2S_CHARACTER_DETACH       (empty)
+11 S2C_CHARACTER_DETACH_OK    character_id; followed by 14
+12 C2S_CHARACTER_CREATE       operation_id, character_name (rules ../01_gameplay/character.md § Name, ../06_data/text.md), class_id
+                              (class.kim | class.moc | class.thuy | class.hoa | class.tho). Legal only while no character is attached.
+13 S2C_CHARACTER_CREATE_RESULT operation_id, status, error_code (CHARACTER_NAME_INVALID | CHARACTER_NAME_TAKEN | CHARACTER_SLOTS_FULL
+                              | TARGET_INVALID (unknown class)), character : CharacterSummary; followed by 14 on success
+14 S2C_CHARACTER_LIST         characters : list of CharacterSummary {character_id, character_name, class_id, level, map_id,
+                              last_online_at_ms}, character_slots (3, ../03_systems/monetization.md). REPLACEABLE_STATE; sent after
+                              2 (when no character was resumed), after 11 and after a successful 12.
+15 S2C_PLACEMENT_PENDING      request_message_id (6 | 208 | 0 for server-initiated transfers), reason : RESPAWN | INSTANCE_RETURN
+                              | RECONNECT | FIRST_LOGIN,
+                              retry_after_ms (5000); the server keeps retrying and later sends 7 / 207 / 105. Never an error.
+```
+
+`C2S_CHARACTER_DETACH` (10) returns the attached character to `OFFLINE` on this session. Success is `S2C_CHARACTER_DETACH_OK` (11). Attaching another character without this detach is `CHARACTER_ALREADY_ACTIVE`. Character deletion does not exist (`../01_gameplay/character.md` § Deletion); character select = `C2S_CHARACTER_ATTACH`.
 
 ## Input / Movement
 ```text
@@ -67,9 +108,29 @@ ID   Name
 117  C2S_DUNGEON_ENTRY_CANCEL
 ```
 
+Input/transfer field lists (envelope `client_seq` identifies every C2S frame; payloads do not repeat it):
+```text
+101 C2S_JUMP                  client_mono_ms (advisory)
+102 C2S_DROP_THROUGH          client_mono_ms (advisory)
+104 C2S_PORTAL_USE            operation_id, portal_id (portal object ID, ../02_world/maps_zones.md); answered by exactly one 116 with
+                              interact_kind = PORTAL (LEVEL_TOO_LOW | OUT_OF_RANGE | IN_COMBAT | MAP_CAPACITY_FULL | STATE_CONFLICT);
+                              SUCCESS is followed by 105
+105 S2C_TRANSFER_PREPARE      transfer_id (16 bytes), reason : PORTAL | TRAVEL | CHANNEL_SWITCH | DUNGEON_ENTER | DUNGEON_LEAVE
+                              | RESPAWN | PVP | RECONNECT | FORCED, map_id, channel_index (uint32; 0 for instances),
+                              instance_id (16 bytes, empty in the normal world), content_revision, ready_deadline_ms (uint32;
+                              TRANSFER_BUDGET_* in ../04_architecture/concurrency.md)
+106 C2S_PRESENTATION_READY    transfer_id
+107 S2C_MOVEMENT_CORRECTION   last_processed_client_seq (uint64), server_tick, x_mm, y_mm (sint32), vx_mm_s, vy_mm_s (sint32),
+                              facing, movement_state : IDLE | RUN | JUMP | FALL | KNOCKBACK (../01_gameplay/movement.md),
+                              platform_id (string; empty = none)
+110 S2C_CHANNEL_SWITCH_RESULT operation_id, status, error_code (MAP_CAPACITY_FULL | COOLDOWN_ACTIVE | IN_COMBAT | STATE_CONFLICT),
+                              target_channel_index, retry_after_ms; SUCCESS is followed by 105
+```
+
 `C2S_INTERACT` (103) is discrete and cannot be silently merged. Fields:
 ```text
 interact_kind : TALK | PICKUP | CHEST | CAST | HOOK | KINDLE | COOK | BONFIRE_REST | QUEST_OBJECT | NPC_SERVICE
+                (PORTAL appears only in S2C_INTERACT_RESULT answering 104)
 target_id     : string — target entity or interactive object ID (object ID patterns: ../02_world/maps_zones.md, ../02_world/world_rules.md)
 operation_id  : UUID
 recipe_id     : string, optional — required when interact_kind == COOK; must match a hearth recipe from crafting_catalog.md
@@ -86,9 +147,9 @@ Every `C2S_INTERACT` gets exactly one `S2C_INTERACT_RESULT` (116): `operation_id
 
 ### Dungeon Entry and Exit (111..117)
 Rules: `../02_world/dungeons.md` (Entry / Membership, Re-entry / Cleanup).
-- **C2S_DUNGEON_ENTER_REQUEST (111)**: `operation_id : UUID`, `dungeon_id : string`, `run_tag : NORMAL | ENDGAME_L60` (`../07_content/dungeon_catalog.md`), `entrance_id : string` (portal/entrance object the requester stands at). Sender is a partyless character or the party leader. If the sender is a snapshot member of a non-terminal instance of this `dungeon_id`, the request re-enters that instance and no prompt is created. A SOLO dungeon or a partyless sender creates the instance immediately. Otherwise the server creates one pending entry (`entry_id`, lifetime `30s`) and prompts every online party member on the same map instance as the sender; the sender counts as accepted. Rejections: `LEVEL_TOO_LOW`, `IN_COMBAT`, `STATE_CONFLICT` (pending entry exists, dead, transferring), `STORY_CHOICE_REQUIRED` (sender has an unresolved story branch for this dungeon; see 509), `PERMISSION_DENIED` (party member not leader), `OUT_OF_RANGE`.
-- **S2C_DUNGEON_ENTRY_STATE (112)**: `entry_id : UUID`, `operation_id : UUID`, `dungeon_id`, `run_tag`, `requester_character_id`, `members : list of {character_id, display_name, response : PENDING | ACCEPTED | DECLINED | INELIGIBLE, error_code}`, `expires_in_ms : uint32`, `outcome : PENDING | CREATED | CANCELLED`, `error_code`. Sent to the requester and every prompted member on each change. The instance is created with the ACCEPTED members when every prompted member has responded or the entry expires (non-responders count as DECLINED); `CANCELLED` when the requester cancels, leaves the party, or becomes ineligible. `CREATED` is followed by `S2C_TRANSFER_PREPARE` for every accepted member. Membership snapshot = accepted members (`dungeons.md`).
-- **C2S_DUNGEON_ENTRY_RESPOND (113)**: `operation_id : UUID`, `entry_id : UUID`, `decision : ACCEPT | DECLINE`. An ACCEPT is revalidated like the request (level, alive, not in combat, story branch); failure marks the member `INELIGIBLE` with its `error_code`.
+- **C2S_DUNGEON_ENTER_REQUEST (111)**: `operation_id : UUID`, `dungeon_id : string`, `run_tag : NORMAL | ENDGAME_L60` (`../07_content/dungeon_catalog.md`), `entrance_id : string` (portal/entrance object the requester stands at). Sender is a partyless character or the party leader. If the sender is a snapshot member of a non-terminal instance of this `dungeon_id`, the request re-enters that instance and no prompt is created. A SOLO dungeon or a partyless sender creates the instance immediately. Otherwise the server creates one pending entry (`entry_id`, lifetime `30s`) and prompts every online party member on the same map instance as the sender; the sender counts as accepted. Rejections: `LEVEL_TOO_LOW`, `IN_COMBAT`, `STATE_CONFLICT` (pending entry exists, dead, transferring), `STORY_CHOICE_REQUIRED` (the act-closing MAIN quest for this dungeon is ACTIVE and its branch flag is unset; see 509), `CLAIM_CAP_REACHED` (pending Reward Claims >= 100), `SERVER_OVERLOADED` (instance creation beyond the partition cap; `../08_scale_ops/capacity.md`), `PERMISSION_DENIED` (party member not leader), `OUT_OF_RANGE`. Check order: `../02_world/dungeons.md` § Entry / Membership.
+- **S2C_DUNGEON_ENTRY_STATE (112)**: `entry_id : UUID`, `operation_id : UUID` (the recipient's own 111 / 113 / 117 this message answers; empty otherwise), `status`, `error_code` (rejection of that request), `dungeon_id`, `run_tag`, `requester_character_id`, `members : list of {character_id, display_name, response : PENDING | ACCEPTED | DECLINED | INELIGIBLE, error_code}`, `expires_in_ms : uint32`, `outcome : PENDING | CREATED | CANCELLED`, `cancel_reason_code` (error code when `CANCELLED`). Sent to the requester and every prompted member on each change. The instance is created with the ACCEPTED members when every prompted member has responded or the entry expires (non-responders count as DECLINED); `CANCELLED` when the requester cancels, leaves the party, becomes ineligible, stops being leader (leader change), disconnects, dies or changes map instance. `CREATED` is followed by `S2C_TRANSFER_PREPARE` for every accepted member. Membership snapshot = accepted members (`dungeons.md`).
+- **C2S_DUNGEON_ENTRY_RESPOND (113)**: `operation_id : UUID`, `entry_id : UUID`, `decision : ACCEPT | DECLINE`. An ACCEPT is revalidated like the request (level, alive, not in combat, story branch, claim cap); failure marks the member `INELIGIBLE` with its `error_code`; instance creation beyond the partition cap cancels the entry with `SERVER_OVERLOADED`.
 - **C2S_DUNGEON_ENTRY_CANCEL (117)**: `operation_id : UUID`, `entry_id : UUID`. Requester only.
 - **C2S_DUNGEON_LEAVE (114)**: `operation_id : UUID`, `mode : EXIT | ABANDON`. `EXIT` = voluntary exit; the member may re-enter with 111 before terminal lock. `ABANDON` removes completion eligibility and re-entry for that instance. Both transfer the character to the instance's return spawn. Rejected while `in_combat` with `IN_COMBAT` (EXIT only; ABANDON is always allowed).
 - **S2C_DUNGEON_LEAVE_RESULT (115)**: `operation_id`, `status : SUCCESS | ERROR`, `mode`, `error_code`.
@@ -98,7 +159,7 @@ Rules: `../02_world/dungeons.md` (Entry / Membership, Re-entry / Cleanup).
 `C2S_INPUT_STATE` delivery class: `REPLACEABLE_STATE` — replaceable/coalescible continuous held-state. It carries:
 ```text
 input_flags     : bitmask of currently held directions/actions
-client_seq      : monotonic client gameplay intent sequence
+(sequence = envelope client_seq; protocol.md § Sequence Semantics)
 client_mono_ms  : uint64 — client monotonic milliseconds, ADVISORY ONLY
                   (see advisory clock rules below)
 ```
@@ -107,7 +168,7 @@ client_mono_ms  : uint64 — client monotonic milliseconds, ADVISORY ONLY
 ```text
 edge_type      : enum PRESS | RELEASE | FLIP
 direction      : enum LEFT | RIGHT
-client_seq     : monotonic, shares the existing client gameplay intent sequence
+(sequence = envelope client_seq, shared with every C2S frame)
 client_mono_ms : uint64 — client monotonic milliseconds, ADVISORY ONLY
                  (see advisory clock rules below)
 ```
@@ -148,17 +209,18 @@ Positions on the wire are quantized to signed integer millimetres (`sint32 *_mm`
 
 Combat field lists:
 ```text
-C2S_SKILL_USE (200)       client_seq, client_mono_ms (advisory), skill_id, facing,
+C2S_SKILL_USE (200)       client_mono_ms (advisory), skill_id, facing,
                           target_entity_id (uint64, 0 = none; SINGLE_TARGET requires it),
                           area_center_x_mm, area_center_y_mm (sint32; AREA_POSITION only, ignored otherwise;
                           clamped/rejected by cast range and collision per skills.md)
-C2S_BASIC_ATTACK (201)    client_seq, client_mono_ms (advisory), facing, target_entity_id (0 = none).
+C2S_BASIC_ATTACK (201)    client_mono_ms (advisory), facing, target_entity_id (0 = none).
                           Uses the equipped basic attack; the client never names a basic skill_id.
-C2S_TARGET_INTENT (202)   client_seq, target_entity_id (0 = clear target)
-S2C_ACTION_STARTED (203)  action_instance_id (uint64), source_entity_id, skill_id, client_seq (echo; 0 for
+C2S_TARGET_INTENT (202)   target_entity_id (0 = clear target)
+S2C_ACTION_STARTED (203)  action_instance_id (uint64), source_entity_id, skill_id, client_seq (echo of the request envelope client_seq; 0 for
                           server-originated actions), server_tick, facing, target_entity_id,
                           area_center_x_mm, area_center_y_mm, cast_ms, cooldown_ends_at_tick, mp_after
-S2C_ACTION_REJECTED (204) client_seq, request_message_id (200 | 201 | 202 | 208), skill_id,
+S2C_ACTION_REJECTED (204) client_seq (echo of the request envelope), request_message_id (200 | 201 | 202 | 208),
+                          operation_id (208 only), skill_id,
                           error_code : COOLDOWN_ACTIVE | INSUFFICIENT_MP | SKILL_NOT_LEARNED | SKILL_LOADOUT_INVALID
                                      | TARGET_INVALID | OUT_OF_RANGE | INVALID_STATE | STALE_INPUT
 S2C_STATUS_EVENT (205)    target_entity_id, source_entity_id, effect_id, status_kind (status_effects.md),
@@ -181,7 +243,7 @@ S2C_COMBAT_EVENT (304)    event_id (uint64, unique per partition), server_tick, 
                           just_guard_window, just_guard_triggered, just_guard_hint,
                           beast_passive2_success, plus the secondary fields below
 ```
-`C2S_RESPAWN_REQUEST` (208) is valid only for a `DEAD` character in the normal world when `server_tick >= respawn_available_at_tick` (`RESPAWN_DELAY`, `../01_gameplay/death_respawn.md`); success is `S2C_RESPAWN`, rejection is `S2C_ACTION_REJECTED` with `INVALID_STATE` (not dead, too early, or respawn is server-driven in dungeon/PvP/Guild War). A retry with the same `operation_id` after success re-sends the committed `S2C_RESPAWN`. A character that never sends 208 stays `DEAD`.
+`C2S_RESPAWN_REQUEST` (208) is valid only for a `DEAD` character in the normal world when `server_tick >= respawn_available_at_tick` (`RESPAWN_DELAY`, `../01_gameplay/death_respawn.md`); success is `S2C_RESPAWN`, rejection is `S2C_ACTION_REJECTED` (carrying the request `operation_id`) with `INVALID_STATE` (not dead, too early, or respawn is server-driven in dungeon/PvP/Guild War). When every channel of the checkpoint map is at the forced-placement cap the server answers `S2C_PLACEMENT_PENDING` (15) and respawns the character when a slot frees (`../02_world/world_rules.md` § Forced Placement). A retry with the same `operation_id` after success re-sends the committed `S2C_RESPAWN`. A character that never sends 208 stays `DEAD`.
 
 
 `S2C_COMBAT_EVENT` also carries the following secondary results generated at Global Effect Resolution Order stage 7 (ADR-0037). Each field is present only when the corresponding secondary result occurred in that event; absence means zero/not-triggered:
@@ -215,6 +277,26 @@ ID   Name
 ```
 
 Baseline and delta semantics are canonical in `synchronization.md`.
+
+Replication field lists (runtime entity IDs are `uint64`, unique within a partition lifetime):
+```text
+EntityState               entity_id, entity_kind : PLAYER | MONSTER | NPC | BEAST | OBJECT | PROJECTILE,
+                          content_id (monster_id | npc_id | object ID | beast_id | skill projectile ID; class_id for PLAYER),
+                          character_id (16 bytes; PLAYER only), display_name, level, owner_entity_id (BEAST/PROJECTILE; 0 = none),
+                          x_mm, y_mm, vx_mm_s, vy_mm_s (sint32), facing, movement_state, hp, max_hp, shield (int64 >= 0),
+                          flags : bitmask IN_COMBAT | DEAD | INVULNERABLE | INTERACTABLE | ELIGIBLE (chest eligibility, this viewer),
+                          statuses : list of {effect_id, source_entity_id, stacks, expires_at_tick},
+                          equipped_cosmetics : list of {slot, cosmetic_id} (PLAYER), encounter_id (0 = none),
+                          stat_lifesteal, stat_reflect, stat_absorb, stat_heal_reduction, stat_healing_received (basis points)
+300 S2C_WORLD_BASELINE    baseline_id (uint64), server_tick, map_id, channel_index, instance_id, content_revision,
+                          self : EntityState, entities : list of EntityState (AOI set, <= MAX_ENTITIES_IN_AOI_PER_CLIENT),
+                          encounters : list of {encounter_id, encounter_content_id, phase_number, active_mechanic_ids}
+301 S2C_ENTITY_SPAWN      baseline_id, server_tick, entity : EntityState
+302 S2C_ENTITY_DESPAWN    baseline_id, server_tick, entity_id, reason : LEFT_AOI | DIED | REMOVED | TRANSFERRED | SHED
+303 S2C_STATE_DELTA       baseline_id, server_tick, entities : list of EntityDelta {entity_id, then every EntityState field
+                          except entity_id/entity_kind/content_id/character_id as proto3 `optional`; absent = unchanged}
+306 C2S_BASELINE_ACK      baseline_id
+```
 
 ### S2C_ENCOUNTER_EVENT
 Primary delivery vehicle for encounter-level events: boss phase transitions, telegraphed mechanics, and per-mechanic lifecycle. Delivery class: `AUTHORITATIVE_EVENT`.
@@ -308,7 +390,10 @@ ID   Name
 436  S2C_BEAST_STATE
 437  S2C_SOUL_STATE
 438  S2C_COSMETIC_STATE
-439..499  (reserved, unassigned)
+439  C2S_REWARD_CLAIM_LIST_REQUEST
+440  S2C_REWARD_CLAIM_LIST_RESULT
+441  S2C_REWARD_CLAIM_DELTA
+442..499  (reserved, unassigned)
 ```
 
 Every result below carries `operation_id`, `status : SUCCESS | ERROR` and `error_code` (`NONE` on success; domain list in `errors.md`). A retry with the same `operation_id` returns the committed result.
@@ -333,14 +418,23 @@ Every result below carries `operation_id`, `status : SUCCESS | ERROR` and `error
 - **C2S_INVENTORY_EXPAND (428)**: `operation_id`, `expected_capacity : uint32` (current capacity; mismatch = `STATE_CONFLICT`). Buys the next `+10` step at the `../03_systems/inventory.md` price. Errors: `INSUFFICIENT_CURRENCY`, `CAPACITY_FULL` (already 120). Result 429: `capacity_after`, `currency_delta`.
 - **C2S_BEAST_LEVEL_UP (430)**: `operation_id`, `beast_id`, `expected_level : uint32` (current level; mismatch = `STATE_CONFLICT`). Consumes the Linh Đan and `currency.common` cost of the next level (`../07_content/spirit_beast_catalog.md`; rules `../03_systems/spirit_beasts.md`). Errors: `BEAST_NOT_OWNED`, `INSUFFICIENT_ITEM`, `INSUFFICIENT_CURRENCY`, `LEVEL_TOO_LOW` (beast level would exceed character level), `CAPACITY_FULL` (beast level 60). Result 431: `beast_id`, `level_after`, `consumed`, `currency_delta`.
 
-State pushes (`REPLACEABLE_STATE`, full snapshot each time; sent after `S2C_CHARACTER_ATTACH_OK` and after every committed change affecting them):
+State pushes (`REPLACEABLE_STATE`, full snapshot each time; sent after `S2C_CHARACTER_ATTACH_OK` and after every committed change affecting them; exception: reward claims are paged, see 434 / 439..441):
 ```text
 432 S2C_WALLET_STATE             balances : list of {currency_id, amount, cap}; wallet_revision
 433 S2C_INVENTORY_STATE          capacity, inventory_revision, slots : list of {slot, item_instance_id, item_id, quantity,
-                                 effective_binding, enhancement_level, locked}; loadouts : 3 x {loadout_id, is_active,
+                                 effective_binding, enhancement_level, locked_quantity (uint32; units locked by an open trade
+                                 session, 0 = none; ../03_systems/items.md § Trade Lock)}; loadouts : 3 x {loadout_id, is_active,
                                  slots : list of {slot_id, item_instance_id}}; loadout_revision
-434 S2C_REWARD_CLAIMS_STATE      claims : list of {reward_claim_id, source_type, source_reference, reward_slot, state, lines : list of {item_id | currency_id,
-                                 quantity}, expires_at}; pending_count, cap (100)
+434 S2C_REWARD_CLAIMS_STATE      claims_revision (uint64), total_count (all PENDING claims), cap (100),
+                                 claims : the 50 oldest PENDING claims (created_at, reward_claim_id order) as RewardClaimView
+                                 {reward_claim_id, source_type, source_reference, reward_slot, state, lines : list of
+                                 {item_id | currency_id, quantity}, created_at_ms, expires_at_ms}. Sent after attach only.
+439 C2S_REWARD_CLAIM_LIST_REQUEST operation_id (echo only; read-only), offset (uint32), limit (uint32 1..50)
+440 S2C_REWARD_CLAIM_LIST_RESULT operation_id, status, error_code, claims_revision, total_count, offset,
+                                 claims : list of RewardClaimView (same order as 434)
+441 S2C_REWARD_CLAIM_DELTA       AUTHORITATIVE_EVENT after every committed change: claims_revision, total_count,
+                                 added : list of RewardClaimView, removed : list of reward_claim_id (claimed, consolidated or
+                                 expired). A client whose claims_revision gap is not +1 re-requests 439 from offset 0.
 435 S2C_ENTITLEMENT_PANEL_STATE  entitlements : list of {entitlement_id, product_id, entitlement_type, grant_state,
                                  season_number, claim_deadline_at, claimable_tier_ids, claimed_tier_ids (this character)}
 436 S2C_BEAST_STATE              beasts : list of {beast_id, level, bond_points, daily_food_points_gained, is_active,
@@ -366,7 +460,7 @@ Spirit Beast operations use dedicated messages (410..417). Do not reuse 408. All
 - **C2S_BEAST_FEED (416)**: `operation_id : UUID`, `beast_id : string`, `food_item_id : string` (bond value per food and active/any-beast rule: `../03_systems/spirit_beasts.md`, values in `../07_content/item_catalog.md`), `quantity : uint32` (default 1).
 - **S2C_BEAST_FEED_RESULT (417)**: `operation_id : UUID`, `status : SUCCESS | ERROR`, `beast_id : string`, `consumed_quantity : uint32`, `new_bond_points : uint32 (0..100)`, `daily_food_points_gained : uint32 (0..20)`, `error_code : NONE | BEAST_NOT_OWNED | INSUFFICIENT_ITEM | DAILY_FOOD_CAP_REACHED | MAX_BOND_REACHED`.
 
-`C2S_ENTITLEMENT_CLAIM` (418): `operation_id`, `entitlement_id`, optional `reward_tier_id`. Result is `S2C_ENTITLEMENT_CLAIM_RESULT` (419). Cross-account receipt replay is `IAP_RECEIPT_ACCOUNT_MISMATCH`.
+`C2S_ENTITLEMENT_CLAIM` (418): `operation_id`, `entitlement_id` (16 bytes), `reward_tier_id` (string; required for `ACCOUNT_SCOPED_ACCESS` tiers, empty for `DIRECT_ACCOUNT_COSMETIC`). Grants to the attached character (`../03_systems/account_storage.md`, `../03_systems/monetization.md`). `S2C_ENTITLEMENT_CLAIM_RESULT` (419): `operation_id`, `status`, `error_code` (`NOT_OWNER`, `ENTITLEMENT_REVOKED`, `ALREADY_OWNED` (tier already claimed by this character), `CLAIM_WINDOW_CLOSED`, `LEVEL_TOO_LOW`, `INVENTORY_FULL`, `STATE_CONFLICT` (grant not `GRANTED`), `IAP_RECEIPT_ACCOUNT_MISMATCH` (cross-account replay)), `entitlement_id`, `reward_tier_id`, `granted : list of {item_instance_id, item_id, quantity}`, `cosmetics_granted : list of cosmetic_id`; followed by 435.
 ### Quest / Atlas (500..506)
 Do not reuse 408 for atlas claim.
 ```text
@@ -388,6 +482,23 @@ ID   Name
 514  S2C_PROGRESSION_MUTATE_RESULT
 515  S2C_PROGRESSION_STATE
 516..599  (reserved, unassigned)
+```
+
+Quest field lists (rules `../02_world/quests.md`; states LOCKED | AVAILABLE | ACTIVE | READY_TO_COMPLETE | COMPLETED | FAILED | EXPIRED):
+```text
+500 C2S_QUEST_ACCEPT          operation_id, quest_id, npc_id (giver in range; empty for DAILY board and auto-offered quests),
+                              board_slot (uint32 1..6 for DAILY board quests; 0 otherwise)
+501 S2C_QUEST_ACCEPT_RESULT   operation_id, status, error_code (LEVEL_TOO_LOW | CAPACITY_FULL (active quest limit) |
+                              DAILY_LIMIT_REACHED | OUT_OF_RANGE | INVALID_STATE (not AVAILABLE) | ALREADY_OWNED), quest_id
+502 C2S_QUEST_TURN_IN         operation_id, quest_id, npc_id (turn-in NPC in range; empty for AUTO completion mode)
+503 S2C_QUEST_UPDATE          quest_id, state, objectives : list of {objective_index, current, required}, expires_at_ms (DAILY/EVENT;
+                              0 = none); when answering 502 also operation_id, status, error_code (INVENTORY_FULL | OUT_OF_RANGE |
+                              INVALID_STATE | DURABLE_BACKPRESSURE), exp_gained, granted : list of {item_instance_id, item_id,
+                              quantity}, currency_delta; unsolicited progress updates leave operation_id empty (AUTHORITATIVE_EVENT)
+506 S2C_PROGRESSION_EVENT     event_kind : EXP_GAINED | LEVEL_UP | SKILL_UNLOCKED | POINTS_GRANTED | FEAT_COMPLETED | ATLAS_TIER
+                              | STORY_FLAG_SET | DISCOVERY, amount (int64), level_after, source_kind (reward_claims.md source_type
+                              values or KILL | QUEST | DISCOVERY), reference_id (string: quest_id, skill_id, feat_id, atlas_page_id,
+                              flag, map_id), server_time_ms
 ```
 
 `C2S_ATLAS_CLAIM` (504): `operation_id`, `atlas_page_id`, `tier`. Acknowledge only: tier rewards auto-settle at promotion; the result returns the existing grant and sets `acknowledged_at` once; it never grants. `S2C_ATLAS_CLAIM_RESULT` (505): `operation_id`, `status`, `error_code` (`ATLAS_TIER_NOT_REACHED` when the tier is not reached; nothing changes), `atlas_page_id`, `tier`, `granted` (the settled grant). Rules `../03_systems/atlas.md`.
@@ -414,7 +525,8 @@ ID   Name                       Direction   Notes
 707  C2S_TRADE_CONFIRM          C→S         lock own offer, ready to finalise
 708  C2S_TRADE_FINALISE         C→S         both confirmed — commit the exchange
 709  S2C_TRADE_RESULT           S→C         authoritative trade outcome; items transferred
-710..729  (reserved, unassigned)
+710  S2C_TRADE_REQUEST_RESULT   S→C         typed result for 700, 702, 703, 705, 707
+711..729  (reserved, unassigned)
 ```
 
 Trade field lists (rules `../03_systems/trading_auction.md` § Direct Trade). Offered items stay in the owner's `CHARACTER_INVENTORY`, locked by the session (`ITEM_LOCKED` for other mutations), until settlement; there is no trade escrow row (`../06_data/data_model.md` § Auction / Trade):
@@ -432,7 +544,9 @@ Trade field lists (rules `../03_systems/trading_auction.md` § Direct Trade). Of
                             common_amount, confirmed (bool)}, fee_preview
 707 C2S_TRADE_CONFIRM       operation_id, trade_id, expected_revision (locks own side; any offer change clears both)
 708 C2S_TRADE_FINALISE      operation_id, trade_id, expected_revision (both confirmed)
-709 S2C_TRADE_RESULT        trade_id, status : COMPLETED | ERROR, error_code, settlement_id,
+710 S2C_TRADE_REQUEST_RESULT operation_id, request_message_id (700 | 702 | 703 | 705 | 707), status, error_code, trade_id
+709 S2C_TRADE_RESULT        operation_id (of the 708 that committed or failed; empty when settlement was triggered by the partner), trade_id,
+                            status : SUCCESS | ERROR, error_code, settlement_id,
                             received : list of {item_instance_id, item_id, quantity}, common_received, fee
 ```
 Trade errors: `TRADE_ELIGIBILITY_LEVEL_REQUIRED`, `TRADE_ELIGIBILITY_AGE_REQUIRED`, `SAME_ACCOUNT_FORBIDDEN`, `TARGET_BLOCKED`, `OUT_OF_RANGE`, `IN_COMBAT`, `ITEM_LOCKED`, `STATE_CONFLICT` (revision mismatch), `TRADE_COMMON_BOTH_SIDES`, `TRADE_PRICE_FLOOR_NOT_MET`, `CURRENCY_CAP_EXCEEDED`, `INVENTORY_FULL`, `TRADE_PARTNER_DISCONNECTED`.
@@ -468,9 +582,10 @@ Auction field lists (rules `../03_systems/trading_auction.md` § Auction House; 
 734 C2S_AUCTION_CANCEL_LISTING  operation_id, listing_id
 735 S2C_AUCTION_CANCEL_RESULT   listing_id, escrow_asset_id
 736 S2C_AUCTION_SOLD            listing_id, item_id, quantity, price_common, tax, proceeds_id, proceeds_amount
-738 C2S_AUCTION_SEARCH          item_id, category, tier, min_price, max_price, sort : PRICE_ASC | PRICE_DESC | NEWEST,
+738 C2S_AUCTION_SEARCH          operation_id (echo only; search is read-only and never idempotency-stored), item_id, category, tier, min_price, max_price, sort : PRICE_ASC | PRICE_DESC | NEWEST,
                                 page_cursor (opaque), page_size (1..50)
-739 S2C_AUCTION_SEARCH_RESULT   rows : list of {listing_id, item_id, quantity, enhancement_level, price_common,
+739 S2C_AUCTION_SEARCH_RESULT   operation_id, status, error_code (RATE_LIMITED | AH_ELIGIBILITY_LEVEL_REQUIRED | OUT_OF_RANGE),
+                                rows : list of {listing_id, item_id, quantity, enhancement_level, price_common,
                                 seller_display_name, expires_at}, next_page_cursor
 740 C2S_AUCTION_RECLAIM         operation_id, escrow_asset_id
 741 S2C_AUCTION_RECLAIM_RESULT  escrow_asset_id, received : {item_instance_id, item_id, quantity}
@@ -558,23 +673,28 @@ ID   Name                       Direction   Notes
 650  C2S_GUILD_SETTINGS_SET     C→S         set guild settings (recruitment mode)
 651  C2S_GUILD_INVITE_CANCEL    C→S         cancel a PENDING outbound guild invite
 652  C2S_GUILD_APPLICATION_CANCEL C→S       applicant cancels own PENDING application
-653..699 (reserved, unassigned)
+653  S2C_PARTY_RESULT           S→C         typed result for every party request
+654  S2C_SOCIAL_RESULT          S→C         typed result for every friend/block request
+655  S2C_CHAT_SEND_RESULT       S→C         typed result for C2S_CHAT_SEND
+656..699 (reserved, unassigned)
 ```
 
 ### Social / Guild Payload Contracts
 
 - **Chat (600..601)**:
-  - `C2S_CHAT_SEND`: `channel : WORLD | LOCAL | PARTY | GUILD | WHISPER`, `target_character_id : UUID (optional, required for WHISPER)`, `message_text : string (1..240 graphemes; validated per social.md § Message Content)`. Rate limits: per-channel limits in `../03_systems/social.md` § Rate Limits.
-  - `S2C_CHAT_MESSAGE`: `chat_message_id : UUID` (= `chat_messages.message_id`; referenced by reports), `channel`, `sender_character_id : UUID`, `sender_name : string`, `message_text : string`, `timestamp : int64`.
+  - `C2S_CHAT_SEND`: `operation_id : UUID`, `channel : WORLD | LOCAL | PARTY | GUILD | WHISPER`, `target_character_id : UUID (optional, required for WHISPER)`, `message_text : string (1..240 graphemes; validated per social.md § Message Content)`. Rate limits: per-channel limits in `../03_systems/social.md` § Rate Limits.
+  - `S2C_CHAT_MESSAGE`: `chat_message_id : UUID` (= `chat_messages.message_id`; referenced by reports), `channel`, `sender_character_id : UUID`, `sender_name : string`, `message_text : string`, `sent_at_ms : int64`.
+  - `S2C_CHAT_SEND_RESULT` (655): `operation_id`, `status`, `error_code` (`RATE_LIMITED`, `TARGET_BLOCKED`, `TARGET_INVALID` (whisper target offline/unknown), `PERMISSION_DENIED` (muted, not in party/guild), `CHAT_TEXT_INVALID` (text rejected by `social.md` § Message Content)), `chat_message_id` (SUCCESS).
 - **Friends & Blocks (611..619)**:
   - `C2S_FRIEND_REQUEST` (611): `operation_id : UUID`, `target_character_id : UUID`. Rate limit: social invite (10/60s). Error codes: `FRIEND_LIMIT_REACHED`, `TARGET_BLOCKED`, `ALREADY_FRIENDS`, `PENDING_REQUEST_EXISTS`.
   - `C2S_FRIEND_ACCEPT` (613): `operation_id : UUID`, `requester_character_id : UUID`. Mutual friendship created in `friends`.
   - `C2S_FRIEND_DECLINE` (614): `operation_id : UUID`, `requester_character_id : UUID`. Request marked DECLINED.
   - `C2S_FRIEND_REMOVE` (615): `operation_id : UUID`, `target_character_id : UUID`. Friendship severed atomically.
-  - `S2C_FRIEND_STATE` (616): `friend_character_id : UUID`, `display_name : string`, `online_state : ONLINE | OFFLINE`, `zone_id : string`, `activity : WORLD | DUNGEON | PVP`.
+  - `S2C_FRIEND_STATE` (616) — delivery class `AUTHORITATIVE_EVENT` (never superseded): `full_snapshot : bool`, `entries : list of {friend_character_id : UUID, display_name, online_state : ONLINE | OFFLINE, zone_id, activity : WORLD | DUNGEON | PVP, change : UPSERT | REMOVED}`, `incoming_requests : list of {requester_character_id, display_name, expires_at_ms}`, `outgoing_requests : list of {target_character_id, display_name, expires_at_ms}`. After attach the server sends `full_snapshot = true` (complete list, <= 100 friends, `social.md`); later messages carry only changed entries (presence or list change) and the complete request lists; the client applies them in `server_seq` order.
   - `C2S_BLOCK_ADD` (617): `operation_id : UUID`, `target_character_id : UUID`. Inserts block, severs mutual friendship, cancels pending requests.
   - `C2S_BLOCK_REMOVE` (618): `operation_id : UUID`, `target_character_id : UUID`. Removes block.
-  - `S2C_BLOCK_STATE` (619): `blocked_character_id : UUID`, `display_name : string`, `action : ADDED | REMOVED`.
+  - `S2C_BLOCK_STATE` (619) — `REPLACEABLE_STATE`, full snapshot after attach and after every change: `blocked : list of {blocked_character_id : UUID, display_name, blocked_at_ms}`.
+  - `S2C_SOCIAL_RESULT` (654): `operation_id`, `request_message_id (611 | 613 | 614 | 615 | 617 | 618)`, `status`, `error_code` (`FRIEND_LIMIT_REACHED`, `TARGET_BLOCKED`, `ALREADY_FRIENDS`, `PENDING_REQUEST_EXISTS`, `TARGET_INVALID`, `RATE_LIMITED`), `target_character_id`.
 - **Party (602..607, 620..622, 634..636)**:
   - `C2S_PARTY_INVITE` (602): `operation_id : UUID`, `target_character_id : UUID`. Sender must be leader, or partyless: a partyless sender's first invite atomically creates a party with the sender as leader (`party_revision = 1`) before the invite is issued; if that invite then ends without acceptance the one-member party remains valid until the leader leaves (`../03_systems/party.md`). Target online, partyless, unblocked. 60s TTL. Rate limit: social invite (10/60s).
   - `S2C_PARTY_INVITE` (603): `party_id : UUID`, `inviter_character_id : UUID`, `inviter_name : string`, `expires_in_seconds : uint32`.
@@ -588,6 +708,7 @@ ID   Name                       Direction   Notes
   - `C2S_PARTY_BOARD_POST` (634): `operation_id : UUID`, `dungeon_id : string`, `desired_size : uint32 (2..5)`, `note : string (<=40 chars)`. Allowed only in Safe Anchor, stationary, 120s TTL, 30s repost cooldown.
   - `C2S_PARTY_BOARD_CANCEL` (635): `operation_id : UUID`.
   - `S2C_PARTY_BOARD_STATE` (636): `entries : list of {post_id, poster_character_id, display_name, class_id, level, dungeon_id, desired_size, expires_in_seconds}`.
+  - `S2C_PARTY_RESULT` (653): `operation_id`, `request_message_id (602 | 604 | 605 | 606 | 620 | 621 | 622 | 634 | 635)`, `status`, `error_code` (`PERMISSION_DENIED` (not leader), `TARGET_INVALID` (offline, already in a party, not a member), `TARGET_BLOCKED`, `CAPACITY_FULL` (5 members), `EXPIRED` (invite), `NOT_IN_SAFE_ANCHOR`, `COOLDOWN_ACTIVE` (board repost), `RATE_LIMITED`, `STATE_CONFLICT`), `party_id`. Roster changes follow as 607.
 - **Guild (608..610, 623..631, 637..649)**:
   - `C2S_GUILD_INVITE` (608): `operation_id : UUID`, `target_character_id : UUID`. Caller role >= OFFICER; target level >= 10, guildless, unblocked. 10-minute invite lifetime (canonical: `../03_systems/guild.md` §Invitations). Rate limit: social invite (10/60s).
   - `S2C_GUILD_INVITE` (609): `guild_id : UUID`, `guild_name : string`, `inviter_name : string`, `expires_in_seconds : uint32`.
@@ -617,10 +738,10 @@ ID   Name                       Direction   Notes
   - `C2S_GUILD_INVITE_CANCEL` (651): `operation_id : UUID`, `target_character_id : UUID`. Original inviter, LEADER or VICE_LEADER; invite -> CANCELLED.
   - `C2S_GUILD_APPLICATION_CANCEL` (652): `operation_id : UUID`, `guild_id : UUID`. Applicant only; application -> CANCELLED.
   - `C2S_GUILD_CREATE` / rename validation errors: `GUILD_NAME_INVALID` (text rules `../06_data/text.md`), `GUILD_NAME_TAKEN` (`name_key` collision).
-  - `S2C_GUILD_RESULT` (649): `operation_id : UUID`, `request_message_id : uint32`, `status : SUCCESS | ERROR`, `error_code` (domain list in `errors.md`). Typed result for every guild request above, 608..627 and 650..652.
+  - `S2C_GUILD_RESULT` (649): `operation_id : UUID`, `request_message_id : uint32`, `status : SUCCESS | ERROR`, `error_code` (domain list in `errors.md`), `guild_id`. Typed result for every guild C2S request: 608, 610, 623..627, 629, 630, 637..640, 642..646, 648, 650..652; state changes follow as 628 / 631 / 641 / 647.
 - **Player Report (632..633)**:
   - `C2S_REPORT_PLAYER` (632): `operation_id : UUID`, `target_character_id : UUID`, `reason : SPAM | HARASSMENT | HATE_OR_ABUSE | CHEATING | SCAM | INAPPROPRIATE_NAME | OTHER`, `chat_message_id : UUID (optional)`, `reporter_notes : string (optional, <= 200 graphemes)`. Canonical reasons and limit (10 submissions / 24h per account): `../03_systems/social.md` § Reports.
-  - `S2C_REPORT_PLAYER_RESULT` (633): `operation_id : UUID`, `status : RECEIVED | RATE_LIMITED | INVALID_TARGET`.
+  - `S2C_REPORT_PLAYER_RESULT` (633): `operation_id : UUID`, `status : SUCCESS | ERROR`, `error_code` (`RATE_LIMITED` (10 per 24 h per account), `TARGET_INVALID`, `ITEM_NOT_FOUND` (unknown `chat_message_id`)), `report_id : UUID` (SUCCESS).
 ## PvP / Guild War
 
 ### PvP ID Reservation (800..899)
@@ -646,7 +767,8 @@ ID   Name                       Direction   Notes
 816  C2S_DUEL_RESPOND           C→S         target accepts or declines
 817  C2S_DUEL_CANCEL            C→S         challenger cancels a pending challenge
 818  S2C_DUEL_RESULT            S→C         to both: ACCEPTED | DECLINED | CANCELLED | EXPIRED | REJECTED(+error_code)
-819..899  (reserved, unassigned)
+819  S2C_PVP_RESULT             S→C         typed result for every PvP / Guild War C2S request
+820..899  (reserved, unassigned)
 ```
 
 Queue and duel payloads (every C2S carries `operation_id`; domain outcomes never use `S2C_ERROR`):
@@ -667,10 +789,24 @@ Queue and duel payloads (every C2S carries `operation_id`; domain outcomes never
 816 C2S_DUEL_RESPOND          operation_id, challenge_id, decision : ACCEPT | DECLINE
 817 C2S_DUEL_CANCEL           operation_id, challenge_id
 818 S2C_DUEL_RESULT           challenge_id, outcome : ACCEPTED | DECLINED | CANCELLED | EXPIRED | REJECTED, error_code
+800 C2S_SPARRING_REQUEST      operation_id, target_character_id
+801 C2S_SPARRING_ACCEPT       operation_id, challenge_id
+812 C2S_SPARRING_DECLINE      operation_id, challenge_id
+805 C2S_MATCH_READY           operation_id, match_id (pvp_match_id or guild_war_match_id), decision : ACCEPT | DECLINE
+806 S2C_MATCH_STATE           match_id, pvp_mode_id, state (pvp.md / guild_war.md lifecycle), state_deadline_ms (int64),
+                              round_number, teams : list of {team_index, score, members : list of {character_id, display_name,
+                              class_id, ready (bool), connected (bool)}}, result : NONE | WIN | LOSS | DRAW | VOID (receiver's
+                              team), rating_before, rating_after (ranked only; 0 otherwise)
+807 C2S_MATCH_SURRENDER       operation_id, match_id
+811 S2C_SPARRING_CHALLENGE    challenge_id, challenger_character_id, challenger_name, expires_in_seconds (60)
+813 S2C_SPARRING_RESULT       challenge_id, outcome : ACCEPTED | DECLINED | EXPIRED | REJECTED, error_code
+819 S2C_PVP_RESULT            operation_id, request_message_id (800 | 801 | 802 | 803 | 805 | 807 | 808 | 809 | 812 | 814 | 816
+                              | 817), status, error_code, reference_id (challenge_id or match_id; empty when none).
+                              Every PvP C2S gets exactly one 819; 804 / 806 / 810 / 813 / 818 are the resulting state events.
 ```
 Duel (`../03_systems/pvp.md` § Duel, § Eligibility): both characters level >= 10, online, not queued/matched/dead/transferring, `social.md` direct-interaction gate; at most one pending outbound and one pending inbound challenge per character. `ACCEPTED` creates a `pvp.mode.duel` match that follows the normal match lifecycle through 806 (`S2C_MATCH_STATE`) and 807 (surrender); `S2C_TRANSFER_PREPARE` moves both to `map.pvp.duel_court`. Queue rejections: `LEVEL_TOO_LOW`, `STATE_CONFLICT` (already queued/matched, dead, transferring, forbidden instance), `COOLDOWN_ACTIVE` (queue sanction or ready-check miss cooldown), `PERMISSION_DENIED` (not party leader / not LEADER or VICE_LEADER), `TARGET_INVALID` (roster member ineligible; `error_code` names the first failing rule).
 
-`C2S_SPARRING_REQUEST` is sent by either player standing on the Sparring Ring platform to issue a casual duel challenge to a target character in the same channel (`pvp.mode.sparring`, ADR-0023). `C2S_SPARRING_ACCEPT` is the target's acceptance response. Both messages carry `target_character_id` and a stable `operation_id`; the server validates platform eligibility, channel co-location, and the `social.md` direct-interaction gate before creating the sparring match. Challenge lifetime is `60s`. The target receives `S2C_SPARRING_CHALLENGE` (811) and answers with `C2S_SPARRING_ACCEPT` (801) or `C2S_SPARRING_DECLINE` (812); both parties receive `S2C_SPARRING_RESULT` (813) for accept, decline, expiry or a validation rejection. `S2C_ERROR` is never used for these domain outcomes.
+`C2S_SPARRING_REQUEST` is sent by either player standing on the Sparring Ring platform to issue a casual duel challenge to a target character in the same channel (`pvp.mode.sparring`, ADR-0023). `C2S_SPARRING_ACCEPT` is the target's acceptance response. `C2S_SPARRING_REQUEST` carries `target_character_id`, `C2S_SPARRING_ACCEPT` / `C2S_SPARRING_DECLINE` carry the `challenge_id` from 811, and all carry a stable `operation_id`; the server validates platform eligibility, channel co-location, and the `social.md` direct-interaction gate before creating the sparring match. Challenge lifetime is `60s`. The target receives `S2C_SPARRING_CHALLENGE` (811) and answers with `C2S_SPARRING_ACCEPT` (801) or `C2S_SPARRING_DECLINE` (812); both parties receive `S2C_SPARRING_RESULT` (813) for accept, decline, expiry or a validation rejection. `S2C_ERROR` is never used for these domain outcomes.
 
 ## Error Result Shape
 Rejected requests use either:
@@ -720,7 +856,7 @@ Every inbound message validates:
 - gameplay state/preconditions,
 - sequence/idempotency rules.
 
-Malformed payloads never reach gameplay handlers as partially trusted data.
+Malformed payloads never reach gameplay handlers as partially trusted data. The rejection code and close-or-not decision for each failed check are canonical in `protocol.md` § Envelope Validation.
 
 ## Invariants
 - stable numeric message IDs,
@@ -729,7 +865,7 @@ Malformed payloads never reach gameplay handlers as partially trusted data.
 - client_mono_ms is advisory; server clamps compensation to 80 ms; edges implying implausible timing are rejected,
 - just_guard is detected server-side only; the client never sends a just_guard flag,
 - every message ID in every range must be registered in this document (ID, direction, fields) before use; unregistered IDs are `MESSAGE_UNKNOWN`,
-- every durable result carries `operation_id`, `status` and `error_code`; state pushes (`S2C_*_STATE`) are full snapshots,
+- every C2S request that can fail gets exactly one typed result carrying `operation_id`, `status` and `error_code` (every `*_RESULT` embeds `OperationResult` as field 1, `protobuf_conventions.md` § 6) (movement and combat intents 100..102, 108, 200..202 are answered by 107 / 204 instead; dungeon entry 111 / 113 / 117 by 112); state pushes (`S2C_*_STATE`) are full snapshots except `S2C_FRIEND_STATE` (616, event) and reward claims (434 paged + 441 delta),
 - durable mutation carries stable operation identity,
 - server results are authoritative,
 - transport reliability does not bypass stale/duplicate validation,

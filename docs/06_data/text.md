@@ -77,6 +77,17 @@ If the owning feature only specifies a grapheme limit, implementation must choos
 
 Reject malformed UTF-8 before normalization.
 
+# Name Limits (ADR-0065)
+Canonical limits for unique names (evaluated after trim + NFC; both limits apply):
+```text
+entity      graphemes  UTF-8 bytes (display)  display column   name_key column
+character   1..16      <= 64                  VARCHAR(64)      VARCHAR(256)
+guild       1..24      <= 96                  VARCHAR(96)      VARCHAR(256)
+```
+`name_key` is `VARCHAR(256)` because case folding may expand code points. A name over either limit is rejected with the owning `*_NAME_INVALID` error; nothing is truncated.
+
+Reserved: a character or guild name whose `name_key` starts with `anonymized_` is rejected; that prefix belongs to server-generated erasure placeholders (`data_model.md` § Account Erasure), which are exempt from the player grapheme limit.
+
 # Control / Invisible Characters
 Names:
 - reject Unicode control characters,
@@ -110,7 +121,7 @@ Client acceptance never proves uniqueness.
 Recommended columns for a unique-name entity:
 ~~~
 name       text NOT NULL
-name_key   VARCHAR(64) NOT NULL   -- max 64 characters; canonical per physical_schema_contract.md
+name_key   VARCHAR(256) NOT NULL  -- canonical per § Name Limits and physical_schema_contract.md
 UNIQUE(name_key)
 ~~~
 

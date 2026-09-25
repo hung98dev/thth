@@ -17,15 +17,31 @@ Toàn bộ client vận hành dựa trên một Finite State Machine cấp cao d
 [PATCHING_UPDATE]
   -> Tải cập nhật tài nguyên nếu có; hiển thị % và thanh tiến trình
 [AUTH_TITLE]
-  -> Màn hình đăng nhập liên kết (Apple / Google / Steam); nút Chạm để vào
+  -> Đăng nhập: tên đăng nhập + mật khẩu, hoặc liên kết Apple / Google / Steam; nút Đăng ký
+     (tên đăng nhập, mật khẩu, email; ../07_security/auth.md § Password Provider, ADR-0051)
+[LOGIN_QUEUED]
+  -> Hàng chờ đăng nhập khi thế giới đầy (SERVER_OVERLOADED + queue_position,
+     ../07_security/session.md § Login Queue): hiển thị vị trí, tự thử lại sau retry_after_ms, nút Hủy
 [CHARACTER_SELECT]
   -> Chọn hoặc tạo nhân vật (tối đa 3 nhân vật; cấm xóa nhân vật)
-[MAP_LOADING_TRANSFER]
+[TRANSFERRING_MAP]
   -> Màn hình chờ tải cảnh chuyển vùng (giữ kết nối WSS, tải Addressables nhóm bản đồ mới)
 [IN_WORLD]
   -> Vào thế giới thực tế, hiển thị HUD chiến đấu đầy đủ
-[DISCONNECTED_RETRY]
+[DISCONNECTED]
   -> Mất kết nối, hiển thị đếm ngược thử lại tự động (1..5s)
+```
+
+Chuyển trạng thái (tên trạng thái dùng thống nhất trong toàn bộ tài liệu và code):
+```text
+BOOT -> PATCHING_UPDATE (catalog mới) | AUTH_TITLE
+PATCHING_UPDATE -> AUTH_TITLE
+AUTH_TITLE -> CHARACTER_SELECT (đăng nhập thành công) | LOGIN_QUEUED (SERVER_OVERLOADED có queue_position)
+LOGIN_QUEUED -> CHARACTER_SELECT (được nhận) | AUTH_TITLE (Hủy, hoặc mất chỗ sau 60 s không attach)
+CHARACTER_SELECT -> TRANSFERRING_MAP (attach) -> IN_WORLD
+IN_WORLD -> TRANSFERRING_MAP (chuyển map/instance) | DISCONNECTED (mất kết nối) | AUTH_TITLE (SESSION_REPLACED, đăng xuất)
+DISCONNECTED -> IN_WORLD (resume) | TRANSFERRING_MAP (resume vào map khác) | AUTH_TITLE (hết lượt thử hoặc SERVER_DRAINING sau hạn)
+bất kỳ -> AUTH_TITLE khi CLIENT_UPDATE_REQUIRED / PROTOCOL_UNSUPPORTED (kèm hướng dẫn cập nhật)
 ```
 
 ## 2. Bố cục Giao diện In-World (HUD Layout)
@@ -71,7 +87,7 @@ Sử dụng Unity Input System (`com.unity.inputsystem 1.20.0`):
 | **Rơi sàn một chiều** | `S + Space` | `Down + A` | Kéo Joystick xuống + Nhảy | `C2S_DROP_THROUGH` (102) |
 | **Đánh Thường** | `J` hoặc Chuột Trái | Nút `X` | Chạm nút Đánh Thường | `C2S_BASIC_ATTACK` (201) |
 | **Kỹ năng Active 1..5** | `K`, `L`, `U`, `I`, `O` | `Y`, `B`, `RB`, `RT`, `LB` | Chạm nút Active 1..5 | `C2S_SKILL_USE` (200) |
-| **Tương tác NPC / Nhặt** | `F` | Nút `X` (khi gần vật phẩm) | Nút Tương tác ngữ cảnh | `C2S_INTERACT` (103) |
+| **Tương tác NPC / Nhặt** | `F` | Nút `LT` | Nút Tương tác ngữ cảnh | `C2S_INTERACT` (103) |
 | **Đổi Mục tiêu** | `Tab` | `R3` (Nhấn cần phải) | Chạm trực tiếp vào quái | Xử lý client targeting |
 | **Mở Chat** | `Enter` | Nút `Back` / `View` | Chạm vào Chat Dock | N/A (Mở UI nội bộ) |
 
@@ -104,7 +120,7 @@ Sử dụng Unity Input System (`com.unity.inputsystem 1.20.0`):
    - Hiển thị popup modal giữa màn hình: `Mất kết nối tới máy chủ. Đang thử kết nối lại... (Lần 1/5)`.
    - Nút `Thử lại ngay` và nút `Thoát ra màn hình chính`.
 3. **Đăng nhập đè phiên (`SESSION_REPLACED`):**
-   - Nhận message ID 11 từ server: Lập tức đóng kết nối WSS.
+   - Nhận `S2C_SESSION_REPLACED` (ID 8, `../05_network/messages.md`) từ server: Lập tức đóng kết nối WSS.
    - Hiển thị thông báo không thể đóng: `Tài khoản của bạn đã được đăng nhập từ một thiết bị khác.` kèm nút `Đồng ý` để quay về màn hình Title.
 
 ## 6. Khả năng Tiếp cận (Accessibility)
@@ -124,5 +140,7 @@ desktop default window = 1280x720; fullscreen/native vẫn được hỗ trợ
 SafeAreaFitter bắt buộc để tránh tai thỏ camera
 input di chuyển gửi qua C2S_MOVEMENT_EDGE (108)
 SESSION_REPLACED = modal ngắt kết nối không thể đóng
+mỗi nút gamepad/phím gán đúng một thao tác trong cùng ngữ cảnh IN_WORLD
+tên trạng thái UI: BOOT, PATCHING_UPDATE, AUTH_TITLE, LOGIN_QUEUED, CHARACTER_SELECT, TRANSFERRING_MAP, IN_WORLD, DISCONNECTED
 icon trạng thái phân biệt bằng hình dạng (tròn/tam giác), không chỉ bằng màu
 ```

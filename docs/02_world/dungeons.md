@@ -17,6 +17,19 @@ Validate unlock/alive/not in combat/requirements/player count/transition. Member
 
 Entry flow (fields, prompt lifetime and rejections canonical in `../05_network/messages.md` `C2S_DUNGEON_ENTER_REQUEST` / `C2S_DUNGEON_ENTRY_RESPOND` / `C2S_DUNGEON_ENTRY_CANCEL` / `C2S_DUNGEON_LEAVE`): the requester (partyless character or party leader) at the entrance sends the request with its `run_tag` (`ENDGAME_L60` only as allowed by `../07_content/dungeon_catalog.md`); party members on the same map instance approve or decline the pending entry; the approved set (requester included) becomes the snapshot. The instance records the requester's `source_map_id` and `source_channel_id` at creation (runtime only; not durable): return transfers and relic spawns use them.
 
+Entry validation order for `C2S_DUNGEON_ENTER_REQUEST` (ADR-0062); the first failing step rejects:
+```text
+1 re-entry   sender is a non-ABANDONED snapshot member of a non-terminal instance of this dungeon_id
+             -> re-enter that instance; only alive, not in combat, not transferring are checked
+             (party role, story gate and claim cap are skipped)
+2 role       sender is partyless or the party leader, else PERMISSION_DENIED
+3 sender     range (OUT_OF_RANGE), level (LEVEL_TOO_LOW), alive / not transferring / no pending entry
+             (STATE_CONFLICT), not in combat (IN_COMBAT), story gate (STORY_CHOICE_REQUIRED,
+             ../07_content/quest_catalog.md), pending Reward Claims >= 100 (CLAIM_CAP_REACHED)
+4 create     SOLO dungeon or partyless sender -> instance now; otherwise one pending entry (30s prompt)
+```
+`C2S_DUNGEON_ENTRY_RESPOND` ACCEPT revalidates the member with step 3 (range excluded; same map instance as the requester instead). At instance creation (all prompted members responded or the prompt expired) every ACCEPTED member is revalidated: online, alive, not in combat, not transferring, still in the requester's party and on the requester's map instance; a failing member becomes `INELIGIBLE` and is excluded from the snapshot. A leader change, the requester leaving the party, disconnecting, dying or changing map instance while the prompt is pending cancels it (`outcome = CANCELLED`); nothing is created.
+
 The Act-VI finale `instance.finale.than_trung` (`../07_content/world_route_catalog.md`) is a PARTY `1..5` instance that follows every rule of this file (entry, membership, states, scaling, checkpoints, wipe, completion, re-entry, cleanup, restart) with its `space_id` in place of `dungeon_id` and `boss.than_trung` as its final encounter (ADR-0061).
 
 ## States / Stages

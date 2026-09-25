@@ -18,7 +18,7 @@ Canonical: `docs/10_implementation/agent_execution_protocol.md` (§4 implementat
 7. **Verify locally.** `bash .devin/scripts/verify_delta.sh --full` until PASS.
 8. **Review.** Request the `reviewer` (separate session). Fix findings; any later push needs a new review.
 9. **CI.** Wait for `Q0-Q6 verify (Linux)` and `Q0-Q6 verify (Windows)` green on the head.
-10. **Evidence + DONE.** `gh run download <run_id> -n evidence -D docs/10_implementation/evidence/IMP-XXX/`; set `status: DONE` + summary row; push; wait for CI green and the reviewer's re-posted `policy-review`. Two-phase gate tasks (IMP-000/061/003/004/005/065/068) skip this step and set DONE in a follow-up status PR after the post-merge `main` run.
+10. **Evidence + DONE.** `gh run download <run_id> -n evidence -D docs/10_implementation/evidence/IMP-XXX/`; set `status: DONE` + summary row; push; wait for CI green and the reviewer's re-posted `policy-review`. Two-phase gate tasks (IMP-000/061/003/004/005/065/068) skip this step: after the implementation PR merges, open status PR `imp/IMP-XXX-done` setting DONE, then commit the `evidence` artifact of that PR's own `verify.yml` run (ADR-0068).
 11. **Merge.** `gh pr ready <N>` then `gh pr merge <N> --auto --squash --delete-branch`. Never merge manually or push to `main`.
 
 ## Failures

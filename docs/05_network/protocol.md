@@ -67,31 +67,51 @@ Bandwidth is controlled with:
 Do not trade tick latency/CPU predictability for generic compression without profiling.
 
 ## Handshake
-Connection sequence:
-1. client completes HTTPS authentication/bootstrap,
-2. bootstrap returns short-lived gameplay connection credential plus endpoint and required protocol/content compatibility,
+Connection sequence (ADR-0064):
+1. client authenticates over HTTPS and holds an access credential (`../07_security/auth.md` § HTTPS Endpoints),
+2. client calls `POST /api/v1/gameplay/ticket`; the response returns a single-use gameplay ticket (60 s), the `wss` endpoint and the required protocol/client-build/content compatibility, or `SERVER_OVERLOADED` with `queue_position` (login queue, `../07_security/session.md`),
 3. client opens `wss`,
-4. client sends `C2S_HELLO` (message_id 1),
+4. client sends `C2S_HELLO` (message_id 1) carrying the gameplay ticket, or the resume credential from its last `S2C_HELLO_OK` when reconnecting (`reconnect.md`); the HELLO envelope has `session_epoch = 0` and `client_seq = 1`,
 5. server validates credential, protocol version, client build/content compatibility, and session replacement rules,
-6. server sends `S2C_HELLO_OK` (message_id 2) with session epoch and authoritative connection parameters,
-7. character/session attach follows,
+6. server sends `S2C_HELLO_OK` (message_id 2) with `session_epoch`, a fresh resume credential and connection parameters, then `S2C_CHARACTER_LIST` (14) unless the resume re-attached the character,
+7. character creation (12) or attach (6) follows,
 8. realtime messages become legal only after attach succeeds.
 
-Gameplay credentials are single-purpose, short-lived, and are never database credentials.
+Before `S2C_HELLO_OK`, any frame other than one `C2S_HELLO` closes the connection with `PROTOCOL_VIOLATION`; a HELLO not received within 10 s of the WebSocket upgrade closes it with `AUTH_REQUIRED`. After `S2C_HELLO_OK` every C2S envelope carries that `session_epoch`.
+
+Gameplay credentials are single-purpose, short-lived, and are never database credentials. A resume credential is presented only in `C2S_HELLO`, never on HTTPS.
 
 ## Sequence Semantics
 Transport order does not replace application validation.
 
 Per connection:
-- `client_seq` is monotonic for client gameplay intents,
-- duplicate/older sequence is rejected,
+- every C2S envelope carries `client_seq`, starting at 1 on `C2S_HELLO` and strictly increasing by at least 1 per frame; payloads never repeat it (the envelope value is canonical),
+- a frame whose `client_seq` is not greater than the last accepted one is rejected with `STALE_INPUT` and not dispatched (no close),
 - movement-state intents (`C2S_INPUT_STATE`, delivery class `REPLACEABLE_STATE`) may be coalesced before simulation,
 - movement-edge intents (`C2S_MOVEMENT_EDGE`, delivery class `DISCRETE_INTENT`) are **never coalesced or merged**; each edge is validated individually to preserve the onset signal required by timing-sensitive mechanics,
 - discrete actions remain distinct,
-- `server_seq` is monotonic for outbound authoritative messages,
-- request/response mutations use stable operation/correlation identity where retry can occur.
+- `server_seq` is monotonic (+1) for every outbound frame,
+- `correlation_id` on an S2C frame = the `client_seq` of the C2S frame it answers (typed results, `S2C_ERROR`, rejections); 0 for unsolicited frames,
+- request/response mutations use stable `operation_id` where retry can occur; a retry is a new frame with a new `client_seq` and the same `operation_id`.
 
-Sequence counters reset only with a new session epoch/connection contract.
+Sequence counters reset only with a new connection (new `session_epoch`).
+
+## Envelope Validation
+Checks run in this order before payload dispatch; the first failure decides the outcome:
+```text
+check                                           outcome
+frame > 64 KiB or envelope not parseable        close: MESSAGE_TOO_LARGE / PROTOCOL_MALFORMED
+protocol_major unsupported                      close: PROTOCOL_UNSUPPORTED
+frame before HELLO_OK other than one HELLO      close: PROTOCOL_VIOLATION
+server_seq != 0 or S2C-only message_id from C   close: PROTOCOL_VIOLATION
+session_epoch != current                        S2C_ERROR SESSION_EPOCH_STALE (RECONNECT), close_after = true
+message_id not registered in messages.md        S2C_ERROR MESSAGE_UNKNOWN, not dispatched, no close
+client_seq not increasing                       S2C_ERROR STALE_INPUT, not dispatched, no close
+message not legal in current phase              S2C_ERROR MESSAGE_NOT_ALLOWED_IN_STATE, no close
+payload fails protobuf parse / schema limits    S2C_ERROR PROTOCOL_MALFORMED, no close
+per-message rate limit exceeded                 RATE_LIMITED (rate_limits.md), no close
+```
+Non-closing protocol rejections share one budget: more than 20 in any 10 s window closes the connection with `PROTOCOL_VIOLATION` (`../07_security/rate_limits.md` § Protocol Reject Budget). Domain rejections after dispatch use the typed result of the request (`messages.md`), never this table.
 
 ## Heartbeat
 Application heartbeat exists even though WebSocket/TCP has transport keepalive.
@@ -114,17 +134,21 @@ RTT sample = server receive time of C2S_HEARTBEAT - echo_server_ms (when echo_se
 ## TLS
 Public client traffic must use TLS. Plaintext gameplay connections are not allowed outside isolated local development.
 
-TLS termination may occur at an Edge/load-balancer layer, but authenticated session identity and trusted forwarding metadata must be cryptographically/operationally protected between edge and backend.
+`TLS_TERMINATION` (`../07_security/external_integrations.md` § 4): `SERVER` = the Go process terminates TLS with `TLS_CERT_FILE` / `TLS_KEY_FILE` (reloaded on SIGHUP); `PROXY` = a terminating proxy on the same host forwards to a loopback-only listener, and the client IP is taken from `X-Forwarded-For` only when the peer is loopback.
 
 ## Connection Backpressure
-Each connection has bounded inbound/outbound queues.
-
-When outbound queue is saturated:
-1. obsolete replaceable state updates may be superseded,
-2. required authoritative events/results are never silently dropped,
-3. the connection is marked unhealthy and closed if it cannot keep up.
-
-The server never buffers unbounded history for a slow client.
+Per connection (ADR-0064):
+```text
+outbound queue capacity          = 256 frames or 1 MiB encoded, whichever is reached first
+REPLACEABLE_STATE supersede key  = (message_id, entity_id or state key); a newer frame replaces the unsent older one in place;
+                                   unsent S2C_STATE_DELTA entries are merged field-wise (newer value wins), never dropped
+slow consumer                    = queue above 75% (192 frames or 768 KiB) continuously for 5 s,
+                                   or a non-replaceable frame that does not fit after superseding
+slow-consumer action             = close with WebSocket status 4008 reason SLOW_CONSUMER; the client reconnects with its
+                                   resume credential (reconnect.md); committed results are re-derived by operation_id retry
+pre-attach inbound queue         = 8 frames; after attach the per-character queues of ../04_architecture/concurrency.md apply
+```
+Required authoritative events/results are never silently dropped: they either enqueue or the connection closes. The server never buffers unbounded history for a slow client.
 
 ## Forbidden
 - client-supplied authoritative position/damage/reward result,

@@ -165,7 +165,7 @@ Mỗi FIELD/dungeon phải có một main route liên tục từ entry đến ex
 
 ## 7. Hợp đồng Xuất Hình học (Unity Geometry Exporter)
 
-1. **Công cụ Xuất:** Script Unity Editor `ThinhThan.Editor.GeometryExporter` quét các Collider trong Scene (gắn tag `ServerGeometry`).
+1. **Công cụ Xuất:** Script Unity Editor `ThinhThan.Core.Geometry.Editor.GeometryExporter` (assembly `ThinhThan.Core.Geometry.Editor`, IMP-062) quét các Collider trong Scene (gắn tag `ServerGeometry`) of the collision-only authoring scene `client/Assets/Scenes/Collision/<space_id>.unity` (IMP-062); visual scenes of IMP-072/IMP-105 contain no `ServerGeometry` colliders (ADR-0068).
 2. **Định dạng Xuất:** File JSON lưu tại `server/internal/sim/spatial/maps/<space_id>.geom.json`.
 3. **Cấu trúc dữ liệu:**
    ```json

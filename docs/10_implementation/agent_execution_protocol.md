@@ -36,7 +36,7 @@ If a box fails, the task stays `NOT_STARTED` or becomes `BLOCKED` (§6). Agents 
 ## 3. Claiming (coordinator)
 
 1. Select the lowest topological index (`task_queue.md` § Topological Execution Order) among ready tasks; keep the number of `IN_PROGRESS` tasks ≤ 5 (ADR-0058: 20 concurrent hosted jobs, 2 verify jobs + 1 evidence job per PR).
-2. Open a status-only claim PR on branch `claim/<yyyymmdd>-<n>` setting `status: IN_PROGRESS`, `claimed_by`, `branch: imp/IMP-XXX-<slug>`, `claimed_at` in the packet and the summary-row status. Status-only diffs take the Q0-only fast path; the reviewer still posts `policy-review`.
+2. Open a status-only claim PR on branch `claim/<yyyymmdd>-<n>` setting `status: IN_PROGRESS`, `claimed_by`, `branch: imp/IMP-XXX-<slug>`, `claimed_at` in the packet and the summary-row status. Status-only diffs take the Q0-only fast path (`audit_gates.md` § Protected Paths); the reviewer still posts `policy-review`.
 3. After the claim merges, hand the task to exactly one implementer (one task per implementer, its own worktree/clone and isolated DB port, Unity cache and temp dirs).
 4. A claim with no PR activity for 24 h is returned to `NOT_STARTED` by a new claim PR (clear claim fields).
 5. Merge conflicts in `task_queue.md` status cells keep both edits.
@@ -89,7 +89,7 @@ Canonical schema: `../09_testing/test_and_release_evidence.md`; identity rules: 
 8 gh pr merge <N> --auto --squash --delete-branch
 ```
 
-- Two-phase gate tasks (`IMP-000`, `IMP-061`, `IMP-003`, `IMP-004`, `IMP-005`, `IMP-065`, `IMP-068`): steps 5–6 are skipped; the PR merges with the task `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
+- Two-phase gate tasks (`IMP-000`, `IMP-061`, `IMP-003`, `IMP-004`, `IMP-005`, `IMP-065`, `IMP-068`): steps 5–6 are skipped; the PR merges with the task `IN_PROGRESS`; a follow-up status PR (branch `imp/IMP-XXX-done`) sets `DONE`, waits for its own `verify.yml` run, downloads that run's `evidence` artifact into `evidence/IMP-XXX/`, pushes, and merges after CI and `policy-review` are green again (ADR-0068). The post-merge guard never produces task evidence.
 - Any push after step 3 (including `git merge origin/main`) requires a new reviewer pass and new evidence.
 - Never push to `main`, force-push, rebase, or merge manually.
 

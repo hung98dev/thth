@@ -26,7 +26,7 @@ OPEN -> LOCKED -> COMMITTING -> COMPLETED
 ```
 Cancel/expire is allowed only from precommit states.
 
-Max 12 item entries per side plus common currency (one side only, below). Offered items stay in `CHARACTER_INVENTORY` under the trade lock (`items.md` § Trade Lock); no escrow location is used. Session state is runtime-only and never persisted; settlement inserts `trade_settlement_records` (`../06_data/data_model.md`). Offer mutation increments revision and clears confirmation. Settlement is atomic. Inactive timeout 120s. Cancel, timeout, disconnect or server restart before `COMPLETED` releases every lock and moves nothing.
+Max 12 item entries per side plus common currency (one side only, below). Offered items stay in `CHARACTER_INVENTORY` under the trade lock (`items.md` § Trade Lock); no escrow location is used. Session state is runtime-only and never persisted; settlement inserts `trade_settlement_records` (`../06_data/data_model.md`). Offer mutation increments revision and clears confirmation. Settlement is atomic. Inactive timeout 120s. Cancel, timeout, disconnect, server restart, or a map transfer/respawn/instance entry/death of either participant before `COMPLETED` releases every lock and moves nothing.
 
 ## Direct-Trade Fee
 A 5% fee applies to the `currency.common` component of each trade settlement:

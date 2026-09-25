@@ -185,10 +185,10 @@ For all 54 persistent launch groups:
 Spawn density assertions (ADR-0035):
 - NORMAL spawn groups: `max_alive = 20` per group; at least two NORMAL groups per field map yields `>= 40` alive NORMAL monsters per channel,
 - ELITE spawn groups: `max_alive = 2` per group,
-- NORMAL respawn band: `10..16s` — assert `respawn_min = 10`, `respawn_max = 16`,
-- ELITE respawn band: `45..75s` — assert `respawn_min = 45`, `respawn_max = 75` (ADR-0061),
+- NORMAL respawn band: `10..14s` — assert `respawn_min = 10`, `respawn_max = 14` (ADR-0062),
+- ELITE respawn band: `35..60s` — assert `respawn_min = 35`, `respawn_max = 60` (ADR-0062); ELITE floor `2 × 3600 / 60 = 120/hour >= 22 × 5 = 110/hour`,
 - NIGHT_RARE authored groups: respawn band `240..360s` — assert `respawn_min = 240`, `respawn_max = 360`; NIGHT_RARE group is only active during night phase and not selectable as a daytime spawn,
-- total theoretical supply for `MAX_PLAYERS_PER_CHANNEL = 18` across two NORMAL groups (40 alive, 10..16s respawn): conservative planning floor (slowest 16s respawn) ≈ 9,000/hour; expected operating (avg 13s respawn) ≈ 11,077/hour. At 18 players × 450 kills/hour realistic sustained demand = 8,100/hour; supply/demand ratio ≥ 1.11× (conservative floor) and ≈ 1.37× (expected operating). Assert `MAX_PLAYERS_PER_CHANNEL = 18` and that sustained demand (18 × 450 = 8,100/hour) does not exceed the conservative supply floor of ~9,000/hour.
+- total theoretical supply across two NORMAL groups (40 alive, 10..14s respawn): conservative planning floor (slowest 14s) ≈ 10,286/hour; expected operating (avg 13s) ≈ 11,077/hour. Demand is sized at `FORCED_PLACEMENT_HARD_CAP = 22`: 22 × 450 = 9,900/hour (ratio ≥ 1.04× floor, ≈ 1.12× expected); at `MAX_PLAYERS_PER_CHANNEL = 18`: 8,100/hour (≥ 1.27× floor). Assert both constants and that 9,900/hour does not exceed the conservative floor (ADR-0062).
 
 Sleep/wake and restart reconstruct population without granting rewards.
 
@@ -338,7 +338,8 @@ For representative UTC hour indexes:
 - exactly **three concurrent regions** are active per UTC hour: indices `H mod 6`, `(H+2) mod 6`, `(H+4) mod 6` (deterministic from server UTC hour H; no randomness),
 - a given region is active in exactly 3 of every 6 consecutive UTC hours (50% availability per region),
 - the three active region indices for H and H+6 are identical (period = 6 hours),
-- same three regions survive server restart without reroll for the current UTC hour,
+- same three regions survive server restart without reroll for the current UTC hour; a restart at minute < 15 reactivates them until `HH:15:00` only, a restart at minute >= 15 activates nothing until the next hour (`../04_architecture/service_boundaries.md` § Spirit Surge Scheduling),
+- a surge deactivates at `HH:15:00`, and a channel partition started inside the window receives the activation with the same end time,
 - safe anchor is never selected as an event field,
 - <=2 event groups per active region, <=4 alive/group,
 - event attack tell >=0.80s,

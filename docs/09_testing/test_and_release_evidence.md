@@ -19,7 +19,7 @@ Evidence, verification commands and release acceptance for thinhthan. Every `DON
 | Unity PlayMode | same with `-testPlatform PlayMode` / `testMode: playmode`; category `Performance` runs only on the Linux job | required after `IMP-065` is DONE |
 | Android performance | `gcloud firebase test android run --type game-loop` on the Owner Setup device models | scheduled `device-perf` workflow on `main` (not a PR check); `DEFERRED(quota)` on exhausted quota (`../04_architecture/client_performance.md`) |
 
-`scripts/verify.ps1` resolves the Unity editor from `UNITY_EDITOR_PATH` (must contain `6000.6.1f1`) and fails if the version differs; with `-UnityResultsDir` it gates on the GameCI result XML instead (missing or failed results = FAIL). Library cache and temp directories are per worktree (CI: `actions/cache` per OS). CI has no GPU: rendering uses Mesa llvmpipe on Linux (ADR-0058). A missing tool, image or licence on CI is an `OPS-xxx` failure; `SKIP(bootstrap)` is allowed only under Bootstrap Mode (`../10_implementation/audit_gates.md`).
+`scripts/verify.ps1` resolves the Unity editor from `UNITY_EDITOR_PATH` (must contain `6000.6.1f1`) and fails if the version differs; with `-UnityResultsDir` it gates on the GameCI result XML instead (missing or failed results = FAIL). Library cache and temp directories are per worktree (CI: `actions/cache` per OS). CI has no GPU: rendering uses Mesa llvmpipe on Linux (ADR-0058). A missing tool, image or licence on CI is an `OPS-xxx` failure; `SKIP(owner-not-done)` is allowed only while the gate's owner task is not `DONE` (`../10_implementation/audit_gates.md` § Gate Activation, ADR-0068).
 
 ## 2. Evidence Manifest
 
@@ -44,7 +44,7 @@ toolchain.protoc = 36.2
 toolchain.protoc_gen_go = v1.36.12
 commands[]
 test_summary.total / passed / failed / skipped
-skipped_reasons[] (id, reason, allowed)        -- SKIP(bootstrap) entries name the gate and its owner task
+skipped_reasons[] (id, reason, allowed)        -- SKIP(owner-not-done) entries name the gate and its owner task; SKIP(status-only) only on the Q0 fast path
 content_revision                               -- "none" while no content compiler exists at the tested source
 ci_run_id, run_attempt
 jobs[] (name, os = linux|windows, result = PASSED)   -- both verify jobs of the same run
@@ -52,7 +52,7 @@ worktree_clean = true
 result = PASSED
 ```
 
-Q6 validates only manifests added in the PR diff: `source_tree_hash` equals the PR head tree hash, and the GitHub API confirms `ci_run_id`/`run_attempt` belong to workflow `verify.yml` with conclusion `success`. Older manifests get schema checks only. Milestone evidence lives in `docs/10_implementation/evidence/M<n>/manifest.json` with the same schema (`task_id` = `M<n>`).
+Q6 validates only manifests added in the PR diff: `source_tree_hash` equals the PR head tree hash, and the GitHub API confirms `ci_run_id`/`run_attempt` belong to workflow `verify.yml` with conclusion `success`. Older manifests get schema checks only. A two-phase task's manifest comes from its follow-up status PR's own run; its hash equals the merged implementation tree because `task_queue.md` and `evidence/**` are excluded (ADR-0068). Milestone evidence lives in `docs/10_implementation/evidence/M<n>/manifest.json` with the same schema (`task_id` = `M<n>`).
 
 ## 3. Fixture Registry
 
@@ -64,6 +64,8 @@ All fixtures are registered and versioned:
    - `invalid_cross_ref/`: Catalog chứa tham chiếu hỏng (phải bị reject).
    - `invalid_balance_window/`: Catalog có TTK vi phạm guardrail.
 3. **Deterministic Movement & Collision Vectors:** Lưu tại `server/internal/sim/spatial/testdata/`. Chứa tọa độ, vận tốc, phím bấm và kết quả tính toán vị trí chuẩn.
+4. **Client Hotspot Stream:** `client/Assets/Tests/PlayMode/NetReceive/Fixtures/hotspot_stream_40.bytes`, 60 s of 10 Hz snapshot/delta envelopes for 40 replicated entities + local player, written by the seeded generator `HotspotStreamGenerator` in the same folder (IMP-065); a test regenerates it and byte-compares. Consumers: `PERF-024`, the IMP-095 hotspot scene (`../04_architecture/client_performance.md`).
+5. **Sim Steady-State Fixture:** built in code by IMP-079 (`server/internal/sim/runtime/`): one channel with 64 replicated actors (22 player slots + 42 monster slots), fixed seed; consumers `HOT-001..003` (`../08_scale_ops/capacity.md`).
 
 Fixtures are immutable; changing one requires the spec change that justifies it.
 
@@ -77,11 +79,11 @@ Kiểm thử chịu tải (M9/M10, IMP-046, IMP-055) bắt buộc phải đính 
 - **Server Specs:** Số vCPU, dung lượng RAM, storage IOPS.
 - **Topology:** một world process (ADR-0052), database pool size, `WORLD_CCU_CAP`.
 - **Concurrency Targets:**
-  - Hard cap: 18 người chơi / channel (ADR-0035).
-  - Bản đồ: 540 người chơi.
-  - Hotspot: 42 named mechanic + 18 người chơi.
-  - Entity cap: Cho phép 80 entity, từ chối entity thứ 81.
-- **Metrics:** p50/p95/p99 tick duration; gate = p95 < 35ms ở 20 Hz (`../08_scale_ops/capacity.md`); network bandwidth per client (< 25 KiB/s).
+  - Admission cap: 18 người chơi / channel (ADR-0035); forced-placement cap: 22 (ADR-0061).
+  - Bản đồ: 540 người chơi (admission).
+  - Hotspot: 42 named mechanic + 22 người chơi (ADR-0066).
+  - Entity cap: 80 entity = 22 slot người chơi + tối đa 58 non-player; từ chối non-player spawn tiếp theo.
+- **Metrics:** p50/p95/p99 tick duration; gate = p95 < 35ms ở 20 Hz (`../08_scale_ops/capacity.md`); network bandwidth per client measured by `load.md` scenario 13 (gate value per `../08_scale_ops/capacity.md` § Bandwidth Budget).
 
 ## 6. Flaky Test Policy
 
@@ -97,5 +99,5 @@ every verify command runs on a clean checkout
 chat logs and screenshots never replace evidence (screenshots are review artifacts)
 worktree_clean = true after verify
 CI = GitHub-hosted jobs `Q0-Q6 verify (Linux)` + `Q0-Q6 verify (Windows)`; `policy-review` is the App status; post-merge guard (ADR-0050, ADR-0057, ADR-0058)
-missing Unity/image/licence/tool on CI = OPS failure, never a skip (except SKIP(bootstrap)); Test Lab quota = DEFERRED(quota)
+missing Unity/image/licence/tool on CI = OPS failure, never a skip (except SKIP(owner-not-done) / SKIP(status-only)); Test Lab quota = DEFERRED(quota)
 ```

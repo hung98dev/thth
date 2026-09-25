@@ -1,6 +1,8 @@
 # ADR-0060: Wire and Durable Contract Completion for Gameplay, World and Systems
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0062)**: a one-member party persists until the leader leaves (`../03_systems/party.md`); the "one-member party whose last invite ends disbands" bullet below is superseded.
+
 ## Context
 The 2026-09-25 spec review found specified player actions with no registered message or payload (skill upgrade, potential allocation, respec, respawn, book/potion use, skill loadout, soul contracts, NPC sell-back, inventory expansion, travel, beast level-up, duel, guild settings and cancels, quest abandon, story branch, dungeon party entry/exit), incomplete field lists (combat 200..207 and 304, durable 400..409, trade 700..709, auction 730..744, queue joins 802/808), wire text drifting from owning specs (chat length, report reasons/limit, guild roles, beast food values), missing error codes, no table for character-scoped cosmetics, no IAP client submission path or PC provider, a stored refund score that was both derived and incremented, an unschematized trade escrow and an incomplete lock order.
 

@@ -214,7 +214,7 @@ INAPPROPRIATE_NAME
 OTHER
 ```
 
-A report may reference `chat_message_id` plus optional reporter notes.
+A report may reference `chat_message_id` plus optional reporter notes (at most 200 graphemes, same text rules as chat).
 
 Duplicate reports by the same reporter against the same target/reason are rate-limited.
 

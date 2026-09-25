@@ -18,7 +18,8 @@ Character deletion is not supported. Once created, a character is permanent and 
 ## Name
 Canonical Unicode processing and uniqueness-key construction are owned by `../06_data/text.md`.
 
-- Maximum `32` visible Unicode grapheme clusters after canonical trim + NFC.
+- `1..16` visible Unicode grapheme clusters and at most 64 UTF-8 bytes after canonical trim + NFC (`../06_data/text.md` § Name Limits).
+- Names whose canonical key starts with `anonymized_` are reserved (erasure placeholders) and rejected.
 - Vietnamese diacritics are allowed and significant.
 - Global uniqueness uses the server-computed canonical `name_key`, not database locale/lowercasing.
 - Control characters and empty names are rejected.

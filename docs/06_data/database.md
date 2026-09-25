@@ -50,38 +50,41 @@ For multi-aggregate transactions:
 2. stable UUID byte/lexical order,
 3. child rows by stable slot/index/ID.
 
-Aggregate-type priority (canonical; lock lower number first; ADR-0053, ADR-0060):
+Aggregate-type priority (canonical; lock lower number first; ADR-0053, ADR-0060, ADR-0065):
 ```text
-1  accounts, account_password_credentials
+1  accounts, account_password_credentials, account_identities, auth_session_families,
+   auth_refresh_credentials, auth_revocations, account_login_history
 2  characters
 3  character_currencies
 4  character_inventories
 5  item_instances / item_locations
 6  character_beasts, character_beast_food_daily, beast_equipment_locations
 7  character_souls, character_soul_resonance
-8  account_iap_entitlements, account_refund_consumed_events
+8  account_iap_entitlements, account_refund_consumed_events, iap_notification_dedup, iap_provider_cursors
 9  account_cosmetic_entitlements, account_entitlement_claims,
    character_cosmetic_entitlements, character_cosmetic_equips
 10 friends, friend_requests, blocks
-11 guilds, guild_memberships, guild_invites, guild_applications, guild_stone_category_completions
+11 guilds, guild_memberships, guild_member_contributions, guild_invites, guild_applications,
+   guild_stone_category_completions
 12 guild_progression, guild_ritual_cycles, guild_blessing_votes
-13 guild storage rows + guild storage claims
+13 guild storage rows (item_locations GUILD_STORAGE) + guild_storage_claims, guild_storage_audit
 14 trade_settlement_records
 15 auction_listings, auction_proceeds
 16 pvp_ratings, pvp_match_settlements, pvp_sanctions,
    guild_war_ratings, guild_war_settlements
-17 reward_claims, boss_chest_eligibility
+17 reward_claims, reward_claim_lines, reward_claim_contributions, boss_chest_eligibility
 18 world_consequence_relics, region_di_tich_markers, public_boss_schedules
 19 character_feats, character_feat_milestones, character_atlas
 20 economy daily rollups
 ```
 Direct trade has no session row; its settlement locks the two characters' rows in priorities 2..5 (UUID order), then inserts priority 14 and 20 rows.
+Within one priority, tables are locked in the order listed on that line; exceptions: priority 18 locks `region_di_tich_markers` before `world_consequence_relics` (`data_model.md` § Boss Aftermath Relic), and `public_boss_schedules` is only written in single-row transactions. The account-erasure transaction (`data_model.md` § Account Erasure) locks the account (1) first, then its characters (2) in UUID order, then follows the table order above with FK checks deferred to commit.
 `operations` rows are inserted last in the same transaction.
 
 An owning feature may define a stricter deterministic order.
 
 ## Idempotency
-Retriable value mutations persist operation_id, operation_family, owner/scope, request fingerprint or invariant-relevant request fields, state, committed outcome reference/result, created_at and completed_at.
+Retriable value mutations persist one `operations` row keyed `(operation_family, owner_id, operation_id)` with request fingerprint, committed outcome reference, created_at and completed_at (schema: `data_model.md` § operations, ADR-0065).
 
 Retry after commit-before-response returns/reconstructs the prior result.
 

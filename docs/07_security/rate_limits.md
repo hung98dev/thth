@@ -46,15 +46,25 @@ sustained   = 20 messages / 60s
 Channel-specific stricter limits are allowed.
 
 ## Authentication
-Authentication endpoints have stricter account/IP/network limits and progressive backoff.
+Authentication endpoints (`auth.md` § HTTPS Endpoints) use the L2 limiter (`external_integrations.md` § 3, ADR-0064): key = action + scope (`ACCOUNT` | `USERNAME` | `IP`), approximate sliding window. Launch defaults (runtime security config may tighten, never loosen without security review):
+```text
+action                     scope      limit / window
+auth.federated.login       IP         30 / 60 s
+auth.password.login        IP         20 / 60 s
+auth.password.login        USERNAME   10 / 60 s   + progressive backoff (below)
+auth.password.register     IP         5 / 3600 s  (only path revealing USERNAME_TAKEN / EMAIL_TAKEN: the enumeration control)
+auth.refresh               ACCOUNT    30 / 60 s
+auth.password.change       ACCOUNT    5 / 3600 s
+auth.link_unlink           ACCOUNT    10 / 3600 s
+gameplay.ticket            ACCOUNT    20 / 60 s
+iap_verify                 ACCOUNT    10 / 60 s ; IP 30 / 60 s
+```
+Progressive backoff (`auth_failure_backoff`, per `USERNAME` and per `IP`): from the 5th consecutive failed password login, `locked_until = now + min(30 s x 2^(failures - 5), 900 s)`; a success clears the USERNAME row. A locked request returns `RATE_LIMITED` with `retry_after_ms` without checking the password.
 
-Exact provider-sensitive values are runtime security configuration so they can react to attack patterns without a game client patch.
+Login error shape must not enable account enumeration: unknown username, wrong password and locked username return the same shape and similar latency.
 
-Login error shape must not enable account enumeration.
-
-Password provider (ADR-0051) classes, values in runtime security config:
-- `auth.password.login`: per IP and per `username_key`, progressive backoff after consecutive failures,
-- `auth.password.register`: per IP; registration is the only path that reveals `USERNAME_TAKEN` / `EMAIL_TAKEN`, so this limit is the enumeration control.
+## Protocol Reject Budget
+Per WSS connection: more than 20 non-closing protocol rejections (`MESSAGE_UNKNOWN`, `STALE_INPUT`, `MESSAGE_NOT_ALLOWED_IN_STATE`, `PROTOCOL_MALFORMED`) in any 10 s window closes the connection with `PROTOCOL_VIOLATION` (`../05_network/protocol.md` § Envelope Validation). Rate-limit rejections count toward their own buckets, not this budget.
 
 ## Per-Operation Sub-limits
 The `durable mutations` bucket (sustained 10/s, burst 20) sets the aggregate ceiling. The following operations carry **stricter per-character sub-limits** that bind before the aggregate bucket:

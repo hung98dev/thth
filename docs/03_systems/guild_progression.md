@@ -48,13 +48,13 @@ No ordinary kill/login/character EXP/trade/craft grant. Guild War owns its cappe
 source                          eligibility (per guild)                                                       idempotency key
 party dungeon completion        >= 3 credited party members are current members of that guild                 guild_id + dungeon_instance_id
 configured public/world boss    >= 3 credited participants of the kill are current members of that guild      guild_id + public_boss_spawn_generation_id (PUBLIC) / encounter_instance_id (INSTANCED)
-configured world event          >= 3 credited participants of the completion are current members of the guild guild_id + chain identity spirit_surge.<utc_hour_start>.<map_id>.<channel_id>.<chain_seq>
+configured world event          >= 3 credited participants of the completion are current members of the guild guild_id + chain_id (UUID v4, ../07_content/world_event_catalog.md)
 explicit guild activity         GUILD_ACTIVITY = Guild Bonfire Gathering (below); max 1 per guild per UTC day guild_id + utc_date
 weekly Ritual completion        vessels all full (below)                                                       guild_id + cycle_id
 ```
 "Configured" = every boss in `../07_content/boss_catalog.md` and every Spirit Surge chain in `../07_content/world_event_catalog.md` (launch roster). A member counts only if the membership existed when the event committed. One event grants once per guild even if several guilds qualify (each guild gets its own grant).
 
-**Guild Bonfire Gathering** (the only launch `GUILD_ACTIVITY`): `>= 5` current members of one guild complete the same 300s `BONFIRE_REST` interval (`../02_world/world_rules.md`) at the same bonfire in the same map instance. The first qualifying interval of the UTC day grants; later ones that day grant nothing.
+**Guild Bonfire Gathering** (the only launch `GUILD_ACTIVITY`): gathering slots are aligned UTC windows `slot = floor(unix_seconds / 300)`. A slot qualifies when `>= 5` current members of one guild have `BONFIRE_REST` active (`../02_world/world_rules.md`) at the same bonfire in the same map instance for the whole slot (from slot start to slot end, no interruption); the grant commits at slot end. The first qualifying slot of the UTC day grants; later ones that day grant nothing (ADR-0062).
 
 Member contribution from an event is granted to each credited current member.
 

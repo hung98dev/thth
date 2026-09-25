@@ -122,6 +122,8 @@ Binding is validated before entering the destination context. A stricter source-
 ## Trade Lock
 An item offered in an `OPEN`/`LOCKED` direct-trade session stays in `CHARACTER_INVENTORY` and is trade-locked: it cannot be moved, used, equipped, discarded, listed, stored or offered in another session. `COMMITTING` transfers it owner A -> owner B in the settlement transaction. Any other end of the session (cancel, timeout, disconnect, server restart) only releases the lock; no item moves (`trading_auction.md`).
 
+Partial stacks (ADR-0062): offering quantity `q` of a stack of `n` locks exactly `q` (`locked_quantity`); the free remainder `n - q` may be used, sold, discarded or split off into a new stack, but no operation may reduce the stack below `q`, MERGE another stack into it, or move/equip/list/store the locked stack itself (`INVALID_STATE`). At `COMMITTING` the locked `q` transfers (a split if `q < n`). A map transfer, respawn, instance entry or death of either participant cancels the session (release only).
+
 ## Definition Defaults
 ```text
 discard_allowed = true, except QUEST items and CHARACTER_BOUND progression items (item.book.*) = false

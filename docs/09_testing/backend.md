@@ -162,8 +162,8 @@ Test IAP entitlement persistence, delivery, and refund lifecycle:
 ## WorldConsequence Partition-Start Tests
 Test the WorldConsequence aggregate load path:
 - normal start: partition loads WorldConsequence aggregate before accepting its first player; player acceptance is blocked until load completes,
-- load timeout: if WorldConsequence load exceeds the configured timeout, the partition fails closed and emits an observable error — it does not accept players against unloaded state,
-- aggregate absent/zeroed: a missing or zeroed WorldConsequence aggregate is treated as a hard failure, not a degraded-mode start,
+- load timeout: if WorldConsequence load exceeds `WORLD_CONSEQUENCE_LOAD_TIMEOUT = 5 s` (`../06_data/data_model.md`), the partition fails closed and emits an observable error — it does not accept players against unloaded state,
+- aggregate validity: an unreadable table or a row with unknown content IDs is a hard failure; zero rows (fresh database) starts normally; expired relics and stale `relic_active_in_region` markers are repaired by the load, not fatal,
 - load after PITR restore: partition started against the restored database loads the restored aggregate correctly and does not use a stale in-memory version from a prior process,
 - concurrent partition starts for the same world must not race to overwrite the aggregate; ownership semantics must be deterministic.
 

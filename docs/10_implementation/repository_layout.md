@@ -109,6 +109,7 @@ client/
 │   ├── csc.rsp                        # IMP-000 -warnaserror+ -nullable:enable (ADR-0059)
 │   ├── Scenes/
 │   │   ├── Bootstrap/                 # IMP-067
+│   │   ├── Collision/                 # IMP-062 collision-only authoring scenes (ServerGeometry)
 │   │   ├── Review/                    # IMP-070 Visual Review scenes
 │   │   ├── Perf/                      # IMP-095 hotspot scene
 │   │   ├── World/                     # IMP-072, 24 normal-world scenes
@@ -117,11 +118,11 @@ client/
 │   ├── Settings/Performance/          # IMP-095 shader warm-up collection, OverdrawCount test material
 │   ├── Scripts/
 │   │   ├── App/                       # IMP-067 composition root (asmdef IMP-000)
-│   │   ├── Core/                      # asmdef IMP-000; Assets IMP-063 (Editor/AssetProduction IMP-070/076), Localization IMP-064,
-│   │   │                              # Rendering IMP-101, Geometry IMP-062, Session + Runtime IMP-065, Input IMP-066,
+│   │   ├── Core/                      # all asmdefs IMP-000; Assets IMP-063 (Editor/AssetProduction IMP-070/076), Localization IMP-064,
+│   │   │                              # Rendering IMP-101, Geometry (+ Editor exporter) IMP-062, Session + Runtime IMP-065, Input IMP-066,
 │   │   │                              # Performance IMP-095, PerformanceDevice IMP-096
 │   │   ├── Net/                       # IMP-065 (asmdef IMP-000)
-│   │   ├── Protocol/                  # IMP-061 generated C#; never hand-edit
+│   │   ├── Protocol/                  # IMP-061 generated C# (asmdef IMP-000); never hand-edit
 │   │   ├── Systems/<Feature>/         # feature packets (asmdef IMP-000); Replication IMP-065, Camera IMP-066
 │   │   └── UI/<Feature>/              # feature packets (asmdef IMP-000)
 │   └── Tests/
@@ -131,24 +132,40 @@ client/
 └── ProjectSettings/                   # IMP-000; QualitySettings.asset IMP-095
 ```
 
-Mandatory assemblies:
+## Mandatory Assemblies
+
+All 13 `.asmdef` files are authored by IMP-000 with exactly these references (name references, `autoReferenced: false`, `overrideReferences: true` where precompiled DLLs are listed); no later packet edits an asmdef (ADR-0068). An assembly whose folder has no script yet is valid by name. Folder paths are under `client/Assets/`.
+
+| Assembly | Folder | Platforms / constraints | References |
+|---|---|---|---|
+| `ThinhThan.Protocol` | `Scripts/Protocol/` | any | precompiled `Google.Protobuf.dll` only |
+| `ThinhThan.Core` | `Scripts/Core/` | any | `Unity.InputSystem`, `Unity.RenderPipelines.Core.Runtime`, `Unity.RenderPipelines.Universal.Runtime` |
+| `ThinhThan.Core.Assets` | `Scripts/Core/Assets/` | any | `ThinhThan.Core`, `Unity.Addressables`, `Unity.ResourceManager` |
+| `ThinhThan.Core.Assets.Editor` | `Scripts/Core/Assets/Editor/` | Editor | `ThinhThan.Core`, `ThinhThan.Core.Assets`, `Unity.Addressables`, `Unity.Addressables.Editor`, `Unity.ResourceManager` |
+| `ThinhThan.Core.Localization` | `Scripts/Core/Localization/` | any | `ThinhThan.Core`, `Unity.Localization`, `Unity.Addressables`, `Unity.ResourceManager` |
+| `ThinhThan.Core.Localization.Editor` | `Scripts/Core/Localization/Editor/` | Editor | `ThinhThan.Core`, `ThinhThan.Core.Localization`, `Unity.Localization`, `Unity.Localization.Editor` |
+| `ThinhThan.Core.Geometry.Editor` | `Scripts/Core/Geometry/Editor/` | Editor | `ThinhThan.Core` |
+| `ThinhThan.Net` | `Scripts/Net/` | any | `ThinhThan.Core`, `ThinhThan.Protocol`; precompiled `Google.Protobuf.dll` |
+| `ThinhThan.Systems` | `Scripts/Systems/` | any | `ThinhThan.Core`, `ThinhThan.Core.Assets`, `ThinhThan.Core.Localization`, `ThinhThan.Net`, `ThinhThan.Protocol`, `Unity.InputSystem`, `Unity.RenderPipelines.Core.Runtime`, `Unity.RenderPipelines.Universal.Runtime`, `Unity.2D.Animation.Runtime`; precompiled `Google.Protobuf.dll` |
+| `ThinhThan.UI` | `Scripts/UI/` | any | `ThinhThan.Core`, `ThinhThan.Core.Assets`, `ThinhThan.Core.Localization`, `ThinhThan.Net`, `ThinhThan.Protocol`, `ThinhThan.Systems`, `Unity.InputSystem`, `UnityEngine.UI`, `Unity.TextMeshPro`; precompiled `Google.Protobuf.dll` |
+| `ThinhThan.App` | `Scripts/App/` | any | every non-Editor `ThinhThan.*` assembly above, `Unity.InputSystem`, `Unity.RenderPipelines.Universal.Runtime`, `Unity.Addressables`, `Unity.ResourceManager`, `Unity.Localization`; precompiled `Google.Protobuf.dll` |
+| `ThinhThan.Tests.EditMode` | `Tests/EditMode/` | Editor; define constraint `UNITY_INCLUDE_TESTS` | every `ThinhThan.*` assembly except `ThinhThan.App` and `ThinhThan.Tests.PlayMode`, every Unity package assembly listed above, `UnityEngine.TestRunner`, `UnityEditor.TestRunner`, `Unity.PerformanceTesting`; precompiled `nunit.framework.dll`, `Google.Protobuf.dll` |
+| `ThinhThan.Tests.PlayMode` | `Tests/PlayMode/` | any; define constraint `UNITY_INCLUDE_TESTS` | every non-Editor `ThinhThan.*` assembly including `ThinhThan.App`, every non-Editor Unity package assembly listed above, `UnityEngine.TestRunner`, `Unity.PerformanceTesting`; precompiled `nunit.framework.dll`, `Google.Protobuf.dll` |
+
+`ThinhThan.Protocol` contains generated protobuf code only and references no project assembly; `scripts/codegen.ps1` never touches its asmdef. `ThinhThan.App` is the composition root; only `ThinhThan.Tests.PlayMode` references it. Assembly references are acyclic.
+
+## ProjectSettings Baseline
+
+IMP-000 pre-declares every `client/ProjectSettings/` entry a later packet needs (ADR-0068). A referenced asset's GUID is the first 32 lowercase hex characters of SHA-256 over its repository-relative path (UTF-8, `/` separators); the owning packet creates the asset with that GUID in its `.meta`. Only `QualitySettings.asset` (IMP-095) is edited later.
 
 ```text
-ThinhThan.Protocol
-ThinhThan.Core
-ThinhThan.Core.Assets
-ThinhThan.Core.Assets.Editor
-ThinhThan.Core.Localization
-ThinhThan.Core.Localization.Editor
-ThinhThan.Net
-ThinhThan.Systems
-ThinhThan.UI
-ThinhThan.App
-ThinhThan.Tests.EditMode
-ThinhThan.Tests.PlayMode
+EditorBuildSettings.asset  m_configObjects com.unity.addressableassets     -> client/Assets/AddressableAssetsData/AddressableAssetSettings.asset (IMP-063)
+                           m_configObjects com.unity.localization.settings -> client/Assets/Localization/Settings/LocalizationSettings.asset (IMP-064)
+GraphicsSettings.asset     m_CustomRenderPipeline                          -> client/Assets/Settings/Rendering/ThinhThanURP.asset (IMP-101)
+TagManager.asset           tags: ServerGeometry (IMP-062 collision scenes)
+ProjectSettings.asset      incremental GC on; Android Optimized Frame Pacing on (client_performance.md § Smoothness by Construction)
+Physics2DSettings.asset    simulationMode = Script
 ```
-
-`ThinhThan.Protocol` contains generated protobuf code only and has no dependency on another project assembly. `ThinhThan.App` is the composition root; no assembly references it. Assembly references must remain acyclic.
 
 ## Protobuf Contract
 
@@ -244,6 +261,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Notices/THIRD_PARTY_ASSETS.txt` | IMP-076 |
 | `client/Assets/Plugins/Google.Protobuf/` | IMP-000 |
 | `client/Assets/Scenes/Bootstrap/` | IMP-067 |
+| `client/Assets/Scenes/Collision/` | IMP-062 |
 | `client/Assets/Scenes/Competitive/` | IMP-105 |
 | `client/Assets/Scenes/Dungeons/` | IMP-105 |
 | `client/Assets/Scenes/Finale/` | IMP-105 |
@@ -255,9 +273,14 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Scripts/Core/Assets/` | IMP-063 |
 | `client/Assets/Scripts/Core/Assets/Editor/AssetProduction/` | IMP-070 |
 | `client/Assets/Scripts/Core/Assets/Editor/AssetProduction/ReleaseAssetAudit.cs` | IMP-076 |
+| `client/Assets/Scripts/Core/Assets/Editor/ThinhThan.Core.Assets.Editor.asmdef` | IMP-000 |
+| `client/Assets/Scripts/Core/Assets/ThinhThan.Core.Assets.asmdef` | IMP-000 |
 | `client/Assets/Scripts/Core/Geometry/` | IMP-062 |
+| `client/Assets/Scripts/Core/Geometry/Editor/ThinhThan.Core.Geometry.Editor.asmdef` | IMP-000 |
 | `client/Assets/Scripts/Core/Input/` | IMP-066 |
 | `client/Assets/Scripts/Core/Localization/` | IMP-064 |
+| `client/Assets/Scripts/Core/Localization/Editor/ThinhThan.Core.Localization.Editor.asmdef` | IMP-000 |
+| `client/Assets/Scripts/Core/Localization/ThinhThan.Core.Localization.asmdef` | IMP-000 |
 | `client/Assets/Scripts/Core/Performance/` | IMP-095 |
 | `client/Assets/Scripts/Core/PerformanceDevice/` | IMP-096 |
 | `client/Assets/Scripts/Core/Rendering/` | IMP-101 |
@@ -267,6 +290,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Scripts/Net/` | IMP-065 |
 | `client/Assets/Scripts/Net/ThinhThan.Net.asmdef` | IMP-000 |
 | `client/Assets/Scripts/Protocol/` | IMP-061 |
+| `client/Assets/Scripts/Protocol/ThinhThan.Protocol.asmdef` | IMP-000 |
 | `client/Assets/Scripts/Systems/Atlas/` | IMP-060 |
 | `client/Assets/Scripts/Systems/Auction/` | IMP-030 |
 | `client/Assets/Scripts/Systems/Beasts/` | IMP-057 |
@@ -530,6 +554,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `server/internal/edge/router/` | IMP-006 |
 | `server/internal/edge/security/` | IMP-045 |
 | `server/internal/edge/session/` | IMP-006 |
+| `server/internal/global/bosses/` | IMP-022 |
 | `server/internal/global/guild/` | IMP-036 |
 | `server/internal/global/matchmaking/arena/` | IMP-041 |
 | `server/internal/global/matchmaking/duel/` | IMP-040 |
@@ -585,6 +610,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `server/internal/sim/spatial/parity/` | IMP-062 |
 | `server/internal/sim/spawning/` | IMP-019 |
 | `server/internal/sim/trade/` | IMP-029 |
+| `server/internal/sim/travel/` | IMP-020 |
 | `server/internal/sim/world/` | IMP-018 |
 | `server/internal/sim/world/surge/` | IMP-025 |
 | `server/internal/stackpin/` | IMP-000 |

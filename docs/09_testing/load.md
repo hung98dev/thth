@@ -14,7 +14,8 @@ Benchmark serialization, content lookup, collision/hit resolution, PostgreSQL tr
 Exercise one simulation partition (one map channel) at:
 - normal load,
 - 17-player pre-threshold,
-- 18-player hard cap (soft threshold and hard cap are now equal),
+- 18-player admission cap (soft threshold and hard cap are equal),
+- 22-player forced-placement cap (`../02_world/world_rules.md` § Forced Placement),
 - public-boss/event density.
 
 
@@ -43,15 +44,15 @@ Exact percentages are test-scenario config and are recorded with results.
 7. reconnect storm,
 8. PostgreSQL latency degradation,
 9. daily/weekly scheduler boundary,
-10. maintenance restart under load (ADR-0052): pass = zero lost or duplicated committed durable operations and >= 99% of drained clients reconnected within 5 minutes after the new process reports ready,
-11. **canonical hotspot benchmark**: 42 `AI_CLASS_NAMED_MECHANIC` monsters plus **18 players** in sustained combat in one channel; pass criterion: p95 tick runtime < 35ms. A run with 42 passive-class monsters must not substitute for this scenario — the mechanic class specifically exercises AI budget; the test must record entity class distribution in results,
-12. **Spirit Surge worst-case**: 3 concurrent Spirit Surge regions each on a fully populated (18-player) map channel; pass criterion: p95 tick < 35ms across all three affected partitions simultaneously; records per-partition tick distribution,
-13. **AOI bandwidth measurement**: per-client bytes/sec with `MAX_ENTITIES_IN_AOI_PER_CLIENT = 40` saturated (all 40 slots occupied with moving, attacking entities); records p50/p95/p99 server-to-client bytes/sec per connection; result is required input for re-validating the `server -> client p95 <= 25 KiB/s` budget before the 10k gate (see `../08_scale_ops/capacity.md`).
+10. maintenance restart under load (ADR-0052, `../08_scale_ops/deployment.md` § Drain and Shutdown): pass = the shutdown sequence completes within `DRAIN_LEAD` + `SHUTDOWN_FLUSH_MAX`, the durable queue is empty at exit (`durable_queue_depth = 0` logged), zero lost or duplicated committed durable operations, no process kill by the systemd stop timeout, and >= 99% of drained clients reconnected within 5 minutes after the new process reports ready,
+11. **canonical hotspot benchmark**: 42 `AI_CLASS_NAMED_MECHANIC` monsters plus **22 players** (forced-placement cap, ADR-0066) in sustained combat in one channel; pass criterion: p95 tick runtime < 35ms. A run with 42 passive-class monsters must not substitute for this scenario — the mechanic class specifically exercises AI budget; the test must record entity class distribution in results,
+12. **Spirit Surge worst-case**: 3 concurrent Spirit Surge regions each on a map channel at the forced-placement cap (22 players); pass criterion: p95 tick < 35ms across all three affected partitions simultaneously; records per-partition tick distribution,
+13. **AOI bandwidth measurement**: per-client bytes/sec with `MAX_ENTITIES_IN_AOI_PER_CLIENT = 40` saturated (all 40 slots occupied with moving, attacking entities); records p50/p95/p99 server-to-client bytes/sec per connection; its measured p95 + 20% becomes the `server -> client` gate value before the 10k gate (`../08_scale_ops/capacity.md` § Bandwidth Budget).
 14. **login queue**: offered load above `WORLD_CCU_CAP`; pass = no connected session is dropped for capacity, queued logins are admitted in FIFO order, and `SERVER_OVERLOADED.retry_after_ms` is honoured,
 15. **map fill**: 540 players across the 30 channels of one map, then a 541st entry attempt; pass = entry rejected with `MAP_CAPACITY_FULL`, no channel exceeds 18,
 16. **settlement burst**: 1,000 auction purchases and 1,000 Reward Claims within 60 s; pass = no duplicate/lost settlement, p95 commit < 150 ms,
 17. **partition capacity measurement**: raise co-hosted partitions until p95 tick >= 35 ms; record `MAX_PARTITIONS_PER_PROCESS` with `measured_at` (`../08_scale_ops/capacity.md`),
-18. **entity cap with transients**: hotspot channel filled to exactly 80 entities including projectiles/transient entities (ADR-0039); pass = p95 tick < 35 ms and the 81st spawn rejected.
+18. **entity cap with transients**: hotspot channel with 22 players and 58 non-player entities (42 monsters + 16 projectiles/transients) = exactly 80 (ADR-0039, ADR-0066); pass = p95 tick < 35 ms, the next non-player spawn rejected, and a forced player placement into a channel below 22 players still admitted.
 
 ## Pass Thresholds
 At supported peak:
@@ -68,7 +69,7 @@ authority duplication = zero
 value duplication = zero
 ```
 
-Release capacity also requires planned 30% headroom or demonstrated horizontal scaling capacity beyond expected peak.
+Release capacity also requires 30% planned headroom on the single world host beyond expected peak (no scale-out, ADR-0052).
 
 ## PostgreSQL Capture
 Record:
@@ -131,8 +132,8 @@ Performance claims without this context are not release evidence.
 ## Invariants
 - 10k test means active gameplay-equivalent workload, not 10k idle sockets.
 - Correctness is a load-test pass condition.
-- 18-player channel hotspot is explicitly tested.
-- Canonical hotspot benchmark (42 named-mechanic monsters + 18 players) is a mandatory scenario.
+- 18-player admission cap and 22-player forced-placement cap are explicitly tested.
+- Canonical hotspot benchmark (42 named-mechanic monsters + 22 players) is a mandatory scenario.
 - Spirit Surge 3-region worst-case is a mandatory scenario.
 - AOI bandwidth measurement scenario must run before the 10k gate; its result gates the server->client budget figure.
 - Soak verifies memory/goroutine/DB stability.

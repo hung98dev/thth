@@ -45,7 +45,7 @@ status: LOCKED
 ## Engineering
 - Shared gameplay rules between PC and mobile where possible; platform UI/input may differ.
 - Persistent state must survive reconnects and server restarts.
-- Architecture must support horizontal scaling where required.
+- One world runs as one `thinhthan-server` process on one host with one PostgreSQL database (ADR-0052); capacity grows by performance work or a larger host, never by extra processes or worlds.
 - Static content uses immutable stable IDs and versioned atomic activation under `../06_data/config.md`.
 - Server-side operations affecting ownership/value must be idempotent where retries are possible.
 - Exact launch engine/toolchain/database/core-library versions are owned by `technology_versions.md`; implementation must not float or auto-select versions.

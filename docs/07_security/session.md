@@ -58,7 +58,7 @@ Account-level parallel gameplay sessions are **not** allowed, even if they would
 Character switch: send `C2S_CHARACTER_DETACH` (10) or return to character select on the current session, then attach another owned character. The previous character is `OFFLINE` before the next attach commits. Success is `S2C_CHARACTER_DETACH_OK` (11).
 
 ## Resume
-Resume credential is bound to the session lineage and, when attached, character identity.
+Resume credential is bound to the session lineage and, when attached, character identity. It is issued in every `S2C_HELLO_OK`, presented only in `C2S_HELLO` (`../05_network/protocol.md` § Handshake) and single-use: each successful HELLO rotates it. A resume inside the character's reconnect grace re-attaches that character without `C2S_CHARACTER_ATTACH` and bypasses the login queue.
 
 Resume cannot:
 - attach a different account,
@@ -77,7 +77,7 @@ A bound gameplay connection may be allowed to continue until its session/securit
 Do not allow an expired refresh credential to create a new gameplay session.
 
 ## Logout
-Explicit logout:
+Explicit logout (`POST /api/v1/auth/logout`, `auth.md` § HTTPS Endpoints):
 - revokes the intended session/refresh family,
 - invalidates gameplay/resume tickets for that family,
 - closes or deauthorizes the live gameplay connection,

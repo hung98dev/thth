@@ -3,7 +3,7 @@ status: LOCKED
 
 ## Scope
 
-Owner Setup, bootstrap mode, integration barriers and protected paths (ADR-0045, ADR-0050, ADR-0057, ADR-0058, ADR-0059). Foundation tasks build the verifier and its fixtures; tasks that depend on `IMP-068` start only after `IMP-068` is `DONE`.
+Owner Setup, bootstrap mode, gate activation, integration barriers and protected paths (ADR-0045, ADR-0050, ADR-0057, ADR-0058, ADR-0059, ADR-0068). Foundation tasks build the verifier and its fixtures; tasks that depend on `IMP-068` start only after `IMP-068` is `DONE`.
 
 Passing local `go test` is not Gate D and is not task evidence.
 
@@ -32,6 +32,10 @@ secrets/vars       UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD (or UNITY_SERIAL),
                    GUARD_APP_ID + GUARD_APP_KEY (merge-guard App, via actions/create-github-app-token),
                    variable AUTO_MERGE_FROZEN=false
 agent tokens       fine-grained, contents + pull requests write only; no administration scope
+backup storage     one S3-compatible bucket (endpoint, region, bucket) for the pgBackRest 2.59.1 repo1 and the
+                   `erasure-ledger/` prefix; credentials go only into the production host environment (`BACKUP_STORAGE_URL`, `BACKUP_STORAGE_CREDENTIALS_FILE`,
+                   `PGBACKREST_REPO1_*`, ../07_security/external_integrations.md), never into GitHub secrets;
+                   required before IMP-047 (ADR-0066)
 ```
 
 `IMP-068` only reads and evidences this setup (`gh api repos/{o}/{r}`, `.../rulesets/{id}`, App installation JSON committed to `evidence/IMP-068/`). Agents never change repository settings.
@@ -40,9 +44,13 @@ agent tokens       fine-grained, contents + pull requests write only; no adminis
 
 - `IMP-000` is the first pull request; no other PR merges before it.
 - Both required jobs (`Q0-Q6 verify (Linux)`, `Q0-Q6 verify (Windows)`) run the verifier from the PR head; the gate ratchet is treated as empty.
-- A Q gate becomes required when its owner task is `DONE` on `main`: Q0/Q1/Q3-Go/Q4/Q6 after `IMP-000` (including C# style, `csc.rsp`, `gofmt`/`go vet`/`staticcheck`); Q2 after `IMP-061` (including the generated C# header); the Q4 client API fence and canonical-implementation checks after `IMP-083`; each Go allocation budget after its owning packet; Q5 after `IMP-005`, `IMP-003`, `IMP-004`; Unity EditMode after `IMP-000`; Unity PlayMode after `IMP-065`; client performance after its owning task. Before that the gate reports `SKIP(bootstrap)`, which is not a failure.
+- Gate activation (§ Gate Activation) applies unchanged before and after `IMP-068`.
 - A task may run before `IMP-068` iff `IMP-068` is not in its transitive `depends_on`.
-- Two-phase gate tasks (`IMP-000`, `IMP-061`, `IMP-003`, `IMP-004`, `IMP-005`, `IMP-065`, `IMP-068`): the implementation PR merges with the task `IN_PROGRESS`; a follow-up status PR sets `DONE` citing the post-merge `main` run.
+- Two-phase gate tasks (`IMP-000`, `IMP-061`, `IMP-003`, `IMP-004`, `IMP-005`, `IMP-065`, `IMP-068`): the implementation PR merges with the task `IN_PROGRESS`; a follow-up status PR sets `DONE` and commits the `evidence` artifact of its own `verify.yml` run; this is valid because `source_tree_hash` excludes `task_queue.md` and `evidence/**`, so the status PR's hash equals the merged implementation tree (ADR-0068). The post-merge guard never produces task evidence.
+
+## Gate Activation
+
+A Q gate or sub-gate is required iff its owner task is `DONE` on `main` or set to `DONE` in the PR head (ADR-0068): Q0/Q1/Q3-Go/Q4/Q6 after `IMP-000` (including C# style, `csc.rsp`, `gofmt`/`go vet`/`staticcheck`); Q2 after `IMP-061` (including the generated C# header); the Q4 client API fence and canonical-implementation checks after `IMP-083`; each Go allocation budget after its owning packet; Q5 after `IMP-005`, `IMP-003`, `IMP-004`; Unity EditMode after `IMP-000`; Unity PlayMode after `IMP-065`; client performance after its owning task. Otherwise it reports `SKIP(owner-not-done)` naming the gate and its owner task, which is not a failure.
 
 ## Gate A — Contract Coherence
 
@@ -72,7 +80,7 @@ Met only when:
 
 ## Gate C — Executable Conformance
 
-Every required Q gate executes; `SKIP(bootstrap)` is allowed only under Bootstrap Mode. Otherwise a tool missing in either CI job is an `OPS-xxx` failure, never a silent skip.
+Every required Q gate executes; `SKIP(owner-not-done)` is allowed only for a gate whose owner task is not `DONE` (§ Gate Activation), and `SKIP(status-only)` only on the Q0-only fast path (§ Protected Paths). Otherwise a tool missing in either CI job is an `OPS-xxx` failure, never a silent skip.
 
 - Q1 toolchain/dependency/action pins;
 - Q2 protobuf Go/C# regenerated into a temp directory and byte-compared, including the generated C# header (`CODE-004`);
@@ -110,29 +118,29 @@ docs/** outside docs/10_implementation/        (specs, ADRs, templates — spec-
 docs/10_implementation/*.md                    (control files)
 ```
 
-Implementer PRs may change control content only as follows: their own packet `status`/`claimed_by`/`branch`/`claimed_at`/`blocked_by` fields and summary-row status cell; appending `known_blockers.md` entries; adding `evidence/<own ID>/`. Q0 rejects any other control-file change unless the PR author role is `spec-owner` or `coordinator` (claims only).
+Implementer PRs may change control content only as follows: their own packet `status`/`claimed_by`/`branch`/`claimed_at`/`blocked_by` fields and summary-row status cell; appending `known_blockers.md` entries; adding `evidence/<own ID>/`. Q0 rejects any other control-file change unless the PR author role is `spec-owner` or `coordinator` (claims only). The role is derived from the branch prefix: `spec/` spec-owner, `claim/` coordinator, `imp/` implementer, `revert/` merge-guard; any other prefix fails Q0 (ADR-0068). A status-only claim/unclaim PR (only claim fields and summary-row status; no `DONE`, no evidence) takes the Q0-only fast path, other gates reporting `SKIP(status-only)`; a PR that sets `DONE` runs every gate.
 
 ## Q0-Q6 Contract
 
 | Gate | Owner | Mandatory result |
 |---|---|---|
-| Q0 Task/spec integrity | IMP-000, IMP-068 | DAG, links, states, transitions, claim fields, control-file diff rules, requirement-ID coverage, evidence schema |
+| Q0 Task/spec integrity | IMP-000, IMP-083, IMP-068 | DAG, links, states, transitions, claim fields, control-file diff rules, requirement-ID coverage, evidence schema |
 | Q1 Version reproducibility | IMP-000 | exact native pins; no floating/unlisted dependency |
 | Q2 Code generation drift | IMP-061 | pinned protoc generators; byte-identical Go/C# output |
 | Q3 Test suites | subsystem task, IMP-068 | Go/race, Go allocation budgets, Unity compile (warnings as errors), EditMode/PlayMode, client performance, deterministic fixtures |
 | Q4 Architecture conformance | IMP-000, IMP-083, IMP-068 | import fences, one production main, generated boundaries, schema prohibitions, C# style, Go vet/staticcheck, client API fence, canonical implementations |
 | Q5 Data/content integrity | IMP-003, IMP-004, IMP-005, IMP-068 | migration rehearsal, schema drift, content compile/activation |
-| Q6 Evidence/cleanliness | IMP-068 | clean generated state, evidence identity per ADR-0057 |
+| Q6 Evidence/cleanliness | IMP-000, IMP-068 | clean generated state, evidence identity per ADR-0057 |
 
 ## Foundation Exit
 
-`IMP-068` may become `DONE` only when Gates A-D and Q0-Q6 pass. If a later change breaks a gate, the post-merge guard reverts it.
+`IMP-068` may become `DONE` only when Gates A-D pass and every Q gate whose owner task is `DONE` runs without skip. If a later change breaks a gate, the post-merge guard reverts it.
 
 ## Invariants
 
 ```text
 open BLK => Gate A fails;  open OPS => Gate D fails
-bootstrap SKIP only before the gate's owner task is DONE
+SKIP(owner-not-done) only while the gate's owner task is not DONE on main or in the PR head
 local green run != Gate D
 PR judged by the verifier built from main (after IMP-068)
 policy-review = App status on every PR, re-posted per push

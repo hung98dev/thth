@@ -1,6 +1,8 @@
 # ADR-0061: World Lifecycle and Content Reconciliation
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0062)**: ELITE band is now `35..60s` and NORMAL `10..14s` (supply sized at 22 players); Surge chain identity is a UUID v4 `chain_id` (no `chain_seq`); forced placement waits via `S2C_PLACEMENT_PENDING`, not the login queue; INSTANCED relics spawn only when no relic with the same `relic_id` is active.
+
 ## Context
 World review found contracts an implementer could not resolve deterministically: an ELITE `max_alive` of 3 contradicting ADR-0035 and the catalog's own validation, Di Tích relics and Gilded Chests undefined for INSTANCED bosses, no PUBLIC boss generation lifecycle, no outcome for server-initiated transfers into a full map, no finale lifecycle, a daily board without seed/weights/targets, unnamed dungeon trash, Season-0 variants spawning all year, mixed object ID patterns, a Thursday weekly boundary, conflicting level gates, a false NORMAL EXP floor, decorative NPCs acting as quest givers, mismatched boss phase data and no Spirit Surge chain idempotency.
 

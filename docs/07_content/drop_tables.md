@@ -422,6 +422,7 @@ Every independent inventory/currency reward slot settles under `reward_claims.md
 - capped currency slot -> direct credit or compatible aggregate currency-overflow claim,
 - failure of one independent slot never rolls back or blocks already committed sibling slots,
 - a committed random result is never rerolled on claim/retry.
+- a character at the `500` claim hard ceiling skips its item/Soul/equipment slot rolls (not earned, not deleted; `reward_claims.md` § Capacity / Abuse); EXP and currency slots still settle.
 
 Character EXP and Soul EXP side grants are not inventory slots and never enter Reward Claims.
 

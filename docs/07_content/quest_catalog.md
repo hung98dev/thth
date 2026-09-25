@@ -75,11 +75,11 @@ All MAIN reward equipment/material delivery is idempotent and uses Reward Claims
 
 For a dungeon whose mandatory completion already requires its final boss, the MAIN quest uses the `DUNGEON` objective only. Do not append the same run's final `BOSS` objective after it under sequential ordering; the boss event occurs before dungeon-completion settlement and would otherwise force an unintended second run.
 
-Binary resolution choice (six act-closing MAIN quests, ADR-0061): while the quest is `ACTIVE` and its `branch_flag` is unset, the character sets it once with `C2S_STORY_BRANCH_CHOOSE` (`../05_network/messages.md`); the value is immutable afterwards. Entering that act's dungeon (or the finale) with the flag unset is rejected with `STORY_CHOICE_REQUIRED`; the client then shows the choice. The flag is presentation/lore only.
+Binary resolution choice (six act-closing MAIN quests, ADR-0061): while the quest is `ACTIVE` and its `branch_flag` is unset, the character sets it once with `C2S_STORY_BRANCH_CHOOSE` (`../05_network/messages.md`); the value is immutable afterwards. Entering that act's dungeon (or the finale) is rejected with `STORY_CHOICE_REQUIRED` only while that act-closing MAIN quest is `ACTIVE` for the entering character and its flag is unset; the client then shows the choice. A character who has not reached the quest, or has already resolved it, enters under the normal dungeon rules (party help, daily objectives, repeats). The flag is presentation/lore only.
 
 Standalone PUBLIC bosses are optional world content and are not MAIN progression gates unless an always-available instanced story equivalent is explicitly defined.
 
-Ordinary field ELITE respawn groups are also not MAIN gates. If future MAIN content needs a named elite fight, it must use an always-available quest-owned encounter or dungeon encounter rather than waiting for the shared `45..75s` field respawn.
+Ordinary field ELITE respawn groups are also not MAIN gates. If future MAIN content needs a named elite fight, it must use an always-available quest-owned encounter or dungeon encounter rather than waiting for the shared `35..60s` field respawn.
 
 # ACT I — Làng Đa
 Regional material: `item.material.lang_da.manh_dong`
@@ -521,7 +521,7 @@ Daily payouts are optional accelerators and are not included in the baseline aff
 
 Board constraints:
 - slot 6 is always `daily.mystery`; its underlying objective is drawn from the non-MYSTERY pool
-- no more than 2 templates from the same objective family (the MYSTERY slot's underlying family counts toward this limit at generation)
+- no more than 2 templates from the same objective family (the MYSTERY slot's underlying family counts toward this limit), except the slot-6 fallback in § Board Generation
 - do not generate `daily.surge_if_active` unless an eligible Surge can be entered during the current board resolution window
 - do not target a dungeon/field the character has not unlocked
 - objective counts never require rare random drops
@@ -535,10 +535,24 @@ rng      = math/rand/v2 PCG(seed1 = digest[0:8], seed2 = digest[8:16]) (big-endi
 draw(W)  = r = rng.Uint64N(sum(W)); first entry, in table order, whose cumulative weight > r
 target region R = region of the character's highest unlocked act (tier = that act)
 eligible = standard templates whose target resolves (DUNGEON: >= 1 unlocked dungeon; surge: rule above)
-slots 1..5: repeat draw(standard weights of eligible templates not yet on the board);
-            discard a draw that would place a 3rd template of one family; stop at 5 templates
-slot 6:     draw(mystery weights of eligible templates not on slots 1..5 and not making a 3rd of a family)
+candidates(capped) = eligible templates not yet on the board and, when capped, whose family has < 2 on the board
+slots 1..5: each slot = draw(standard weights of candidates(capped = true)); one rng call per slot, no rejection loop
+slot 6:     draw(mystery weights of candidates(capped = true)); if that set is empty, draw(mystery weights of
+            candidates(capped = false)) — the only case where a 3rd template of one family is allowed
 targets:    resolved slot 1..6 in order with the same rng, using the rules below
+```
+Eligibility always contains the 9 non-DUNGEON, non-EVENT templates (every region has ELITEs, markers and route points), so every slot has a non-empty candidate set. Below Level 8 (no dungeon) and without an active Surge the capped set is exhausted after slot 5 (KILL 2 + REACH 2 + INTERACT 1) and slot 6 uses the uncapped draw.
+
+Golden vectors (template selection only; `character_id` given as UUID, hashed as its 16 raw bytes):
+```text
+case A  character_id 01920000-0000-7000-8000-000000000001, utc_date 2026-10-01, no unlocked dungeon, no Surge
+        digest[0:16] 4f7a4430e2b9f1fb2cf6d902d7312f32   slot 6 uncapped = true
+        1 daily.old_marks  2 daily.spirit_cleanup  3 daily.elite_watch  4 daily.field_route
+        5 daily.river_or_trail  6 daily.guardian
+case B  character_id 01920000-0000-7000-8000-000000000002, utc_date 2026-10-01, >= 1 unlocked dungeon, Surge eligible
+        digest[0:16] c07c3ffea4db31dd4cafff80315df897   slot 6 uncapped = false
+        1 daily.spirit_cleanup  2 daily.field_route  3 daily.dungeon_path  4 daily.surge_if_active
+        5 daily.explore_quiet  6 daily.elite_watch
 ```
 | template_id | standard weight | mystery weight |
 |---|---:|---:|

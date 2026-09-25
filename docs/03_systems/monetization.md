@@ -56,7 +56,7 @@ Refunds transition state to REFUNDED and revoke the granted benefit if still app
 Grant state transitions:
 ```text
 PENDING -> GRANTED               (on verified platform receipt confirmation)
-PENDING -> REJECTED              (verification failed, invalid/forged receipt, or second receipt for an already-live season track; terminal; excluded from the one-live-track-per-season unique index, so it never blocks a later valid purchase; flagged for platform refund when payment was captured)
+PENDING -> REJECTED              (verification failed, invalid/forged receipt, Steam `Init` order never approved within 24 h, or second receipt for an already-live season track; terminal; excluded from the one-live-track-per-season unique index, so it never blocks a later valid purchase; flagged for platform refund when payment was captured)
 PENDING -> REFUNDED              (on platform dispute/chargeback before grant)
 GRANTED -> REFUNDED              (on platform dispute/chargeback after grant, item not yet consumed)
 GRANTED -> REFUNDED_CONSUMED     (on platform dispute/chargeback after grant, item already consumed)

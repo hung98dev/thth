@@ -96,20 +96,23 @@ Reward Claims have:
 They are a recovery/settlement mechanism only.
 
 ## Capacity / Abuse
-A character may have at most `100` active PENDING non-aggregate claims. Aggregate currency overflow claims count as one claim each regardless of contribution count.
+`pending_count` = the character's PENDING non-aggregate claims + its aggregate currency claims (one each regardless of contribution count). Soft cap `100`; hard ceiling `500` (ADR-0062).
 
-At the cap, a new non-aggregate item claim first consolidates into an existing `PENDING` claim with the same `owner_character_id + item_id + effective_binding` (quantity added; stack limits do not apply inside a claim). Instances with persistent per-instance state (equipment rolls, Soul instances) never consolidate. Each contribution keeps its own `source_reward_operation_id + reward_slot` key in the contribution ledger, as for aggregate currency, so retries add nothing.
+Preventable sources (player-initiated and refusable before anything is earned: dungeon entry, quest turn-in, shop purchase, craft, redemption) check `pending_count >= 100` when the action starts and reject with `CLAIM_CAP_REACHED`; nothing is consumed. The check never depends on rewards that are not rolled yet. Auction purchase is not a claim source: a buyer whose inventory cannot hold the lot is rejected and the listing stays `ACTIVE` (`trading_auction.md`).
 
-If no compatible claim exists:
+Non-preventable sources (earned by combat, time or system settlement: field/boss loot, dungeon/encounter/event completion settlement, auction escrow expiry, PvP/Guild settlement, compensation) never fail and never delete:
 ```text
-preventable source (player-initiated and refusable before anything is earned:
-  dungeon entry, quest turn-in, shop purchase, craft, redemption, auction purchase)
-  -> reject before the action with CLAIM_CAP_REACHED; nothing is consumed
-non-preventable source (earned by combat, time or system settlement:
-  field/boss loot, dungeon/encounter/event completion settlement, seller proceeds, compensation)
-  -> create the claim beyond the cap (soft cap); never fail, never delete
+pending_count < 100        -> new claim as usual
+100 <= pending_count < 500 -> item claim consolidates into a PENDING claim with the same
+                              owner_character_id + item_id + effective_binding (quantity added; stack limits
+                              do not apply inside a claim); equipment/Soul instances (per-instance state) never
+                              consolidate; no compatible claim -> new claim beyond the soft cap
+pending_count >= 500       -> the character earns no new loot or completion item/equipment rolls (the roll is
+                              not performed, so nothing earned is lost); EXP and currency still settle (currency
+                              overflow uses its aggregate claim); auction escrow expiry, PvP/Guild settlements
+                              and compensation still create claims; the client shows the claims-full notice
 ```
-Never delete oldest rewards automatically.
+Consolidated contributions keep their own `source_reward_operation_id + reward_slot` keys in the contribution ledger, as for aggregate currency, so retries add nothing. Never delete oldest rewards automatically.
 
 ## Idempotency
 Canonical creation/delivery key:

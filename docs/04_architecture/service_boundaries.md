@@ -35,12 +35,12 @@ Owns bounded asynchronous work such as Auction expiry/finalization, cleanup/reco
 Workers use the same durable-domain operations and idempotency rules as synchronous requests and do not bypass invariants through direct gameplay-table updates.
 
 ## Ephemeral Global Runtime
-Owns cross-partition live state that is not a simulation entity and is not PostgreSQL-backed at launch:
+Owns cross-partition live state that is not a simulation entity. Its state is memory-only except the PUBLIC boss schedule below, whose writes go through Durable Domain commands and which is reloaded from PostgreSQL on process start:
 - ordinary world party membership (`../03_systems/party.md`; not persisted across full process restart)
 - chat fanout for WORLD / PARTY / GUILD / WHISPER (`../03_systems/social.md`)
 - PvP and Guild-War matchmaking queues (`../03_systems/pvp.md`, `../03_systems/guild_war.md`)
 - Spirit Surge region scheduling (`../02_world/world_rules.md`, `../07_content/world_event_catalog.md`)
-- PUBLIC boss spawn generation identity: assigns and retires `public_boss_spawn_generation_id` for all channel copies of a standalone PUBLIC boss and runs its generation lifecycle, persisted in `public_boss_schedules` (`../02_world/bosses.md`, ADR-0061); per-character eligibility is persisted by Durable Domain in `boss_chest_eligibility`
+- PUBLIC boss spawn generation identity: assigns and retires `public_boss_spawn_generation_id` for all channel copies of a standalone PUBLIC boss and runs its generation lifecycle (`../02_world/bosses.md`, ADR-0061); every state change is a Durable Domain command writing `public_boss_schedules`, and the runtime waits for the commit before emitting spawn/despawn commands; on process start it loads all rows before any channel partition accepts players; per-character eligibility is persisted by Durable Domain in `boss_chest_eligibility`
 
 One serialized in-process single-writer executor per logical world process (per `AGENTS.md` and `../11_decisions/0044-launch-topology-single-binary-role-modes.md`). It executes within the single server process alongside Edge, Sim, and Durable. It is not a separate binary, not Redis, not a distributed database lease, and not a second source of durable truth.
 
@@ -52,9 +52,10 @@ Full process restart drops ordinary world parties. Matchmaking queues restart em
 Ephemeral Global Runtime is the single authority for Spirit Surge region selection and activation. Rules:
 - enforces the maximum of 3 concurrently active regions; a fourth region cannot be activated while 3 are live,
 - region selection is deterministic from UTC hour (matching the content spec derivation); no RNG is introduced,
-- on activation the runtime emits a typed `SpiritSurgeActivate(region_id, hour_boundary_utc)` command to each affected World Simulation partition,
-- on deactivation at the UTC hour boundary the runtime emits `SpiritSurgeDeactivate(region_id)` to the same partitions,
-- restart safety: on process restart the runtime recomputes the active region set from the current UTC hour and reissues activation commands to partitions that are live; no durable storage is required because selection is purely deterministic from server time,
+- active window = `HH:00:00 <= server UTC < HH:15:00` (`../02_world/world_rules.md` § Spirit Surge: starts every whole UTC hour, 15 minutes),
+- at `HH:00:00` the runtime emits a typed `SpiritSurgeActivate(region_id, hour_boundary_utc, ends_at_utc = HH:15:00)` command to each affected running World Simulation partition; a channel partition that starts inside the window receives the same command on start,
+- at `HH:15:00` the runtime emits `SpiritSurgeDeactivate(region_id)` to the same partitions; partitions also end the surge locally at `ends_at_utc` if the command is late,
+- restart safety: on process start the runtime activates the current hour's regions only when the UTC minute is < 15, with the same `ends_at_utc` (remaining duration only); at minute >= 15 nothing is activated until the next hour; no durable storage is required because selection is purely deterministic from server time,
 - World Simulation partitions never self-select as a Spirit Surge region; they act only on commands from this runtime.
 
 

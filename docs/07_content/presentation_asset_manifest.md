@@ -15,7 +15,7 @@ Toàn bộ tài nguyên client được phân bổ thành các nhóm tải độ
 |---|---|---|---|---|
 | **`Group_Core_UI`** | Font chữ, icon giao diện, khung hình, thanh máu/mana, VFX UI cơ bản | $\le 25\text{ MB}$ | $\le 45\text{ MB}$ | Tải 1 lần khi khởi động game (`BOOT`), giữ nguyên trong RAM suốt phiên chơi. |
 | **`Group_Characters`** | Spritesheet 5 hệ phái, animation rig 2D, hiệu ứng đòn đánh thường | $\le 40\text{ MB}$ | $\le 75\text{ MB}$ | Tải tại màn hình chọn nhân vật (`CHARACTER_SELECT`), lưu vĩnh viễn trong RAM. |
-| **`Group_Monsters_Region_0..5`** | Spritesheets quái vật và trùm của 6 vùng đất (Làng Đa đến Núi Thiêng) | $\le 30\text{ MB}$ / vùng | $\le 60\text{ MB}$ | Tải khi người chơi chuyển vùng vào bản đồ thuộc vùng đất đó (`MAP_LOADING_TRANSFER`); tự động giải phóng khi rời vùng. |
+| **`Group_Monsters_Region_0..5`** | Spritesheets quái vật và trùm của 6 vùng đất (Làng Đa đến Núi Thiêng) | $\le 30\text{ MB}$ / vùng | $\le 60\text{ MB}$ | Tải khi người chơi chuyển vùng vào bản đồ thuộc vùng đất đó (`TRANSFERRING_MAP`); tự động giải phóng khi rời vùng. |
 | **`Group_Maps_Backgrounds_0..5`** | Các lớp cảnh nền cuộn thị sai (Parallax 2D backgrounds), tilemaps địa hình | $\le 35\text{ MB}$ / vùng | $\le 80\text{ MB}$ | Tải theo bản đồ cụ thể; unload khi chuyển sang bản đồ khác. |
 | **`Group_Audio_Core`** | Hiệu ứng âm thanh va chạm (SFX), tiếng bước chân, UI clicks, đòn đánh | $\le 20\text{ MB}$ | $\le 30\text{ MB}$ | Nạp khi khởi động, lưu trong bộ nhớ. |
 | **`Group_Audio_Folklore_BGM`** | Nhạc nền dân gian Việt Nam (Đàn Tranh, Sáo Trúc, Trống Cơm) | $\le 45\text{ MB}$ | $\le 25\text{ MB}$ (streaming) | Stream trực tiếp từ file nén khi vào map tương ứng; không tải toàn bộ vào RAM. |

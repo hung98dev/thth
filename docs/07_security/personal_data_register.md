@@ -1,63 +1,38 @@
-# Personal Data Register & Column Mapping
+# Personal Data Register & Retention Schedule
 status: LOCKED
 
 ## Scope
 
-Bảng đăng ký và ánh xạ chi tiết các trường dữ liệu cá nhân (Personal Data) tới từng bảng và cột trong cơ sở dữ liệu PostgreSQL của Thỉnh Thần, tuân thủ Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định số 13/2023/NĐ-CP.
+Canonical mapping of personal-data categories to tables/columns and the **single canonical retention schedule** (ADR-0065). `data_protection.md` owns the legal framework, category definitions and request handling and references this file for periods. The erasure transaction itself is canonical in `../06_data/data_model.md` § Account Erasure. Executing task: `IMP-056`.
 
-Tài liệu này là căn cứ thực thi kỹ thuật trực tiếp cho task `IMP-056` (Data Protection / Retention & Data-Subject Requests).
+Legal basis: Luật 91/2025/QH15 và Nghị định 356/2025/NĐ-CP (personal data), Luật Kế toán 88/2015/QH13 Điều 41 (financial records).
 
-Category letters and retention intent are canonical in `data_protection.md`; this file maps them to columns.
+## 1. Retention Schedule and Column Mapping
 
-## 1. Table.Column Mapping Matrix
+| Cat. | Data | Tables / columns | Retention (automatic purge) | At erasure (`data_model.md` § Account Erasure) |
+|---|---|---|---|---|
+| **A** Account identity | username, email, password hash; account row | `account_password_credentials.*`; `accounts.*` | credentials: account lifetime; `accounts` row: 1 year after `erased_at` (holds no personal column after erasure) | credentials deleted; `accounts.status = TOMBSTONE_ERASED`, `erased_at` set |
+| **B** Provider links | Apple/Google/Steam subject | `account_identities.*` | account lifetime; a link removed by unlink is deleted immediately | deleted |
+| **C** Session & device metadata | session families, refresh hashes, platform, app version, device model class | `auth_session_families.*`, `auth_refresh_credentials.*` | 30 days after the family is revoked or expires | deleted (families already revoked at deletion request) |
+| **D** Security signals | revocations; login device/IP-prefix hashes; rate-limit counters; auth failure backoff | `auth_revocations.*`, `account_login_history.*`, `rate_limit_counters.*`, `auth_failure_backoff.*` | revocations: until `expires_at` (≤ 30 days); login history: 90 days rolling; rate-limit counters and auth failure backoff: 24 h after last update | revocations and login history deleted; rate-limit counters and auth failure backoff are keyed by salted hashes, cannot be searched by subject and are not erased individually (they expire within 24 h) |
+| **E** Payment records | receipts, entitlement history, refund events, IAP notifications | `account_iap_entitlements.*`, `account_refund_consumed_events.*`, `account_entitlement_claims.*`, `iap_notification_dedup.*` | entitlements, claims, refund events: **10 years** from `created_at` (Luật Kế toán), and an entitlement row stays while any cosmetic entitlement row references it; notification dedup: 180 days | account link severed: `account_id` re-pointed to `TOMBSTONE_ACCOUNT_ID` |
+| **F** Chat | moderation log | `chat_messages.*` | 90 days rolling | the account's rows deleted |
+| **G** Gameplay & economy records | characters and owned state; operations; settlements; rollups; guild storage audit | `characters.*` and character-owned tables, `operations.*`, `auction_listings.*`, `auction_proceeds.*`, `trade_settlement_records.*`, `economy_*_daily_rollups.*`, `guild_storage_audit.*` | characters: permanent (anonymized after erasure); operations, terminal auction listings, `CLAIMED` proceeds, trade settlements, rollups, guild storage audit: 180 days rolling; `PENDING` proceeds and listings still holding an asset are never purged | characters anonymized (`Anonymized_` + 32-hex UUID); account columns re-pointed to the tombstone; account rollups deleted |
+| **H** Audit | enforcement, admin, security, refund audit | `audit_events.*` | **3 years** from `occurred_at` | kept unchanged (legal/enforcement evidence); `subject_account_id` has no FK |
 
-| Category | Mô tả dữ liệu | Bảng & Cột cụ thể | Cơ sở pháp lý (Luật 91/2025 & NĐ 356/2025) | Thời hạn lưu trữ | Hành động khi Xóa / Yêu cầu Hủy (Erasure) |
-|---|---|---|---|---|---|
-| **A. Định danh tài khoản** | ID tài khoản, ngày tạo, trạng thái rủi ro | `accounts.account_id`<br>`accounts.created_at`<br>`accounts.status`<br>`account_refund_consumed_events` (điểm hoàn tiền IAP suy ra, ADR-0060)<br>`account_password_credentials.username_key`<br>`account_password_credentials.email`<br>`account_password_credentials.password_hash` | Điều 11 (Thực hiện hợp đồng dịch vụ) | 1 năm sau khi đóng tài khoản | Chuyển `status = 'TOMBSTONE_ERASED'`. Cắt toàn bộ liên kết nhân vật. Sau 1 năm, xóa bản ghi nếu không còn nghĩa vụ pháp lý. |
-| **B. Danh tính liên kết (Federated ID)** | ID người dùng từ bên thứ ba (Apple, Google, Steam) | `account_identities.provider_id`<br>`account_identities.provider_subject`<br>`account_identities.linked_at` | Điều 11 (Xác thực đăng nhập theo yêu cầu người dùng) | 30 ngày sau khi đóng tài khoản | Hard delete ngay lập tức các dòng trong `account_identities` khi xử lý yêu cầu xóa hợp lệ. |
-| **C. Phiên xác thực & Thiết bị** | Session family, refresh token hash, ngày hết hạn | `auth_session_families.*`<br>`auth_refresh_credentials.*` | Điều 11 (Bảo mật phiên đăng nhập) | Tối đa 30 ngày hoặc khi token hết hạn | Hard delete toàn bộ bản ghi session và refresh credentials của tài khoản. |
-| **D. IP & Tín hiệu an ninh** | Danh sách token bị thu hồi, IP rate limit | `auth_revocations.*`<br>`rate_limit_counters.*` | Điều 17 (Bảo vệ an ninh mạng và chống gian lận) | 90 ngày (rolling window) | Dữ liệu tự động hết hạn và xóa sau 90 ngày theo scheduler; không thể yêu cầu xóa sớm do phục vụ phòng chống tấn công. |
-| **E. Chứng từ thanh toán IAP** | Token giao dịch, biên lai Store, lịch sử hoàn tiền | `account_iap_entitlements.platform_receipt`<br>`account_refund_consumed_events.*` | Luật Kế toán 88/2015/QH13 (Nghĩa vụ lưu trữ chứng từ tài chính) | **10 năm** bắt buộc | **Không xóa chứng từ tài chính**. Thực hiện cắt liên kết định danh: chuyển `account_id` trỏ về `TOMBSTONE_ACCOUNT_ID` để lưu trữ chứng từ vô danh. |
-| **F. Nội dung giao tiếp (Chat)** | Lịch sử chat thế giới, bang hội, tin nhắn riêng | `chat_messages.sender_account_id`<br>`chat_messages.sender_character_id`<br>`chat_messages.content`<br>`chat_messages.created_at` | Điều 11 (Cung cấp tính năng mạng xã hội in-game) | 90 ngày (rolling window) | Xóa toàn bộ tin nhắn do tài khoản gửi trong vòng 15 ngày lịch kể từ yêu cầu xóa hợp lệ (data_protection.md). |
-| **G. Dữ liệu Gameplay & Tiến trình** | Cấp độ, trang bị, kho đồ, Atlas, nhiệm vụ | `characters.*`<br>`character_atlas.*`<br>`character_progression.*`<br>`character_inventories.*`<br>`operations.*` | Không thuộc dữ liệu cá nhân nhạy cảm; thuộc sở hữu hệ thống trò chơi | Nhân vật: vĩnh viễn ở dạng ẩn danh; event log gameplay: 180 ngày (rolling) | **Cắt đứt liên kết sở hữu (Anonymization):**<br>- `characters.account_id = TOMBSTONE_ACCOUNT_ID`<br>- Đổi tên nhân vật: `Anonymized_<short_uuid>`<br>- Giải phóng `name_key` ban đầu<br>- Hủy bỏ các niêm yết trên Chợ Đấu Giá. |
-| **H. Nhật ký kiểm toán (Audit Logs)** | Log can thiệp tài khoản, thay đổi quyền, thao tác GM | `audit_events.actor_id`<br>`audit_events.action`<br>`audit_events.payload`<br>`audit_events.created_at` | Điều 17 (An toàn thông tin & truy vết gian lận) | 3 năm | Lưu giữ nguyên vẹn trong 3 năm phục vụ điều tra gian lận; sau 3 năm tự động purge. |
+A purge job per row family runs daily and deletes rows past their period in bounded batches. Backups follow `../08_scale_ops/backup_recovery.md` (restore points ≤ 6 months; erasure ledger replay).
 
-## 2. Quy trình Thực thi Quyền Dữ liệu (Data-Subject Requests)
-
-### 2.1 Yêu cầu Xóa Dữ liệu (Right to Erasure / RTBF)
-1. Thời hạn xử lý: Phản hồi thủ tục trong vòng **2 ngày làm việc**; hoàn tất thực thi hợp lệ trong vòng **15 ngày** kể từ khi nhận được yêu cầu hợp lệ qua kênh hỗ trợ chính thức per Decree 356/2025/NĐ-CP.
-2. Thứ tự thực thi kỹ thuật trong một PostgreSQL Transaction:
-   ```sql
-   -- 1. Chuyển trạng thái tài khoản
-   UPDATE accounts SET status = 'TOMBSTONE_ERASED' WHERE account_id = $1;
-   -- 2. Xóa liên kết danh tính bên thứ ba
-   DELETE FROM account_identities WHERE account_id = $1;
-   DELETE FROM account_password_credentials WHERE account_id = $1;
-   -- 3. Hủy phiên làm việc
-   DELETE FROM auth_session_families WHERE account_id = $1;
-   DELETE FROM auth_refresh_credentials WHERE account_id = $1;
-   -- 4. Chuyển giao nhân vật sang Tombstone và ẩn danh tên
-   UPDATE characters
-   SET account_id = '00000000-0000-0000-0000-000000000001',
-       name = 'Anonymized_' || SUBSTRING(character_id::text, 1, 8),
-       name_key = 'anonymized_' || SUBSTRING(character_id::text, 1, 8)
-   WHERE account_id = $1;
-   -- 5. Cắt liên kết chứng từ IAP (lưu trữ 10 năm theo Luật Kế toán)
-   UPDATE account_iap_entitlements
-   SET account_id = '00000000-0000-0000-0000-000000000001'
-   WHERE account_id = $1;
-   ```
-3. Lưu biên bản thực thi vào hồ sơ DPO kèm mã yêu cầu để giải trình cơ quan quản lý (A05 Bộ Công an) khi có thanh tra.
-
-### 2.2 Yêu cầu Trích xuất Dữ liệu (Data Portability)
-- Cung cấp file JSON chứa thông tin nhóm A, B, D và E (lịch sử giao dịch IAP).
-- Tiến trình chơi game (cấp độ, trang bị, vật phẩm) được xuất kèm dưới dạng bản tóm tắt thân thiện (game summary export).
+## 2. Data-Subject Requests
+- **Erasure:** procedure response within **2 business days**; execution within **15 calendar days** of a valid request. In-app deletion enters `PENDING_DELETION` (7-day cancel window, all sessions revoked at request), then the erasure transaction runs. The DPO file records the request ID, operation ID and execution time for regulator inspection (A05, Bộ Công an).
+- **Access / portability:** JSON export of Categories A, B, D (login history summary), E (purchase history) and F; characters/progression as a courtesy game summary.
 
 ## Invariants
-
 ```text
-Category E (IAP receipts) = lưu trữ 10 năm theo Luật Kế toán 88/2015/QH13; cắt liên kết ID
-nhân vật sau khi xóa tài khoản = chuyển sang TOMBSTONE_ACCOUNT_ID và đổi tên Anonymized_*
-thời hạn thực thi yêu cầu quyền dữ liệu = tối đa 15 ngày (phản hồi thủ tục 2 ngày làm việc)
-dữ liệu Category B, C = xóa hoàn toàn (hard delete) khi tài khoản bị xóa
+this file = the only retention schedule; data_protection.md references it
+erasure transaction = data_model.md § Account Erasure (one transaction, deferred composite FKs)
+Category E kept 10 years with account link severed at erasure
+characters permanent; anonymized name = 'Anonymized_' + 32-hex character UUID; `anonymized_` name_key prefix reserved
+Categories A credentials, B, C, D (except rate-limit counters), F deleted at erasure
+Category H kept 3 years unchanged
+erasure execution <= 15 calendar days; procedure response <= 2 business days
 ```

@@ -57,7 +57,7 @@ A change touching files in more than two numbered directories must list the comp
 | Dungeon / Spirit Surge EXP rules | `07_content/dungeon_catalog.md`, `07_content/world_event_catalog.md` (ADR-0032) |
 | Content catalog status values | `07_content/README.md` |
 | Asset size, cutout, volume and review gates | `07_content/presentation_asset_manifest.md` (ADR-0055, ADR-0056) |
-| CI, bootstrap, evidence, merge and review policy | `10_implementation/audit_gates.md`, `10_implementation/agent_execution_protocol.md` (ADR-0050, ADR-0057, ADR-0058) |
+| CI, bootstrap, evidence, merge and review policy | `10_implementation/audit_gates.md`, `10_implementation/agent_execution_protocol.md` (ADR-0050, ADR-0057, ADR-0058, ADR-0068) |
 | Client performance and smoothness | `04_architecture/client_performance.md` |
 | Client smoothness by construction (FrameLoop, FrameBudget, governor) / code-quality gates | `04_architecture/client_performance.md` § Smoothness by Construction, `10_implementation/engineering_conventions.md` §1.1, §1.7, §2.3–§2.7 (ADR-0059) |
 | Roles (spec-owner, coordinator, implementers, reviewer) | `10_implementation/README.md` |
