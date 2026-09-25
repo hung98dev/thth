@@ -31,7 +31,7 @@ jobs:
     timeout-minutes: 150
     services:
       postgres:
-        image: ${{ env.POSTGRES_IMAGE }}
+        image: postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: thinhthan_test
@@ -54,8 +54,10 @@ jobs:
 
       - name: Merge freeze guard
         shell: bash
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
-          case "${{ github.head_ref || github.ref_name }}" in
+          case "$BRANCH_NAME" in
             revert/*|ops/*) echo "exempt branch"; exit 0 ;;
           esac
           if [ "${{ vars.AUTO_MERGE_FROZEN }}" = "true" ]; then
@@ -251,9 +253,10 @@ jobs:
 
       - name: Merge freeze guard
         shell: cmd
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
-          set "br=${{ github.head_ref || github.ref_name }}"
-          echo %br%| findstr /b /c:"revert/" /c:"ops/" >nul && (echo exempt branch & exit /b 0)
+          echo %BRANCH_NAME%| findstr /b /c:"revert/" /c:"ops/" >nul && (echo exempt branch & exit /b 0)
           if /I "${{ vars.AUTO_MERGE_FROZEN }}"=="true" (echo repository merge freeze active >&2 & exit /b 1)
 
       - name: Install pwsh + CLI tools (pinned)
@@ -441,8 +444,10 @@ jobs:
 
       - name: Merge freeze guard
         shell: bash
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
-          case "${{ github.head_ref || github.ref_name }}" in
+          case "$BRANCH_NAME" in
             revert/*|ops/*) exit 0 ;;
           esac
           if [ "${{ vars.AUTO_MERGE_FROZEN }}" = "true" ]; then
@@ -488,11 +493,12 @@ jobs:
           THINHTHAN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           THINHTHAN_RUN_ID: ${{ github.run_id }}
           THINHTHAN_RUN_ATTEMPT: ${{ github.run_attempt }}
+          HEAD_REF: ${{ github.head_ref }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           Move-Item reports/linux/verify-report.json reports/linux-verify-report.json
           Move-Item reports/windows/verify-report.json reports/windows-verify-report.json
-          pwsh -NoProfile -File scripts/verify.ps1 -MergeReports -MergeDir reports -TaskID "${{ github.head_ref }}"
+          pwsh -NoProfile -File scripts/verify.ps1 -MergeReports -MergeDir reports -TaskID "$env:HEAD_REF"
 
       - name: Upload evidence manifest
         if: always()
