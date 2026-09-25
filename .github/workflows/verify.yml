@@ -160,16 +160,20 @@ jobs:
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
                 printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf
-                if unity-editor -batchmode -nographics -quit -logFile "$LOG_FILE"; then
-                  echo "licence ok via ulf"
+                if [ -n "$UNITY_SERIAL" ]; then
+                  echo "activating via UNITY_SERIAL"
+                  unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile "$LOG_FILE" || exit 198
                 elif [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
-                  echo "ulf licence rejected; trying UNITY_EMAIL/UNITY_PASSWORD online activation"
-                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" ${UNITY_SERIAL:+-serial "$UNITY_SERIAL"} -quit -logFile "$LOG_FILE"
+                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile "$LOG_FILE" || true
                 fi
                 unity-editor -projectPath /github/workspace/client -quit -logFile "$LOG_FILE"
               ' \
               && exit 0
             rc=$?
+            if [ "$rc" -eq 198 ]; then
+              echo "unity licence activation failed (rc=198) - deterministic, not retrying. Fix UNITY_SERIAL/licence secrets." >&2
+              exit 1
+            fi
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
             tail -c 50000 unity-materialize.log 2>/dev/null || true
             [ "$i" -lt 5 ] && sleep 60
@@ -203,8 +207,10 @@ jobs:
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
                 printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf
-                if ! unity-editor -batchmode -nographics -quit -logFile -; then
-                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" ${UNITY_SERIAL:+-serial "$UNITY_SERIAL"} -quit -logFile - || true
+                if [ -n "$UNITY_SERIAL" ]; then
+                  unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - || exit 198
+                elif [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - || true
                 fi
                 unity-editor -projectPath /github/workspace/client \
                   -runTests -testPlatform "$MODE" \
@@ -352,17 +358,26 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $z = "$env:RUNNER_TEMP\edb.zip"
           curl.exe -fSL -m 900 --retry 3 --retry-delay 10 'https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip' -o $z
+          if ($LASTEXITCODE -ne 0) { throw "edb download failed rc=$LASTEXITCODE" }
+          Write-Host 'edb download done'
           if ((Get-FileHash $z -Algorithm SHA256).Hash.ToLower() -ne 'fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c') { throw 'edb sha256 mismatch' }
+          Write-Host 'edb sha256 ok'
           tar.exe -xf $z -C "$env:RUNNER_TEMP"
           Rename-Item "$env:RUNNER_TEMP\pgsql" "$env:RUNNER_TEMP\edb" -ErrorAction SilentlyContinue
           if (-not (Test-Path "$env:RUNNER_TEMP\edb")) { New-Item -ItemType Directory -Path "$env:RUNNER_TEMP\edb" | Out-Null; tar.exe -xf $z -C "$env:RUNNER_TEMP\edb" }
           $bin = "$env:RUNNER_TEMP\edb\pgsql\bin"
           if (-not (Test-Path "$bin\initdb.exe")) { $bin = "$env:RUNNER_TEMP\edb\bin" }
-          & "$bin\initdb.exe" -D "$env:RUNNER_TEMP\pgdata" -U postgres -A trust -E UTF8 --locale=C | Out-Null
+          Write-Host "edb extract done; bin=$bin"
+          $p = Start-Process -FilePath "$bin\initdb.exe" -ArgumentList "-D `"$env:RUNNER_TEMP\pgdata`" -U postgres -A trust -E UTF8 --locale=C" -NoNewWindow -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\initdb.out" -RedirectStandardError "$env:RUNNER_TEMP\initdb.err"
+          if (-not $p.WaitForExit(300000)) { $p | Stop-Process -Force; throw 'initdb timed out after 300s' }
+          if ($p.ExitCode -ne 0) { Get-Content "$env:RUNNER_TEMP\initdb.err" -Tail 40 -ErrorAction SilentlyContinue; throw "initdb failed rc=$($p.ExitCode)" }
+          Write-Host 'initdb done'
           $l = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
           $l.Start(); $port = $l.LocalEndpoint.Port; $l.Stop()
-          & "$bin\pg_ctl.exe" -D "$env:RUNNER_TEMP\pgdata" -o "-p $port" -l "$env:RUNNER_TEMP\pg.log" -w -t 120 start | Out-Null
-          if ($LASTEXITCODE -ne 0) { Get-Content "$env:RUNNER_TEMP\pg.log" -Tail 40; throw 'postgres failed to start' }
+          $p = Start-Process -FilePath "$bin\pg_ctl.exe" -ArgumentList "-D `"$env:RUNNER_TEMP\pgdata`" -o `"-p $port`" -l `"$env:RUNNER_TEMP\pg.log`" -w -t 120 start" -NoNewWindow -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\pgctl.out" -RedirectStandardError "$env:RUNNER_TEMP\pgctl.err"
+          if (-not $p.WaitForExit(180000)) { $p | Stop-Process -Force; Get-Content "$env:RUNNER_TEMP\pg.log" -Tail 40 -ErrorAction SilentlyContinue; throw 'pg_ctl timed out after 180s' }
+          if ($p.ExitCode -ne 0) { Get-Content "$env:RUNNER_TEMP\pg.log" -Tail 40 -ErrorAction SilentlyContinue; throw "pg_ctl failed rc=$($p.ExitCode)" }
+          Write-Host 'postgres started'
           "THINHTHAN_TEST_PG_DSN=postgres://postgres@127.0.0.1:$port/postgres?sslmode=disable" >> $env:GITHUB_ENV
 
       - name: Verifier environment
@@ -395,8 +410,9 @@ jobs:
               -w C:\repo `
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              powershell -Command "Set-Content -Path 'C:\Program Files\Unity\Editor\Data\Resources\Unity_lic.ulf' -Value `$env:UNITY_LICENSE; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -quit -logFile -; if (`$LASTEXITCODE -ne 0 -and `$env:UNITY_EMAIL -and `$env:UNITY_PASSWORD) { Write-Host 'ulf licence rejected; trying online activation'; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile - }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
+              powershell -Command "Set-Content -Path 'C:\Program Files\Unity\Editor\Data\Resources\Unity_lic.ulf' -Value `$env:UNITY_LICENSE; if (`$env:UNITY_SERIAL) { & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -serial `$env:UNITY_SERIAL -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile -; if (`$LASTEXITCODE -ne 0) { exit 198 } } elseif (`$env:UNITY_EMAIL -and `$env:UNITY_PASSWORD) { & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile - }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
             if ($LASTEXITCODE -eq 0) { $ok = $true; break }
+            if ($LASTEXITCODE -eq 198) { Write-Host 'unity licence activation failed (deterministic) - not retrying'; exit 1 }
             Write-Host "unity materialization attempt $i failed; retrying after 60s"
             if ($i -lt 5) { Start-Sleep -Seconds 60 }
           }
