@@ -315,14 +315,15 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $z = "$env:RUNNER_TEMP\edb.zip"
-          Invoke-WebRequest -Uri 'https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip' -OutFile $z -UseBasicParsing
+          curl.exe -fsSL 'https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip' -o $z
           if ((Get-FileHash $z -Algorithm SHA256).Hash.ToLower() -ne 'fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c') { throw 'edb sha256 mismatch' }
           Expand-Archive $z -DestinationPath "$env:RUNNER_TEMP\edb" -Force
           $bin = "$env:RUNNER_TEMP\edb\pgsql\bin"
-          & "$bin\initdb.exe" -D "$env:RUNNER_TEMP\pgdata" -U postgres -A trust | Out-Null
+          & "$bin\initdb.exe" -D "$env:RUNNER_TEMP\pgdata" -U postgres -A trust -E UTF8 --locale=C | Out-Null
           $l = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
           $l.Start(); $port = $l.LocalEndpoint.Port; $l.Stop()
-          & "$bin\pg_ctl.exe" -D "$env:RUNNER_TEMP\pgdata" -o "-p $port" -l "$env:RUNNER_TEMP\pg.log" -w start | Out-Null
+          & "$bin\pg_ctl.exe" -D "$env:RUNNER_TEMP\pgdata" -o "-p $port" -l "$env:RUNNER_TEMP\pg.log" -w -t 120 start | Out-Null
+          if ($LASTEXITCODE -ne 0) { Get-Content "$env:RUNNER_TEMP\pg.log" -Tail 40; throw 'postgres failed to start' }
           "THINHTHAN_TEST_PG_DSN=postgres://postgres@127.0.0.1:$port/postgres?sslmode=disable" >> $env:GITHUB_ENV
 
       - name: Verifier environment
