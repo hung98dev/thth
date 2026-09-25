@@ -144,7 +144,7 @@ jobs:
         run: |
           set -uo pipefail
           for i in 1 2 3 4 5; do
-            docker run --rm \
+            timeout -k 15 300 docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               -w /github/workspace \
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -154,10 +154,16 @@ jobs:
               && exit 0
             rc=$?
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
+            tail -c 50000 unity-materialize.log 2>/dev/null || true
             [ "$i" -lt 5 ] && sleep 60
           done
           echo "unity materialization failed after 5 attempts (licence/infra)" >&2
           exit 1
+
+      - name: Dump unity-materialize.log on failure
+        if: failure()
+        shell: bash
+        run: tail -c 200000 unity-materialize.log 2>/dev/null || echo 'no unity-materialize.log produced'
 
       - name: Unity EditMode+PlayMode tests
         timeout-minutes: 30
