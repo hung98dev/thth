@@ -151,21 +151,23 @@ jobs:
               -w /github/workspace \
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
+              -e MONO_GC_PARAMS=nursery-size=64m \
               -e LOG_FILE="$lf" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
                 rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
                 timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile "$LOG_FILE" &&
-                unity-editor -projectPath /github/workspace/client -quit -logFile "$LOG_FILE"
+                unity-editor -batchmode -nographics -projectPath /github/workspace/client -quit -logFile "$LOG_FILE"
               ' \
               && exit 0
             rc=$?
-            if [ "$rc" -eq 198 ] || [ "$rc" -eq 124 ] ]; then
+            if [ "$rc" -eq 198 ] || [ "$rc" -eq 124 ]; then
               echo "unity licence activation failed deterministically (rc=$rc) - not retrying. Fix UNITY_SERIAL/licence secrets." >&2
               exit 1
             fi
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
             tail -c 50000 unity-materialize.log 2>/dev/null || true
+            sudo dmesg 2>/dev/null | tail -10 || true
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
@@ -194,17 +196,18 @@ jobs:
           for mode in EditMode PlayMode; do
             ok=
             for i in 1 2 3 4 5; do
-              if docker run --rm --shm-size=2g \
+              if docker run --rm --shm-size=1536m \
                 -v "${{ github.workspace }}:/github/workspace" \
                 -w /github/workspace \
                 -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 -e LIBGL_ALWAYS_SOFTWARE=1 \
+                -e MONO_GC_PARAMS=nursery-size=64m \
                 -e MODE="$mode" \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
                 bash -c '
                   rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
                   timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - &&
-                  unity-editor -projectPath /github/workspace/client \
+                  unity-editor -batchmode -nographics -projectPath /github/workspace/client \
                     -runTests -testPlatform "$MODE" \
                     -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                     -logFile -
@@ -213,10 +216,11 @@ jobs:
               else
                 rc=$?
               fi
-              if [ "$rc" -eq 198 ] || [ "$rc" -eq 124 ] ]; then
+              if [ "$rc" -eq 198 ] || [ "$rc" -eq 124 ]; then
                 echo "unity $mode tests failed deterministically (rc=$rc) - not retrying" >&2
                 exit 1
               fi
+              sudo dmesg 2>/dev/null | tail -10 || true
               echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
               docker run --rm \
                 -v "${{ github.workspace }}:/github/workspace" \
