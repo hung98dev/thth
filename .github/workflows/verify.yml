@@ -159,7 +159,13 @@ jobs:
               -e LOG_FILE="$lf" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf &&
+                printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf
+                if unity-editor -batchmode -nographics -quit -logFile "$LOG_FILE"; then
+                  echo "licence ok via ulf"
+                elif [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+                  echo "ulf licence rejected; trying UNITY_EMAIL/UNITY_PASSWORD online activation"
+                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" ${UNITY_SERIAL:+-serial "$UNITY_SERIAL"} -quit -logFile "$LOG_FILE"
+                fi
                 unity-editor -projectPath /github/workspace/client -quit -logFile "$LOG_FILE"
               ' \
               && exit 0
@@ -196,7 +202,10 @@ jobs:
               -e MODE="$mode" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf &&
+                printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf
+                if ! unity-editor -batchmode -nographics -quit -logFile -; then
+                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" ${UNITY_SERIAL:+-serial "$UNITY_SERIAL"} -quit -logFile - || true
+                fi
                 unity-editor -projectPath /github/workspace/client \
                   -runTests -testPlatform "$MODE" \
                   -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
@@ -386,7 +395,7 @@ jobs:
               -w C:\repo `
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              powershell -Command "Set-Content -Path 'C:\Program Files\Unity\Editor\Data\Resources\Unity_lic.ulf' -Value `$env:UNITY_LICENSE; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
+              powershell -Command "Set-Content -Path 'C:\Program Files\Unity\Editor\Data\Resources\Unity_lic.ulf' -Value `$env:UNITY_LICENSE; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -quit -logFile -; if (`$LASTEXITCODE -ne 0 -and `$env:UNITY_EMAIL -and `$env:UNITY_PASSWORD) { Write-Host 'ulf licence rejected; trying online activation'; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile - }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
             if ($LASTEXITCODE -eq 0) { $ok = $true; break }
             Write-Host "unity materialization attempt $i failed; retrying after 60s"
             if ($i -lt 5) { Start-Sleep -Seconds 60 }
