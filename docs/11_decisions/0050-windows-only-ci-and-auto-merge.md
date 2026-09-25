@@ -3,6 +3,8 @@ status: ACCEPTED
 
 > **AMENDMENT NOTICE (ADR-0057)**: Bootstrap mode, Owner Setup, the trusted `pull_request_target` judge, the App-only source of `policy-review` (required on every PR, no workflow job of that name), App-token revert PRs with freeze on revert/infra failures, coordinator claims, the derived gate ratchet and cloud execution are specified in ADR-0057. Where this ADR differs, ADR-0057 governs.
 
+> **AMENDMENT NOTICE (ADR-0058)**: The self-hosted Windows runner, "Windows-only CI", the single required job and the Windows-only command matrix are superseded: CI runs on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners with required checks `Q0-Q6 verify (Linux)` and `Q0-Q6 verify (Windows)`, scripts run under `pwsh` 7.6.6. Where this ADR differs, ADR-0058 governs.
+
 ## Context
 The implementation machine and the pinned Unity editor (`6000.6.1f1`) run on Windows. Maintaining byte-identical PowerShell and Bash verify/codegen wrappers plus a second CI job doubled verifier surface without adding coverage for a Windows-developed project. Earlier evidence skipped required Unity tests because the CI runner had no Unity editor. Owner decision (2026-09-24): CI runs on Windows only, and a pull request merges automatically once required CI passes.
 

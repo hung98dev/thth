@@ -297,7 +297,7 @@ The queue contains 106 IMP tasks (IMP-000 through IMP-105) in 28 dependency wave
 IMP-000 -> IMP-001 -> IMP-002 -> IMP-003 -> IMP-004 -> IMP-068 -> IMP-098 -> IMP-097 -> IMP-006 -> IMP-100 -> IMP-065 -> IMP-013 -> IMP-066 -> IMP-011 -> IMP-014 -> IMP-015 -> IMP-016 -> IMP-019 -> IMP-022 -> IMP-023 -> IMP-091 -> IMP-052 -> IMP-043 -> IMP-056 -> IMP-103 -> IMP-067 -> IMP-096 -> IMP-048
 ```
 
-Implementation is performed by AI agents (`agent_execution_protocol.md`); throughput is bounded by runner slots and this chain, not by team size. Art/audio production (IMP-070..076, IMP-104, IMP-105) runs in parallel from wave 3 and is re-audited by IMP-076 before IMP-067. Do not promise an M10 date until measured task throughput and device-perf results exist.
+Implementation is performed by AI agents (`agent_execution_protocol.md`); throughput is bounded by the concurrency limit (5 tasks on GitHub-hosted runners) and this chain, not by team size. Art/audio production (IMP-070..076, IMP-104, IMP-105) runs in parallel from wave 3 and is re-audited by IMP-076 before IMP-067. Do not promise an M10 date until measured task throughput and device-perf results exist.
 
 Known bottlenecks:
 - IMP-013 -> IMP-014: `C2S_MOVEMENT_EDGE` and the Just Guard latency model are the most integration-sensitive contract (ADR-0034, ADR-0038).

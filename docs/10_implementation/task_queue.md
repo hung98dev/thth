@@ -155,7 +155,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../00_context/technology_versions.md`, `../00_context/constraints.md`, `../00_context/glossary.md`, `../00_context/non_goals.md`, `../00_context/vision.md`, `../04_architecture/system_overview.md`, `../04_architecture/backend.md`, `repository_layout.md`, `architecture_conformance.md`, `../09_testing/test_and_release_evidence.md`, `audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`]
-adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0040-world-consequence-durable-aggregate.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`]
+adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0040-world-consequence-durable-aggregate.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: []
 owned_paths: [`.editorconfig`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `.github/workflows/verify.yml`, `scripts/verify.ps1`, `server/go.mod`, `server/go.sum`, `server/cmd/verify/`, `server/internal/conformance/gates/`, `server/internal/stackpin/`, `client/Packages/`, `client/ProjectSettings/`, `client/Assets/Plugins/Google.Protobuf/`, `client/Assets/Scripts/Core/ThinhThan.Core.asmdef`, `client/Assets/Scripts/Net/ThinhThan.Net.asmdef`, `client/Assets/Scripts/Systems/ThinhThan.Systems.asmdef`, `client/Assets/Scripts/UI/ThinhThan.UI.asmdef`, `client/Assets/Scripts/App/ThinhThan.App.asmdef`, `client/Assets/Tests/EditMode/ThinhThan.Tests.EditMode.asmdef`, `client/Assets/Tests/PlayMode/ThinhThan.Tests.PlayMode.asmdef`, `client/Assets/Tests/EditMode/AssemblyGraph/`]
 forbidden_paths: [`server/cmd/server/`]
@@ -170,16 +170,18 @@ Materialize the canonical versions from `../00_context/technology_versions.md` a
 - materialized bootstrap paths strictly conform to `repository_layout.md`; `proto/`, migrations, generated outputs, and feature paths remain absent until their owning task,
 - Unity `client/ProjectSettings/ProjectVersion.txt` (6000.6.1f1), `client/Packages/manifest.json`, and `client/Packages/packages-lock.json` match the matrix, including Addressables `2.11.2`,
 - Go `server/go.mod` (module `thinhthan`, Go 1.27.1), `server/go.sum`, and CI use the pinned Go/direct-module versions,
-- `scripts/verify.ps1` exists and calls `server/cmd/verify`; proto drift is owned by IMP-061,
+- `scripts/verify.ps1` is PowerShell 7 (`pwsh` 7.6.6), runs unchanged on Linux and Windows, calls `server/cmd/verify` and accepts `-UnityResultsDir`; proto drift is owned by IMP-061,
 - the seven asmdefs `ThinhThan.Core`, `ThinhThan.Net`, `ThinhThan.Systems`, `ThinhThan.UI`, `ThinhThan.App`, `ThinhThan.Tests.EditMode`, `ThinhThan.Tests.PlayMode` exist with acyclic references per `engineering_conventions.md` §2.2,
 - `.github/pull_request_template.md` carries the PR report fields of `agent_execution_protocol.md` §4,
-- `verify.yml` runs the Bootstrap Mode job `Q0-Q6 verify (Windows)`; gates whose owner task is not `DONE` report `SKIP(bootstrap)` (`audit_gates.md`),
-- PostgreSQL 18.6 tests use the EDB Windows binaries from Owner Setup (no container); migrations and apply/down/apply remain owned by IMP-005/Q5,
+- `verify.yml` runs the Bootstrap Mode jobs `Q0-Q6 verify (Linux)` on `ubuntu-24.04` and `Q0-Q6 verify (Windows)` on `windows-2022` in parallel plus the `evidence manifest` job (ADR-0058); gates whose owner task is not `DONE` report `SKIP(bootstrap)` (`audit_gates.md`),
+- every job's first step fails a fork PR with `external PRs not accepted` before checkout, cache or secrets (no job-level `if`); steps use `shell: pwsh`; Unity runs through the SHA-pinned GameCI actions in digest-pinned images with the licence from secrets and `client/Library` cached per OS,
+- PostgreSQL 18.6: the Linux job uses the digest-pinned `postgres:18.6` service container, the Windows job the EDB binaries; both export `THINHTHAN_TEST_PG_DSN`; migrations and apply/down/apply remain owned by IMP-005/Q5,
 - unlisted/floating/prerelease core dependency fails CI,
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
 
 ## Tests
-- `server/internal/stackpin/versions_test.go`: exact toolchain/dependency/action pins and forbidden floating/unlisted dependencies.
+- `server/internal/stackpin/versions_test.go`: exact toolchain/dependency/action pins, image digests, runner labels (`ubuntu-24.04`, `windows-2022`; no `-latest`/self-hosted) and forbidden floating/unlisted dependencies.
+- `server/internal/conformance/gates/workflow_test.go`: TestLinuxAndWindowsJobsRequired, TestForkGuardIsFirstStep, TestNoJobLevelIfOnRequiredJobs, TestSecretsOnlyAfterForkGuard.
 - `server/internal/conformance/gates/gates_test.go`: initial Q0/Q1 wrapper-to-verifier wiring, bootstrap SKIP rules and fail-closed mutation fixtures.
 - `client/Assets/Tests/EditMode/AssemblyGraph/AssemblyGraphTests.cs`: TestAsmdefReferencesAcyclic, TestProtocolReferencesNoProjectAssembly.
 
@@ -544,7 +546,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`audit_gates.md`, `agent_execution_protocol.md`, `known_blockers.md`, `../00_context/technology_versions.md`, `../07_security/external_integrations.md`, `../08_scale_ops/deployment.md`, `../09_testing/test_and_release_evidence.md`]
-adrs: [`0010-exact-technology-version-pinning.md`, `0045-ci-evidence-without-self-referential-sha.md`, `0050-windows-only-ci-and-auto-merge.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`]
+adrs: [`0010-exact-technology-version-pinning.md`, `0045-ci-evidence-without-self-referential-sha.md`, `0050-windows-only-ci-and-auto-merge.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: [IMP-004, IMP-005, IMP-061, IMP-063, IMP-064, IMP-083]
 owned_paths: [`.github/workflows/verify.yml`, `.github/workflows/post_merge_guard.yml`, `server/internal/conformance/ratchet/`, `server/internal/conformance/trusted/`]
 forbidden_paths: [`server/cmd/server/`, `server/internal/sim/`, `server/internal/global/`, `server/internal/edge/`]
@@ -553,24 +555,25 @@ contract_outputs: [trusted required check, post-merge guard, derived gate ratche
 consumers_checked: [docs/10_implementation/README.md, docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/task_queue.md]
 
 ## Change
-- Read and evidence Owner Setup (repository settings, `main` ruleset, App installation, runner labels/GPU, Test Lab project) with `gh api`; never change repository settings.
-- Finalize `verify.yml` as the trusted `pull_request_target` job: verifier built from `main`, PR head checked out into a separate directory, required status `Q0-Q6 verify (Windows)`.
-- Build the post-merge guard: full verify on every push to `main`; a non-infrastructure failure makes the App token open `revert/<sha>` and set dependents `BLOCKED`; a revert commit or infrastructure failure sets `AUTO_MERGE_FROZEN=true` and opens `OPS-xxx`.
+- Read and evidence Owner Setup (public repository settings, outside-collaborator approval, `main` ruleset, both App installations, required secret names, Test Lab project) with `gh api`; never change repository settings.
+- Finalize `verify.yml` as the trusted `pull_request_target` workflow (ADR-0058): jobs `Q0-Q6 verify (Linux)` (`ubuntu-24.04`) and `Q0-Q6 verify (Windows)` (`windows-2022`) each fail a fork PR in their first step, build the verifier from `main` and run it on the PR head checked out into a separate directory; no secret is exposed before the fork guard.
+- Build the post-merge guard: both verify jobs on every push to `main`; a non-infrastructure failure makes the merge-guard App token open `revert/<sha>` and set dependents `BLOCKED`; a revert commit or infrastructure failure sets `AUTO_MERGE_FROZEN=true` and opens `OPS-xxx`.
 - Derive the gate ratchet automatically on the base branch from the verifier gate list plus tests named in `DONE` packets.
 - Verify, never resolve, contract blockers: an open `BLK-xxx` fails Gate A and leaves this task `BLOCKED`.
 
 ## Acceptance
-- Gates A-D in `audit_gates.md` pass without required skips; Owner Setup JSON (repo, ruleset, App installation, runner) is referenced by the evidence manifest,
+- Gates A-D in `audit_gates.md` pass without required skips; Owner Setup JSON (repo, ruleset, App installations, secret names) is referenced by the evidence manifest,
 - `policy-review` is required on every PR and accepted only from the App; no workflow job has that name,
 - a PR that edits the verifier is still judged by the verifier built from `main`,
 - removing a ratchet entry or adding a skip without an ADR already on `main` fails,
 - a failing `main` push yields a revert PR; a failing revert or infrastructure failure freezes auto-merge instead,
-- Unity EditMode executes on the runner; PlayMode becomes required after IMP-065 (bootstrap rule),
+- Unity EditMode executes in both OS jobs; PlayMode becomes required after IMP-065 (bootstrap rule),
+- a fork PR fails both required checks before any checkout or secret use; the trusted workflow never checks out fork code with secrets,
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
 
 ## Tests
 - `server/internal/conformance/ratchet/ratchet_test.go`: TestRatchetDerivedFromDonePackets, TestRatchetDecreaseNeedsAdrOnMain, TestSkipWithoutAdrFails.
-- `server/internal/conformance/trusted/trusted_test.go`: TestVerifierBuiltFromBase, TestOwnerSetupEvidenceSchema, TestGuardOpensRevertPr, TestRevertOrInfraFailureFreezes, TestOpenBlkFailsGateA.
+- `server/internal/conformance/trusted/trusted_test.go`: TestVerifierBuiltFromBase, TestOwnerSetupEvidenceSchema, TestGuardOpensRevertPr, TestRevertOrInfraFailureFreezes, TestOpenBlkFailsGateA, TestForkPrFailsBeforeCheckout, TestBothOsJobsRequired.
 
 generated_artifacts: [`verify-report.json`]
 cleanup_obligations: [Remove temporary codegen/build/migration workspaces; leave zero generated drift.]
@@ -822,7 +825,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../06_data/database.md`, `../06_data/save_rules.md`, `../06_data/data_model.md`, `../06_data/migrations.md`, `../06_data/physical_schema_contract.md`]
-adrs: [`0011-postgresql-relational-persistence.md`, `0040-world-consequence-durable-aggregate.md`, `0048-character-update-timestamp.md`, `0053-durable-contract-reconciliation.md`]
+adrs: [`0011-postgresql-relational-persistence.md`, `0040-world-consequence-durable-aggregate.md`, `0048-character-update-timestamp.md`, `0053-durable-contract-reconciliation.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: [IMP-001]
 owned_paths: [`server/internal/durable/idempotency/`, `server/internal/durable/db/`, `server/internal/durable/schema/`, `server/migrations/`, `server/cmd/migrate/`, `server/internal/testing/pgtest/`]
 forbidden_paths: [`server/internal/sim/`, `client/Assets/Scripts/`]
@@ -831,7 +834,7 @@ contract_outputs: [single committed operation record, replayable result, baselin
 consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md]
 
 ## Change
-Implement PostgreSQL-backed stable operation dedupe/result replay under `../06_data/database.md` and `save_rules.md`, the baseline migration `server/migrations/000001_baseline.{up,down}.sql` with the complete launch schema of `../06_data/physical_schema_contract.md` (ADR-0048, ADR-0053), and the PostgreSQL 18.6 test harness (`server/internal/testing/pgtest/`) that starts the EDB Windows binaries and exports `THINHTHAN_TEST_PG_DSN`.
+Implement PostgreSQL-backed stable operation dedupe/result replay under `../06_data/database.md` and `save_rules.md`, the baseline migration `server/migrations/000001_baseline.{up,down}.sql` with the complete launch schema of `../06_data/physical_schema_contract.md` (ADR-0048, ADR-0053), and the PostgreSQL 18.6 test harness (`server/internal/testing/pgtest/`) that uses `THINHTHAN_TEST_PG_DSN` when set (Linux CI `postgres:18.6` service container) and otherwise starts the EDB Windows binaries and exports it (ADR-0058).
 
 IMP-005 is the only migration owner. No other packet adds a migration; a later schema change is a spec change whose new numbered pair is owned by a new packet.
 
@@ -847,6 +850,7 @@ IMP-005 is the only migration owner. No other packet adds a migration; a later s
 ## Tests
 - `server/internal/durable/idempotency/idempotency_test.go`: TestOperationDeduplication, TestCommitBeforeResponseRetry, TestConflictingPayloadRejection, TestPostgresUniqueConstraint.
 - `server/internal/durable/schema/schema_snapshot_test.go`: TestBaselineApplyDownApply, TestPerConstraintSnapshot, TestMigrationsImmutable.
+- `server/internal/testing/pgtest/pgtest_test.go`: TestUsesPresetDsn, TestStartsEdbBinariesWhenDsnUnset.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1420,7 +1424,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client_performance.md`, `../04_architecture/client.md`, `../07_content/presentation_asset_manifest.md`, `../09_testing/load.md`, `engineering_conventions.md`, `audit_gates.md`]
-adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`]
+adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: [IMP-063, IMP-065, IMP-066, IMP-101]
 owned_paths: [`client/Assets/Scripts/Core/Performance/`, `client/ProjectSettings/QualitySettings.asset`, `client/Assets/Scenes/Perf/`, `client/Assets/Tests/PlayMode/Performance/`, `client/Assets/Tests/EditMode/PerformanceBudgets/`]
 forbidden_paths: [`server/`]
@@ -1431,11 +1435,11 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 - Implement the 5-second first-launch benchmark that selects `LOW`/`MEDIUM`/`HIGH`; presets change only render scale, point Light2D budget, particle budget, parallax `L3` and bloom. Implement the battery-saver 30 FPS cap.
 - Build the hotspot scene `client/Assets/Scenes/Perf/` (18 players + 42 `AI_CLASS_NAMED_MECHANIC` monsters + skill VFX, `../09_testing/load.md` scenario 11) from Addressables keys, so production art is measured as it lands.
-- Run PlayMode performance tests with `FrameTimingManager`/`ProfilerRecorder` on the cloud Windows runner GPU (DESKTOP_MIN class, Owner Setup) and network-smoothness tests with the IMP-065 emulator; these form the every-PR client-performance gate once this task is `DONE`.
+- Run PlayMode performance tests (category `Performance`) with `FrameTimingManager`/`ProfilerRecorder` on the GitHub-hosted Linux CI job (no GPU, ADR-0058): CPU timing with `-batchmode -nographics`, draw/memory measurements under xvfb + Mesa llvmpipe; network-smoothness tests use the IMP-065 emulator. These form the every-PR client-performance gate once this task is `DONE`; GPU frame time is never measured in CI.
 
 ## Acceptance
 - PERF-001: the benchmark selects a preset; switching presets changes presentation only (colliders, hitboxes and telegraphs identical),
-- PERF-002: DESKTOP_MIN hotspot for 5 min: p95 <= 16.7 ms, p99 <= 25 ms, 0 hitches > 50 ms in combat,
+- PERF-002: desktop CPU budget in the hotspot scene for 5 min on the Linux job (`-nographics`): main-thread CPU time excluding GPU/present waits p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms,
 - PERF-004: 0 bytes managed GC allocation per frame in steady gameplay in the hotspot scene,
 - PERF-005 (desktop): resident memory <= 2.5 GB,
 - PERF-006: batches <= 150 and SetPass calls <= 60 on `LOW`; texture memory within `presentation_asset_manifest.md` §1; active point Light2D and particle counts <= preset budget,
@@ -1443,11 +1447,11 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - PERF-010: interpolation delay 2 snapshot intervals adaptive 150..300 ms, extrapolation <= 250 ms, correction smoothed over 100 ms when <= 0.5 m else snapped,
 - PERF-011: full-quality conditions (RTT <= 150 ms, jitter <= 30 ms, loss <= 2%) give <= 1 correction > 0.5 m per minute; degraded conditions (<= 300 ms, <= 60 ms, <= 5%) show the network indicator with no desync,
 - PERF-013: battery saver caps FPS at 30 on every tier,
-- a runner without a DESKTOP_MIN-class GPU fails the gate as an `OPS-xxx` blocker; the gate never reports a skipped pass.
+- performance tests run only in the Linux job and never read GPU frame time; the gate never reports a skipped pass once this task is `DONE`.
 
 ## Tests
 - `client/Assets/Tests/PlayMode/Performance/QualityPresetTests.cs`: TestBenchmarkSelectsPreset (PERF-001), TestPresetsPresentationOnly (PERF-001), TestBatterySaverCaps30 (PERF-013).
-- `client/Assets/Tests/PlayMode/Performance/HotspotFrameTests.cs`: TestDesktopFramePacing (PERF-002), TestZeroGcPerFrame (PERF-004), TestDesktopResidentMemory (PERF-005), TestBatchesSetPassLightsParticles (PERF-006), TestMissingGpuIsOpsBlocker.
+- `client/Assets/Tests/PlayMode/Performance/HotspotFrameTests.cs`: TestDesktopCpuBudget (PERF-002), TestZeroGcPerFrame (PERF-004), TestDesktopResidentMemory (PERF-005), TestBatchesSetPassLightsParticles (PERF-006), TestPerformanceCategoryLinuxOnlyNoGpuTiming.
 - `client/Assets/Tests/PlayMode/Performance/InputLatencyTests.cs`: TestFirstVisualResponseOneFrame (PERF-009), TestConfirmedResultWithinRttPlus50 (PERF-009).
 - `client/Assets/Tests/PlayMode/Performance/NetworkSmoothnessTests.cs`: TestInterpolationExtrapolationCorrection (PERF-010), TestFullQualityAndDegradedConditions (PERF-011).
 - `client/Assets/Tests/EditMode/PerformanceBudgets/TextureBudgetTests.cs`: TestTextureMemoryBudgets (PERF-006).
@@ -1498,7 +1502,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client_performance.md`, `audit_gates.md`, `../00_context/technology_versions.md`, `../09_testing/test_and_release_evidence.md`]
-adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`]
+adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: [IMP-067, IMP-095]
 owned_paths: [`.github/workflows/device_perf.yml`, `scripts/device_perf.ps1`, `client/Assets/Scripts/Core/PerformanceDevice/`, `server/internal/conformance/deviceperf/`]
 forbidden_paths: [`server/internal/sim/`, `server/internal/durable/`, `proto/`]
@@ -1508,7 +1512,7 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 
 ## Change
 - Add the Unity game-loop entry (`client/Assets/Scripts/Core/PerformanceDevice/`) that runs the hotspot scene in an IL2CPP Android build and writes frame timings, memory and CPU samples to the game-loop results file.
-- Add the scheduled `device-perf` workflow on `main`: at most one run per UTC day, only when client code/assets changed since the last device run, plus the launch-candidate run; it calls `gcloud firebase test android run --type game-loop` (gcloud pinned in `technology_versions.md`) on the ANDROID_MIN and ANDROID_REC models from Owner Setup, downloads results and gates them. No device is attached to the runner.
+- Add the scheduled `device-perf` workflow on `main`: at most one run per UTC day, only when client code/assets changed since the last device run, plus the launch-candidate run; it calls `gcloud firebase test android run --type game-loop` (gcloud pinned in `technology_versions.md`) on the ANDROID_MIN and ANDROID_REC models from Owner Setup, downloads results and gates them. The workflow runs on `ubuntu-24.04` (ADR-0058); no device is attached to the runner.
 - Exhausted Test Lab quota reports `DEFERRED(quota)` and retries the next day; the workflow is never a PR check and never opens `OPS-xxx` for quota.
 
 ## Acceptance
@@ -3202,7 +3206,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`definition_of_done.md`, `milestones.md`, `audit_gates.md`, `../08_scale_ops/deployment.md`, `../08_scale_ops/sharding.md`, `../09_testing/strategy.md`, `../09_testing/test_and_release_evidence.md`, `../04_architecture/client_performance.md`]
-adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`]
+adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: [IMP-044, IMP-045, IMP-046, IMP-047, IMP-096]
 owned_paths: [`docs/10_implementation/release/`, `server/internal/testing/release/`, `deploy/prod/`]
 forbidden_paths: [`server/cmd/server/`]
@@ -3491,7 +3495,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client.md`, `../04_architecture/client_assets.md`, `../04_architecture/client_localization.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../07_content/world_route_catalog.md`, `../07_content/dungeon_catalog.md`, `../03_systems/pvp.md`, `../03_systems/guild_war.md`, `../05_network/versioning.md`, `../08_scale_ops/deployment.md`, `../00_context/technology_versions.md`, `../04_architecture/client_performance.md`]
-adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: [IMP-020, IMP-024, IMP-025, IMP-028, IMP-041, IMP-042, IMP-076, IMP-084, IMP-085, IMP-086, IMP-087, IMP-088, IMP-089, IMP-090, IMP-093, IMP-099, IMP-103]
 owned_paths: [`client/BuildProfiles/`, `client/Assets/Scenes/Bootstrap/`, `client/Assets/Scripts/App/`, `client/Assets/Tests/PlayMode/AppComposition/`, `scripts/verify_client_build.ps1`]
 forbidden_paths: [`server/`]
@@ -3500,7 +3504,7 @@ contract_outputs: [Windows/Android IL2CPP builds (outside the repository), check
 consumers_checked: [docs/02_world/maps_zones.md, docs/02_world/dungeons.md, docs/03_systems/pvp.md, docs/03_systems/guild_war.md, docs/04_architecture/client_experience_contract.md, docs/04_architecture/physics_geometry_contract.md, docs/07_content/world_route_catalog.md, docs/07_content/dungeon_catalog.md, docs/07_content/presentation_asset_manifest.md, client/ProjectSettings/ProjectSettings.asset, docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md]
 
 ## Change
-- Author IL2CPP player builds for Windows and Android from `client/BuildProfiles/`; build output goes to a directory outside the repository (runner temp), never into the tree.
+- Author IL2CPP player builds for Windows and Android from `client/BuildProfiles/` with `game-ci/unity-builder` (ADR-0058): Windows in the `windows-6000.6.1f1-windows-il2cpp` image on the `windows-2022` job, Android in the `ubuntu-6000.6.1f1-android` image on the `ubuntu-24.04` job; build output goes to a directory outside the repository (runner temp), never into the tree.
 - Enforce .NET Standard 2.1 API profile and exact assembly dependencies.
 - Wire the production bootstrap scene and the `ThinhThan.App` composition root (`client/Assets/Scripts/App/`) so every completed client feature is reachable without test-only setup.
 - Deliver release packaging validating bundle integrity, symbols, and executable hashes.
@@ -3512,11 +3516,11 @@ consumers_checked: [docs/02_world/maps_zones.md, docs/02_world/dungeons.md, docs
 - the production bootstrap scene reaches login, character selection, world HUD, and every feature UI supplied by its dependencies,
 - Release package includes Addressables catalogs, localization tables, protobuf assemblies and accessible third-party asset credits generated by IMP-076; no placeholder or unapproved-source file ships,
 - Build checksums and binary artifacts are recorded in release manifest.
-- PERF-007 (desktop): on the IL2CPP Windows player on the runner, cold start to login <= 6 s, login to in-world <= 8 s, same-region transfer <= 3 s, new-region transfer <= 6 s, reconnect resume <= 5 s,
+- PERF-007 (desktop): PlayMode tests in category `Performance` on the Linux job (llvmpipe, ADR-0058), cold start to login <= 6 s, login to in-world <= 8 s, same-region transfer <= 3 s, new-region transfer <= 6 s, reconnect resume <= 5 s,
 - no build output or cache is committed; `git status` is clean after the build.
 
 ## Tests
-- `scripts/verify_client_build.ps1`: clean IL2CPP Windows and Android smoke builds and package verification (ADR-0050).
+- `scripts/verify_client_build.ps1`: clean IL2CPP Windows (Windows job) and Android (Linux job) smoke builds and package verification (ADR-0058).
 - `client/Assets/Tests/PlayMode/AppComposition/AppCompositionTests.cs`: production bootstrap, reference viewport/camera, 33 playable-scene registrations, and feature-registration coverage.
 - `client/Assets/Tests/PlayMode/AppComposition/LoadTimeTests.cs`: TestColdStartDesktop, TestLoginToWorld, TestMapTransferTimes, TestReconnectResumeTime (PERF-007).
 
@@ -3535,7 +3539,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md`, `../04_architecture/physics_geometry_contract.md`, `repository_layout.md`]
-adrs: [`0014-unity-addressables-asset-delivery.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+adrs: [`0014-unity-addressables-asset-delivery.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
 depends_on: [IMP-063, IMP-101]
 owned_paths: [`client/Assets/Art/Provenance/asset_source_register.json`, `client/Assets/Art/Provenance/register.schema.json`, `client/Assets/Scripts/Core/Assets/Editor/AssetProduction/`, `client/Assets/Scenes/Review/`, `client/Assets/Tests/EditMode/AssetProvenance/`, `client/Assets/Tests/EditMode/CutoutQualityGate/`, `client/Assets/Tests/EditMode/VolumeDepthGate/`]
 forbidden_paths: [`server/`, `proto/`]
@@ -3553,7 +3557,7 @@ consumers_checked: [docs/07_content/presentation_asset_manifest.md, docs/04_arch
 - Clean empty register passes foundation tests; a production file without a row fails the release mode of the validator.
 - Invalid/missing license URL, source URL, generation record, hash, attribution or approval produces a path-specific error; a third-party input to AI generation cannot be hidden.
 - Validator uses pinned Unity/project tooling only; no new runtime/package dependency.
-- `client/Assets/Scenes/Review/` hosts the Visual Review scenes (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%); screenshots are review artifacts referenced by the evidence manifest, never committed or used as evidence.
+- `client/Assets/Scenes/Review/` hosts the Visual Review scenes (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%); the Linux CI job renders them under xvfb + Mesa llvmpipe (`renderer=llvmpipe`, ADR-0058) and uploads artifact `visual-review`; screenshots are review artifacts referenced by the evidence manifest, never committed or used as evidence.
 
 ## Tests
 - `client/Assets/Tests/EditMode/CutoutQualityGate/CutoutQualityGateTests.cs`: one passing clean sprite and one failing fixture per §3.2 rule.
@@ -3586,7 +3590,7 @@ consumers_checked: [docs/07_content/monster_catalog.md, docs/07_content/boss_cat
 - Import with canonical cell, PPU, pivot and size profile; integrate stable Addressable keys without changing authoritative collider dimensions. Record each file and source in `client/Assets/Art/Provenance/fragments/actors_players.json`.
 
 ## Acceptance
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every class/player actor ID resolves to an intentional visual (including explicit shared variants); no placeholder/default-tool sprite remains.
 - Idle/move/attack/hit/defeat and other states required by the owning runtime/UI contract are present; animation timing does not assert server gameplay results.
 - Class skill silhouettes remain legible at `1280x720` and mobile layout; Vietnamese folklore silhouette/identity is reviewed.
@@ -3620,7 +3624,7 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - Import with canonical cell, PPU, pivot and size profile; record each file and source in `client/Assets/Art/Provenance/fragments/actors_creatures.json`.
 
 ## Acceptance
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every monster, boss and Spirit Beast ID resolves to an intentional visual (including explicit shared variants); no placeholder sprite remains.
 - Idle/move/attack/hit/defeat states required by the runtime/UI contract are present; animation timing does not assert server results.
 - Boss/elite telegraphs remain legible at `1280x720` and mobile layout; Vietnamese folklore silhouette/identity is reviewed.
@@ -3654,7 +3658,7 @@ consumers_checked: [docs/07_content/world_route_catalog.md, docs/07_content/dung
 - Keep visual layers separate from authoritative collision/geometry export; no giant one-sprite map. Record every shipped image/source in `client/Assets/Art/Provenance/fragments/world.json`.
 
 ## Acceptance
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every scene has a unique stable Addressable key and visual identity; different map shape/size/branches/vertical tiers match catalogs and exported geometry.
 - Foreground/parallax and telegraph contrast remain readable; atlas/bundle size and region unload budgets pass.
 - Visual editing does not silently alter canonical collision, spawn anchors or server geometry. Any needed geometry change returns to its owning spec/task.
@@ -3688,7 +3692,7 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - Keep visual layers separate from geometry export; record every file and source in `client/Assets/Art/Provenance/fragments/instances.json`.
 
 ## Acceptance
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every instance scene has a unique stable Addressable key; shape/size/branches/vertical tiers match catalogs and exported geometry; competitive scenes keep mirror parity.
 - Telegraph contrast remains readable; atlas/bundle size budgets pass; visual editing never alters collision, anchors or server geometry.
 
@@ -3721,7 +3725,7 @@ consumers_checked: [docs/07_content/class_skill_catalog.md, docs/07_content/item
 - Deliver both required locales' glyph coverage and PC/mobile presentation variants without encoding gameplay outcomes in visual data.
 
 ## Acceptance
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every release UI control/state and relevant item/equipment/skill ID resolves; no tofu, unlabelled placeholder icon or missing telegraph.
 - VFX shape/timing visually communicates the canonical skill geometry but cannot change hitboxes, duration or target selection.
 - Small-screen contrast/readability and color-independent dangerous telegraphs pass visual review.
@@ -3755,7 +3759,7 @@ consumers_checked: [docs/07_content/cosmetic_catalog.md, docs/03_systems/cosmeti
 - Record cultural/reference review by cosmetic ID in `client/Assets/Art/Provenance/cultural_review.md` for entries named by `cosmetic_catalog.md`; enter every shipped media file into the source fragment.
 
 ## Acceptance
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every cosmetic ID renders the correct entitlement presentation and never changes gameplay collider/stats/equipment identity.
 - Culturally sensitive concepts have review evidence before production acceptance; no recognizable borrowed trademark, religious insignia or unlicensed reference.
 - No placeholder cosmetic ships; free-license/AI-tool rights and attribution are complete.

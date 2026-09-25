@@ -1,6 +1,6 @@
 # AI Project Rules
 
-Purpose: this repository is specified and implemented entirely by AI agents (ADR-0050, ADR-0057). The only human role is the repository owner: one-time Owner Setup and fixing `OPS-xxx` environment failures (`docs/10_implementation/audit_gates.md`).
+Purpose: this repository is specified and implemented entirely by AI agents (ADR-0050, ADR-0057, ADR-0058). The only human role is the repository owner: one-time Owner Setup and fixing `OPS-xxx` environment failures (`docs/10_implementation/audit_gates.md`).
 
 Rules:
 - Treat `docs/` as the project specification and source of truth.
@@ -57,7 +57,7 @@ A change touching files in more than two numbered directories must list the comp
 | Dungeon / Spirit Surge EXP rules | `07_content/dungeon_catalog.md`, `07_content/world_event_catalog.md` (ADR-0032) |
 | Content catalog status values | `07_content/README.md` |
 | Asset size, cutout, volume and review gates | `07_content/presentation_asset_manifest.md` (ADR-0055, ADR-0056) |
-| CI, bootstrap, evidence, merge and review policy | `10_implementation/audit_gates.md`, `10_implementation/agent_execution_protocol.md` (ADR-0050, ADR-0057) |
+| CI, bootstrap, evidence, merge and review policy | `10_implementation/audit_gates.md`, `10_implementation/agent_execution_protocol.md` (ADR-0050, ADR-0057, ADR-0058) |
 | Client performance and smoothness | `04_architecture/client_performance.md` |
 | Roles (spec-owner, coordinator, implementers, reviewer) | `10_implementation/README.md` |
 
@@ -97,7 +97,8 @@ open-world PK, swim stamina, mail, 4th currency, mounts, invented shop prices
 C2S_AUCTION_BID    -> FIXED_PRICE buy only
 CHARACTER_ALREADY_ACTIVE on replace login -> SESSION_REPLACED (ADR-0030)
 latest / floating / prerelease versions
-Bash CI wrappers / non-Windows CI job (ADR-0050)
+Bash verify/codegen wrappers (ADR-0050); self-hosted / GPU / larger runners, owner-managed VM, `*-latest` runner image (ADR-0058)
+fork PRs; job-level `if` that skips a required check; secrets before the fork guard (ADR-0058)
 git rebase / force-push / direct push to main / self-review (ADR-0050)
 ```
 
@@ -111,11 +112,12 @@ simulation 20 Hz; p95 tick < 35 ms; channel cap = 18 (ADR-0035); map = 540
 C# 9.0 Allman; Go tabs; proto indent 2
 Go toolchain = 1.27.1
 textures authored at 2x, imported at 100 PPU (UI 200) (ADR-0055)
+public repo; CI = GitHub-hosted ubuntu-24.04 + windows-2022 only, no GPU (ADR-0058)
 ```
 
 Done:
 - `DONE` is defined only by `docs/10_implementation/definition_of_done.md`; the merge sequence only by `docs/10_implementation/agent_execution_protocol.md` §5a
 - spec changes land first in a spec-change PR; code + tests + status + CI-produced evidence land in the task PR
-- verify: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1` locally and in CI (Windows-only); Go: `go -C server ...`
-- a ready PR merges automatically (squash) when `Q0-Q6 verify (Windows)` and the App status `policy-review` are green
+- verify: `pwsh -NoProfile -File scripts/verify.ps1` locally and in CI (GitHub-hosted Linux + Windows jobs on every PR); Go: `go -C server ...`
+- a ready PR merges automatically (squash) when `Q0-Q6 verify (Linux)`, `Q0-Q6 verify (Windows)` and the App status `policy-review` are green
 - verify fail = not done

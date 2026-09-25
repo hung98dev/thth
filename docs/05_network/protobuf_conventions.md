@@ -100,10 +100,10 @@ Canonical field authority is `../05_network/protocol.md`. This protobuf layout m
    - Target C#: `client/Assets/Scripts/Protocol/`
    - Cấm sửa tay bất kỳ dòng code nào trong hai thư mục trên.
 2. **Codegen Scripts:**
-   - Windows: `scripts/codegen.ps1` (script duy nhất; ADR-0050 bỏ wrapper Bash)
+   - `pwsh -NoProfile -File scripts/codegen.ps1` trên Linux và Windows (script duy nhất; ADR-0050 bỏ wrapper Bash, ADR-0058 chạy bằng PowerShell 7)
    - Script phải sử dụng đúng phiên bản `protoc 36.2` và `protoc-gen-go v1.36.12` theo `docs/00_context/technology_versions.md`.
 3. **Kiểm tra lệch mã sinh (Codegen Drift Check):**
-   - Trong CI (Windows) và `verify.ps1`, script sẽ chạy lệnh codegen và kiểm tra `git status --porcelain`.
+   - Trong CI (job Linux và Windows) và `verify.ps1`, script sẽ chạy lệnh codegen và kiểm tra `git status --porcelain`.
    - Bất kỳ sự khác biệt nào giữa mã nguồn đã commit và mã sinh mới đều khiến bài test thất bại ngay lập tức (exit code 1).
 4. **Golden Binary Fixtures:**
    - Bộ fixture nhị phân mẫu được lưu tại `proto/testdata/golden/*.bin`.

@@ -11,7 +11,7 @@ HANDBOOK.md           agent onboarding doc
 rules/                *.md — always_on or glob-triggered rules
 skills/<name>/SKILL.md
 agents/<name>.md      custom subagent profiles
-scripts/              hook + verification scripts (Bash 5 via Git Bash on Windows; canonical verify/codegen are PowerShell, ADR-0050)
+scripts/              hook + verification scripts (Bash 5; Git Bash on Windows; canonical verify/codegen are PowerShell 7 `pwsh`, ADR-0058)
 ```
 
 ## Conventions

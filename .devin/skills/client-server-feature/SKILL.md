@@ -11,7 +11,7 @@ Order matters: contract → server → client → compatibility. Never implement
 
 1. **Contract readiness.** Read the protected `docs/05_network/messages.md`/`errors.md` and all consumers. If they do not already specify the intended change, record the gap in `docs/10_implementation/known_blockers.md`, mark the task BLOCKED, and hand it to the `spec-owner` agent (spec-change PR + `policy-review`); never edit protected specs as an implementer.
 2. **Schema/version.** Edit `proto/thinhthan/v1/*.proto` only after contract readiness, following `.devin/rules/12-proto-contract.md`. Per `versioning.md`: additive-optional → `protocol_minor`; semantic/required change → `protocol_major`. Record the decision.
-3. **Regenerate.** Run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/codegen.ps1`; it bootstraps the pinned generators under ignored `tools/`. Never hand-edit generated Go/C#/asmdef/meta output.
+3. **Regenerate.** Run `pwsh -NoProfile -File scripts/codegen.ps1`; it bootstraps the pinned generators under ignored `tools/`. Never hand-edit generated Go/C#/asmdef/meta output.
 4. **Server.** Implement authoritative handling per `implement-backend-feature`. Client input stays intent — validate everything server-side.
 5. **Client.** Implement presentation/intent per `implement-unity-feature`. Absent optional fields render nothing, not zero (`versioning.md` ADR-0037 rules).
 6. **Compatibility.** When fixture shapes change, run `cd server && go test ./internal/testing/protocol -run TestBinaryEncodingParity -update-golden`; then run Go registry/golden tests and Unity EditMode parity. Check old-client behavior.

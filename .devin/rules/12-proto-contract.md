@@ -31,7 +31,7 @@ Canonical: `docs/05_network/protobuf_conventions.md`, `versioning.md`, `messages
 
 ## After any proto change
 
-1. Run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/codegen.ps1` (Windows only, ADR-0050); it bootstraps pinned `protoc 36.2` + `protoc-gen-go v1.36.12` under ignored `tools/`.
+1. Run `pwsh -NoProfile -File scripts/codegen.ps1` (Linux or Windows, ADR-0058); it bootstraps pinned `protoc 36.2` + `protoc-gen-go v1.36.12` under ignored `tools/`.
 2. If an affected fixture shape changed, regenerate with `cd server && go test ./internal/testing/protocol -run TestBinaryEncodingParity -update-golden`.
 3. Run `bash .devin/scripts/verify_delta.sh --full`: canonical Q2 must report zero drift for `server/internal/protocol/v1/`, C# output, asmdef, and deterministic Unity metadata; protocol registry/golden tests must pass.
 4. Check both consumers: `server/internal/` and `client/Assets/Scripts/`; Unity EditMode parity covers C# decode/re-encode.

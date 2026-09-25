@@ -119,7 +119,7 @@ Kích thước         texture = đúng 2 x cell ref; bbox silhouette (a >= 128)
 Validator ghi số đo từng file vào báo cáo; một vi phạm là fail. Ngưỡng chỉ được nới bằng ADR (gate ratchet, ADR-0050).
 
 ### 3.3 Duyệt hiển thị trong game (Visual Review Gate)
-Ảnh review được phép render bằng GPU phần cứng hoặc bằng render phần mềm WARP của Windows (runner không GPU, `../10_implementation/audit_gates.md` renderer policy); metadata ảnh ghi `renderer`. WARP chỉ dùng để soi hình ảnh, không dùng cho số liệu hiệu năng.
+Ảnh review được render trên job Linux của CI (GitHub-hosted, không GPU) bằng Mesa llvmpipe dưới xvfb (ADR-0058); metadata ảnh ghi `renderer=llvmpipe`. Ảnh chỉ dùng để soi hình ảnh, không dùng cho số liệu hiệu năng GPU.
 Mỗi entity/UI được chụp trong game trên map/nền thật của nó ở `1280x720`, `1920x1080` và profile điện thoại `2400x1080`, cả ngày và đêm, ở zoom 100% và 200%. Một agent khác người tạo xác nhận và ghi vào evidence:
 - không thấy viền lem, quầng màu, răng cưa hay đốm rác ở cả hai mức zoom;
 - silhouette đọc rõ trên nền: chênh lệch độ sáng trung bình giữa dải viền silhouette và nền ≥ 20%, hoặc asset có outline;

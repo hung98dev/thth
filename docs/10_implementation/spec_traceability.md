@@ -214,6 +214,7 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `0055-2x-texture-authoring-and-cutout-quality-gate.md` | IMP-004, IMP-013, IMP-015, IMP-018, IMP-019, IMP-022, IMP-023, IMP-024, IMP-040, IMP-041, IMP-042, IMP-048, IMP-062, IMP-063, IMP-067, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-078, IMP-088, IMP-095, IMP-101, IMP-104, IMP-105 |
 | `0056-volumetric-art-direction-and-2d-lighting.md` | IMP-018, IMP-025, IMP-055, IMP-058, IMP-059, IMP-063, IMP-065, IMP-066, IMP-067, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-087, IMP-088, IMP-095, IMP-099, IMP-101, IMP-104, IMP-105 |
 | `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md` | IMP-000, IMP-048, IMP-068, IMP-076, IMP-083, IMP-095, IMP-096 |
+| `0058-public-repo-github-hosted-linux-and-windows-runners.md` | IMP-000, IMP-005, IMP-048, IMP-067, IMP-068, IMP-070, IMP-095, IMP-096 |
 
 ## Requirement ID → Task
 

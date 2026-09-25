@@ -17,7 +17,7 @@ Thực hiện Wave <N> của repo thinhthan. Bạn là coordinator cho wave này
    Nếu AUTO_MERGE_FROZEN=true hoặc có OPS-xxx mở: báo lại và dừng.
 2. Lấy danh sách task của Wave <N> trong bảng Waves. Với từng task: claim theo §3 (IMP-000 tự claim trong PR của nó),
    rồi giao cho một agent con riêng (worktree, branch imp/IMP-XXX-<slug>, DB port và Unity cache riêng) chạy Implementer Prompt bên dưới.
-   Chạy song song tối đa bằng số runner slot; task còn lại chờ slot trống.
+   Chạy song song tối đa 5 task (giới hạn đồng thời, ADR-0058); task còn lại chờ slot trống.
 3. Theo dõi tới khi mọi task của wave là DONE trên main (two-phase task: cả PR status theo §5a) hoặc BLOCKED.
    Task BLOCKED vì BLK: để spec-owner xử lý, khi task trở lại NOT_STARTED thì claim và chạy lại. BLOCKED vì OPS: dừng task đó.
 4. Báo cáo cuối: từng task -> DONE/BLOCKED (mã BLK/OPS), PR đã merge, số lần CI chạy, việc chủ repo cần làm (nếu có).
@@ -34,7 +34,7 @@ Bạn là coordinator của repo thinhthan. Đọc AGENTS.md, docs/10_implementa
 Lặp liên tục cho tới khi IMP-048 DONE:
 1. Pull main. Nếu biến repo AUTO_MERGE_FROZEN=true hoặc có OPS-xxx mở thì dừng và chờ.
 2. Tính các task sẵn sàng (mọi depends_on DONE trên main, không BLK mở ảnh hưởng, tuân Bootstrap Mode trước IMP-068).
-3. Claim theo §3 (IMP-000: claim trong chính PR của nó), tối đa số runner slot task IN_PROGRESS cùng lúc, ưu tiên thứ tự topo nhỏ nhất.
+3. Claim theo §3 (IMP-000: claim trong chính PR của nó), tối đa 5 task IN_PROGRESS cùng lúc, ưu tiên thứ tự topo nhỏ nhất.
 4. Giao mỗi task cho đúng một implementer bằng Implementer Prompt (task, branch, worktree, base SHA).
 5. Task BLOCKED vì BLK -> giao cho spec-owner; claim quá 24h không hoạt động -> trả về NOT_STARTED.
 Không tự viết code, không sửa spec, không hỏi con người.
@@ -100,4 +100,4 @@ thêm regression test vào ## Tests của task liên quan, đóng BLK và trả 
 Before `IMP-068 = DONE`, only tasks without `IMP-068` in their transitive `depends_on` run (Bootstrap Mode, `audit_gates.md`). Two-phase tasks merge `IN_PROGRESS` and get `DONE` from a follow-up status PR. Serialized integration tasks run alone on their owned paths (`server/cmd/server/`, `server/internal/app/`, `client/Assets/Scripts/App/`, release artifacts).
 
 ## Parallel Execution
-The coordinator claims a batch of ready tasks in one claim PR, then gives each implementer only the Implementer Prompt with its own `IMP-*`, branch, worktree path and base SHA. Concurrent tasks never share a worktree, database, port or Unity project/cache directory. Runner slots from Owner Setup bound concurrency; each PR follows §5a independently and merges on its own green checks.
+The coordinator claims a batch of ready tasks in one claim PR, then gives each implementer only the Implementer Prompt with its own `IMP-*`, branch, worktree path and base SHA. Concurrent tasks never share a worktree, database, port or Unity project/cache directory. The concurrency limit (5 tasks, ADR-0058) bounds parallelism; each PR follows §5a independently and merges on its own green checks.

@@ -16,9 +16,9 @@ cd "$ROOT" 2>/dev/null || true
 
 has_cmd() { command -v "$1" >/dev/null 2>&1; }
 
-# Windows-only canonical wrappers (ADR-0050). Git Bash runs them through PowerShell.
-ps_cmd() { if has_cmd powershell.exe; then printf 'powershell.exe'; elif has_cmd pwsh; then printf 'pwsh'; else printf 'powershell'; fi; }
-run_ps_script() { local script="$1"; shift; "$(ps_cmd)" -NoProfile -ExecutionPolicy Bypass -File "$script" "$@"; }
+# Canonical wrappers are PowerShell 7 (`pwsh`) on Linux and Windows (ADR-0058).
+ps_cmd() { if has_cmd pwsh; then printf 'pwsh'; elif has_cmd pwsh.exe; then printf 'pwsh.exe'; else return 1; fi; }
+run_ps_script() { local script="$1" ps; shift; ps="$(ps_cmd)" || return 127; "$ps" -NoProfile -File "$script" "$@"; }
 
 # Resolve the exact pinned Unity Editor; never confuse other `unity` CLIs with
 # the editor binary. UNITY_EDITOR_PATH may override discovery only when its path
@@ -27,7 +27,8 @@ unity_editor_path() {
   local candidate normalized
   for candidate in \
     "${UNITY_EDITOR_PATH:-}" \
-    "C:/Program Files/Unity/Hub/Editor/6000.6.1f1/Editor/Unity.exe"; do
+    "C:/Program Files/Unity/Hub/Editor/6000.6.1f1/Editor/Unity.exe" \
+    "${HOME:-/nonexistent}/Unity/Hub/Editor/6000.6.1f1/Editor/Unity"; do
     [ -n "$candidate" ] || continue
     normalized="${candidate//\\//}"
     case "$normalized" in *6000.6.1f1*) ;; *) continue ;; esac

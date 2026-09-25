@@ -21,7 +21,7 @@ Classify with: `bash .devin/scripts/diff_scope.sh`
 |---|---|
 | Scoped iteration | `bash .devin/scripts/verify_delta.sh` |
 | Full local checkpoint | `bash .devin/scripts/verify_delta.sh --full` |
-| Canonical clean-tree Q0-Q6 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1` (Windows; CI is Windows-only, ADR-0050) |
+| Canonical clean-tree Q0-Q6 | `pwsh -NoProfile -File scripts/verify.ps1` (Linux or Windows; CI = GitHub-hosted Linux + Windows jobs, ADR-0058) |
 
 ## DONE gate (condensed — canonical: `docs/10_implementation/definition_of_done.md`)
 

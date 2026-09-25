@@ -48,7 +48,7 @@ thinhthan/
 └── server/                                         # one Go module `thinhthan`
 ```
 
-No `deploy/docker/`: PostgreSQL 18.6 tests use the EDB Windows binaries recorded in Owner Setup and started by `server/internal/testing/pgtest/` (IMP-005). Build output (Unity player builds, caches) goes to a directory outside the repository.
+No `deploy/docker/`: PostgreSQL 18.6 tests use the digest-pinned `postgres:18.6` service container on the Linux CI job and the EDB Windows binaries on Windows (ADR-0058); `server/internal/testing/pgtest/` (IMP-005) connects through `THINHTHAN_TEST_PG_DSN`. Build output (Unity player builds, caches) goes to a directory outside the repository.
 
 ## Go Layout
 

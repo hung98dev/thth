@@ -49,7 +49,7 @@ if [ -f docs/10_implementation/known_blockers.md ]; then
 fi
 dirty="$(changed_files | wc -l | tr -d ' ')"
 branch="$(git branch --show-current 2>/dev/null || echo '?')"
-if [ -f scripts/verify.ps1 ]; then verify="powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1 (canonical Q0-Q6, Windows-only CI) + .devin/scripts/verify_delta.sh --full (local diff supplements)"; else verify="none yet — repository is docs-only; IMP-000 creates scripts/verify.ps1"; fi
+if [ -f scripts/verify.ps1 ]; then verify="pwsh -NoProfile -File scripts/verify.ps1 (canonical Q0-Q6; CI = GitHub-hosted Linux + Windows jobs) + .devin/scripts/verify_delta.sh --full (local diff supplements)"; else verify="none yet — repository is docs-only; IMP-000 creates scripts/verify.ps1"; fi
 
 note SessionStart "thinhthan repo state:
 - phase: $phase | present:${present:-none} | absent:${absent:-none}

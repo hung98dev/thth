@@ -1,6 +1,8 @@
 # ADR-0057: Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0058)**: Owner Setup runner/GPU/WARP items (item 1), concurrency = runner slots (item 8), cloud-execution runner rules (item 13) and the Windows-only PostgreSQL pin note are superseded: GitHub-hosted Linux + Windows runners, no GPU, concurrency limit 5, `postgres:18.6` container on Linux and EDB binaries on Windows. Where this ADR differs, ADR-0058 governs.
+
 ## Context
 ADR-0045 and ADR-0050 described the steady state after `IMP-068`, but not how an empty repository reaches it. A `pull_request` workflow runs the PR's own workflow file, so a PR could weaken its judge. A `tested_commit_sha` disappears after squash merge. The revert PR of a `GITHUB_TOKEN` never triggers checks. Claims, retries, environment failures and the one unavoidable human setup step were undefined, so autonomous agents could stall or loop.
 

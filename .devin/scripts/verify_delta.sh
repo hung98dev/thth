@@ -68,6 +68,8 @@ if [ "$FULL" -eq 1 ]; then
   hdr "Canonical verifier (Q0-Q6)"
   if [ "$BOOTSTRAP" -eq 1 ]; then
     skip "SKIP(bootstrap): scripts/verify.ps1 does not exist yet (created by IMP-000)"
+  elif ! ps_cmd >/dev/null; then
+    warn "pwsh (PowerShell 7) not installed locally; canonical Q0-Q6 deferred to CI (authoritative, ADR-0058)"
   else
     canonical_ran=1
     before_status="$(git status --porcelain=v1 --untracked-files=all 2>/dev/null)"
@@ -270,6 +272,8 @@ if in_scope PROTO; then
     pass "protobuf codegen drift + Go registry/golden parity covered by canonical Q2/Q3"
   elif [ ! -f scripts/codegen.ps1 ]; then
     fail "proto changed but scripts/codegen.ps1 is missing (IMP-061 not done yet or regressed)"
+  elif ! ps_cmd >/dev/null; then
+    warn "pwsh (PowerShell 7) not installed locally; codegen drift deferred to CI Q2 (ADR-0058)"
   else
     before="$(generated_snapshot)"
     codegen_out="$(run_ps_script scripts/codegen.ps1 2>&1)"
@@ -294,7 +298,7 @@ if in_scope CLIENT_CS || in_scope CLIENT_ASSETS; then
   elif [ -z "$unity_editor" ] && [ "$BOOTSTRAP" -eq 1 ]; then
     skip "SKIP(bootstrap): Unity editor not provisioned locally"
   elif [ -z "$unity_editor" ]; then
-    fail "pinned Unity Editor 6000.6.1f1 unavailable (set UNITY_EDITOR_PATH to the exact editor binary)"
+    warn "pinned Unity Editor 6000.6.1f1 not installed locally; Unity tests deferred to CI (authoritative, ADR-0058; set UNITY_EDITOR_PATH to run locally)"
   elif [ ! -d client ]; then
     fail "client changes detected but client/ project is absent"
   else

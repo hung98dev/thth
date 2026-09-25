@@ -5,23 +5,23 @@ status: LOCKED
 
 Evidence, verification commands and release acceptance for thinhthan. Every `DONE` must be reproducible from a clean checkout without relying on agent memory or chat. Identity rules: ADR-0045 as amended by ADR-0057.
 
-## 1. Command Matrix (Windows only, local and CI; ADR-0050)
+## 1. Command Matrix (Linux and Windows, local and CI; ADR-0058)
 
 | Operation | Command | Requirement |
 |---|---|---|
-| Full repository verify | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1` | Q0-Q6; non-zero exit on any failed gate; starts PostgreSQL 18.6 Windows binaries on a random port and exports `THINHTHAN_TEST_PG_DSN` |
-| Protobuf codegen | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/codegen.ps1` | Go + C# output with zero drift |
+| Full repository verify | `pwsh -NoProfile -File scripts/verify.ps1` (CI adds `-UnityResultsDir <dir>`) | Q0-Q6; non-zero exit on any failed gate; uses `THINHTHAN_TEST_PG_DSN` when set (Linux CI `postgres:18.6` service container), otherwise starts the PostgreSQL 18.6 EDB Windows binaries on a random port and exports it |
+| Protobuf codegen | `pwsh -NoProfile -File scripts/codegen.ps1` | Go + C# output with zero drift |
 | Content compile | `go -C server run ./cmd/compiler` | all content catalogs compile |
 | Backend tests | `go -C server test ./...` (+ `-race` for `sim|edge|durable|global`) | unit and architecture tests |
-| Unity EditMode | `"$UNITY_EDITOR_PATH" -batchmode -projectPath client -runTests -testPlatform EditMode -testResults <tmp>/editmode.xml -logFile <tmp>/editmode.log` | always required |
-| Unity PlayMode | same with `-testPlatform PlayMode` | required after `IMP-065` is DONE |
+| Unity EditMode | local: `"$UNITY_EDITOR_PATH" -batchmode -projectPath client -runTests -testPlatform EditMode -testResults <tmp>/editmode.xml -logFile <tmp>/editmode.log`; CI: `game-ci/unity-test-runner` (`testMode: editmode`) into `-UnityResultsDir` | always required |
+| Unity PlayMode | same with `-testPlatform PlayMode` / `testMode: playmode`; category `Performance` runs only on the Linux job | required after `IMP-065` is DONE |
 | Android performance | `gcloud firebase test android run --type game-loop` on the Owner Setup device models | scheduled `device-perf` workflow on `main` (not a PR check); `DEFERRED(quota)` on exhausted quota (`../04_architecture/client_performance.md`) |
 
-`scripts/verify.ps1` resolves the Unity editor from `UNITY_EDITOR_PATH` (must contain `6000.6.1f1`) and fails if the version differs. Library cache and temp directories are per worktree. A missing tool or GPU on CI is an `OPS-xxx` failure; `SKIP(bootstrap)` is allowed only under Bootstrap Mode (`../10_implementation/audit_gates.md`).
+`scripts/verify.ps1` resolves the Unity editor from `UNITY_EDITOR_PATH` (must contain `6000.6.1f1`) and fails if the version differs; with `-UnityResultsDir` it gates on the GameCI result XML instead (missing or failed results = FAIL). Library cache and temp directories are per worktree (CI: `actions/cache` per OS). CI has no GPU: rendering uses Mesa llvmpipe on Linux (ADR-0058). A missing tool, image or licence on CI is an `OPS-xxx` failure; `SKIP(bootstrap)` is allowed only under Bootstrap Mode (`../10_implementation/audit_gates.md`).
 
 ## 2. Evidence Manifest
 
-CI is the enforcement source. `verify.yml` checks out the PR head SHA, computes `source_tree_hash`, runs Q0-Q6 and uploads `manifest.json` as artifact `evidence`. The agent downloads it (`gh run download <id> -n evidence`) into `docs/10_implementation/evidence/<ID>/` and commits it unchanged. FAILED manifests are never committed.
+CI is the enforcement source. `verify.yml` checks out the PR head SHA, computes `source_tree_hash` and runs Q0-Q6 in the jobs `Q0-Q6 verify (Linux)` and `Q0-Q6 verify (Windows)`; the `evidence manifest` job merges both reports and uploads `manifest.json` as artifact `evidence`. The agent downloads it (`gh run download <id> -n evidence`) into `docs/10_implementation/evidence/<ID>/` and commits it unchanged. FAILED manifests are never committed.
 
 ```text
 source_tree_hash = SHA-256 over sorted lines "path NUL git-blob-sha LF" from `git ls-files`, excluding
@@ -45,6 +45,7 @@ test_summary.total / passed / failed / skipped
 skipped_reasons[] (id, reason, allowed)        -- SKIP(bootstrap) entries name the gate and its owner task
 content_revision                               -- "none" while no content compiler exists at the tested source
 ci_run_id, run_attempt
+jobs[] (name, os = linux|windows, result = PASSED)   -- both verify jobs of the same run
 worktree_clean = true
 result = PASSED
 ```
@@ -93,6 +94,6 @@ no DONE without a CI-produced manifest committed unchanged
 every verify command runs on a clean checkout
 chat logs and screenshots never replace evidence (screenshots are review artifacts)
 worktree_clean = true after verify
-CI = Windows workflow `Q0-Q6 verify (Windows)`; `policy-review` is the App status; post-merge guard (ADR-0050, ADR-0057)
-missing Unity/GPU/tool on CI = OPS failure, never a skip (except SKIP(bootstrap)); Test Lab quota = DEFERRED(quota)
+CI = GitHub-hosted jobs `Q0-Q6 verify (Linux)` + `Q0-Q6 verify (Windows)`; `policy-review` is the App status; post-merge guard (ADR-0050, ADR-0057, ADR-0058)
+missing Unity/image/licence/tool on CI = OPS failure, never a skip (except SKIP(bootstrap)); Test Lab quota = DEFERRED(quota)
 ```

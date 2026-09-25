@@ -5,7 +5,7 @@ status: LOCKED
 Canonical player-facing performance and smoothness targets for the Unity client: device tiers, frame pacing, memory/GC, load times, input responsiveness, network smoothness, mobile thermal/battery, and how each is measured. Server-side targets stay in `../08_scale_ops/capacity.md`. Measurement uses Unity built-ins only (`FrameTimingManager`, `ProfilerRecorder`); no new package.
 
 ## Platforms and Device Tiers
-Launch platforms: Windows desktop and Android. iOS is not a launch target (Windows-only CI, ADR-0050).
+Launch platforms: Windows desktop and Android. iOS is not a launch target (CI builds only Windows and Android players, ADR-0058).
 
 | Tier | Reference hardware | Target |
 |---|---|---|
@@ -20,10 +20,12 @@ Measured in the canonical hotspot scene (18 players + 42 `AI_CLASS_NAMED_MECHANI
 
 ```text
 tier           target   p95 frame     p99 frame     hitches (>50 ms)
-DESKTOP_MIN    60 FPS   <= 16.7 ms    <= 25 ms      0 per 5 min in combat
+DESKTOP_MIN    60 FPS   <= 16.7 ms    <= 25 ms      0 per 5 min in combat   (design target, not CI-gated)
 ANDROID_REC    60 FPS   <= 16.7 ms    <= 25 ms      <= 1 per 5 min
 ANDROID_MIN    30 FPS   <= 33.3 ms    <= 45 ms      <= 1 per 5 min
 ```
+Desktop CPU budget (`PERF-002`, CI-gated): hotspot scene for 5 minutes with `-batchmode -nographics` on the Linux CI job, main-thread CPU time per frame (`PlayerLoop` excluding GPU/present waits, `ProfilerRecorder`) p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms. Desktop GPU frame pacing is an accepted gap: hosted CI has no GPU (ADR-0058); it is mitigated by the `PERF-006` draw budgets and the `PERF-003` Android GPU device runs.
+
 Frame budget on `ANDROID_MIN` (33.3 ms): scripts <= 10 ms, rendering <= 12 ms, remainder for OS/GPU. Batches <= 150 on mobile (SpriteAtlas per region/actor group, no per-frame material instancing). VSync on desktop; `Application.targetFrameRate` = tier target on Android.
 
 ## Memory and GC
@@ -70,14 +72,14 @@ ANDROID_MIN-class device, 30 FPS cap                  average CPU utilisation <=
 A battery-saver toggle caps FPS at 30 on any tier.
 
 ## Measurement and Gates
-- Desktop: PlayMode performance tests run the hotspot scene with `FrameTimingManager`/`ProfilerRecorder` on the cloud Windows runner, which must have a hardware GPU at `DESKTOP_MIN` level or better from IMP-095 on (Owner Setup, `../10_implementation/audit_gates.md`); a runner without such a GPU makes the gate an `OPS` blocker, never a skipped pass. Software rendering (WARP) is never valid for these measurements.
-- Every PR, device-independent budgets (runs on the Windows runner, always required once the owning task is DONE):
+- Desktop (every PR, Linux job, GitHub-hosted, no GPU; ADR-0058): PlayMode tests in category `Performance` run the hotspot scene with `FrameTimingManager`/`ProfilerRecorder`. CPU timing (`PERF-002`) runs with `-nographics`; draw/memory/load measurements render under xvfb with Mesa llvmpipe. GPU frame time is never measured or gated in CI, so a missing GPU is neither a failure nor an `OPS` blocker.
+- Every PR, device-independent budgets (Linux job, always required once the owning task is DONE):
   ```text
   managed GC allocation per frame in the hotspot scene       = 0 bytes
   batches <= 150, SetPass calls <= 60 (LOW preset)          texture memory within presentation_asset_manifest.md §1 budgets
-  active point Light2D and particle counts <= preset budget  desktop frame targets above
+  active point Light2D and particle counts <= preset budget  desktop CPU budget (PERF-002)
   ```
-- Android device runs: an IL2CPP Android build of the hotspot scene runs as a Unity game-loop test on Firebase Test Lab physical devices (one `ANDROID_MIN`-class and one `ANDROID_REC`-class model, recorded in Owner Setup); CI downloads the frame timings and gates them. No device is attached to the runner. Cadence stays inside the free quota: at most one scheduled run per day on `main` when client code/assets changed since the last device run, plus the mandatory launch-candidate run. A run blocked by exhausted quota is reported `DEFERRED(quota)` and retried the next day; it never fails or blocks ordinary PRs. The launch-candidate gate requires a passing device run on the release commit and waits (it never skips) until quota allows.
+- Android device runs: an IL2CPP Android build of the hotspot scene runs as a Unity game-loop test on Firebase Test Lab physical devices (one `ANDROID_MIN`-class and one `ANDROID_REC`-class model, recorded in Owner Setup) from the scheduled `device-perf` workflow on `ubuntu-24.04`; CI downloads the frame timings and gates them. No device is attached to the runner. Cadence stays inside the free quota: at most one scheduled run per day on `main` when client code/assets changed since the last device run, plus the mandatory launch-candidate run. A run blocked by exhausted quota is reported `DEFERRED(quota)` and retried the next day; it never fails or blocks ordinary PRs. The launch-candidate gate requires a passing device run on the release commit and waits (it never skips) until quota allows.
 - Network smoothness tests use the client network emulator (latency, jitter, loss) against a local server in PlayMode.
 - The 30-minute sustained runs execute on Firebase Test Lab during the launch-candidate gate.
 - Any metric above its target fails the gate; targets change only by spec change (gate ratchet, ADR-0050).
@@ -88,7 +90,7 @@ Every ID below must be named in at least one task packet's acceptance and covere
 | ID | Requirement (section) | Gate |
 |---|---|---|
 | `PERF-001` | Auto benchmark picks LOW/MEDIUM/HIGH; presets change presentation only (Device Tiers) | every PR |
-| `PERF-002` | DESKTOP_MIN frame pacing p95/p99/hitches (Frame Pacing) | every PR |
+| `PERF-002` | desktop CPU budget: main-thread p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms (Frame Pacing) | every PR (Linux job) |
 | `PERF-003` | ANDROID_MIN and ANDROID_REC frame pacing (Frame Pacing) | device run |
 | `PERF-004` | 0 bytes managed GC per frame in steady gameplay (Memory and GC) | every PR |
 | `PERF-005` | resident memory caps per tier (Memory and GC) | every PR (desktop) + device run |

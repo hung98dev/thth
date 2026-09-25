@@ -61,11 +61,12 @@ Use `docs/templates/adr.md`.
 | 0047 | Skill Reach Budget and Collider-Aware Resolution | ACCEPTED |
 | 0048 | Character Row Update Timestamp _(amended: included in baseline 000001)_ | ACCEPTED |
 | 0049 | Guild Storage Same-Account Transfer Prohibition | ACCEPTED |
-| 0050 | Windows-Only CI and Auto-Merge on Green _(amended by ADR-0057)_ | ACCEPTED |
+| 0050 | Windows-Only CI and Auto-Merge on Green _(amended by ADR-0057, ADR-0058)_ | ACCEPTED |
 | 0051 | First-Party Username/Password Login | ACCEPTED |
 | 0052 | Single Launch World | ACCEPTED |
 | 0053 | Durable Data Contract Reconciliation | ACCEPTED |
 | 0054 | Wire Message Completion | ACCEPTED |
 | 0055 | 2x Texture Authoring and Cutout Quality Gate | ACCEPTED |
 | 0056 | Volumetric Art Direction and URP 2D Lighting | ACCEPTED |
-| 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics | ACCEPTED |
+| 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics _(amended by ADR-0058)_ | ACCEPTED |
+| 0058 | Public Repository on GitHub-Hosted Linux and Windows Runners | ACCEPTED |

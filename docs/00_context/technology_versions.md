@@ -1,6 +1,6 @@
 # Technology Versions
 status: LOCKED
-verified_at: 2026-09-20
+verified_at: 2026-09-25
 
 ## Scope
 Canonical exact launch toolchain and approved core dependency versions.
@@ -126,14 +126,24 @@ Do not:
 | GitHub Actions `actions/upload-artifact` | `v4.6.2` (`ea165f8d65b6e75b540449e92b4886f43607fa02`) | Upload verify-report.json. Floating `@v4` forbidden. |
 | Server runtime packaging | static binary + systemd unit | No container base image in production (`../08_scale_ops/deployment.md`). |
 | TLS root CA bundle | Mozilla via curl.se `cacert-2026-08-13.pem`, SHA-256 `f66dff1bdf8f96060b8177976f8b7d9254bc89bc4db933d769f7384d28480bc9` | Committed at `deploy/prod/cacert.pem`; verify hash in Q1; refresh only by updating this row. |
-| GitHub Actions `actions/create-github-app-token` | `v3.2.0` (`bcd2ba49218906704ab6c1aa796996da409d3eb1`) | App token for post-merge revert PRs (ADR-0057). |
+| GitHub Actions `actions/create-github-app-token` | `v3.2.0` (`bcd2ba49218906704ab6c1aa796996da409d3eb1`) | Merge-guard App token for post-merge revert PRs (ADR-0057, ADR-0058). |
 | GitHub CLI `gh` | `2.101.0` | PR, auto-merge, run download, rulesets evidence. |
-| Git for Windows | `2.55.0.windows.5` | Git + Git Bash; Git Bash runs only local `.devin` hooks (exempt from the no-Bash CI rule). |
+| Git for Windows | `2.55.0.windows.5` | Local Windows agent machines only: Git + Git Bash for `.devin` hooks (not a CI verify/codegen wrapper). |
 | `jq` | `1.8.2` | JSON in local hooks and CI scripts. |
 | Google Cloud SDK `gcloud` | `586.0.0` | `gcloud firebase test android run --type game-loop` in the scheduled `device-perf` workflow. |
-| PostgreSQL test server | `postgresql-18.6-1-windows-x64-binaries.zip` (https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip) | Official EDB Windows binaries; SHA-256 recorded by IMP-000 in `server/internal/stackpin/`; `verify.ps1` unpacks into ignored `tools/`, starts on a random port, exports `THINHTHAN_TEST_PG_DSN`. No container runtime. |
+| PostgreSQL test server (Windows) | `postgresql-18.6-1-windows-x64-binaries.zip` (https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip) | Windows CI job and local Windows: official EDB binaries; SHA-256 recorded by IMP-000 in `server/internal/stackpin/`; `verify.ps1` unpacks into ignored `tools/`, starts on a random port, exports `THINHTHAN_TEST_PG_DSN` unless it is already set. |
+| GitHub-hosted runner images | `ubuntu-24.04`, `windows-2022` | Only runners allowed (ADR-0058). `*-latest`, self-hosted, GPU and larger runners are forbidden. `windows-2022` matches the ltsc2022 GameCI Windows images. |
+| PowerShell | `7.6.6` (`pwsh`) | Runs `scripts/verify.ps1` / `scripts/codegen.ps1` on Linux and Windows; workflow steps use `shell: pwsh`. Windows PowerShell 5.1 is not a supported host. |
+| GitHub Actions `actions/cache` | `v6.1.0` (`55cc8345863c7cc4c66a329aec7e433d2d1c52a9`) | Unity `client/Library` cache per OS, keyed on `packages-lock.json` + `ProjectVersion.txt`. |
+| GitHub Actions `game-ci/unity-test-runner` | `v4.3.2` (`fa6ced25861c16ef56187828c43f76d00df43a23`) | Unity EditMode/PlayMode in CI; `customImage` set to a digest-pinned image below. |
+| GitHub Actions `game-ci/unity-builder` | `v6.0.0` (`eb1b9fba120c6e62c9fb7a7a81d6c107ce004c45`) | IL2CPP Windows/Android player builds (IMP-067). |
+| Unity CI image (Linux tests, screenshots) | `unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d` | Linux job; xvfb + Mesa llvmpipe rendering. |
+| Unity CI image (Android build) | `unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab` | Linux job; IL2CPP Android build. |
+| Unity CI image (Windows tests) | `unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534` | Windows job. |
+| Unity CI image (Windows player build) | `unityci/editor:windows-6000.6.1f1-windows-il2cpp-3.2.2@sha256:5bd80a61ac442b81745f653dd39395f6e93167ebc51c4b494bdd42c2b656195b` | Windows job; IL2CPP Windows player build. |
+| PostgreSQL test container (Linux CI) | `postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722` | Service container of `Q0-Q6 verify (Linux)`; exports `THINHTHAN_TEST_PG_DSN`. Tests only; production stays container-free. |
 
-CI runs only on a cloud Windows VM registered as a self-hosted runner with the pinned Unity editor (`UNITY_EDITOR_PATH`), Go, Git for Windows, `gh`, `jq` and `gcloud` installed (ADR-0050, ADR-0057; Owner Setup in `../10_implementation/audit_gates.md`). Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. `scripts/verify.ps1` must not call `python`.
+CI runs only on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners; each job installs the pinned Go, `pwsh`, `gh`, `jq` and `gcloud` and runs Unity in the digest-pinned GameCI images above (ADR-0058; Owner Setup in `../10_implementation/audit_gates.md`). Every Action is pinned by commit SHA and every container image by digest. Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. `scripts/verify.ps1` must not call `python`.
 # Pinned Content System Constants
 
 These constants are fixed at project initialization and must never change after any content using them has been shipped. Changing a namespace UUID retroactively invalidates every idempotency key previously derived from it.
@@ -143,7 +153,7 @@ These constants are fixed at project initialization and must never change after 
 | `CONTENT_GRANT_NAMESPACE_UUID` | `f7a3d2b1-4e8c-4a2f-9b3e-6d1c5f8e7a2b` | UUID v5 namespace for all deterministic content-grant idempotency keys (seasonal cosmetics, Atlas reward tiers, Guild Stone completions, and any future one-time content delivery). Generated once with `crypto/rand`. **Immutable** — changing this value breaks every previously issued grant key. Do not rotate, substitute, or regenerate. See `../06_data/ids.md` "Deterministic Content-Grant Idempotency Keys". |
 
 # Verified Stable Choices
-As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta.
+As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta. CI tooling rows added by ADR-0058 were verified on `2026-09-25`.
 
 # Version Verification
 When refreshing this matrix, verify candidate versions against the technology vendor's official release channel or canonical package registry. Record a new `verified_at` date. Do not infer "best" from version number alone: production selects the newest compatible **stable/LTS** release after compatibility review, not preview/beta/RC merely because it is newer.

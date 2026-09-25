@@ -15,7 +15,7 @@ production
 Staging uses production-like protocol/content/database migration flow and can execute load/fault tests without production player value.
 
 ## Artifacts
-Backend deployment ships one immutable artifact per release: the statically linked `thinhthan-server` binary (`CGO_ENABLED=0`, `GOOS=linux`, `GOARCH=amd64`, cross-built by the pinned Go toolchain on the Windows CI runner) plus the pinned Mozilla CA bundle (`../00_context/technology_versions.md`). Production runs it as one systemd service on one Linux host (`deploy/prod/thinhthan-server.service`); PostgreSQL 18.6 runs on its own host. No container runtime or Kubernetes is used in production (one process, ADR-0052).
+Backend deployment ships one immutable artifact per release: the statically linked `thinhthan-server` binary (`CGO_ENABLED=0`, `GOOS=linux`, `GOARCH=amd64`, built by the pinned Go toolchain on the Linux CI job (ADR-0058)) plus the pinned Mozilla CA bundle (`../00_context/technology_versions.md`). Production runs it as one systemd service on one Linux host (`deploy/prod/thinhthan-server.service`); PostgreSQL 18.6 runs on its own host. No container runtime or Kubernetes is used in production (one process, ADR-0052).
 
 Artifact identity includes:
 - source commit,

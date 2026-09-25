@@ -20,7 +20,7 @@ server/                 module thinhthan, Go 1.27.1
   migrations/           000001_baseline_schema (IMP-005)
 client/                 Unity 6000.6.1f1 (URP 2D Renderer)
 deploy/prod/            systemd unit + pinned CA bundle (IMP-048)
-scripts/                verify.ps1, codegen.ps1 (Windows only)
+scripts/                verify.ps1, codegen.ps1 (PowerShell 7, Linux + Windows)
 docs/                   numbered specs 00..11
 .devin/                 agent governance (rules/skills/hooks/agents/scripts)
 ```
@@ -53,14 +53,14 @@ NO: routers, ORMs, zap/logrus/zerolog, Redis/Kafka/NATS, gRPC, math/rand v1
 |---|---|
 | Scoped iteration checks | `bash .devin/scripts/verify_delta.sh` |
 | Full local checkpoint / Stop equivalent | `bash .devin/scripts/verify_delta.sh --full` |
-| Canonical clean-tree Q0-Q6 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1` (CI: cloud Windows runner) |
+| Canonical clean-tree Q0-Q6 | `pwsh -NoProfile -File scripts/verify.ps1` (CI: GitHub-hosted Linux + Windows jobs, ADR-0058) |
 | Diff risk classification | `bash .devin/scripts/diff_scope.sh` |
-| Regenerate protobuf + Unity metadata | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/codegen.ps1` |
+| Regenerate protobuf + Unity metadata | `pwsh -NoProfile -File scripts/codegen.ps1` |
 | Regenerate golden fixtures | `cd server && go test ./internal/testing/protocol -run TestBinaryEncodingParity -update-golden` |
 | Go suite | `go -C server test ./...` / affected sim/edge/durable/global with `-race` |
 | Unity EditMode | `"$UNITY_EDITOR_PATH" -batchmode -projectPath client -runTests -testPlatform EditMode -quit` |
 
-`.devin` auto-discovers the pinned Unity Hub editor path (Windows is canonical); set `UNITY_EDITOR_PATH` only to another binary whose path contains `6000.6.1f1`. Codegen manages protoc under ignored `tools/`; global `protoc` is optional.
+`.devin` auto-discovers the pinned Unity Hub editor path on Windows or Linux; a machine without it gets `WARN` and defers Unity to CI. Set `UNITY_EDITOR_PATH` only to another binary whose path contains `6000.6.1f1`. Codegen manages protoc under ignored `tools/`; global `protoc` is optional.
 
 ## Read order for any task
 
@@ -121,5 +121,5 @@ Canonical live list: `docs/10_implementation/known_blockers.md` (currently empty
 | `reviewer` | read-only conformance verdict |
 | `verifier` | read-only diff-to-test-matrix execution |
 | `spec-owner` | Contract Owner: resolves blockers, edits protected specs/ADRs via spec-change PRs (`THINHTHAN_AGENT_ROLE=spec-owner`) |
-| `coordinator` | claims ready tasks (status-only PRs), unclaims stale claims, keeps concurrency within runner slots |
+| `coordinator` | claims ready tasks (status-only PRs), unclaims stale claims, keeps concurrency within the limit of 5 tasks |
 | `asset-producer` | art/audio production within asset task owned paths; never gameplay/server/spec |
