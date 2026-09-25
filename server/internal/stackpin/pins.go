@@ -169,12 +169,11 @@ var ForbiddenModules = []string{
 	"github.com/gofiber/fiber/v2",
 }
 
-// UnityPackages is the canonical com.unity.* package set for
+// UnityPackages is the canonical com.unity.* package set required in
 // client/Packages/manifest.json (Unity 6000.6.1f1-aligned versions).
 var UnityPackages = map[string]string{
 	"com.unity.render-pipelines.universal":   "17.6.0",
 	"com.unity.render-pipelines.core":        "17.6.0",
-	"com.unity.shadergraph":                  "17.6.0",
 	"com.unity.inputsystem":                  "1.20.0",
 	"com.unity.2d.animation":                 "16.0.0",
 	"com.unity.2d.psdimporter":               "15.0.0",
@@ -183,4 +182,25 @@ var UnityPackages = map[string]string{
 	"com.unity.test-framework.performance":   "6.6.0",
 	"com.unity.memoryprofiler":               "1.1.12",
 	"com.unity.performance.profile-analyzer": "1.4.0",
+	"com.unity.ugui":                         "2.0.0",
+}
+
+// UnityOptionalPackages may appear in manifest.json at their pinned version
+// but are not required (matrix: shadergraph "use only if shader authoring
+// needs it").
+var UnityOptionalPackages = map[string]string{
+	"com.unity.shadergraph": "17.6.0",
+}
+
+// UnityPackageAllowlist is required ∪ optional: the only non-modules
+// com.unity.* entries manifest.json may list.
+func UnityPackageAllowlist() map[string]string {
+	out := map[string]string{}
+	for k, v := range UnityPackages {
+		out[k] = v
+	}
+	for k, v := range UnityOptionalPackages {
+		out[k] = v
+	}
+	return out
 }

@@ -35,12 +35,13 @@ func RepoRoot(dir string) (string, error) {
 	}
 }
 
-// DiffFiles returns the changed file list of refBase..refHead (relative
-// slash paths), using merge-base semantics when the refs are commits.
+// DiffFiles returns the changed file list of refBase...refHead (relative
+// slash paths) — merge-base semantics so main-side drift on a stale PR does
+// not appear as phantom PR changes.
 func DiffFiles(root, base, head string) ([]string, error) {
-	out, err := gitDir(root, "diff", "--name-only", "--diff-filter=ACDMRT", base+".."+head)
+	out, err := gitDir(root, "diff", "--name-only", "--diff-filter=ACDMRT", base+"..."+head)
 	if err != nil {
-		return nil, fmt.Errorf("git diff %s..%s: %v", base, head, err)
+		return nil, fmt.Errorf("git diff %s...%s: %v", base, head, err)
 	}
 	return splitLines(out), nil
 }
@@ -54,10 +55,10 @@ func RefFile(root, ref, path string) (string, error) {
 	return out, nil
 }
 
-// removedLines returns lines deleted from path in base..head (for append-only
-// control files).
+// removedLines returns lines deleted from path in base...head (merge-base
+// semantics), for append-only control files.
 func removedLines(root string, e *Env, path string) []string {
-	out, err := gitDir(root, "diff", "-U0", e.BaseSHA+".."+e.HeadSHA, "--", path)
+	out, err := gitDir(root, "diff", "-U0", e.BaseSHA+"..."+e.HeadSHA, "--", path)
 	if err != nil {
 		return nil
 	}

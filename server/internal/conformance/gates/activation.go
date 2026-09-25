@@ -71,12 +71,14 @@ func IsTwoPhase(taskID string) bool {
 }
 
 // ControlFiles is the set of repo paths a status-only PR may touch: the
-// packet fields + summary row of task_queue.md, known_blockers.md appends and
-// the PR task's own evidence directory.
+// packet fields + summary row of task_queue.md and known_blockers.md
+// appends. Evidence files are deliberately NOT control files — a PR that
+// touches only evidence would otherwise take the Q0-only fast path and skip
+// every gate. Implementer writes under evidence/<own task>/ are allowed by
+// the per-file scope check instead.
 var controlFilePrefixes = []string{
 	"docs/10_implementation/task_queue.md",
 	"docs/10_implementation/known_blockers.md",
-	"docs/10_implementation/evidence/",
 }
 
 // IsControlFile reports whether path is a status/control file.

@@ -64,9 +64,9 @@ func checkWhitespace(text string) []string {
 }
 
 // braceAllowedEnd matches a line starting with '}' that may only contain '}',
-// ';', ')' and '/' (comment) characters after it — e.g. '}', '};', '});',
-// '}) // comment'.
-var braceAllowedEnd = regexp.MustCompile(`^}+\s*[;)/]*\s*(//.*)?$`)
+// ';', ',', ')' and '/' (comment) characters after it — e.g. '}', '};', '},',
+// '});', '}) // comment'.
+var braceAllowedEnd = regexp.MustCompile(`^}+\s*[;,)/]*\s*(//.*)?$`)
 
 func checkBraces(text string) []string {
 	var out []string
@@ -97,11 +97,10 @@ func checkBraces(text string) []string {
 		if trimmed == "" {
 			continue
 		}
-		// A line containing '{' must contain only '{' (Allman).
-		if strings.Contains(l, "{") {
-			if trimmed != "{" {
-				out = append(out, n(i)+"'{' must be alone on its line")
-			}
+		// A line ending in '{' must contain only '{' (Allman); an inline
+		// '{' mid-line (e.g. a collection initializer) is fine.
+		if strings.HasSuffix(trimmed, "{") && trimmed != "{" {
+			out = append(out, n(i)+"'{' must be alone on its line")
 		}
 		// A line starting with '}' may only have brace-end characters.
 		if strings.HasPrefix(trimmed, "}") {
@@ -176,13 +175,42 @@ func checkPrivateFields(text string) []string {
 	return out
 }
 
-var typeDeclRe = regexp.MustCompile(`(?m)^(?:\s*(?:public|internal|private|protected|static|abstract|sealed|partial|readonly|file|unsafe|new)\s+)*(class|struct|interface|enum|record|delegate)\s+([A-Za-z_][A-Za-z0-9_]*)`)
+var typeDeclRe = regexp.MustCompile(`^\s*(?:(?:public|internal|private|protected|static|abstract|sealed|partial|readonly|file|unsafe|new)\s+)*(class|struct|interface|enum|record|delegate)\s+([A-Za-z_][A-Za-z0-9_]*)`)
 
+// checkOneTypePerFile counts only top-level (namespace-scope) type
+// declarations: a declaration at brace depth ≤ 1 — inside the namespace
+// block but outside any type — is top-level; deeper ones are nested types,
+// which §2.7 does not forbid.
 func checkOneTypePerFile(rel, text string) []string {
 	var out []string
 	var types []string
-	for _, m := range typeDeclRe.FindAllStringSubmatch(text, -1) {
-		types = append(types, m[2])
+	depth := 0
+	inBlockComment := false
+	for _, raw := range strings.Split(text, "\n") {
+		l := raw
+		if inBlockComment {
+			if idx := strings.Index(l, "*/"); idx >= 0 {
+				l = l[idx+2:]
+				inBlockComment = false
+			} else {
+				continue
+			}
+		}
+		if idx := strings.Index(l, "/*"); idx >= 0 {
+			if end := strings.Index(l[idx:], "*/"); end >= 0 {
+				l = l[:idx] + l[idx+end+2:]
+			} else {
+				l = l[:idx]
+				inBlockComment = true
+			}
+		}
+		if idx := strings.Index(l, "//"); idx >= 0 {
+			l = l[:idx]
+		}
+		if m := typeDeclRe.FindStringSubmatch(l); m != nil && depth <= 1 {
+			types = append(types, m[2])
+		}
+		depth += strings.Count(l, "{") - strings.Count(l, "}")
 	}
 	if len(types) > 1 {
 		out = append(out, "multiple top-level types: "+strings.Join(types, ", "))

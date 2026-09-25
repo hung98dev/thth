@@ -58,7 +58,7 @@ function Start-LocalPostgres {
     } catch {
         docker pull $image | Out-Null
     }
-    $script:pgContainer = (docker run -d --rm -e POSTGRES_PASSWORD=postgres -p 0:5432 $image).Trim()
+    $script:pgContainer = (docker run -d --rm -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=thinhthan_test -p 0:5432 $image).Trim()
     if ($script:pgContainer) {
         $port = (docker port $script:pgContainer 5432/tcp).Split(':')[-1]
         $env:THINHTHAN_TEST_PG_DSN = "postgres://postgres:postgres@127.0.0.1:$port/thinhthan_test?sslmode=disable"

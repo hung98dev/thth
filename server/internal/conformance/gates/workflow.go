@@ -118,7 +118,8 @@ func ParseWorkflow(path string) (*WorkflowFile, error) {
 		}
 		if m := runRe.FindStringSubmatch(line); m != nil {
 			curStep.Run = m[1]
-			if strings.HasSuffix(curStep.Run, "|") || strings.HasSuffix(curStep.Run, ">") || strings.HasSuffix(curStep.Run, "|-") {
+			// Block scalar indicators: |, > and their chomping variants.
+			if strings.HasPrefix(curStep.Run, "|") || strings.HasPrefix(curStep.Run, ">") {
 				runIndent = -2 // capture following indented lines
 			}
 			continue

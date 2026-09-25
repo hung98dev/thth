@@ -38,7 +38,10 @@ var bannedClientAPI = []struct {
 	{"find_calls", regexp.MustCompile(`\b(GameObject\.Find|FindObjectOfType|FindFirstObjectByType|FindAnyObjectByType|FindObjectsOfType|SendMessage|BroadcastMessage|InvokeRepeating)\s*\(|(?:^|[^\.\w])Invoke\s*\(`), nil, nil},
 	{"resources_load", regexp.MustCompile(`\bResources\.Load\b|\.WaitForCompletion\s*\(`), nil, nil},
 	{"async_void", regexp.MustCompile(`\basync\s+void\b`), nil, nil},
-	{"debug_log", regexp.MustCompile(`\bDebug\.Log\w*\b`), nil, nil},
+	{"debug_log", regexp.MustCompile(`\bDebug\.Log\w*\b`), func(rel string) bool {
+		// The canonical Log facade (§2.5) is the one file allowed Debug.Log.
+		return rel == "client/Assets/Scripts/Core/Runtime/Log.cs"
+	}, nil},
 	{"runtime_material", regexp.MustCompile(`\.material\b|new\s+Material\(`), nil, nil},
 	{"static_unity_main", regexp.MustCompile(`\bstatic\s+void\s+Main\s*\(`), nil, nil},
 	{"task_thread_outside_net", regexp.MustCompile(`\b(Task\.Run|new\s+Task\s*<|new\s+Task\s*\(|System\.Threading|ThreadPool|new\s+Thread\s*\()`), func(rel string) bool {

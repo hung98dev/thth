@@ -78,14 +78,22 @@ func checkGoMod(root string) Finding {
 			inRequire = false
 			continue
 		}
-		var mod, ver string
+		var mod, ver, reqLine string
+		indirect := false
 		switch {
 		case inRequire:
-			if m := requireRe.FindStringSubmatch(line); m != nil {
-				mod, ver = m[1], m[2]
-			}
+			reqLine = line
 		case strings.HasPrefix(line, "require "):
-			if m := requireRe.FindStringSubmatch(strings.TrimPrefix(line, "require ")); m != nil {
+			reqLine = strings.TrimPrefix(line, "require ")
+		}
+		if reqLine != "" {
+			if i := strings.Index(reqLine, "//"); i >= 0 {
+				if strings.TrimSpace(reqLine[i+2:]) == "indirect" {
+					indirect = true
+				}
+				reqLine = strings.TrimSpace(reqLine[:i])
+			}
+			if m := requireRe.FindStringSubmatch(reqLine); m != nil {
 				mod, ver = m[1], m[2]
 			}
 		}
@@ -96,6 +104,11 @@ func checkGoMod(root string) Finding {
 			if mod == f || strings.HasPrefix(mod, f+"/") {
 				problems = append(problems, "forbidden dependency "+mod)
 			}
+		}
+		if indirect {
+			// Transitive versions are locked by go.sum; only the
+			// forbidden-module list applies to // indirect requires.
+			continue
 		}
 		if want, ok := GoModulePins[mod]; !ok {
 			problems = append(problems, fmt.Sprintf("unlisted module %s %s", mod, ver))
@@ -154,6 +167,7 @@ func checkUnity(root string) Finding {
 		if json.Unmarshal(data, &m) != nil {
 			problems = append(problems, "manifest.json invalid JSON")
 		} else {
+			allow := UnityPackageAllowlist()
 			for name, want := range UnityPackages {
 				got, ok := m.Dependencies[name]
 				if !ok {
@@ -169,8 +183,10 @@ func checkUnity(root string) Finding {
 					}
 					continue
 				}
-				if _, ok := UnityPackages[name]; !ok {
+				if want, ok := allow[name]; !ok {
 					problems = append(problems, "unlisted Unity package "+name+" "+ver)
+				} else if want != ver {
+					problems = append(problems, fmt.Sprintf("%s pinned %s, manifest has %s", name, want, ver))
 				}
 				if t := floatingToken(ver); t != "" {
 					problems = append(problems, fmt.Sprintf("%s uses forbidden version token %q", name, t))
@@ -183,7 +199,7 @@ func checkUnity(root string) Finding {
 	if data, err := os.ReadFile(lockPath); err == nil {
 		var l unityLock
 		if json.Unmarshal(data, &l) == nil {
-			for name, want := range UnityPackages {
+			for name, want := range UnityPackageAllowlist() {
 				if e, ok := l.Dependencies[name]; ok && e.Version != want {
 					problems = append(problems, fmt.Sprintf("%s lock %s != pin %s", name, e.Version, want))
 				}

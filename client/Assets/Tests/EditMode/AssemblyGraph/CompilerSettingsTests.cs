@@ -24,12 +24,20 @@ namespace ThinhThan.Tests.EditMode.AssemblyGraph
             // additionally rejects every textual suppression escape hatch.
             foreach (var path in Directory.GetFiles("Assets", "*.cs", SearchOption.AllDirectories))
             {
+                // Generated C# under Assets/Scripts/Protocol/ is exempt —
+                // CODE-004 requires its generated #pragma/#nullable header.
+                if (path.Replace('\\', '/').StartsWith("Assets/Scripts/Protocol/"))
+                {
+                    continue;
+                }
                 var text = File.ReadAllText(path);
-                Assert.IsFalse(text.Contains("#pragma warning disable"),
-                    path + ": #pragma warning disable forbidden");
-                Assert.IsFalse(text.Contains("//lint:file-ignore"),
-                    path + ": //lint:file-ignore forbidden");
-                Assert.IsFalse(text.Contains("// ReSharper disable"),
+                // Needles are concatenated so this file does not trip its own
+                // suppression scan.
+                Assert.IsFalse(text.Contains("#pragma " + "warning " + "disable"),
+                    path + ": #pragma " + "warning " + "disable forbidden");
+                Assert.IsFalse(text.Contains("//lint:" + "file-ignore"),
+                    path + ": //lint:" + "file-ignore forbidden");
+                Assert.IsFalse(text.Contains("// ReSharper " + "disable"),
                     path + ": ReSharper suppression forbidden");
             }
         }

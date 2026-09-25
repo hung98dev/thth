@@ -98,8 +98,8 @@ func TestStatusOnlyPrFastPath(t *testing.T) {
 	if !StatusOnlyPR([]string{"docs/10_implementation/task_queue.md"}) {
 		t.Fatal("task_queue-only diff must be status-only")
 	}
-	if !StatusOnlyPR([]string{"docs/10_implementation/known_blockers.md", "docs/10_implementation/evidence/IMP-001/manifest.json"}) {
-		t.Fatal("blockers + evidence diff must be status-only")
+	if StatusOnlyPR([]string{"docs/10_implementation/known_blockers.md", "docs/10_implementation/evidence/IMP-001/manifest.json"}) {
+		t.Fatal("evidence diff must not take the Q0-only status-only fast path")
 	}
 	if StatusOnlyPR([]string{"docs/10_implementation/task_queue.md", "server/go.mod"}) {
 		t.Fatal("code in diff must not be status-only")

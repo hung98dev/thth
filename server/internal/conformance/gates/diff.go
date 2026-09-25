@@ -72,6 +72,14 @@ func checkControlFileDiff(root string, e *Env, headPackets map[string]TaskPacket
 	for _, f := range cl.Files {
 		switch cl.Role {
 		case RoleImplementer:
+			// Evidence is not a control file (keeps status-only PRs honest);
+			// an implementer may only write evidence/<own task>/.
+			if strings.HasPrefix(f, "docs/10_implementation/evidence/") {
+				if !implementerControlFileAllowed(f, cl.TaskID) {
+					problems = append(problems, "implementer may not change control file "+f)
+				}
+				continue
+			}
 			if IsControlFile(f) {
 				if !implementerControlFileAllowed(f, cl.TaskID) {
 					problems = append(problems, "implementer may not change control file "+f)

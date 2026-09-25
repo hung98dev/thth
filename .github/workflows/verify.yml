@@ -28,7 +28,7 @@ jobs:
   verify-linux:
     name: 'Q0-Q6 verify (Linux)'
     runs-on: ubuntu-24.04
-    timeout-minutes: 150
+    timeout-minutes: 120
     services:
       postgres:
         image: postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722
@@ -134,9 +134,10 @@ jobs:
         run: docker pull "${{ env.UNITY_LINUX_IMAGE }}"
 
       - name: Unity materialization (licence retry <=5)
+        timeout-minutes: 30
         shell: bash
         env:
-          UNITY_USERNAME: ${{ secrets.UNITY_USERNAME }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -146,7 +147,7 @@ jobs:
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               -w /github/workspace \
-              -e UNITY_USERNAME -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+              -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               xvfb-run -a unity-editor -batchmode -projectPath /github/workspace/client -quit -logFile /github/workspace/unity-materialize.log \
@@ -159,9 +160,10 @@ jobs:
           exit 1
 
       - name: Unity EditMode+PlayMode tests
+        timeout-minutes: 30
         shell: bash
         env:
-          UNITY_USERNAME: ${{ secrets.UNITY_USERNAME }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -172,7 +174,7 @@ jobs:
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               -w /github/workspace \
-              -e UNITY_USERNAME -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+              -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               xvfb-run -a unity-editor -batchmode -projectPath /github/workspace/client \
@@ -246,7 +248,7 @@ jobs:
   verify-windows:
     name: 'Q0-Q6 verify (Windows)'
     runs-on: windows-2022
-    timeout-minutes: 180
+    timeout-minutes: 120
     steps:
       - name: Fork guard
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
@@ -348,9 +350,10 @@ jobs:
         run: docker pull "${{ env.UNITY_WINDOWS_IMAGE }}"
 
       - name: Unity materialization (licence retry <=5)
+        timeout-minutes: 30
         shell: pwsh
         env:
-          UNITY_USERNAME: ${{ secrets.UNITY_USERNAME }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -360,7 +363,7 @@ jobs:
             docker run --rm `
               -v "${{ github.workspace }}:C:\repo" `
               -w C:\repo `
-              -e UNITY_USERNAME -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
+              -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
               powershell -Command "& 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
             if ($LASTEXITCODE -eq 0) { $ok = $true; break }
@@ -370,9 +373,10 @@ jobs:
           if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
 
       - name: Unity EditMode+PlayMode tests
+        timeout-minutes: 30
         uses: game-ci/unity-test-runner@fa6ced25861c16ef56187828c43f76d00df43a23 # v4.3.2
         env:
-          UNITY_USERNAME: ${{ secrets.UNITY_USERNAME }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -443,7 +447,7 @@ jobs:
     needs: [verify-linux, verify-windows]
     if: always()
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 120
     steps:
       - name: Fork guard
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
