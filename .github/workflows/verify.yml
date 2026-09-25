@@ -376,6 +376,18 @@ jobs:
             "THINHTHAN_RUN_ATTEMPT=${{ github.run_attempt }}"
           ) -join "`n" >> $env:GITHUB_ENV
 
+      - name: Ensure Docker daemon is up (windows-2022 workaround)
+        shell: pwsh
+        run: |
+          Start-Service docker -ErrorAction SilentlyContinue
+          for ($i = 0; $i -lt 60; $i++) {
+            docker info *> $null
+            if ($LASTEXITCODE -eq 0) { exit 0 }
+            Start-Sleep 2
+          }
+          docker info
+          exit 1
+
       - name: Pull Unity image (pinned)
         shell: pwsh
         run: docker pull "${{ env.UNITY_WINDOWS_IMAGE }}"
