@@ -83,7 +83,7 @@ Basic attacks participate in skill point progression and build customization:
 - Dedicated Basic Attack slot: Exactly `1` learned basic attack may be equipped from the 4 learned basic attacks.
 - Active slots: `0..5` learned active skills may be equipped into the five active hotbar slots (ADR-0016, ADR-0033). All five active skills are eventually learned (at Lv8, 14, 22, 32, 45); they may all be equipped simultaneously. Empty slots are valid while fewer than five actives are equipped. No slot may contain an unlearned skill or duplicate `skill_id`.
 - Learned passive skills are always active; there are no passive slots.
-- Loadout may change only while not `in_combat` and not under a PvP/content build lock.
+- Loadout may change only while not `in_combat` and not under a PvP/content build lock. Request: `C2S_LOADOUT_CHANGE{kind=SKILL_SET}` (`../05_network/messages.md`); the server validates the whole basic + 5-slot set atomically.
 - Unequipping a skill does not reset its cooldown.
 - Basic attack intent may be submitted on press or while its input remains held. While held, the client may submit at most one intent per currently known server cooldown; the server still accepts only one action after the authoritative cooldown and state checks. No client-side auto-hit result is valid.
 ## Target Count Limits and Scaling

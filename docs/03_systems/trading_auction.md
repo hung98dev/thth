@@ -8,7 +8,7 @@ Defines direct two-player trade and fixed-price world Auction House.
 Only `currency.common` transfers between players. Tradable items require UNBOUND, allowed trade rule, owned/unlocked. Bound items never player-tradable. Equipment must be unequipped and Soul Contract resolved; persistent item state is preserved. Beast equipment (`BEAST_EQUIPMENT` item type; see `items.md`) is not tradable regardless of binding state.
 
 # Direct Trade
-Exactly two different characters; same-account direct trade rejected. Start requires same map instance, <=4m, not in combat, social direct-interaction allowed, no conflict.
+Exactly two different characters; same-account direct trade is rejected with `SAME_ACCOUNT_FORBIDDEN`. Start requires same map instance, <=4m, not in combat, social direct-interaction allowed, no conflict.
 
 ## Direct-Trade Eligibility Gates
 Both the offeror and the recipient must satisfy all of the following before a trade session opens:
@@ -26,7 +26,7 @@ OPEN -> LOCKED -> COMMITTING -> COMPLETED
 ```
 Cancel/expire is allowed only from precommit states.
 
-Max 12 item entries plus common currency. Offer mutation increments revision and clears confirmation. Settlement is atomic. Inactive timeout 120s.
+Max 12 item entries per side plus common currency (one side only, below). Offered items stay in `CHARACTER_INVENTORY` under the trade lock (`items.md` § Trade Lock); no escrow location is used. Session state is runtime-only and never persisted; settlement inserts `trade_settlement_records` (`../06_data/data_model.md`). Offer mutation increments revision and clears confirmation. Settlement is atomic. Inactive timeout 120s. Cancel, timeout, disconnect or server restart before `COMPLETED` releases every lock and moves nothing.
 
 ## Direct-Trade Fee
 A 5% fee applies to the `currency.common` component of each trade settlement:
@@ -63,23 +63,24 @@ If either receiver would exceed the cap, the entire trade remains uncommitted an
 # Auction House
 World-wide per logical world. FIXED_PRICE only; one listing = one indivisible lot. Price bounds: `min_listing_price` to `2_000_000_000` common. Duration 24h. Max 20 ACTIVE listings/character.
 
-## Auction Listing Eligibility Gates
-A character may not place an auction listing unless:
+## Auction Eligibility Gates
+Every Auction House operation (browse, buy, list, cancel, reclaim) requires the Level-15 service unlock (`../01_gameplay/progression.md`); listing additionally requires character age (ADR-0063, amending ADR-0041 §2):
 ```text
-character.level >= 10
-character.age_hours >= 24   (server time since character creation)
+any auction operation: character.level >= 15
+listing:               character.age_hours >= 24   (server time since character creation)
 ```
-Listings submitted by ineligible characters are rejected before escrow with `AH_ELIGIBILITY_LEVEL_REQUIRED` or `AH_ELIGIBILITY_AGE_REQUIRED`. Purchasing existing listings has no level or age gate; only the listing side is gated.
+Rejections: `AH_ELIGIBILITY_LEVEL_REQUIRED` (level < 15, any operation) and `AH_ELIGIBILITY_AGE_REQUIRED` (listing, age < 24 h), before escrow or debit.
 
 ### Definition: min_listing_price
 ```text
-min_listing_price = max(100, npc_base_buy_price)
+unit_floor        = max(100, npc_base_buy_price)
+min_listing_price = unit_floor × lot quantity
 ```
-Where `npc_base_buy_price` is the NPC base purchase value of the listed item (0 if the item has no NPC purchase value). Equipment listings additionally enforce the tier floor below; the effective floor is the maximum of all applicable rules.
+Where `npc_base_buy_price` is the per-unit NPC base purchase value of the listed item (0 if the item has no NPC purchase value). Equipment listings additionally enforce the tier floor below; the effective floor is the maximum of all applicable rules.
 
 ### Listing Price Floor (Anti-Mule Protection)
 To enforce character resource isolation (ADR-0029) and prevent laundering items between alts through third-party straw purchases:
-- Minimum listing price: `price >= max(100, npc_base_buy_price)`.
+- Minimum listing price: `price >= max(100, npc_base_buy_price) × quantity`.
 - Equipment listings enforce tier floors:
   - T1: >= 500 common
   - T2: >= 1,500 common
@@ -87,7 +88,7 @@ To enforce character resource isolation (ADR-0029) and prevent laundering items 
   - T4: >= 10,000 common
   - T5: >= 25,000 common
   - T6: >= 50,000 common
-- Listings below these floors are rejected before escrow.
+- Listings below these floors are rejected before escrow with `AH_PRICE_FLOOR_NOT_MET`.
 ## Fees
 Listing fee = max(10, floor(price*1%)), ON_LIST, non-refundable sink.
 Sale tax = floor(price*5%); seller proceeds = price-tax.
@@ -106,7 +107,7 @@ Listing atomically moves asset inventory -> AUCTION_ESCROW. Active listing immut
 ## Purchase
 Buyer submits `C2S_AUCTION_BUY` (732); server returns `S2C_AUCTION_BUY_RESULT` (733). Message 737 is retired unused; do not reuse. Wording is purchase/buy; never bid or outbid.
 
-Server locks listing and validates buyer currency/inventory; at most one buyer settles ACTIVE -> SETTLING -> SOLD. Seller and same-account characters cannot buy own listing.
+Server locks listing and validates buyer currency/inventory; at most one buyer settles ACTIVE -> SETTLING -> SOLD. Seller and same-account characters cannot buy own listing (`SAME_ACCOUNT_FORBIDDEN`).
 Buyer inventory/currency validation occurs before debit. A full buyer inventory leaves the listing ACTIVE and charges nothing.
 
 ## Seller Proceeds and Currency Cap

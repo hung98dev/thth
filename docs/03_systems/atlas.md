@@ -34,10 +34,10 @@ Total **launch** pages: **104** (58 quai_dam + 25 hon_giam + 8 di_tich + 13 co_v
 ## Rewards (Non-Power)
 Each page tier grants at most one immutable `atlas_reward_bundle`, concretely authored by `atlas_catalog.md`. A launch-page bundle may contain one `currency.special` credit (1 or 2 per `../07_content/atlas_catalog.md`; seasonal pages grant 0; cosmetic-only, **character-scoped**) and one non-economic presentation entitlement (cosmetic title, lore illustration, or card frame). Atlas completion milestones may similarly bundle one glowing title plus one portrait frame, never gear or points.
 
-Tier progress and its entitlement key are character-scoped: `source_reward_operation_id + character_id + atlas_page_id + tier`. A `currency.special` result credits that `character_id`. Launch maximum Atlas total (`520`) is below the `currency.special` character cap (`1,000,000`). (Recomputed after roster expansion to 104 pages with T3 = 2 special to remain within the ~545 sink surface: 104×(1+2+2) = 520.) Cosmetic title/frame from Atlas is character-scoped (ADR-0029). Neither reward may be rerolled on retry.
+Tier progress and its entitlement key are character-scoped: `atlas.tier.<character_id>.<atlas_page_id>.<tier>` (the single idempotency key for promotion, EXP, `currency.special` and entitlement of that tier; stored as `reward_operation_id`). A `currency.special` result credits that `character_id`. Launch maximum Atlas total (`520`) is below the `currency.special` character cap (`1,000,000`). (Recomputed after roster expansion to 104 pages with T3 = 2 special to remain within the ~545 sink surface: 104×(1+2+2) = 520.) Cosmetic title/frame from Atlas is character-scoped (ADR-0029). Neither reward may be rerolled on retry.
 
 ## Claim
-Client submits `C2S_ATLAS_CLAIM` (504) with `operation_id`, `atlas_page_id`, `tier` (`../05_network/messages.md`). Server returns `S2C_ATLAS_CLAIM_RESULT` (505). If the tier already auto-settled, return the existing grant (idempotent). Do not reuse 408.
+Every tier reward auto-settles in the same transaction as the tier promotion (no unclaimed Atlas reward state exists; a player who never opens the journal loses nothing). `C2S_ATLAS_CLAIM` (504) with `operation_id`, `atlas_page_id`, `tier` (`../05_network/messages.md`) only acknowledges a settled tier for the journal UI: `S2C_ATLAS_CLAIM_RESULT` (505) returns the existing grant and sets `acknowledged_at` once; a tier not yet reached is rejected with `ATLAS_TIER_NOT_REACHED` and changes nothing. It never creates a grant. Do not reuse 408.
 
 Each atlas tier-up is 1 LIFE_SKILL action granting character EXP for the current act (`../07_content/progression_route.md`): I 6417, II 8283, III 6332, IV 7047, V 9448, VI 10494. The EXP grant is atomic with the tier promotion.
 
@@ -51,7 +51,7 @@ Unlocking an Atlas page does not unlock combat content, maps, or dungeons. It is
 ## Persistence
 Persist per character:
 ```
-character_atlas(character_id, atlas_page_id, tier, seen_count, completed_at, reward_operation_id)
+character_atlas(character_id, atlas_page_id, tier, seen_count, completed_at, reward_operation_id, acknowledged_at NULL)
 atlas_milestones(character_id, milestone_id, completed_at)
 ```
 Plus idempotent reward operation IDs for each tier grant.
@@ -60,7 +60,7 @@ Plus idempotent reward operation IDs for each tier grant.
 Server owns all unlock counters, tier promotion, and reward grants. Client only renders the journal UI and sends inspect requests.
 
 ## UI
-Atlas Journal in Safe Anchors and menu: grid of pages, completion %, lore viewer, reward claim button. No trading of pages.
+Atlas Journal in Safe Anchors and menu: grid of pages, completion %, lore viewer, "new reward" marker cleared by `C2S_ATLAS_CLAIM` acknowledgement. No trading of pages.
 
 ## Invariants
 ```text

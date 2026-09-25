@@ -122,7 +122,7 @@ path_los = required
 ```
 The map asset must provide a legal standing point on the main irrigation path, within `12m` unobstructed LOS of `.01`, reachable from `spawn.entry.lang_da.bo_ruong` without double-jump. Seeing the chest does not require a key. Opening may still use a short perch jump. `.02` on this map remains a high hidden perch.
 
-Season extra chests (not counted in the two-per-FIELD launch pair). Present only while matching `season_region_index`. Table `drop.chest.hidden`.
+Season extra chests (not counted in the two-per-FIELD launch pair). Present only while matching `season_region_index`. Table `drop.chest.hidden`. ID pattern `chest.hidden.season.<season_region_index>.<region_key>.<index>` (the map is the `map_id` column; `../02_world/maps_zones.md`).
 
 | chest_id | map_id | season_region_index |
 |---|---|---:|
@@ -240,6 +240,16 @@ spawn.return.<region>.<dungeon_key>
 ```
 No dungeon exit can place a character directly into the next progression region.
 
+Each INSTANCED boss source map also provides one relic anchor near the entrance portal (`../02_world/bosses.md` § Boss Aftermath, ADR-0061); static activation fails if it is missing or inside the portal safety radius:
+```text
+anchor.relic.quy_nhap_trang    on map.lang_da.go_ma
+anchor.relic.moc_tinh_da       on map.rung_u_minh.mieu_bo_hoang
+anchor.relic.thuong_luong      on map.ben_nuoc_den.ben_do_cu
+anchor.relic.ho_tinh           on map.deo_may.rung_cam
+anchor.relic.ho_tinh_chin_duoi on map.thanh_co.den_tran
+anchor.relic.than_trung        on map.nui_thieng.cong_co
+```
+
 # Act-VI Finale Entry
 ```text
 portal.nui_thieng.cong_co.to.boss_than_trung
@@ -249,6 +259,7 @@ portal.nui_thieng.cong_co.to.boss_than_trung
   requirement = progression.story.a6.03
   return_spawn = spawn.return.nui_thieng.than_trung
 ```
+The finale instance follows every rule of `../02_world/dungeons.md` (PARTY `1..5`, entry/approval, membership, death/checkpoint, wipe, `120s` grace, `10m` empty timeout, `120s` closing, return) with `space_id` in place of `dungeon_id` (ADR-0061).
 
 Finale geometry:
 

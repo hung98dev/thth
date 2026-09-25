@@ -40,7 +40,9 @@ One reference screen is `25.6m x 14.4m` (`1280x720` at `50 px/m`). Dungeon bound
 | `dungeon.hang_ma_tranh` | `4.75x2.00` | `121.6x28.8` | `6080x1440` | `PREDATOR_TRAIL_FORK` | four trail-marker forks across three tiers; one false danger lane; ambush loop rejoins final den |
 | `dungeon.den_tran` | `5.00x2.25` | `128.0x32.4` | `6400x1620` | `SEAL_TEMPLE_GAUNTLET` | three drum wings feed a central seal hub; wall traversal climbs two tiers; final chamber at upper east |
 
-Each mandatory stage owns a non-overlapping authored encounter area. Checkpoint, boss, secret, objective and return anchors must lie inside bounds and on a path legal for `CHARACTER`. Scene art may vary within the profile; removing a required branch/loop or flattening the scene to one lane is a contract violation.
+Each mandatory stage owns a non-overlapping authored encounter area. Checkpoint, boss, secret, objective and return anchors must lie inside bounds and on a path legal for `CHARACTER`.
+
+Stage waves (ADR-0061): every trash/elite monster is listed per stage as waves `w1..wn` with full `monster_id`s. A wave marked with an area spawns when the first snapshot member enters that area; any other `w1` spawns when the first member enters the stage area; `w(n+1)` spawns `2s` after every monster of `w(n)` is defeated. Wave monsters spawn at `anchor.dungeon.<stage_key>.w<n>` (`<stage_key>` = `stage_id` without `stage.`), never respawn, and are restored in full with their wave on a wipe of that stage. Counts are fixed (PARTY scaling applies only to the configured major encounters and the final boss, `../02_world/dungeons.md`). A stage's combat requirement is complete when its last wave is defeated. Scene art may vary within the profile; removing a required branch/loop or flattening the scene to one lane is a contract violation.
 
 # Progression First-Clear EXP
 Each launch dungeon is the major progression clear for Acts I-V and contributes exactly `0.4%` of its owning act EXP budget on the character's first eligible completion (STORY_ONCE sub-split per the seven-channel EXP portfolio).
@@ -82,9 +84,12 @@ Stages:
 1. `stage.dinh_lang_bo_hoang.thap_den`
    - objective: interact with `3` authored lamp anchors
    - combat: two groups, each `3` Act-I NORMAL monsters
+     - `w1` (area A): `2 monster.lang_da.vong_hon` + `1 monster.lang_da.hon_ma_co_thu`
+     - `w2` (area B): `1 monster.lang_da.vong_hon` + `2 monster.lang_da.hon_ma_co_thu`
    - lamps cannot be activated from outside their local encounter area
 2. `stage.dinh_lang_bo_hoang.san_sau`
    - combat: `6` Act-I NORMAL + `1 monster.lang_da.ma_xo`
+     - `w1`: `3 monster.lang_da.hon_ma_co_thu`; `w2`: `3 monster.lang_da.vong_hon_gia`; `w3`: `1 monster.lang_da.ma_xo`
    - checkpoint on completion
 3. `stage.dinh_lang_bo_hoang.quy_nhap_trang`
    - boss `boss.quy_nhap_trang`
@@ -108,9 +113,11 @@ Stages:
 1. `stage.mieu_ba_trong_rung.loi_lac`
    - follow `3` visible route markers in authored order
    - combat total: `6` Act-II NORMAL
+     - `w1`: `2 monster.rung_u_minh.tinh_cay` + `1 monster.rung_u_minh.vong_rung_sau`; `w2`: `2 monster.rung_u_minh.dai_tinh_cay` + `1 monster.rung_u_minh.vong_rung_sau`
 2. `stage.mieu_ba_trong_rung.re_quan`
    - destroy `3` supernatural root objectives
    - combat total: `6` Act-II NORMAL + `1 monster.rung_u_minh.moc_tinh`
+     - `w1`: `3 monster.rung_u_minh.dai_tinh_cay`; `w2`: `3 monster.rung_u_minh.vong_rung_sau`; `w3`: `1 monster.rung_u_minh.moc_tinh`
    - checkpoint on completion
 3. `stage.mieu_ba_trong_rung.moc_tinh_da`
    - boss `boss.moc_tinh_da`
@@ -129,9 +136,11 @@ Stages:
    - activate `2` sluice controls
    - each activation opens one authored safe platform lane
    - combat total: `6` Act-III NORMAL
+     - `w1` (sluice 1): `2 monster.ben_nuoc_den.hon_chet_duoi` + `1 monster.ben_nuoc_den.bong_nuoc_ma`; `w2` (sluice 2): `2 monster.ben_nuoc_den.ca_tinh_gia` + `1 monster.ben_nuoc_den.bong_nuoc_ma`
 2. `stage.xom_chim.mai_nha`
    - cross roof/platform route
    - combat total: `6` Act-III NORMAL + `1 monster.ben_nuoc_den.ma_da_gia`
+     - `w1`: `3 monster.ben_nuoc_den.ca_tinh_gia`; `w2`: `3 monster.ben_nuoc_den.nguoi_song_co`; `w3`: `1 monster.ben_nuoc_den.ma_da_gia`
    - checkpoint on completion
 3. `stage.xom_chim.thuong_luong`
    - boss `boss.thuong_luong`
@@ -150,9 +159,11 @@ Stages:
    - follow `4` visible trail markers
    - wrong authored lane creates danger, never permanent route failure
    - combat total: `6` Act-IV NORMAL
+     - `w1`: `2 monster.deo_may.vong_rung` + `1 monster.deo_may.ho_con_tinh`; `w2`: `2 monster.deo_may.ho_tinh_lon` + `1 monster.deo_may.vong_rung`
 2. `stage.hang_ma_tranh.phuc_kich`
    - two authored ambush waves
    - total: `6` Act-IV NORMAL + `1 monster.deo_may.ma_tranh_gia` + `1 monster.deo_may.ho_tinh_ve`
+     - `w1`: `3 monster.deo_may.ho_tinh_lon`; `w2`: `1 monster.deo_may.ma_tranh_gia`; `w3`: `3 monster.deo_may.vong_nui_gia`; `w4`: `1 monster.deo_may.ho_tinh_ve`
    - elite appearances are sequential, not simultaneous
    - checkpoint on completion
 3. `stage.hang_ma_tranh.ho_tinh`
@@ -171,12 +182,15 @@ Stages:
 1. `stage.den_tran.trong_tran`
    - activate `3` seal drums
    - combat total: `8` Act-V NORMAL
+     - `w1`: `2 monster.thanh_co.qua_tinh` + `2 monster.thanh_co.hon_tran_linh`; `w2`: `2 monster.thanh_co.qua_tinh_lon` + `2 monster.thanh_co.hon_tran_linh`
 2. `stage.den_tran.thach_ve`
    - defeat `2 monster.thanh_co.thach_ve` sequentially with NORMAL support packs
+     - `w1`: `1 monster.thanh_co.thach_ve` + `2 monster.thanh_co.ma_co`; `w2`: `1 monster.thanh_co.thach_ve` + `2 monster.thanh_co.qua_tinh`
    - checkpoint on completion
 3. `stage.den_tran.tuong_vo`
    - authored broken-wall traversal with falling-debris telegraphs
    - combat total: `4` Act-V NORMAL + `1 monster.thanh_co.hon_tuong`
+     - `w1`: `2 monster.thanh_co.hon_tran_linh` + `2 monster.thanh_co.qua_tinh_lon`; `w2`: `1 monster.thanh_co.hon_tuong`
 4. `stage.den_tran.ho_tinh_chin_duoi`
    - boss `boss.ho_tinh_chin_duoi`
 
@@ -329,6 +343,7 @@ ENDGAME_L60 character EXP is irrelevant at max level; it must not be converted i
 # Validation
 Reject:
 - unknown stage/boss/monster/reward ID,
+- a stage whose combat line has no wave list, a wave count differing from the stated stage total, or a wave monster outside the owning act's roster,
 - stage count outside `3..4` for these launch definitions,
 - first-progression-clear EXP differing from `progression_route.md` (0.4% of act budget),
 - repeated grant of first-progression-clear EXP,

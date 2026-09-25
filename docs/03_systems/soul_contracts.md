@@ -20,7 +20,7 @@ same soul_id -> max 1 contracted instance
 Duplicate acquisition never auto-destroys, fuses, or converts a soul into currency. Extra instances of an already-owned `soul_id` grant **no Soul EXP** and increment Atlas `hon_giam` counters. No recycle/fusion system at launch.
 
 ### Memory Resonance (Hào Quang Ký Ức)
-Acquiring duplicates of a `soul_id` whose Atlas page is already Mastered accumulates an authoritative vanity counter `memory_resonance_count` on that soul record:
+Acquiring duplicates of a `soul_id` whose Atlas page is already Mastered accumulates an authoritative vanity counter `memory_resonance_count` per `(character_id, soul_id)` (§ Persistence):
 - Grants zero combat stats, zero multipliers, and zero currency.
 - Reaching `memory_resonance_count >= 10` for a BOSS Soul unlocks an ambient cosmetic spirit sheen in Safe Anchors.
 - Preserves the emotional reward of rare boss drops without inflating character power.
@@ -39,7 +39,7 @@ same soul_id -> max 1 per loadout
 Create/remove/move/replace only when character owns both assets, equipment is in a loadout, character not `in_combat`, and neither asset is transaction-locked. Mutations are atomic. Unequipping contracted equipment atomically removes the contract and returns the same progressed soul to Collection.
 
 ## Soul Level / EXP
-Level `1..5`; milestones Lv1/Lv3/Lv5.
+Level `1..5`; milestones Lv1/Lv3/Lv5. Effect values are a step function of level: Lv1-2 use the Lv1 value, Lv3-4 the Lv3 value, Lv5 the Lv5 value (`../07_content/soul_catalog.md`); Lv2 and Lv4 change only EXP progress, never an effect value.
 
 Cumulative thresholds:
 ```text
@@ -100,7 +100,7 @@ Soul instances are `CHARACTER_BOUND`; no trade/auction/Guild Storage.
 Contracted equipment cannot enter trade, auction, guild storage, or normal crafting consumption until contract resolves.
 
 ## Persistence
-Persist `soul_instance_id`, `soul_id`, owner, level, current_soul_exp, contracted item or null.
+Persist `soul_instance_id`, `soul_id`, owner, level, current_soul_exp, contracted item or null. Persist per `(character_id, soul_id)` the vanity counter `memory_resonance_count` (int, default 0; incremented in the same transaction as the duplicate acquisition, idempotent on the acquisition operation) and `sheen_unlocked_at` NULL (set once when a BOSS soul reaches 10).
 
 ## Invariants
 ```text

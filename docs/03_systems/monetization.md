@@ -25,7 +25,7 @@ matchmaking priority purchase = BANNED
 ```
 
 ## Payment Providers
-Payments are processed through the platform's native billing APIs (app store on mobile, regional payment gateway on PC). The game does not implement its own credit card processing. Payment tokens are opaque to game logic; only the resulting entitlement event is consumed.
+Payments are processed through the platform's native billing APIs: Google Play Billing on Android and Steam microtransactions on Windows PC (provider contracts, receipt/verification endpoint and webhooks: `../07_security/external_integrations.md`). Receipts are submitted to the HTTPS IAP verify endpoint, never over the gameplay WebSocket. The game does not implement its own credit card processing. Payment tokens are opaque to game logic; only the resulting entitlement event is consumed.
 
 ## Account Entitlement System
 The entitlement store is owned by `../06_data/data_model.md` and surfaced in `account_storage.md`. Key contract:
@@ -35,7 +35,7 @@ entitlement_id    = stable UUID, one per purchase event; primary key
 account_id        = purchasing account (FK -> accounts)
 product_id        = references a product in the store catalog below
 entitlement_type  = ONE_SHOT | ACCOUNT_SCOPED_ACCESS | DIRECT_ACCOUNT_COSMETIC   (no launch product uses ONE_SHOT; it is reserved for a future one-time item product and must stay supported by the claim path)
-grant_state       = PENDING | GRANTED | REFUNDED | REFUNDED_CONSUMED
+grant_state       = PENDING | GRANTED | REJECTED | REFUNDED | REFUNDED_CONSUMED
 platform_receipt  = opaque platform verification token; UNIQUE across all accounts
 timestamp         = purchase server timestamp (granted_at)
 ```
@@ -56,6 +56,7 @@ Refunds transition state to REFUNDED and revoke the granted benefit if still app
 Grant state transitions:
 ```text
 PENDING -> GRANTED               (on verified platform receipt confirmation)
+PENDING -> REJECTED              (verification failed, invalid/forged receipt, or second receipt for an already-live season track; terminal; excluded from the one-live-track-per-season unique index, so it never blocks a later valid purchase; flagged for platform refund when payment was captured)
 PENDING -> REFUNDED              (on platform dispute/chargeback before grant)
 GRANTED -> REFUNDED              (on platform dispute/chargeback after grant, item not yet consumed)
 GRANTED -> REFUNDED_CONSUMED     (on platform dispute/chargeback after grant, item already consumed)
@@ -65,9 +66,9 @@ GRANTED -> REFUNDED_CONSUMED     (on platform dispute/chargeback after grant, it
 When a chargeback or platform refund triggers a GRANTED → REFUNDED transition:
 - `ONE_SHOT` claims already materialized into character possession stay under the no-deletion policy: the entitlement transitions to `REFUNDED_CONSUMED`, emitting an `IAP_REFUND_CONSUMED` audit event.
 - `ACCOUNT_SCOPED_ACCESS` (season track): every cosmetic claimed under it is revoked on all characters; `REFUNDED_CONSUMED` if any tier was claimed, else `REFUNDED` (`account_storage.md`).
-- For `DIRECT_ACCOUNT_COSMETIC`: the row in `account_cosmetic_entitlements` is revoked and deleted. If the cosmetic was actively equipped by any character on the account during gameplay, the entitlement transitions to `REFUNDED_CONSUMED`, the slot resets to default presentation at next sync, an `IAP_REFUND_CONSUMED` audit event is emitted, and the account risk score increments. If never equipped, it transitions cleanly to `REFUNDED`.
+- For `DIRECT_ACCOUNT_COSMETIC`: the row in `account_cosmetic_entitlements` is revoked and deleted. If `first_equipped_at` is set (any character equipped it at least once), the entitlement transitions to `REFUNDED_CONSUMED`, the slot resets to default presentation at next sync, an `IAP_REFUND_CONSUMED` audit event is emitted, and one `account_refund_consumed_events` row is appended. If `first_equipped_at` is null, it transitions cleanly to `REFUNDED`.
 
-**Suspension threshold:** Each `REFUNDED_CONSUMED` event is recorded in the immutable `account_refund_consumed_events` ledger (`06_data/data_model.md`). The account's escalation score `accounts.iap_refund_consumed_score` tracks events within any rolling 180-day window (`occurred_at >= NOW() - INTERVAL '180 days'`). When the score reaches **2**, the account status transitions to `SUSPENDED_PAYMENT_RECONCILIATION` (`06_data/data_model.md`) pending manual operator review and payment reconciliation. The suspension prevents further IAP purchases, new character creation, and participation in Ranked PvP while under review. Existing characters and inventory are preserved pending resolution.
+**Suspension threshold:** Each `REFUNDED_CONSUMED` event is recorded in the immutable `account_refund_consumed_events` ledger (`06_data/data_model.md`). The escalation score is derived, never stored: the count of the account's ledger rows with `occurred_at >= NOW() - INTERVAL '180 days'`. When the score reaches **2**, the account status transitions to `SUSPENDED_PAYMENT_RECONCILIATION` (`06_data/data_model.md`) pending manual operator review and payment reconciliation. The suspension prevents further IAP purchases, new character creation, and participation in Ranked PvP while under review. Existing characters and inventory are preserved pending resolution.
 ## Store Structure
 The game store launches with one panel: **Cosmetics**. No other store panel is enabled at launch.
 
@@ -152,10 +153,10 @@ The purchase creates one **account-scoped access entitlement**:
 entitlement_type = ACCOUNT_SCOPED_ACCESS
 product_id       = product.service.season_track.<season_number>
 account_id       = purchasing account
-grant_state      = PENDING | GRANTED | REFUNDED | REFUNDED_CONSUMED
+grant_state      = PENDING | GRANTED | REJECTED | REFUNDED | REFUNDED_CONSUMED
 ```
 
-This single purchase covers all current and future characters on the account until `claim_deadline_at` (season end + 14 days). An account holds at most one live track per `season_number` (DB unique); a second verified receipt for the same season is not granted and is flagged for platform refund. Repeat cycles (`season_number >= 6`) sell a new product for the new `season_number`; tiers a character already owns from an earlier cycle resolve as already-owned no-ops and the store UI shows per-character ownership before purchase. It is not a one-shot item entitlement and is not consumed by the first character to interact with it.
+This single purchase covers all current and future characters on the account until `claim_deadline_at` (season end + 14 days). An account holds at most one live track per `season_number` (DB unique); a second verified receipt for the same season becomes `REJECTED` and is flagged for platform refund. Repeat cycles (`season_number >= 6`) sell a new product for the new `season_number`; tiers a character already owns from an earlier cycle resolve as already-owned no-ops and the store UI shows per-character ownership before purchase. It is not a one-shot item entitlement and is not consumed by the first character to interact with it.
 
 Each character claims their own cosmetic rewards independently using a **composite idempotency key**:
 ```text
@@ -203,4 +204,6 @@ platform_receipt -> permanently bound to first verified account_id
 cross-account receipt replay -> IAP_RECEIPT_ACCOUNT_MISMATCH rejection
 GRANTED -> REFUNDED_CONSUMED when item already consumed at refund time
 2x REFUNDED_CONSUMED in 180 days -> SUSPENDED_PAYMENT_RECONCILIATION
+failed verification -> REJECTED (terminal); never blocks a later valid purchase
+PC payment provider = Steam; Android = Google Play Billing
 ```

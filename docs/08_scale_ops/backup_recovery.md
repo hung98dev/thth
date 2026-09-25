@@ -10,7 +10,7 @@ Back up all canonical PostgreSQL durable gameplay/account state required to reco
 - inventory/equipment/currency,
 - quest/build/Soul state,
 - guild/social durable state,
-- Auction/trade escrow/proceeds,
+- Auction escrow/proceeds and trade settlement records,
 - Reward Claims,
 - cosmetics/entitlements,
 - **WorldConsequence durable aggregate** (Di Tích world-consequence state; a partition must load this before accepting players — a silently-zeroed aggregate is an unsafe restore, not a degraded-mode restore),

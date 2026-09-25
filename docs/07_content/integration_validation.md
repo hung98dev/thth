@@ -48,8 +48,8 @@ Spirit Surge recurring event definitions = 1
 currencies = 3
 atlas pages launch = 104 (58 quai_dam + 25 hon_giam + 8 di_tich + 13 co_vat)
 atlas pages seasonal first-cycle = 60 (10 × seasons 0..5)
-cosmetics TOTAL_STABLE = 284
-  TITLE_PLAY=125 PROFILE_FRAME_PLAY=3 APPEARANCE_PLAY=4 GUILD=3 PLAY_PLUS_GUILD=135
+cosmetics TOTAL_STABLE = 294
+  TITLE_PLAY=127 PROFILE_FRAME_PLAY=9 APPEARANCE_PLAY=4 GUILD=5 PLAY_PLUS_GUILD=145
   COMMON_SINKS=20 SPECIAL_CURRENCY_SINKS=20 SEASONAL_ATLAS_TITLES=60 SEASON_FREE=18 SEASON_PAID=18 IAP_STORE_IDS=13
 ```
 
@@ -298,10 +298,10 @@ For every persistent spawn group:
 - selector resolves to at least one valid monster,
 - NORMAL group resolves only NORMAL monsters,
 - ELITE group resolves only ELITE monsters,
-- `max_alive = 20` for launch NORMAL groups and `3` for launch ELITE groups,
+- `max_alive = 20` for launch NORMAL groups and `2` for launch ELITE groups,
 - any INSTANCED space granting kill EXP, a dungeon completion granting EXP other than `dungeon_repeat_exp(min(character_act, dungeon_tier_act + 1))`, an ELITE_BOSS PUBLIC-boss share outside Acts III/VI, a Spirit Surge grant not using `min(character_act, region_act + 1)`, or a seasonal Atlas tier granting `currency.special`,
 - launch NORMAL respawn resolves to `10..16s`,
-- launch ELITE respawn resolves to `75..120s`,
+- launch ELITE respawn resolves to `45..75s`,
 - launch NIGHT_RARE respawn resolves to `240..360s` (authored NIGHT_RARE band; monsters in this band appear only during server night cycle),
 - population and expanded runtime fields satisfy `spawning.md`.
 
@@ -628,7 +628,7 @@ For all 104 atlas pages in `atlas_catalog.md`:
 
 Seasonal first-cycle (60 pages, seasons 0..5): every Source ID resolves to `monster.*` / `chest.hidden.season.*` / `item.material.*` or `DISH_COOKED` item / `relic.season.*`. Relics exist in `bosses.md`. Chests exist in `world_route_catalog.md`.
 
-Atlas special rewards use the same idempotency as other special sources: `character_id + atlas_page_id + tier`. Atlas is non-power and never gates MAIN.
+Atlas special rewards use the same idempotency as other special sources: `atlas.tier.<character_id>.<atlas_page_id>.<tier>`. Atlas is non-power and never gates MAIN.
 
 # Bonus Book Graph
 For `item.book.potential` and `item.book.skill` in `item_catalog.md`:

@@ -50,9 +50,23 @@ Load status thresholds:
 - `12..17 players`: Busy (Đông)
 - `18 players`: Full (Đầy)
 
-When a channel reaches 18 players, new arrivals and transfer requests into that channel are rejected. Automatic placement routes new players to the **most populated** channel with `player_count < 18`. If all 30 channels are at 18, reject with `MAP_CAPACITY_FULL` as below.
+When a channel reaches 18 players, player-initiated arrivals and transfer requests into that channel are rejected. Automatic placement routes new players to the **most populated** channel with `player_count < 18`. If all 30 channels are at 18, reject with `MAP_CAPACITY_FULL` as below.
 
-When all 30 channels are at capacity, normal-map entry and channel-transfer requests are rejected with `MAP_CAPACITY_FULL`; the server does not queue, evict, or silently route the character to another map. The response includes `retry_after_ms = 5000`. A retry uses the same entry intent but a new operation ID after that interval.
+When all 30 channels are at capacity, player-initiated normal-map entry (portal, travel service, map selection) and channel-transfer requests are rejected with `MAP_CAPACITY_FULL`; the server does not queue, evict, or silently route the character to another map. The response includes `retry_after_ms = 5000`. A retry uses the same entry intent but a new operation ID after that interval.
+
+### Forced Placement (ADR-0061)
+Server-initiated placements cannot be refused by the player and never return `MAP_CAPACITY_FULL`: checkpoint respawn, dungeon/finale exit or closing transfer, PvP/Guild War return, reconnect fallback (`maps_zones.md` § Reconnect) and first login to the starter map.
+```text
+FORCED_PLACEMENT_HARD_CAP = 22 players per channel (MAX_PLAYERS_PER_CHANNEL + 4)
+1 preferred channel if player_count < 22
+    respawn: current channel if the checkpoint is on the same map (else none); instance exit/return: the
+    recorded entry channel; reconnect: previous channel; first login: none
+2 else the least-populated channel with player_count < 22 (tie -> lowest channel index)
+3 else (all 30 channels at 22): retry the placement every 5s; meanwhile the character stays where it is
+    (dead at the death position with respawn pending, or inside the closing instance, which stays open
+    for it; login/reconnect waits in the login queue of ../07_security/session.md)
+```
+A channel above 18 shows Full and keeps rejecting player-initiated arrivals until it drops below 18. No player is evicted to restore 18.
 ## Party Cohesion
 When entering a normal world map together, party members should be routed to the same map instance when capacity allows.
 
@@ -73,7 +87,7 @@ Inside a safe zone:
 
 ## Village Bonfire Gathering (Lửa Trại Đình Làng)
 Every Safe Anchor features a central communal bonfire under ADR-0023:
-- **Resting Radius and Initiation**: Characters within 6.0m of an active bonfire initiate `BONFIRE_REST` by sending `C2S_INTERACT` (103) with `interact_kind = BONFIRE_REST` and `target_id = bonfire.<zone_id>`. The server validates that the bonfire is active (kindled), the character is stationary within the 6.0m radius, and has no active combat state.
+- **Resting Radius and Initiation**: Characters within 6.0m of an active bonfire initiate `BONFIRE_REST` by sending `C2S_INTERACT` (103) with `interact_kind = BONFIRE_REST` and `target_id = bonfire.<map_id>` (e.g. `bonfire.map.lang_da.dinh_lang`, `../07_content/world_route_catalog.md`). The server validates that the bonfire is active (kindled), the character is stationary within the 6.0m radius, and has no active combat state.
 - **Active state**: `BONFIRE_REST` begins on server acceptance (character enters resting/sitting presentation); it ends immediately on movement input, combat action, map transfer, disconnect, explicit stand-up interaction, or leaving the radius. It does not persist across reconnect.
 - **Passive Rest EXP**: Each completed 10s tick grants `rest_exp = 1,000` (×100 scale, ADR-0031), up to 180 ticks (30 active minutes = 180,000 EXP maximum) per `character_id + utc_date`. The cap is checked and committed with the tick operation; no tick is granted after the cap. This rest EXP is an ambient social accelerator outside the seven-channel progression portfolio (`../07_content/progression_route.md`) and is strictly excluded from baseline leveling pace calculations.
 - **Linh Thú Bonding**: Each completed 300s active-rest interval grants the active beast `+1 bond_point`, up to 6 points per `character_id + beast_id + utc_date` from bonfire rest. This is additional to, and uses a separate counter from, the food cap in `spirit_beasts.md`.
@@ -151,8 +165,8 @@ KIM | MOC | THUY | HOA | THO
 ```
 
 Effects in each active region:
-- several normal spawn groups are replaced by surge variants
-- one elite event chain becomes available
+- up to 2 temporary surge groups are added to the selected field; the 54 persistent groups are unchanged (`../07_content/world_event_catalog.md`)
+- one elite event chain at a time per selected map channel
 - event monsters have visibly telegraphed elemental mechanics
 - eligible kills and objectives may award configured surge materials
 - completing the event chain awards one first-completion bonus per character per UTC day
@@ -271,7 +285,7 @@ in_combat source of truth = combat.md
 normal gameplay progression is not energy-gated
 server time is authoritative
 channels_per_map = 30
-max_players_per_channel = 18
+max_players_per_channel = 18 (player-initiated); forced placement hard cap = 22 (ADR-0061)
 spirit_surge active regions per hour = 3 (region coverage ~50%)
 spirit_surge selection = deterministic from server UTC time
 Di_Tich world-consequence state = persistent across restart

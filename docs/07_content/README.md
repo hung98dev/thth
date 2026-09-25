@@ -35,7 +35,7 @@ This directory turns canonical gameplay/world/system rules into shippable conten
 1 Spirit Surge event definition
 18 persistent launch service NPCs
 24 decorative ambient NPCs
-284 cosmetics (PLAY_PLUS_GUILD=135; COMMON_SINKS=20; SPECIAL_CURRENCY_SINKS=20; SEASONAL_ATLAS_TITLES=60; SEASON_FREE=18; SEASON_PAID=18; IAP_STORE_IDS=13; TOTAL=284)
+294 cosmetics (PLAY_PLUS_GUILD=145; COMMON_SINKS=20; SPECIAL_CURRENCY_SINKS=20; SEASONAL_ATLAS_TITLES=60; SEASON_FREE=18; SEASON_PAID=18; IAP_STORE_IDS=13; TOTAL=294)
 104 launch atlas pages (58 quai_dam + 25 hon_giam + 8 di_tich + 13 co_vat) + 60 seasonal first-cycle pages (10 × seasons 0..5)
 ```
 Prefer fewer memorable definitions over filler.

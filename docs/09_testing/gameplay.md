@@ -126,18 +126,21 @@ cooldown_start = ON_START
 An accepted ON_START skill interrupted afterward still consumes cost/starts cooldown once; a pre-acceptance rejection consumes neither.
 
 ## Skill-Level Tests
-For `S=1..10`:
+For `S=1..12`:
 ```text
-ACTIVE damage_scale  = 1 + 0.03  * (S-1)
-ACTIVE support_scale = 1 + 0.025 * (S-1)
+ACTIVE damage_scale     = 1 + 0.035 * (S-1)
+ACTIVE support_scale    = 1 + 0.025 * (S-1)
+ACTIVE cooldown_seconds = base_cooldown * (1 - 0.030 * (S-1))
 ```
-Validate the four pure-utility cooldown rows and all ten passive scaling rows from `class_skill_catalog.md` exactly.
+Validate every active cooldown row (including `luu_bo` and `son_bich`) and all fifteen passive scaling rows from `class_skill_catalog.md` exactly.
 
 Required regressions:
 - basic attacks upgrade up to Level 12 with cooldown reduction and scaling status effect proc rate,
 - active skills upgrade up to Level 12 with power scaling and cooldown reduction,
 - passive skills upgrade up to Level 6,
-- basic attack cooldown reaches class minimum (0.20s..0.50s) at skill level 12,
+- basic attack Lv1 and Lv12 cooldowns lie inside the class bands of `skills.md`, and `proc_bp(12) = max_proc` exactly,
+- every class-skill damage component uses the owning class element; KHAC detonation consumes remaining scheduled ticks x stacks at `1.50x` (`classes.md`),
+- `han_khi` consumes only the caster's own 3 CHILL stacks and respects its 5,000ms per-target lockout,
 - every upgradeable level changes at least one gameplay number,
 - no level silently adds a tag/mechanic/targeting/execution type,
 - MOC poison and HOA burn tick counts/total coefficients match the catalog,
@@ -181,9 +184,9 @@ For all 54 persistent launch groups:
 
 Spawn density assertions (ADR-0035):
 - NORMAL spawn groups: `max_alive = 20` per group; at least two NORMAL groups per field map yields `>= 40` alive NORMAL monsters per channel,
-- ELITE spawn groups: `max_alive = 3` per group,
+- ELITE spawn groups: `max_alive = 2` per group,
 - NORMAL respawn band: `10..16s` — assert `respawn_min = 10`, `respawn_max = 16`,
-- ELITE respawn band: `75..120s` — assert `respawn_min = 75`, `respawn_max = 120`,
+- ELITE respawn band: `45..75s` — assert `respawn_min = 45`, `respawn_max = 75` (ADR-0061),
 - NIGHT_RARE authored groups: respawn band `240..360s` — assert `respawn_min = 240`, `respawn_max = 360`; NIGHT_RARE group is only active during night phase and not selectable as a daytime spawn,
 - total theoretical supply for `MAX_PLAYERS_PER_CHANNEL = 18` across two NORMAL groups (40 alive, 10..16s respawn): conservative planning floor (slowest 16s respawn) ≈ 9,000/hour; expected operating (avg 13s respawn) ≈ 11,077/hour. At 18 players × 450 kills/hour realistic sustained demand = 8,100/hour; supply/demand ratio ≥ 1.11× (conservative floor) and ≈ 1.37× (expected operating). Assert `MAX_PLAYERS_PER_CHANNEL = 18` and that sustained demand (18 × 450 = 8,100/hour) does not exceed the conservative supply floor of ~9,000/hour.
 
@@ -191,7 +194,7 @@ Sleep/wake and restart reconstruct population without granting rewards.
 
 # Monster / Boss Tests
 - all 58 launch non-boss definitions (46 NORMAL + 12 ELITE) plus 6 Season-0 variants (total 64 non-boss monster rows in `monster_catalog.md`) compile and expand into required runtime fields (HP, ATTACK, DEFENSE, element, movement, combat profile, base_exp, concrete drop_table_id).
-- 6 Season 0 variants (`dom_dom_nguyen`, `bu_nhin_gai`, `coc_doc`, `hon_hoang`, `co_thu_tinh`, `do_trang_quy`) spawn in designated Act I seasonal pools during Season 0 without violating channel capacity or displacing baseline monsters.
+- 6 Season 0 variants (`dom_dom_nguyen`, `bup_lua`, `tinh_buoi`, `co_lua`, `vong_bien`, `hon_gao`) are selectable in their Act I pools only while `season_region_index = 0` (`map_spawn_catalog.md` § Logical Pool Resolution) and never otherwise; group `max_alive` is unchanged.
 - EXP and drop acceptance for 6 seasonal variants: base_exp matches Act I NORMAL band (545..590), drop tables resolve to valid items without power inflation, and kills register toward seasonal Atlas pages (`atlas.page.season.0.*`).
 - fixed monster level never follows player level.
 - loot/EXP death settlement happens once.

@@ -73,7 +73,7 @@ CHARACTER_BOUND also cannot leave its owning character.
 Prefer hidden quest state; physical QUEST item only when visible/inspectable/consumable object is needed. Non-tradable by default.
 
 ## Consumables
-Shared cooldowns: HP 8s, MP 8s, utility 15s; longer item-specific cooldown wins. Failed validation never consumes. Normal PvE permits healing/resource consumables unless content disables; ranked PvP may override.
+Shared cooldown groups (`shared_cooldown_group`): `HP` 8s, `MP` 8s, `BUFF` 5s, `FOOD` 1s; `NONE` has no shared cooldown. A longer item-specific cooldown wins. Failed validation never consumes. Normal PvE permits healing/resource consumables unless content disables; ranked PvP may override.
 
 ## Bonus Books (Sach Tiem Nang / Sach Ky Nang)
 Two character-bound consumable items grant extra progression points (see `../01_gameplay/progression.md`):
@@ -84,14 +84,14 @@ Two character-bound consumable items grant extra progression points (see `../01_
 | `item.book.skill` | Sach Ky Nang | `+1` unspent skill point | 99 | CHARACTER_BOUND, ON_ACQUIRE |
 
 Rules:
-- Books are granted only by the level-milestone schedule in `progression.md` (Lv25..60, total 12 each by 60) via idempotent `progression.book.<type>.<level>` flags.
+- Books are granted only by the level-milestone schedule in `progression.md` (Lv25..60, total 12 each by 60) via idempotent `progression.book.<type>.<level>` flags, inside the level-up transaction; a full inventory routes them to a Reward Claim (`progression.md` § Bonus Books).
 - Consumption is atomic `operation_id` idempotent; duplicate consume is rejected, retry reconstructs the same grant.
 - Books never enter trade/auction/guild storage; they are CHARACTER_BOUND and cannot be moved via `account_storage.md`.
 - Potential gained from `item.book.potential` counts toward the 60% per-stat cap denominator (total earned = 236 + books consumed); skill points follow the same 75/114 limit (ADR-0033: 59 level-up + 12 books + 4 Lv55/Lv60 bonus = 75 total).
 - See `progression.md` for unlock schedule and persistence.
 
 ## Beast Equipment
-Items of type BEAST_EQUIPMENT occupy equipment slots on a Linh Thú (Spirit Beast), not on the character. Default definition binding is `UNBOUND`. Binding triggers follow the same rules as EQUIPMENT. Unequipped BEAST_EQUIPMENT lives in `CHARACTER_INVENTORY` (ADR-0019 inventory-storable). Equipped BEAST_EQUIPMENT occupies `BEAST_EQUIPMENT_SLOT` only. It cannot occupy a character loadout slot, guild storage, or trade/auction escrow. See `../03_systems/spirit_beasts.md` for Linh Thú equipment slot rules.
+Items of type BEAST_EQUIPMENT occupy equipment slots on a Linh Thú (Spirit Beast), not on the character. Default definition binding is `UNBOUND`. Binding triggers follow the same rules as EQUIPMENT. Unequipped BEAST_EQUIPMENT lives in `CHARACTER_INVENTORY` (ADR-0019 inventory-storable). Equipped BEAST_EQUIPMENT occupies `BEAST_EQUIPMENT_SLOT` only. It cannot occupy a character loadout slot, guild storage, a direct-trade offer or `AUCTION_ESCROW`. See `../03_systems/spirit_beasts.md` for Linh Thú equipment slot rules.
 
 ## Equipment
 No durability/repair. Persistent rolls and enhancement. Attribute identities come from definition; values roll once and never reroll on retry/reconnect.
@@ -103,9 +103,10 @@ CHARACTER_INVENTORY
 EQUIPPED
 BEAST_EQUIPMENT_SLOT
 GUILD_STORAGE
-TRADE_ESCROW
 AUCTION_ESCROW
 ```
+
+Direct trade has no custody location: offered items stay in `CHARACTER_INVENTORY` under a trade lock (§ Trade Lock).
 
 `BEAST_EQUIPMENT_SLOT` is a persistent location exclusively for items of type `BEAST_EQUIPMENT`; it represents an item equipped in one of the three Linh Thú equipment slots (`vong_co`, `ao_giap`, `linh_chau`). Only `BEAST_EQUIPMENT` items may occupy this location; see `../03_systems/spirit_beasts.md` for slot rules.
 
@@ -118,8 +119,18 @@ A pending Reward Claim is also not an item location and does not yet own a norma
 
 Binding is validated before entering the destination context. A stricter source-bound item cannot pass through an escrow/storage context merely because the base item definition is normally transferable.
 
+## Trade Lock
+An item offered in an `OPEN`/`LOCKED` direct-trade session stays in `CHARACTER_INVENTORY` and is trade-locked: it cannot be moved, used, equipped, discarded, listed, stored or offered in another session. `COMMITTING` transfers it owner A -> owner B in the settlement transaction. Any other end of the session (cancel, timeout, disconnect, server restart) only releases the lock; no item moves (`trading_auction.md`).
+
+## Definition Defaults
+```text
+discard_allowed = true, except QUEST items and CHARACTER_BOUND progression items (item.book.*) = false
+shared_cooldown_group = NONE
+```
+A catalog row overrides a default only by stating the field explicitly.
+
 ## Transfer / Use / Discard
-Transfers are atomic owner A -> owner B. Item use validates then executes/consumes. Discard only when definition allows; equipped/escrow/contracted cannot discard; high-value UI confirmation recommended.
+Transfers are atomic owner A -> owner B. Item use validates then executes/consumes. Discard only when `discard_allowed = true`; equipped, trade-locked, `AUCTION_ESCROW` and Soul-contracted items cannot be discarded; high-value UI confirmation recommended.
 
 ## Creation / Destruction
 Authorized rewards, shop, craft, events/admin create via idempotent operations. Creation persists the effective binding/source state before the item is visible to the owner.

@@ -35,7 +35,7 @@ No launch critical service is night-only or event-only.
 Display labels may be replaced later by named fictional characters without changing `npc_id` or services.
 
 # Ambient NPCs — 24
-Each safe anchor has 4 decorative NPCs (`capabilities = DECORATIVE`, no shop/service). Zero rewards.
+Each safe anchor has 4 ambient NPCs (`capabilities = DIALOGUE, QUEST, DECORATIVE`; no SHOP/SERVICE, ADR-0061). They grant nothing outside quest transactions. A NIGHT_ONLY or DAY_ONLY NPC can be talked to, give a quest or accept a turn-in only while present; its SIDE quest can be accepted only then, and progress already made persists while it is absent.
 
 | map_id | DAY_ONLY | NIGHT_ONLY | PATROL |
 |---|---|---|---|
@@ -188,7 +188,7 @@ Reject:
 # Invariants
 ```text
 18 persistent launch service NPCs
-24 decorative ambient NPCs
+24 ambient NPCs (DIALOGUE, QUEST, DECORATIVE; no SHOP/SERVICE)
 1 shared recovery-common shop
 1 shared bound-utility shop
 3 predictable service NPCs per safe anchor

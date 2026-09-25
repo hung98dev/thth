@@ -41,6 +41,12 @@ finalized_reward_payload
 created_at
 state
 ```
+`source_type` (ADR-0060) is one of:
+```text
+MONSTER  BOSS  BOSS_CHEST  DUNGEON  QUEST  WORLD_EVENT  ATLAS  FEAT  LEVEL_MILESTONE
+PVP  GUILD_WAR  GUILD  AUCTION_ESCROW_EXPIRY  ADMIN_COMPENSATION
+```
+`source_reference` is the source's stable identity (e.g. `boss_id + public_boss_spawn_generation_id`, `dungeon_instance_id`, `quest_id`, `progression.book.<type>.<level>`, `listing_id`). A flow not covered by this list adds a value here in the same spec change.
 
 For an item/equipment reward, the pending claim stores the complete immutable item-creation payload rather than a normal owned `item_instance_id`. The payload contains every finalized value needed for exact later delivery, including item ID, quantity, effective binding/source override, generated roll/enhancement/provenance state when applicable, and required content revision. See ADR-0012.
 States:
@@ -78,7 +84,7 @@ Aggregate currency claim requirements:
 - item/Soul/equipment sibling slots continue settling independently,
 - claiming the aggregate credit remains all-or-nothing against the canonical currency cap.
 
-If safe consolidation is unavailable and creating another claim would exceed the claim cap, the reward-producing action must fail before the reward is earned where possible; an already-earned reward may never be deleted.
+Claim-cap handling is defined in § Capacity / Abuse; an already-earned reward is never deleted.
 
 ## Not Mail
 Reward Claims have:
@@ -92,7 +98,18 @@ They are a recovery/settlement mechanism only.
 ## Capacity / Abuse
 A character may have at most `100` active PENDING non-aggregate claims. Aggregate currency overflow claims count as one claim each regardless of contribution count.
 
-Before an activity creates a new non-aggregate claim beyond the cap, reward-producing entry/settlement must fail safely or compatible claims must consolidate according to an explicitly supported rule. Never delete oldest rewards automatically.
+At the cap, a new non-aggregate item claim first consolidates into an existing `PENDING` claim with the same `owner_character_id + item_id + effective_binding` (quantity added; stack limits do not apply inside a claim). Instances with persistent per-instance state (equipment rolls, Soul instances) never consolidate. Each contribution keeps its own `source_reward_operation_id + reward_slot` key in the contribution ledger, as for aggregate currency, so retries add nothing.
+
+If no compatible claim exists:
+```text
+preventable source (player-initiated and refusable before anything is earned:
+  dungeon entry, quest turn-in, shop purchase, craft, redemption, auction purchase)
+  -> reject before the action with CLAIM_CAP_REACHED; nothing is consumed
+non-preventable source (earned by combat, time or system settlement:
+  field/boss loot, dungeon/encounter/event completion settlement, seller proceeds, compensation)
+  -> create the claim beyond the cap (soft cap); never fail, never delete
+```
+Never delete oldest rewards automatically.
 
 ## Idempotency
 Canonical creation/delivery key:

@@ -6,10 +6,10 @@ Concrete non-power cosmetic entitlements for launch. Ownership/equip/redemption 
 
 All cosmetics below are presentation-only. They never modify stats, collision, rewards, matchmaking, drop rates, quest progress, or economy efficiency.
 
-# TITLE — 18 Core + 107 Atlas = 125
+# TITLE — 20 Core + 107 Atlas = 127
 Default scope: CHARACTER (ADR-0029). Guild cosmetics stay guild-scoped. IAP store cosmetics (`../03_systems/monetization.md`) are account-entitled.
 
-Core launch titles (18):
+Core launch titles (20):
 
 | cosmetic_id | Display | Unlock source |
 |---|---|---|
@@ -31,6 +31,8 @@ Core launch titles (18):
 | `cosmetic.title.dai_hiep_lang_que` | Đại Hiệp Làng Quê | 2,000 Chivalry Points (ADR-0023) |
 | `cosmetic.title.hiep_nghia_vo_song` | Hiệp Nghĩa Vô Song | 5,000 Chivalry Points (ADR-0023) |
 | `cosmetic.title.tam_giao_vien_man` | Tâm Giao Viên Mãn | Linh Thú bond 100 |
+| `cosmetic.title.pvp.than_thoai` | Thần Thoại Đấu Trường | PvP season settlement, `pvp.tier.mythic` (§ Competitive Season Rewards) |
+| `cosmetic.title.guild_war.hung_binh` | Hùng Binh Ngũ Ấn | Guild War season settlement, guild MMR >= 1800 (§ Competitive Season Rewards) |
 
 Atlas titles (107) — concrete roster owned by `atlas_catalog.md`:
 
@@ -42,11 +44,11 @@ Atlas titles (107) — concrete roster owned by `atlas_catalog.md`:
 | 13 | `cosmetic.title.atlas.<co_vat_key>` | `cosmetic.title.atlas.ca_chep_hoa_rong` — Catch 10 Cá Chép Hóa Rồng (tier 3) |
 | 3 | Milestone | `cosmetic.title.atlas.nha_suu_tam` (20 mastered), `cosmetic.title.atlas.hoc_gia_dan_gian` (50), `cosmetic.title.atlas.bach_khoa_dan_gian` (104 mastered) |
 
-All atlas titles are `CHARACTER` scope (ADR-0029; `atlas.md` is the canonical owner of Atlas scoping), purely cosmetic, glowing per `atlas_catalog.md` tier 3, idempotent per `character_id + atlas_page_id + tier`.
+All atlas titles are `CHARACTER` scope (ADR-0029; `atlas.md` is the canonical owner of Atlas scoping), purely cosmetic, glowing per `atlas_catalog.md` tier 3, idempotent per `atlas.tier.<character_id>.<atlas_page_id>.<tier>` (`../03_systems/atlas.md`).
 
 Story and feat titles are granted idempotently when their triggering condition or progression flag commits.
 
-# PROFILE_FRAME — 3
+# PROFILE_FRAME — 9
 Default scope: CHARACTER (ADR-0029). Play-earned frames are character-scoped.
 
 | cosmetic_id | Display | Unlock source |
@@ -54,6 +56,12 @@ Default scope: CHARACTER (ADR-0029). Play-earned frames are character-scoped.
 | `cosmetic.frame.ben_da` | Khung Bến Đa | complete `quest.side.a1.chiec_non_ben_da` |
 | `cosmetic.frame.ho_tinh` | Khung Hồ Tinh | first eligible clear of `boss.ho_tinh_chin_duoi` |
 | `cosmetic.frame.nui_thieng` | Khung Núi Thiêng | one-time alternative redemption defined below |
+| `cosmetic.frame.pvp.bac` | Khung Bạc Đấu Trường | PvP season settlement, `pvp.tier.silver` |
+| `cosmetic.frame.pvp.vang` | Khung Vàng Đấu Trường | PvP season settlement, `pvp.tier.gold` |
+| `cosmetic.frame.pvp.ngoc` | Khung Ngọc Đấu Trường | PvP season settlement, `pvp.tier.jade` |
+| `cosmetic.frame.pvp.linh` | Khung Linh Đấu Trường | PvP season settlement, `pvp.tier.spirit` |
+| `cosmetic.frame.pvp.than_thoai` | Khung Thần Thoại Đấu Trường | PvP season settlement, `pvp.tier.mythic` |
+| `cosmetic.frame.guild_war.chien_ky` | Khung Chiến Kỳ | Guild War season settlement, eligible member |
 
 ## `cosmetic.frame.nui_thieng`
 Display: **Khung Núi Thiêng**
@@ -290,8 +298,8 @@ CHARACTER play sinks. Prices owned by `economy_catalog.md`. Do not invent `item.
 
 `cosmetic.appearance.ao_vai_hoa_van` and `cosmetic.frame.nui_thieng` also have special-currency routes (already counted in APPEARANCE_PLAY / PROFILE_FRAME_PLAY).
 
-# GUILD-SCOPED COSMETICS — 3
-These entitlements belong to the guild, not a member account. They are visual rewards for the existing Ritual streak; no new guild currency/system is added.
+# GUILD-SCOPED COSMETICS — 5
+These entitlements belong to the guild, not a member account. They are visual rewards for the existing Ritual streak and Guild War season placement; no new guild currency/system is added.
 
 ## `cosmetic.guild.crest.ritual_4`
 Category: `GUILD_CREST_ACCENT`  
@@ -308,6 +316,34 @@ Category: `GUILD_SHRINE_VISUAL`
 Display: **Đèn Hội Tụ**  
 Unlock: guild reaches a `12` consecutive Ritual-cycle streak.
 
+## `cosmetic.guild.shrine.guild_war_top10`
+Category: `GUILD_SHRINE_VISUAL`  
+Display: **Đàn Ngũ Ấn**  
+Unlock: Guild War season settlement, guild leaderboard rank 1..10 (§ Competitive Season Rewards).
+
+## `cosmetic.guild.banner.guild_war_champion`
+Category: `GUILD_BANNER`  
+Display: **Cờ Bá Chủ Ngũ Ấn**  
+Unlock: Guild War season settlement, guild leaderboard rank 1.
+
+## Competitive Season Rewards
+Settled once per season at season end (`../03_systems/pvp.md` § Rewards, `../03_systems/guild_war.md` § Season Rewards). Every ID is a stable launch ID; a later season re-grants nothing new (duplicate source = success, no replacement).
+```text
+PvP (CHARACTER scope; requires >= 10 reward-eligible ranked completions in the season, any ranked mode)
+  tier = highest final season_rating tier across ranked modes at settlement; a tier grants its row and every lower row
+  pvp.tier.silver  -> cosmetic.frame.pvp.bac
+  pvp.tier.gold    -> cosmetic.frame.pvp.vang
+  pvp.tier.jade    -> cosmetic.frame.pvp.ngoc
+  pvp.tier.spirit  -> cosmetic.frame.pvp.linh
+  pvp.tier.mythic  -> cosmetic.frame.pvp.than_thoai + cosmetic.title.pvp.than_thoai
+  Ranked Duel season rank 1 -> cosmetic.title.thien_ha_de_nhat (feat.pvp.rank1_season)
+Guild War (eligibility = guild_war.md § Season Rewards)
+  every eligible member                         -> cosmetic.frame.guild_war.chien_ky (CHARACTER)
+  eligible member, guild final MMR >= 1800      -> cosmetic.title.guild_war.hung_binh (CHARACTER)
+  guild leaderboard rank 1..10, >= 10 matches   -> cosmetic.guild.shrine.guild_war_top10 (GUILD)
+  guild leaderboard rank 1, >= 10 matches       -> cosmetic.guild.banner.guild_war_champion (GUILD)
+```
+
 Ritual-streak cosmetics remain cosmetic-only; missing/breaking a streak never removes already unlocked guild cosmetic entitlement unless the guild itself is deleted under canonical guild lifecycle.
 
 # Source / Duplicate Semantics
@@ -317,6 +353,8 @@ cosmetic.story.<cosmetic_id>.<character_id>
 cosmetic.quest.<quest_id>.<cosmetic_id>.<character_id>
 cosmetic.boss.<boss_id>.<cosmetic_id>.<character_id>
 cosmetic.guild.ritual.<guild_id>.<streak_threshold>.<cosmetic_id>
+cosmetic.pvp.season.<season_id>.<cosmetic_id>.<character_id>
+cosmetic.guild_war.season.<season_id>.<cosmetic_id>.<character_id | guild_id>
 cosmetic.iap.<cosmetic_id>.<account_id>
 ```
 
@@ -353,18 +391,18 @@ Reject:
 
 # Invariants
 ```text
-TITLE_PLAY = 125 (18 core + 107 atlas)
-PROFILE_FRAME_PLAY = 3
+TITLE_PLAY = 127 (20 core + 107 atlas)
+PROFILE_FRAME_PLAY = 9
 APPEARANCE_PLAY = 4
-GUILD = 3
-PLAY_PLUS_GUILD = 135
+GUILD = 5
+PLAY_PLUS_GUILD = 145
 COMMON_SINKS = 20
 SPECIAL_CURRENCY_SINKS = 20
 SEASONAL_ATLAS_TITLES = 60
 SEASON_FREE = 18
 SEASON_PAID = 18
 IAP_STORE_IDS = 13
-TOTAL_STABLE_COSMETIC_IDS = 284
+TOTAL_STABLE_COSMETIC_IDS = 294
 cosmetic power = 0
 play frames/appearances/titles/common sinks/season free = CHARACTER (ADR-0029)
 IAP store cosmetics = ACCOUNT (account_cosmetic_entitlements); season paid = CHARACTER (claimed via ACCOUNT_SCOPED_ACCESS)

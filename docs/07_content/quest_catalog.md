@@ -75,9 +75,11 @@ All MAIN reward equipment/material delivery is idempotent and uses Reward Claims
 
 For a dungeon whose mandatory completion already requires its final boss, the MAIN quest uses the `DUNGEON` objective only. Do not append the same run's final `BOSS` objective after it under sequential ordering; the boss event occurs before dungeon-completion settlement and would otherwise force an unintended second run.
 
+Binary resolution choice (six act-closing MAIN quests, ADR-0061): while the quest is `ACTIVE` and its `branch_flag` is unset, the character sets it once with `C2S_STORY_BRANCH_CHOOSE` (`../05_network/messages.md`); the value is immutable afterwards. Entering that act's dungeon (or the finale) with the flag unset is rejected with `STORY_CHOICE_REQUIRED`; the client then shows the choice. The flag is presentation/lore only.
+
 Standalone PUBLIC bosses are optional world content and are not MAIN progression gates unless an always-available instanced story equivalent is explicitly defined.
 
-Ordinary field ELITE respawn groups are also not MAIN gates. If future MAIN content needs a named elite fight, it must use an always-available quest-owned encounter or dungeon encounter rather than waiting for the shared `75..120s` field respawn.
+Ordinary field ELITE respawn groups are also not MAIN gates. If future MAIN content needs a named elite fight, it must use an always-available quest-owned encounter or dungeon encounter rather than waiting for the shared `45..75s` field respawn.
 
 # ACT I — Làng Đa
 Regional material: `item.material.lang_da.manh_dong`
@@ -519,11 +521,64 @@ Daily payouts are optional accelerators and are not included in the baseline aff
 
 Board constraints:
 - slot 6 is always `daily.mystery`; its underlying objective is drawn from the non-MYSTERY pool
-- no more than 2 templates from the same objective family (the MYSTERY slot's underlying family counts toward this limit after reveal)
+- no more than 2 templates from the same objective family (the MYSTERY slot's underlying family counts toward this limit at generation)
 - do not generate `daily.surge_if_active` unless an eligible Surge can be entered during the current board resolution window
 - do not target a dungeon/field the character has not unlocked
 - objective counts never require rare random drops
 - MYSTERY template always grants `currency.bound` at settlement; this makes DAILY a valid `currency.bound` source
+
+## Board Generation (ADR-0061)
+The board is generated on the character's first board request of the UTC day and persisted; generation is a pure function of the inputs below.
+```text
+digest   = SHA-256("thinhthan.daily.v1|" || character_id (16 raw bytes) || utc_date "YYYY-MM-DD")
+rng      = math/rand/v2 PCG(seed1 = digest[0:8], seed2 = digest[8:16]) (big-endian uint64)
+draw(W)  = r = rng.Uint64N(sum(W)); first entry, in table order, whose cumulative weight > r
+target region R = region of the character's highest unlocked act (tier = that act)
+eligible = standard templates whose target resolves (DUNGEON: >= 1 unlocked dungeon; surge: rule above)
+slots 1..5: repeat draw(standard weights of eligible templates not yet on the board);
+            discard a draw that would place a 3rd template of one family; stop at 5 templates
+slot 6:     draw(mystery weights of eligible templates not on slots 1..5 and not making a 3rd of a family)
+targets:    resolved slot 1..6 in order with the same rng, using the rules below
+```
+| template_id | standard weight | mystery weight |
+|---|---:|---:|
+| `daily.hunt_small` | 12 | 6 |
+| `daily.hunt_varied` | 10 | 8 |
+| `daily.elite_watch` | 8 | 12 |
+| `daily.dungeon_path` | 8 | 10 |
+| `daily.field_route` | 10 | 8 |
+| `daily.old_marks` | 10 | 8 |
+| `daily.river_or_trail` | 8 | 8 |
+| `daily.spirit_cleanup` | 10 | 10 |
+| `daily.guardian` | 6 | 12 |
+| `daily.dungeon_help` | 6 | 10 |
+| `daily.explore_quiet` | 8 | 8 |
+| `daily.surge_if_active` | 4 | 6 |
+
+Target resolution (region `R`, its three FIELD maps in `world_route_catalog.md` order; "draw a map" = uniform over them):
+```text
+hunt_small      draw a map; any 8 NORMAL kills on it
+hunt_varied     monster family = combat_profile column of monster_catalog.md; draw 2 distinct families present
+                among NORMAL monsters of R's ALWAYS spawn pools; 4 kills of each family anywhere in R
+elite_watch     1 kill of any ELITE of R
+dungeon_path    draw one unlocked dungeon (uniform); complete it
+field_route     for each of R's 3 fields draw p1|p2; reach the 3 points (any order)
+old_marks       draw 4 of R's 6 field markers without replacement; interact with each
+river_or_trail  draw a map; reach its p1 and p2 (either order)
+spirit_cleanup  supernatural = monster element NONE; 6 kills of NORMAL element-NONE monsters in R
+guardian        2 ELITE kills in any unlocked region
+dungeon_help    any unlocked dungeon completion, any party size
+explore_quiet   draw a map; enter its side area, then reach its p1 or p2
+surge_if_active 1 eligible contribution to any active Spirit Surge
+```
+Daily objective anchors — every FIELD map provides (`<map_key>` = `map_id` without `map.`; static activation fails when any is missing, overlaps a portal/checkpoint safety radius, or lies outside the walkable geometry):
+```text
+anchor.daily.<map_key>.p1      west-end route point (REACH radius 3m)
+anchor.daily.<map_key>.p2      east-end route point (REACH radius 3m)
+marker.daily.<map_key>.1|2     inspectable old marker (C2S_INTERACT target, range 2m, not random, no cooldown)
+area.daily.<map_key>.side      optional side-area volume; "enter" = character position inside the volume
+```
+Totals: 36 route points, 36 markers, 18 side areas. Validation also rejects a region whose ALWAYS NORMAL pools contain fewer than 2 combat profiles or no element-NONE NORMAL.
 
 # Spirit Surge Event Quest
 `quest.event.spirit_surge.contribute`
@@ -540,7 +595,7 @@ drop.event.spirit_surge.<tier>.completion
 and the daily-first table where eligible. The quest itself adds no extra permanent-power reward.
 
 # Bonus Books Note
-Bonus progression books (`item.book.potential` +10, `item.book.skill` +1) are **not** direct skill/potential grants and therefore do not violate the `direct skill/potential reward` validation rule. They are level-milestone item grants via `progression.book.<type>.<level>` flags (Lv25,30,35,40 +1 each; Lv45,50,55,60 +2 each; total 12 each by 60) and are consumed as CHARACTER_BOUND consumables per `../01_gameplay/progression.md` and `item_catalog.md`. MAIN quests that coincide with those levels may grant the book item as an additional reward slot, but the point is granted only after item consumption, not directly by quest completion.
+Bonus progression books (`item.book.potential` +10, `item.book.skill` +1) are **not** direct skill/potential grants and therefore do not violate the `direct skill/potential reward` validation rule. They are level-milestone item grants via `progression.book.<type>.<level>` flags (Lv25,30,35,40 +1 each; Lv45,50,55,60 +2 each; total 12 each by 60) and are consumed as CHARACTER_BOUND consumables per `../01_gameplay/progression.md` and `item_catalog.md`. No quest grants a book; the point is granted only after item consumption.
 
 # Validation
 Static validation rejects:
@@ -603,6 +658,6 @@ Vietnamese folklore/local mystery focus
 MAIN/SIDE each have exactly one mystery beat
 DAILY/EVENT mystery beat = none
 mystery_type set includes TESTIMONY
-TESTIMONY talk_pool = 5 ambient NPCs; wrong INTERACT resets, does not fail
+TESTIMONY talk_pool = 4 ambient NPCs + region guide; wrong INTERACT resets, does not fail
 LISTEN is a permitted objective type
 ```

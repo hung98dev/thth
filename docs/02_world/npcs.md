@@ -29,6 +29,8 @@ service.auction
 `service.storage.account` opens the account-level IAP entitlement panel in `../03_systems/account_storage.md` under ADR-0029. No gameplay item vault or alt bank exists.
 There is no repair service.
 
+Wire mapping is canonical in `../05_network/messages.md`: dialogue responses are `C2S_INTERACT` `TALK` with `service_param` = dialogue option; `service.set_checkpoint` and `service.travel` are `C2S_INTERACT` `NPC_SERVICE` (`service_param` = travel destination); the other services and quest accept/turn-in use their dedicated messages carrying `npc_id`, validated against the open NPC session and range. A service or option outside the NPC's allowed set, or an expired session, is rejected.
+
 ## Travel / Respec
 Travel destinations are predefined map+spawn pairs; access/cost/combat state revalidated. Respec only opens the canonical progression action.
 

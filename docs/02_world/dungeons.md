@@ -15,6 +15,10 @@ Launch supports exactly `NORMAL`. There is no generic Challenge/Hard difficulty 
 ## Entry / Membership
 Validate unlock/alive/not in combat/requirements/player count/transition. Membership snapshots approved members at creation and is independent of later party mutation. No new member after ACTIVE; original snapshot members may first-enter until final encounter engagement.
 
+Entry flow (fields, prompt lifetime and rejections canonical in `../05_network/messages.md` `C2S_DUNGEON_ENTER_REQUEST` / `C2S_DUNGEON_ENTRY_RESPOND` / `C2S_DUNGEON_ENTRY_CANCEL` / `C2S_DUNGEON_LEAVE`): the requester (partyless character or party leader) at the entrance sends the request with its `run_tag` (`ENDGAME_L60` only as allowed by `../07_content/dungeon_catalog.md`); party members on the same map instance approve or decline the pending entry; the approved set (requester included) becomes the snapshot. The instance records the requester's `source_map_id` and `source_channel_id` at creation (runtime only; not durable): return transfers and relic spawns use them.
+
+The Act-VI finale `instance.finale.than_trung` (`../07_content/world_route_catalog.md`) is a PARTY `1..5` instance that follows every rule of this file (entry, membership, states, scaling, checkpoints, wipe, completion, re-entry, cleanup, restart) with its `space_id` in place of `dungeon_id` and `boss.than_trung` as its final encounter (ADR-0061).
+
 ## States / Stages
 ```text
 CREATING -> READY -> ACTIVE -> COMPLETED/FAILED -> CLOSING -> CLOSED
@@ -80,7 +84,7 @@ Personal configured EXP/common/bound/material/consumable/equipment/progression r
 Default lockout = `NONE`.
 
 ## Re-entry / Cleanup
-Membership survives disconnect; guaranteed same-instance grace `120s`. Voluntary exit may re-enter before terminal lock; `ABANDON` removes completion eligibility. Empty instance `10m` -> FAILED. Completion closing = `120s` then transfer out.
+Membership survives disconnect; guaranteed same-instance grace `120s`. Voluntary exit (`C2S_DUNGEON_LEAVE` `EXIT`) may re-enter through the entrance before terminal lock; `ABANDON` removes completion eligibility and cannot re-enter. Empty instance `10m` -> FAILED. Completion closing = `120s` then transfer out. Every transfer out (exit, abandon, FAILED/CLOSING) goes to `spawn.return.<region>.<dungeon_key>` in the recorded `source_channel_id` under forced placement (`world_rules.md` § Forced Placement).
 
 ## Restart
 Active runtime instances are not reconstructed initially; incomplete run fails/closes, committed rewards remain, no duplicate settlement.

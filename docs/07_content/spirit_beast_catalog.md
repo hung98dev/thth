@@ -14,15 +14,21 @@ Launch budget:
 ```
 
 
-# Launch P2 legalization
-`../03_systems/spirit_beasts.md` owns legal P2 verbs and ICD `45s..90s`. This catalog's prose is rewritten at compile:
-- ICD below 45s → 45s; above 90s → 90s.
-- Invulnerability / iframe / death-ward (`coc_than` bubble) → Emergency Shield absorb `0.20 MAX_HP` for 3s (not invuln).
-- Blind / −100% accuracy (`hoa_diep`) → Anti-Heal `HEALING_RECEIVED=0.50` for 4s.
-- Pre-mitigation reflect (`trau_dong` P1) → DEFENSE bonus only; P2 → CC Cleanse on STUN/FREEZE.
-- Heal-over-time (`huou_sao` P2) → Emergency Shield `0.20 MAX_HP`.
-- Chim Lạc kill haste P2 → Kill/Assist Resource Restore (fifth legal P2 type from `../03_systems/spirit_beasts.md`); `25% MAX_MP` stripped to `3% MAX_MP` per ≤3% payload ceiling; `+20% MOVE_SPEED` grant removed (stat modifier banned under this type); ICD authored within 45s–90s range, no clamping needed.
-Transferred combat stats remain only the list in `spirit_beasts.md`. Extra catalog stats (CRIT_DAMAGE, projectile speed, fire pen) are presentation/P1 flavor and do not enter the character stat pool unless already on that list.
+# Passive Rules
+`../03_systems/spirit_beasts.md` owns the legal P2 types, their fixed payloads and the ICD range `45s..90s`. Every P2 below is the final compiled definition: one legal type, its fixed payload, and authored ICDs per tier (no compile-time rewrite). Base stats transfer only through the list in `spirit_beasts.md`; P1 percentages apply through the passive budget rules there.
+
+| beast_id | P2 type | ICD Lv20 / Lv40 / Lv60 |
+|---|---|---|
+| `beast.kim.ho_vang` | Anti-Heal | 60s / 50s / 45s |
+| `beast.kim.nghe_dong` | CC Cleanse | 75s / 60s / 45s |
+| `beast.moc.huou_sao` | Emergency Shield | 90s / 75s / 60s |
+| `beast.moc.chim_lac` | Kill/Assist Resource Restore (3% MAX_MP) | 60s / 50s / 45s |
+| `beast.thuy.rai_ca` | Mist Escape | 60s / 50s / 45s |
+| `beast.thuy.rua_than` | Emergency Shield | 80s / 65s / 50s |
+| `beast.hoa.ga_than` | Kill/Assist Resource Restore (3% MAX_HP) | 75s / 60s / 45s |
+| `beast.hoa.hoa_diep` | Anti-Heal | 65s / 50s / 45s |
+| `beast.tho.coc_than` | Emergency Shield | 90s / 85s / 80s |
+| `beast.tho.trau_dong` | CC Cleanse | 90s / 75s / 60s |
 
 # Roster of 10 Launch Spirit Beasts
 
@@ -37,14 +43,14 @@ Integer-valued output is rounded down; percentage/fraction output is represented
 |---|---|---|:---:|---|
 | `beast.kim.ho_vang` | Hổ Vàng | Golden Tiger | KIM | Burst Crit & Anti-Heal |
 | `beast.kim.nghe_dong` | Nghê Đồng | Bronze Lion-Dog | KIM | Tankiness & Hard-CC Cleanse |
-| `beast.moc.huou_sao` | Hươu Sao | Spotted Deer | MOC | Sustain & Emergency Healing |
-| `beast.moc.chim_lac` | Chim Lạc | Lac Bird | MOC | Attack Speed & Kill Snowball |
-| `beast.thuy.rai_ca` | Rái Cá Sông | River Otter | THUY | Evasion & Mobility Break |
-| `beast.thuy.rua_than` | Kim Quy | Golden Turtle | THUY | Flat Damage Reduction & Burst Block |
-| `beast.hoa.ga_than` | Gà Lửa | Fire Rooster | HOA | Burn Amplification & Mana Burn |
-| `beast.hoa.hoa_diep` | Hỏa Điệp | Fire Butterfly | HOA | Fire Pen & Blinding Counter |
-| `beast.tho.coc_than` | Cóc Vàng | Golden Toad | THO | Max HP & Death Defiance Bubble |
-| `beast.tho.trau_dong` | Trâu Đồng | Golden Ox | THO | Reflect Armor & Anti-Gang Knockup |
+| `beast.moc.huou_sao` | Hươu Sao | Spotted Deer | MOC | Sustain & Emergency Shield |
+| `beast.moc.chim_lac` | Chim Lạc | Lac Bird | MOC | Attack Speed & Kill Restore |
+| `beast.thuy.rai_ca` | Rái Cá Sông | River Otter | THUY | Evasion & Mist Escape |
+| `beast.thuy.rua_than` | Kim Quy | Golden Turtle | THUY | Flat Damage Reduction & Emergency Shield |
+| `beast.hoa.ga_than` | Gà Lửa | Fire Rooster | HOA | Burn Amplification & Kill Restore |
+| `beast.hoa.hoa_diep` | Hỏa Điệp | Fire Butterfly | HOA | Fire Pen & Anti-Heal |
+| `beast.tho.coc_than` | Cóc Vàng | Golden Toad | THO | Max HP & Emergency Shield |
+| `beast.tho.trau_dong` | Trâu Đồng | Golden Ox | THO | Defense & Hard-CC Cleanse |
 ---
 
 # Detailed Beast Profiles & Skills
@@ -60,7 +66,7 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - Level 1: `+6.0%` -> Level 60: `+20.0%`.
 - **Passive 2 — Khóa Huyết (`beast.skill.ho_vang.khoa_huyet`, Clutch)**:
   - Unlocked at Lv20, upgraded at Lv40 and Lv60.
-  - When hitting an enemy whose HP is below `25%`, inflicts *Khóa Huyết* reducing the target's received healing by `50%` for `4s`.
+  - Anti-Heal: when the owner's DAMAGING hit commits on a hostile target below `20% MAX_HP`, inflicts *Khóa Huyết* (`HEALING_RECEIVED = 0.50` for `4s`).
   - Internal cooldown: `60s` (Lv20) -> `50s` (Lv40) -> `45s` (Lv60).
 
 ---
@@ -75,9 +81,7 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - Increases owner's `DEFENSE` and reduces incoming critical strike chance.
   - Level 1: `+2.0% DEFENSE, -1.5% enemy crit` -> Level 60: `+8.0% DEFENSE, -5.0% enemy crit`.
 - **Passive 2 — Nghê Hống Phá Hồn (`beast.skill.nghe_dong.pha_hon`, Clutch)**:
-  - When the owner suffers a hard crowd control effect (`STUN` or `FREEZE`), the Nghê instantly roars:
-    1. Cleanses the hard CC status immediately.
-    2. Knocks back all hostiles within a 3.0m radius by 2.5m.
+  - CC Cleanse: when a `STUN` or `FREEZE` commits on the owner, the Nghê roars and dispels that status instance in the same tick.
   - Internal cooldown: `75s` (Lv20) -> `60s` (Lv40) -> `45s` (Lv60).
 
 ---
@@ -92,7 +96,7 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - Increases owner's received healing effectiveness and passively regenerates HP.
   - Level 1: `+4.0% incoming heal, +0.2% MAX_HP every 4s` -> Level 60: `+12.0% incoming heal, +0.4% MAX_HP every 4s`.
 - **Passive 2 — Hoa Thần Hộ Mệnh (`beast.skill.huou_sao.ho_menh`, Clutch)**:
-  - When the owner's HP drops below `20%`, instantly sprouts a medicinal flower aura that heals for `25% MAX_HP` over 3.0s.
+  - Emergency Shield: when a committed hit leaves the owner below `20% MAX_HP`, a medicinal flower aura grants an absorb shield of `floor(0.20 × MAX_HP)` for `3.0s`.
   - Internal cooldown: `90s` (Lv20) -> `75s` (Lv40) -> `60s` (Lv60).
 
 ---
@@ -104,10 +108,10 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - `ATTACK_SPEED`: +0.003 -> +0.013
   - `MAX_MP`: +3 -> +50
 - **Passive 1 — Lạc Vũ Phong (`beast.skill.chim_lac.phi_vu`)**:
-  - Increases owner's `ATTACK_SPEED` and projectile travel speed by `15%`.
+  - Increases owner's `ATTACK_SPEED`.
   - Level 1: `+2.0% ATTACK_SPEED` -> Level 60: `+8.0% ATTACK_SPEED`.
 - **Passive 2 — Lạc Dực Truy Kích (`beast.skill.chim_lac.truy_kich`, Clutch)**:
-  - When the owner scores a kill or assist on a hostile actor, instantly restores `3% MAX_MP` (Kill/Assist Resource Restore type; MOVE_SPEED grant removed per type constraint).
+  - Kill/Assist Resource Restore: on a confirmed kill or assist of a hostile actor, restores `3% MAX_MP` to the owner.
   - Internal cooldown: `60s` (Lv20) -> `50s` (Lv40) -> `45s` (Lv60).
 
 ---
@@ -122,7 +126,7 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - Increases owner's `DODGE_CHANCE` and grants slow resistance.
   - Level 1: `+2.5% DODGE_CHANCE, +8% slow resist` -> Level 60: `+8.5% DODGE_CHANCE, +20% slow resist`.
 - **Passive 2 — Thoát Xác Thủy Quái (`beast.skill.rai_ca.thoat_xac`, Clutch)**:
-  - When afflicted with `ROOT` or a movement speed slow exceeding `30%`, instantly dissolves the constraint and grants `2.0s` slow immunity.
+  - Mist Escape: when a `ROOT` or `SLOW` (any magnitude) commits on the owner, removes that status instance and grants `2.0s` immunity to ROOT and SLOW application.
   - Internal cooldown: `60s` (Lv20) -> `50s` (Lv40) -> `45s` (Lv60).
 
 ---
@@ -134,10 +138,10 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - `DEFENSE`: +1 -> +18
   - `MAX_HP`: +11 -> +183
 - **Passive 1 — Mai Rùa Kiên Cố (`beast.skill.rua_than.mai_rua`)**:
-  - Increases owner's `DAMAGE_REDUCTION` and reduces backstab damage taken.
+  - Increases owner's `DAMAGE_REDUCTION`.
   - Level 1: `+3.5% DAMAGE_REDUCTION` -> Level 60: `+10.0% DAMAGE_REDUCTION`.
 - **Passive 2 — Thủy Khiên Bất Hoại (`beast.skill.rua_than.thuy_khien`, Clutch)**:
-  - When taking a single hit that exceeds `35% MAX_HP`, reduces the damage of that specific hit by `65%`.
+  - Emergency Shield: when a committed hit leaves the owner below `20% MAX_HP`, the shell grants an absorb shield of `floor(0.20 × MAX_HP)` for `3.0s`.
   - Internal cooldown: `80s` (Lv20) -> `65s` (Lv40) -> `50s` (Lv60).
 
 ---
@@ -152,7 +156,7 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - Amplifies all fire and burn damage dealt by the owner.
   - Level 1: `+8.0% Burn damage` -> Level 60: `+25.0% Burn damage`.
 - **Passive 2 — Phụng Hỏa Kích Nộ (`beast.skill.ga_than.kich_no`, Clutch)**:
-  - On a critical hit against an enemy player, unleashes a flame flare dealing `0.35 ATTACK` fire splash and burns `8% MAX_MP` of the victim.
+  - Kill/Assist Resource Restore: on a confirmed kill or assist of a hostile actor, the phoenix flare restores `3% MAX_HP` to the owner.
   - Internal cooldown: `75s` (Lv20) -> `60s` (Lv40) -> `45s` (Lv60).
 
 ---
@@ -167,7 +171,7 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - Increases owner's `MAX_HP` and grants heavy displacement resistance.
   - Level 1: `+2.5% MAX_HP, +10% knockback resist` -> Level 60: `+8.0% MAX_HP, +20% knockback resist`.
 - **Passive 2 — Khí Bào Hộ Mệnh (`beast.skill.coc_than.khi_bao`, Clutch)**:
-  - When the owner would receive lethal damage (HP drops to `<= 1`), prevents death, applies an Emergency Shield absorbing `20% MAX_HP` for `3.0s` (compiled from the invulnerable-bubble authored intent; no iframe, no invulnerability), and knocks back attackers by 3.0m.
+  - Emergency Shield: when a committed hit leaves the owner below `20% MAX_HP`, a golden mist bubble grants an absorb shield of `floor(0.20 × MAX_HP)` for `3.0s`. It never prevents death.
   - Internal cooldown: `90s` (Lv20) -> `85s` (Lv40) -> `80s` (Lv60).
 
 
@@ -181,9 +185,7 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - Increases owner's fire elemental penetration and adds AoE fire splash to basic attacks.
   - Level 1: `+4.5% Fire Pen, +10% splash in 1.5m` -> Level 60: `+15.0% Fire Pen, +25% splash in 1.8m`.
 - **Passive 2 — Tàn Hỏa Bộc Liệt (`beast.skill.hoa_diep.boc_liet`, Clutch)**:
-  - When taking damage from an enemy within 3.0m while below 50% HP, emits a burst of flame powder (compiled: the blinding/-100% accuracy intent is rewritten to Anti-Heal per the legal-P2-effects rule):
-    1. Inflicts Anti-Heal on the attacker (`HEALING_RECEIVED = 0.50` for `4s`).
-    2. Deals `0.40 ATTACK` fire damage and burns `6% MAX_MP`.
+  - Anti-Heal: when the owner's DAMAGING hit commits on a hostile target below `20% MAX_HP`, flame powder inflicts `HEALING_RECEIVED = 0.50` on that target for `4s`.
   - Internal cooldown: `65s` (Lv20) -> `50s` (Lv40) -> `45s` (Lv60).
 
 ---
@@ -195,13 +197,10 @@ Integer-valued output is rounded down; percentage/fraction output is represented
   - `MAX_HP`: +15 -> +233
   - `DAMAGE_REDUCTION`: +0.003 -> +0.013
 - **Passive 1 — Thiết Ngưu Hộ Thể (`beast.skill.trau_dong.thiet_nguu`)**:
-  - Increases owner's `DEFENSE` (the reflect-armor authored intent is compiled to DEFENSE bonus only; pre-mitigation reflect is a banned P1 effect per `../03_systems/spirit_beasts.md`).
+  - Increases owner's `DEFENSE`.
   - Level 1: `+2.0% DEFENSE` -> Level 60: `+8.0% DEFENSE`.
 - **Passive 2 — Kim Ngưu Chấn Địa (`beast.skill.trau_dong.chan_dia`, Clutch)**:
-  - When the owner is targeted by `>= 2 hostile players` in PvP, the Golden Ox stomps the earth:
-    1. Knocks up (AIRBORNE) all surrounding enemies within 3.5m for 0.8s.
-    2. Applies a `40% SLOW` on those enemies for 3.0s.
-    3. Grants owner `+25% DEFENSE` for 4.0s.
+  - CC Cleanse: when a `STUN` or `FREEZE` commits on the owner, the Golden Ox stomps the earth and dispels that status instance in the same tick.
   - Internal cooldown: `90s` (Lv20) -> `75s` (Lv40) -> `60s` (Lv60).
 ---
 
@@ -290,6 +289,6 @@ DEFENSE: trau_dong Lv60 base+20, t6 ao_giap+27  → floor(( 20+ 27)×1.08) =  50
 10. **Passive budget — Rule C**: Any beast whose Passive 1 grants ATTACK_SPEED > `8.0%` at Lv60.
 11. **Passive budget — Rule D**: Any beast whose Passive 1 grants CRIT_DAMAGE amplification > `0.20`, Burn/fire damage amplification > `25.0%`, fire penetration > `15.0%`, incoming heal effectiveness > `12.0%`, AoE splash effectiveness > `25.0%`, control resistance > `20.0%`, or enemy-crit aura debuff > `5.0%` at Lv60.
 12. Any Passive 1 `linear(start, end)` curve whose `end` (Lv60) value violates an applicable Rule A/B/C/D ceiling.
-13. Any Passive 2 ICD outside `45s..90s` (range from `../03_systems/spirit_beasts.md`). All authored values are now within range; prior out-of-range values corrected: `beast.moc.chim_lac` 20s/15s/10s→60s/50s/45s, `beast.kim.ho_vang` 40s→45s, `beast.thuy.rai_ca` 40s→45s, `beast.hoa.hoa_diep` 35s→45s, `beast.hoa.ga_than` 40s/30s→60s/45s (full ladder 50s/40s/30s→75s/60s/45s to eliminate invisible Lv40→Lv60 tier).
-14. Any Passive 2 using a banned effect (blind, accuracy-100, pre-mitigation reflect, backstab, iframe/invulnerability, projectile-speed as transferred stat). The legalization compile rewrites in the catalog header are the authoritative fix record; these assertions confirm no new banned effects were introduced.
-15. Any Passive 2 ICD ladder where two tiers compile to the same effective ICD value (clamp authored value to [45s, 90s]; if effective_icd(Lv20) == effective_icd(Lv40) or effective_icd(Lv40) == effective_icd(Lv60) or effective_icd(Lv20) == effective_icd(Lv60), the upgrade at that boundary is invisible — reject). Any Passive 2 of Kill/Assist Resource Restore type where `payload_pct > 0.03` or payload includes a stat modifier, damage, mitigation, shield, CC, or status application — reject.
+13. Any Passive 2 ICD outside `45s..90s` (range from `../03_systems/spirit_beasts.md`).
+14. Any Passive 2 whose type is not in the legal P2 list of `../03_systems/spirit_beasts.md`, whose payload differs from that type's fixed payload, or that adds a rider (knockback, damage, stat modifier, invulnerability); any P1 or P2 using a banned effect (blind, accuracy-100, pre-mitigation reflect, backstab, iframe/invulnerability, projectile speed).
+15. Any Passive 2 ICD ladder where two tiers have the same authored ICD (invisible upgrade — reject; resonance may later share an effective ICD, `spirit_beasts.md`). Any Passive 2 of Kill/Assist Resource Restore type where `payload_pct > 0.03` or payload includes a stat modifier, damage, mitigation, shield, CC, or status application — reject.

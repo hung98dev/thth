@@ -117,6 +117,18 @@ Do not accept arbitrary client-selected database primary keys without verifying 
 ## IAP Receipt Verification (Outbound Trust Boundary)
 The IAP path is an outbound call to a platform payment provider. It is not an inbound gameplay message and not a WebSocket frame, but it is a trust boundary that must be explicitly secured.
 
+**Client submission (ADR-0060):** after the platform purchase UI completes, the client calls the Edge HTTPS endpoint (never a WebSocket frame):
+```text
+POST /api/v1/iap/verify        Authorization: Bearer <access token> (auth.md)
+  body     platform : GOOGLE_PLAY | APP_STORE | STEAM, product_id, platform_receipt
+           (Google purchaseToken | Apple transactionId | Steam orderid)
+  response entitlement_id, grant_state : PENDING | GRANTED | REJECTED, error_code
+POST /api/v1/iap/steam/init    Authorization: Bearer <access token>
+  body     product_id
+  response orderid, entitlement_id   (server calls ISteamMicroTxn/InitTxn; the Steam overlay asks the user)
+```
+`platform_receipt` is UNIQUE: the first call inserts the `PENDING` row (after the account/product/season checks), later calls with the same receipt return the existing row (idempotent), and a receipt bound to another account returns `IAP_RECEIPT_ACCOUNT_MISMATCH` without a row. Rate limit: L2 `rate_limit_counters` action `iap_verify` (`rate_limits.md`). Steam: `/verify` with the `orderid` after the overlay authorization callback finalizes the order (`ISteamMicroTxn/FinalizeTxn`); a user-declined or failed order is `REJECTED`. Google Play: after `GRANTED` the server acknowledges the purchase (`purchases.products.acknowledge`) with retry; an unacknowledged purchase that Google refunds arrives through RTDN as a refund. Providers and endpoints: `external_integrations.md` § 2.
+
 **What is validated before grant:**
 1. Receipt schema: the `platform_receipt` field is a non-empty opaque token within the allowed byte length; structural pre-checks are platform-specific (app store vs. regional gateway).
 2. Platform API response: the server calls the platform's verification endpoint and inspects the canonical response fields (status, product_id, order_id, purchase_time). The game server never interprets a receipt locally without a positive platform confirmation.
@@ -126,7 +138,7 @@ The IAP path is an outbound call to a platform payment provider. It is not an in
 **Provider timeout / error handling:**
 - A network timeout or HTTP 5xx from the platform provider is a transient failure. The entitlement remains in `PENDING` state. No grant is committed.
 - The operation is retried with exponential backoff (max 3 attempts, cap 30 s). Each retry reuses the same stable `entitlement_id` as the idempotency key; the platform endpoint's own idempotency ensures a second verification call does not double-charge the player.
-- After retry exhaustion, the entitlement stays `PENDING` and the client is informed to retry later. Support tooling can manually re-trigger verification.
+- After retry exhaustion, the entitlement stays `PENDING` and the client receives `IAP_VERIFICATION_PENDING`; the client retries `/verify` with the same receipt. Support tooling can manually re-trigger verification.
 
 **Retry double-grant safety:**
 - The grant is committed inside a database transaction that checks `grant_state = PENDING` at commit time. A concurrent duplicate verification attempt for the same `entitlement_id` that arrives while one transaction is in flight will see the state already committed and return the existing record without a second grant.
@@ -135,6 +147,7 @@ The IAP path is an outbound call to a platform payment provider. It is not an in
 **Ambiguous / unverified responses:**
 - A grant is **never** committed on a provider response that is absent, malformed, ambiguous (non-terminal status), or carries a verification status other than a definitive confirmed-purchase signal.
 - `PENDING` is the safe default; only a clear positive confirmation transitions to `GRANTED`.
+- A definitive negative answer (not purchased, cancelled, invalid token, wrong package/app) or a product mismatch transitions `PENDING -> REJECTED` (`IAP_RECEIPT_INVALID` / `IAP_PRODUCT_MISMATCH`); a valid season-track receipt for a season the account already holds is stored `REJECTED` (`IAP_SEASON_TRACK_DUPLICATE`). `REJECTED` is terminal and never occupies the per-season unique slot (`../06_data/data_model.md`).
 
 ## Admin / Worker
 Internal requests require the same domain invariants as public requests.
@@ -155,6 +168,6 @@ Validation failure:
 - SQL is parameterized,
 - spatial/combat outcomes are server-owned,
 - internal tooling does not bypass domain invariants,
-- IAP grant committed only on definitive positive platform confirmation; PENDING is the safe default,
+- IAP grant committed only on definitive positive platform confirmation; PENDING is the safe default; definitive negative -> terminal REJECTED,
 - IAP retry uses same entitlement_id; commit-time PENDING check prevents double-grant,
 - boss chest claim re-validates contribution_record for current public_boss_spawn_generation_id at commit time; no valid record -> CHEST_ELIGIBILITY_INVALID, no loot roll.

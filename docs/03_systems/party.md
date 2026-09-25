@@ -11,7 +11,7 @@ Immutable `party_id`; `PARTY_MAX_MEMBERS = 5`; one character at most one party. 
 Each member stores character_id, monotonic join_sequence, online_state. Exactly one leader. Leader invites, kicks, transfers leadership, and initiates party-controlled content when required; no reward/combat privilege.
 
 ## Invitations
-Lifetime `60s`; states PENDING/ACCEPTED/DECLINED/CANCELLED/EXPIRED. Only leader invites. Target online, partyless, passes social direct-interaction gate; capacity validated atomically at acceptance. Pending invites do not reserve slots.
+Lifetime `60s`; states PENDING/ACCEPTED/DECLINED/CANCELLED/EXPIRED. Only leader invites. A partyless character may also invite: the invite commit atomically creates a new ACTIVE party with the inviter as leader (join_sequence 1) and carries its `party_id`; if that invite then declines/expires/cancels the solo party remains (valid) until the leader leaves. There is no separate create message. Target online, partyless, passes social direct-interaction gate; capacity validated atomically at acceptance. Pending invites do not reserve slots.
 
 ## Leave / Leadership
 Leave/kick removes party membership but not established dungeon membership or committed rewards. If leader leaves, lowest join_sequence remaining member becomes leader. Final leave disbands. Explicit transfer allowed.

@@ -4,7 +4,7 @@ status: LOCKED
 ## Scope
 Concrete 25-Soul launch roster for `../03_systems/soul_contracts.md`.
 
-Soul identity, rank, element, source, trigger, effect mechanics, Lv1/Lv3/Lv5 values, and repeat/first-clear acquisition references are fully resolved. Soul EXP progression sources/thresholds are owned by `../03_systems/soul_contracts.md`; this file does not duplicate them.
+Soul identity, rank, element, source, trigger, effect mechanics, Lv1/Lv3/Lv5 values (Lv2 = Lv1 value, Lv4 = Lv3 value; `../03_systems/soul_contracts.md`), and repeat/first-clear acquisition references are fully resolved. Soul EXP progression sources/thresholds are owned by `../03_systems/soul_contracts.md`; this file does not duplicate them.
 
 Soul presentation uses creatures already present in the Vietnamese-folklore encounter catalog. A Soul is a stylized supernatural contract with the game's creature interpretation, not a claim about real-world belief.
 

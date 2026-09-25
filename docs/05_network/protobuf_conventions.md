@@ -26,13 +26,13 @@ option csharp_namespace = "ThinhThan.Protocol.V1";
 |---|---|---|
 | `common.proto` | N/A (Shared Types) | `Vector2Int`, `Timestamp`, `ErrorPayload`, `OperationIdentity` |
 | `session.proto` | 1 .. 11 | Hello, Attach, Detach, SessionReplaced, Heartbeat, ServerDraining, Error (authentication itself is HTTPS, `../07_security/auth.md`) |
-| `movement.proto` | 100 .. 110 | C2S_MOVEMENT_EDGE (108), C2S_CHANNEL_SWITCH (109), S2C_CHANNEL_SWITCH_RESULT (110), PositionSnapshot, Velocity, Knockback |
-| `combat.proto` | 200 .. 207, 300 .. 306 | CombatAction, HitResult, world replication (baseline, spawn/despawn, state delta, baseline ack), S2C_COMBAT_EVENT (304), StatusEffectDelta |
-| `durable.proto` | 400 .. 425 | InventoryMutate, ItemEquip, LoadoutSwitch, RewardClaim, Beast operations (410..417), EntitlementClaim (418..419), NpcShopBuy (420..421), Cosmetic redeem/equip (422..425) |
-| `content.proto` | 500 .. 506 | ContentRevisionSync, AtlasClaim, ProgressionEvent |
-| `social.proto` | 600 .. 649 | Friend, Block, Chat (World/Party/Guild/Whisper), Party, Guild (incl. create/disband/applications/storage claims/blessing vote) |
+| `movement.proto` | 100 .. 117 | C2S_MOVEMENT_EDGE (108), C2S_CHANNEL_SWITCH (109), S2C_CHANNEL_SWITCH_RESULT (110), dungeon entry/exit (111..115, 117), S2C_INTERACT_RESULT (116), PositionSnapshot, Velocity, Knockback |
+| `combat.proto` | 200 .. 208, 300 .. 306 | CombatAction, HitResult, world replication (baseline, spawn/despawn, state delta, baseline ack), S2C_COMBAT_EVENT (304), StatusEffectDelta |
+| `durable.proto` | 400 .. 438 | InventoryMutate, Loadout (equip/skill/soul contract), Craft, Enhance, RewardClaim, Beast operations (410..417, 430..431), EntitlementClaim (418..419), NpcShop buy/sell (420..421, 426..427), Cosmetic redeem/equip (422..425), InventoryExpand (428..429), state pushes (432..438) |
+| `content.proto` | 500 .. 515 | Quest accept/turn-in/abandon, AtlasClaim, ProgressionEvent, story branch, skill upgrade, potential allocate, respec, ProgressionState |
+| `social.proto` | 600 .. 652 | Friend, Block, Chat (World/Party/Guild/Whisper), Party, Guild (incl. create/disband/applications/storage claims/blessing vote) |
 | `market.proto` | 700 .. 744 | Direct Trade, Auction list/buy/cancel/search/reclaim/proceeds |
-| `pvp.proto` | 800 .. 813 | Sparring, Duel, Five Element Arena, Guild War match states |
+| `pvp.proto` | 800 .. 818 | Sparring, Duel, Five Element Arena, Guild War match states |
 
 ## 2. Wire Envelope Specification
 

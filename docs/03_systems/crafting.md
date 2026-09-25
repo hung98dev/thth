@@ -63,7 +63,7 @@ new_level = current_level
 Enhancement level is strictly preserved.
 
 ## Lucky Charm (Bùa May Mắn)
-Players may optionally use a Lucky Charm to boost enhancement success rate under ADR-0022. Exactly **one lucky charm of one type** may be consumed per attempt; stacking multiple lucky charms is strictly rejected:
+Players may optionally use a Lucky Charm to boost enhancement success rate under ADR-0022. Exactly **one lucky charm of one type** may be consumed per attempt; stacking multiple lucky charms, or using a charm outside its level eligibility, is rejected with `CHARM_INELIGIBLE` before anything is consumed:
 
 | Charm Tier | Item ID | Bonus | Level Eligibility |
 |---|---|:---:|---|
@@ -193,7 +193,7 @@ With Insurance applied for attempts +8..+11 **and the canonical per-target soft-
 
 These values are validation references, not persisted runtime state. Tooling computes expectation in full precision and compares each displayed value after rounding to two decimal places; a displayed reference differs only when absolute full-precision drift exceeds `0.005` multiplier units.
 
-The **+16 enhancement of a T6 item is the official terminal destination for `currency.common`** at 2,000-hour pacing. At ~140,000 common/hour income the expected full T6+16 cost (994,878,788 common, approximately 0.995B; derived as 3,979,515.15 common-base units × T6 base 250 = 994,878,787.5, rounded) represents approximately 7,100 hours of play — a genuine lifetime goal, not a casual target. Its role is to act as a permanent, deep, unambiguous gold sink that removes excess currency without creating a pay-to-win advantage.
+The **+16 enhancement of a T6 item is the official terminal destination for `currency.common`**. At `REFERENCE_ENDGAME_COMMON_PER_HOUR` (76,500, canonical in `../07_content/economy_catalog.md`) the expected full T6+16 cost (994,878,788 common, approximately 0.995B; derived as 3,979,515.15 common-base units × T6 base 250 = 994,878,787.5, rounded) represents approximately 13,000 hours of field income (994,878,788 / 76,500 = 13,005) — a genuine lifetime goal, not a casual target. Its role is to act as a permanent, deep, unambiguous gold sink that removes excess currency without creating a pay-to-win advantage.
 
 Derivation arithmetic (T6, +12→+13 with pity):
 ```text
@@ -259,6 +259,6 @@ equipment never destroyed
 attempt-cost multipliers are explicit tables
 cost review includes failure probability, not just per-attempt price
 +13..+16 never required for baseline content
-+16 T6 = official terminal gold destination (~7,100 hours at 140k/hour; ~994,878,788 common)
++16 T6 = official terminal gold destination (~13,000 hours at REFERENCE_ENDGAME_COMMON_PER_HOUR; ~994,878,788 common)
 one operation -> one RNG result
 ```

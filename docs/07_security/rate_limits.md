@@ -30,6 +30,8 @@ auction search       sustained 1/s, burst 5
 
 HTTPS webhooks (`external_integrations.md`): Apple/Google IAP notifications are accepted only after signature/OIDC verification; unauthenticated requests are limited to 60/min per source IP and verified notifications to 600/min total, excess answered `429` so the store retries.
 
+HTTPS IAP client endpoints (`validation.md` § IAP Receipt Verification): `POST /api/v1/iap/verify` and `POST /api/v1/iap/steam/init` share the L2 action `iap_verify` = 10 requests/min per account and 30/min per source IP; excess returns `RATE_LIMITED` (BACKOFF). Retrying an existing receipt is idempotent but still counted.
+
 These limits are intentionally above legal normal gameplay frequency and can be runtime-tuned after telemetry.
 
 A rate limit never makes an otherwise illegal skill/action legal.

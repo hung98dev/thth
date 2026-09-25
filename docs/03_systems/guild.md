@@ -338,7 +338,7 @@ Preconditions:
 ```text
 Guild Storage empty
 no APPROVED storage claims
-no ACTIVE/MATCHED/ACCEPTING/PREPARING Guild War registration or match
+no QUEUED/MATCHED/ACCEPTING/PREPARING/ACTIVE/RESOLVING Guild War registration or match
 ```
 
 Flow:

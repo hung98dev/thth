@@ -33,24 +33,27 @@ Tài liệu này đảm bảo hai AI agent triển khai các task persistence đ
 
 Chưa có migration nào tồn tại. IMP-005 tạo baseline `server/migrations/000001_baseline_schema.up.sql` và snapshot `server/migrations/schema_snapshot.sql`; baseline tạo **mọi bảng khai báo trong `data_model.md`** (kể cả `characters.updated_at`); danh sách dưới đây là các bảng cần lưu ý đặc biệt về kiểu dữ liệu/ràng buộc, không phải danh sách giới hạn:
 
-1. `accounts` — Tài khoản người chơi, trạng thái `ACTIVE`, `TOMBSTONE_ERASED`, và điểm tích lũy hoàn tiền IAP.
+1. `accounts` — Tài khoản người chơi, trạng thái `ACTIVE`, `TOMBSTONE_ERASED`; không có cột điểm hoàn tiền IAP (điểm được suy ra từ `account_refund_consumed_events` trong 180 ngày, ADR-0060).
 2. `account_identities` — Liên kết OAuth bên thứ ba (Apple, Google, Steam), ràng buộc `ON DELETE RESTRICT`.
    `account_password_credentials` — Username/email/Argon2id hash cho provider `password` (ADR-0051); `UNIQUE(username_key)`, `UNIQUE(email_key)`.
 3. `characters` — Nhân vật người chơi (tối đa 3 nhân vật, cấp 1..60, tên định danh duy nhất `name_key`); `current_exp INTEGER`, `created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()` và `updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`. `updated_at` chỉ ghi lần sửa gần nhất của chính hàng `characters`, theo `data_model.md`.
 4. `operations` — Nhật ký idempotency chống xử lý lặp lại giao dịch tài sản.
 5. `character_currencies` — Số dư 3 loại tiền (`common`, `bound`, `special`) có ràng buộc `>= 0`.
 6. `item_instances` & `item_locations` — Thực thể vật phẩm, cấp cường hóa 0..16, và vị trí duy nhất.
-7. `account_iap_entitlements` & `account_refund_consumed_events` — Quyền sở hữu IAP và nhật ký sự kiện hoàn tiền trong cửa sổ 180 ngày.
+7. `account_iap_entitlements` & `account_refund_consumed_events` — Quyền sở hữu IAP (`grant_state` gồm `REJECTED` kèm `reject_reason`, cột `platform`) và nhật ký sự kiện hoàn tiền trong cửa sổ 180 ngày.
 8. `economy_account_daily_rollups` & `economy_character_daily_rollups` — Bảng tổng hợp luồng tiền và khối lượng giao dịch đối tác (`trade_partner_volumes`).
 9. `world_consequence_relics` & `region_di_tich_markers` — Trạng thái thế giới sau khi diệt boss Di Tích (khóa `(map_id, channel_id, relic_id)`).
 10. `rate_limit_counters` — Bộ đếm giới hạn tần suất L2 trên PostgreSQL (không dùng Redis).
 11. `iap_notification_dedup` — Chống xử lý trùng lặp webhook thông báo từ Apple/Google.
 12. `audit_events` — Nhật ký kiểm toán an ninh và truy vết thao tác.
 13. `character_inventories` — Metadata kho đồ nhân vật: capacity, revision.
-14. `account_cosmetic_entitlements` & `account_entitlement_claims` — Quyền sở hữu mỹ phẩm IAP cấp account (per `data_model.md`).
+14. `account_cosmetic_entitlements` (có `first_equipped_at`) & `account_entitlement_claims` — Quyền sở hữu mỹ phẩm IAP cấp account (per `data_model.md`).
+    `character_cosmetic_entitlements` & `character_cosmetic_equips` — Mỹ phẩm cấp nhân vật và slot đang trang bị (ADR-0060).
 15. `auth_session_families`, `auth_refresh_credentials`, `auth_revocations` — Phiên xác thực và thu hồi (`../07_security/auth.md`).
-16. `boss_chest_eligibility` — Quyền mở rương boss PUBLIC theo nhân vật (ADR-0053).
+16. `boss_chest_eligibility` — Quyền mở rương boss PUBLIC theo nhân vật (ADR-0053); `public_boss_schedules` — vòng đời generation boss PUBLIC, CHECK trạng thái `SCHEDULED`/`OPEN` (ADR-0061).
 17. `character_feats` & `character_feat_milestones` — Feat và mốc thưởng (`../03_systems/cosmetics.md`).
+18. `character_souls` — Soul instance, cấp, EXP, `contracted_item_instance_id UNIQUE` (ADR-0060); `character_soul_resonance` — bộ đếm cộng hưởng ký ức theo `(character_id, soul_id)`.
+19. `character_beasts`, `character_beast_food_daily`, `beast_equipment_locations` — Linh Thú và bộ đếm điểm thức ăn theo ngày UTC.
 
 ## 4. Ràng buộc Toàn vẹn & Hành vi Khóa Ngoại (Foreign Keys)
 

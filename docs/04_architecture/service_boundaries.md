@@ -40,7 +40,7 @@ Owns cross-partition live state that is not a simulation entity and is not Postg
 - chat fanout for WORLD / PARTY / GUILD / WHISPER (`../03_systems/social.md`)
 - PvP and Guild-War matchmaking queues (`../03_systems/pvp.md`, `../03_systems/guild_war.md`)
 - Spirit Surge region scheduling (`../02_world/world_rules.md`, `../07_content/world_event_catalog.md`)
-- PUBLIC boss spawn generation identity: assigns and retires `public_boss_spawn_generation_id` for all channel copies of a standalone PUBLIC boss (`../02_world/bosses.md`); per-character eligibility is persisted by Durable Domain in `boss_chest_eligibility`
+- PUBLIC boss spawn generation identity: assigns and retires `public_boss_spawn_generation_id` for all channel copies of a standalone PUBLIC boss and runs its generation lifecycle, persisted in `public_boss_schedules` (`../02_world/bosses.md`, ADR-0061); per-character eligibility is persisted by Durable Domain in `boss_chest_eligibility`
 
 One serialized in-process single-writer executor per logical world process (per `AGENTS.md` and `../11_decisions/0044-launch-topology-single-binary-role-modes.md`). It executes within the single server process alongside Edge, Sim, and Durable. It is not a separate binary, not Redis, not a distributed database lease, and not a second source of durable truth.
 

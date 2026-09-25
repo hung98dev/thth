@@ -12,7 +12,7 @@ Stable `cosmetic_id`. Launch gameplay cosmetics (story, feat, atlas, chivalry, b
 ```text
 character_id + cosmetic_id
 ```
-Guild crest/banner/shrine stay guild-scoped. Payment/IAP cosmetics are account-entitled and may be equipped on any character of that account without moving items.
+Grants are stored one row per grant source in `character_cosmetic_entitlements` (`../06_data/data_model.md`); the cosmetic is owned while any row exists, so revoking one source (e.g. a refunded season track) keeps ownership granted by another source. Guild crest/banner/shrine stay guild-scoped. Payment/IAP cosmetics are account-entitled and may be equipped on any character of that account without moving items.
 
 Duplicate entitlement grants are idempotent and do not automatically create a tradable token/currency.
 
@@ -27,14 +27,15 @@ WEAPON_TRAIL          slot: weapon_trail
 AURA                  slot: aura
 EMOTE                 no slot; every owned emote is usable (emote wheel)
 CHARACTER_SHRINE      slot: character_shrine  (personal shrine display at Safe Anchors)
+GUILD_STONE_INSCRIPTION slot: guild_stone_inscription  (style of the character's own name on the Guild Stone, guild.md; character-scoped)
 GUILD_SHRINE_VISUAL   guild-scoped; set by guild LEADER/VICE_LEADER
 GUILD_BANNER          guild-scoped
 GUILD_CREST_ACCENT    guild-scoped
 ```
-Each slot holds one equipped cosmetic. Seasonal and currency shrines (`cosmetic.shrine.*`) are `CHARACTER_SHRINE`; guild shrine visuals are a separate guild-scoped category.
+Each slot holds one equipped cosmetic. `cosmetic.guild_stone.inscription.*` are `GUILD_STONE_INSCRIPTION`. Seasonal and currency shrines (`cosmetic.shrine.*`) are `CHARACTER_SHRINE`; guild shrine visuals are a separate guild-scoped category.
 
 ## Equip
-Equipping/unequipping is presentation state. One active item per mutually exclusive cosmetic slot unless a definition says otherwise.
+Equipping/unequipping is presentation state. The first equip of an account IAP cosmetic by any character sets its `first_equipped_at` once (refund classification, `monetization.md`). One active item per mutually exclusive cosmetic slot unless a definition says otherwise.
 
 Invalid/removed entitlement falls back to none/default. Cosmetic equip can never alter gameplay collision/hitboxes or hide required combat telegraphs.
 
@@ -193,27 +194,27 @@ Guild cosmetic state never modifies Guild War or Guild progression power.
 ## Persistence
 Persist:
 ```text
-character cosmetic entitlement set (ADR-0029)
+character cosmetic entitlements (character_cosmetic_entitlements: one row per grant source; ADR-0029)
 equipped character cosmetic IDs
-account IAP cosmetic entitlement set (account_cosmetic_entitlements; payment spec exists in monetization.md)
+account IAP cosmetic entitlement set (account_cosmetic_entitlements incl. first_equipped_at; payment spec in monetization.md)
 guild-scoped cosmetic state where owned by guild
 ```
 Server validates ownership; client never grants entitlement.
 
 ## Launch Counts
 ```text
-TITLE_PLAY = 125
-PROFILE_FRAME_PLAY = 3
+TITLE_PLAY = 127
+PROFILE_FRAME_PLAY = 9
 APPEARANCE_PLAY = 4
-GUILD = 3
-PLAY_PLUS_GUILD = 135
+GUILD = 5
+PLAY_PLUS_GUILD = 145
 COMMON_SINKS = 20
 SPECIAL_CURRENCY_SINKS = 20
 SEASONAL_ATLAS_TITLES = 60
 SEASON_FREE = 18
 SEASON_PAID = 18
 IAP_STORE_IDS = 13
-TOTAL_STABLE_COSMETIC_IDS = 284
+TOTAL_STABLE_COSMETIC_IDS = 294
 ```
 Play-earned cosmetics are character-scoped. IAP store cosmetics are account-entitled.
 

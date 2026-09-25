@@ -46,13 +46,13 @@ Use `docs/templates/adr.md`.
 | 0032 | Seven-Channel EXP Source Portfolio | ACCEPTED |
 | 0033 | Skill Unlock Schedule Remap and Lv55/Lv60 Bonus Skill Points | ACCEPTED |
 | 0034 | Just Guard Edge-Trigger, Streak Mechanic, and Revised Mitigation Budget | ACCEPTED |
-| 0035 | Spawn Density Increase and Channel-Capacity Implications _(amended: channel cap 20→18)_ | ACCEPTED |
+| 0035 | Spawn Density Increase and Channel-Capacity Implications _(amended: channel cap 20→18)_ _(amended by ADR-0061)_ | ACCEPTED |
 | 0036 | Seasons as Launch Infrastructure | ACCEPTED |
 | 0037 | Reflect, Lifesteal, Absorb, Heal-Reduction Stats | ACCEPTED |
 | 0038 | Discrete Movement-Edge Input Message | ACCEPTED |
 | 0039 | Entity Capacity Model and AI Budget Classes | ACCEPTED |
 | 0040 | WorldConsequence Durable Aggregate _(amended by ADR-0053)_ | ACCEPTED |
-| 0041 | Anti-RMT Trade Gates and IAP Entitlement Integrity | ACCEPTED |
+| 0041 | Anti-RMT Trade Gates and IAP Entitlement Integrity _(amended by ADR-0060, ADR-0063)_ | ACCEPTED |
 | 0042 | Atlas Roster Expansion to 104 Launch Pages | ACCEPTED |
 | 0043 | Spirit Beast Instance Identity | ACCEPTED |
 | 0044 | Launch Topology — One Process Hosting Edge, Sim, Durable and Global _(amended by ADR-0052)_ | ACCEPTED |
@@ -71,3 +71,6 @@ Use `docs/templates/adr.md`.
 | 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics _(amended by ADR-0058)_ | ACCEPTED |
 | 0058 | Public Repository on GitHub-Hosted Linux and Windows Runners | ACCEPTED |
 | 0059 | Client Smoothness by Construction and Machine-Enforced Code Quality | ACCEPTED |
+| 0060 | Wire and Durable Contract Completion for Gameplay, World and Systems | ACCEPTED |
+| 0061 | World Lifecycle and Content Reconciliation | ACCEPTED |
+| 0063 | Economy Contract Reconciliation | ACCEPTED |

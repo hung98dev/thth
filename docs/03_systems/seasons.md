@@ -192,7 +192,7 @@ character_atlas(character_id, atlas_page_id, tier, seen_count, completed_at, rew
 
 Seasonal Guild Stone entries use the Guild Stone rules in `guild.md`.
 
-Seasonal cosmetic entitlements use the existing character cosmetic entitlement table in `cosmetics.md`.
+Seasonal cosmetic entitlements are rows of `character_cosmetic_entitlements` (`cosmetics.md` § Persistence); a paid-track row records the granting `ACCOUNT_SCOPED_ACCESS` entitlement as its source.
 
 ## Invariants
 ```text

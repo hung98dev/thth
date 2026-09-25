@@ -35,6 +35,8 @@ GROUND -> grounded=true, jumping=false, falling=false
 ```
 Unless marked otherwise, `movement_behavior = ALLOW`. Rows tagged `MOVEMENT` use `movement_behavior = FORCED`.
 
+Damage element: every damage component of every class skill (direct hits, zone ticks, splash, passive explosions, retaliation, DoT templates) has `damage_element` = the owning class element (`KIM`, `MOC`, `THUY`, `HOA`, `THO`). No launch class skill has a physical or mixed component. This is the per-skill element declaration required by `../01_gameplay/combat.md` for `element_multiplier`, `RESIST_SHRED`, KHAC detonation and element-scoped bonuses such as `hoa_hon`.
+
 ## KIM — Kiếm Khách
 | skill_id | Display | unlock | execution_type | targeting_mode | tags | air |
 |---|---|---:|---|---|---|---|
@@ -61,7 +63,7 @@ Unless marked otherwise, `movement_behavior = ALLOW`. Rows tagged `MOVEMENT` use
 | `skill.moc.passive.sinh_tuc` | Sinh Tức | Lv27 | NONE | NONE | HEAL,DEFENSIVE | NONE |
 | `skill.moc.basic.truc_phi_tieu` | Trúc Phi Tiêu | Lv18 | PROJECTILE | PROJECTILE | BASIC_ATTACK,DAMAGING,PROJECTILE,STATUS_APPLY | ALL |
 | `skill.moc.active.hoi_xuan` | Hồi Xuân | Lv14 | INSTANT | SINGLE_TARGET | HEAL,DEFENSIVE | ALL |
-| `skill.moc.active.thanh_dang` | Thanh Đằng | Lv22 | AREA | AREA_POSITION | AREA,STATUS_APPLY,DEFENSIVE | GROUND |
+| `skill.moc.active.thanh_dang` | Thanh Đằng | Lv22 | AREA | AREA_POSITION | DAMAGING,AREA,STATUS_APPLY,DEFENSIVE | GROUND |
 | `skill.moc.passive.thao_moc_dong_hoa` | Thảo Mộc Đồng Hóa | Lv50 | NONE | NONE | DEFENSIVE | NONE |
 | `skill.moc.basic.co_thu_kich` | Cổ Thụ Kích | Lv36 | PROJECTILE | PROJECTILE | BASIC_ATTACK,DAMAGING,PROJECTILE,STATUS_APPLY | ALL |
 | `skill.moc.active.van_doc` | Vạn Độc Trận | Lv32 | AREA | AREA_POSITION | DAMAGING,AREA,STATUS_APPLY | ALL |
@@ -93,7 +95,7 @@ Unless marked otherwise, `movement_behavior = ALLOW`. Rows tagged `MOVEMENT` use
 | `skill.hoa.passive.cuong_hoa` | Cuồng Hỏa | Lv27 | NONE | NONE | DAMAGING | NONE |
 | `skill.hoa.basic.hoa_xa` | Hỏa Xạ | Lv18 | PROJECTILE | PROJECTILE | BASIC_ATTACK,DAMAGING,PROJECTILE,STATUS_APPLY | ALL |
 | `skill.hoa.active.lien_bao` | Liên Bạo | Lv14 | AREA | AREA_POSITION | DAMAGING,AREA,STATUS_APPLY | ALL |
-| `skill.hoa.active.hoa_giap` | Hỏa Giáp | Lv22 | INSTANT | SELF | DEFENSIVE,STATUS_APPLY | ALL |
+| `skill.hoa.active.hoa_giap` | Hỏa Giáp | Lv22 | INSTANT | SELF | DAMAGING,DEFENSIVE,STATUS_APPLY | ALL |
 | `skill.hoa.passive.hoa_hon` | Hỏa Hồn | Lv50 | NONE | NONE | DAMAGING,DEFENSIVE | NONE |
 | `skill.hoa.basic.lua_tao_quan` | Lửa Táo Quân | Lv36 | PROJECTILE | PROJECTILE | BASIC_ATTACK,DAMAGING,PROJECTILE,STATUS_APPLY | ALL |
 | `skill.hoa.active.hoa_vuc` | Hỏa Vực | Lv32 | AREA | AREA_POSITION | DAMAGING,AREA,STATUS_APPLY | GROUND |
@@ -125,13 +127,15 @@ Each basic attack scales power, cooldown, and status proc chance:
 ```text
 damage_scale(S) = 1 + 0.040 * step
 cooldown_ms(S)  = max( round_half_up(1000 * max_cd), round_half_up(1000 * (base_cd - cd_step * step)) )
-proc_bp(S)      = min( round_half_up(10000 * max_proc), round_half_up(10000 * (base_proc + proc_step * step)) )
+proc_bp(S)      = round_half_up(10000 * (base_proc + (max_proc - base_proc) * step / 11))
 ```
-`max_cd` is the Lv12 cooldown floor and `max_proc` the Lv12 proc ceiling; the clamp absorbs step rounding (e.g. `0.500 - 0.0273*11 = 0.1997` resolves to `200 ms`). Cooldown is integer milliseconds; proc chance is integer basis points.
+`max_cd` is the Lv12 cooldown floor; `proc_bp` interpolates linearly so `proc_bp(1) = base_proc` and `proc_bp(12) = max_proc` exactly. The cooldown clamp absorbs step rounding (e.g. `0.500 - 0.0273*11 = 0.1997` resolves to `200 ms`). Cooldown is integer milliseconds; proc chance is integer basis points.
 At Level 12, `damage_scale(12) = 1.44x` (+44% damage).
 
 ### Canonical Basic Effect Templates
-These templates are the complete payloads behind the effect IDs in the basic matrix. On application, `source_attack_snapshot` is the source's final ATTACK at hit commit. Each DOT tick uses `raw_damage = floor(source_attack_snapshot * per_tick_attack_ratio)`, resolves the normal damage pipeline with `can_crit=false` and `can_dodge=false`, and uses the template element. Ticks occur at `1,000ms` intervals starting `1,000ms` after application; no tick occurs at application time. `dispel_priority=50` unless stated otherwise.
+These DoT templates and the non-DoT templates below are the complete payloads behind every effect ID used by class skills. On application, `source_attack_snapshot` is the source's final ATTACK at hit commit. Each DOT tick uses `raw_damage = floor(source_attack_snapshot * per_tick_attack_ratio) * stack_count`, resolves the normal damage pipeline with `can_crit=false` and `can_dodge=false`, and uses the template element. DoT instances are keyed per source `(target, effect_id, source_id)`; instances from different sources coexist.
+
+Tick schedule: ticks occur at `applied_at + k * 1,000ms` (`k >= 1`) while `<= expires_at`, where `applied_at` is the first application of the instance; no tick occurs at application time. A `REFRESH_DURATION` reapply sets `expires_at = now + duration` and replaces `source_attack_snapshot` but keeps `applied_at`. A `STACK` reapply adds one stack (up to `max_stacks`), then refreshes expiry and snapshot the same way; all stacks share one schedule. `dispel_priority=50` unless stated otherwise.
 
 | effect_id | element / total | duration / tick | reapply / stack | dispel | exact payload |
 |---|---|---|---|---|---|
@@ -142,31 +146,77 @@ These templates are the complete payloads behind the effect IDs in the basic mat
 | `effect.basic.burn_true_3s` | HOA; `0.48 ATTACK` total | 3,000ms / 1,000ms | `REFRESH_DURATION`, 1 stack | `dispellable=false` | `per_tick_attack_ratio=0.16`, tags `NEGATIVE|DOT|BURN`; "true" means non-dispellable only, never defense-ignoring damage |
 | `effect.basic.area_splash_50` | HOA; `0.50` of triggering direct component coefficient | instant | no status instance | n/a | circle `radius_m=1.20` at primary-hit position; primary is excluded; secondary targets are selected by distance then durable target ID and count against the basic action's resolved target cap, so it adds no targets beyond that cap |
 
+### Canonical Non-DoT Status Templates
+Instance key `TARGET`: one instance per `(target, effect_id)`; a reapply from any source follows the reapply rule and the latest source becomes `source_id`. Instance key `SOURCE`: one instance per `(target, effect_id, source_id)`. Control templates (STUN, ROOT, FREEZE, AIRBORNE) reapply as `REFRESH_DURATION` with `expires_at = max(expires_at, now + duration)`, so a shorter control never shortens a longer one. Unless stated: `dispellable=true`, `dispel_priority=50`, `persist_across_map=false`, `persist_through_death=false`. `POSITIVE` statuses are removable only by an explicit enemy-dispel effect (none at launch). Zone-applied statuses are applied at zone activation and at every zone tick to each eligible target inside; their duration is `tick_interval + 100ms`, so they lapse shortly after the target leaves.
+
+| effect_id | status / tags | exact payload | duration | reapply / key | used by |
+|---|---|---|---|---|---|
+| `effect.basic.vulnerable_8_4s` | VULNERABLE; `NEGATIVE\|VULNERABLE` | target `DEFENSE` `PERCENT_ADD -0.08` | 4,000ms | `REFRESH_DURATION` / TARGET | `truy_phong_kiem` |
+| `effect.skill.kim.pha_giap_vulnerable_5s` | VULNERABLE; `NEGATIVE\|VULNERABLE` | target `DEFENSE` `PERCENT_ADD -0.15` | 5,000ms | `REFRESH_DURATION` / TARGET | `pha_giap` |
+| `effect.basic.crit_mark_3s` | CRIT_MARK; `NEGATIVE\|CRIT_MARK` | `attacker_crit_chance_add = +0.10`; an attacker gains it once however many instances the target carries | 3,000ms | `REFRESH_DURATION` / SOURCE | `pha_khong_kiem` |
+| `effect.basic.heal_reduction_3s` | HEAL_REDUCTION; `NEGATIVE\|HEAL_REDUCTION` | target `HEALING_RECEIVED x0.75` | 3,000ms | `REFRESH_DURATION` / TARGET | `thao_kich` |
+| `effect.basic.slow_15_2s` | SLOW; `NEGATIVE\|SLOW` | `MOVE_SPEED x0.85` | 2,000ms | `REFRESH_DURATION` / TARGET | `co_thu_kich` |
+| `effect.basic.slow_20_3s` | SLOW; `NEGATIVE\|SLOW` | `MOVE_SPEED x0.80` | 3,000ms | `REFRESH_DURATION` / TARGET | `thuy_tien` |
+| `effect.basic.slow_25_3s` | SLOW; `NEGATIVE\|SLOW` | `MOVE_SPEED x0.75` | 3,000ms | `REFRESH_DURATION` / TARGET | `am_luu` |
+| `effect.skill.thuy.slow_40_3s` | SLOW; `NEGATIVE\|SLOW` | `MOVE_SPEED x0.60` | 3,000ms | `REFRESH_DURATION` / TARGET | `han_trieu` |
+| `effect.skill.kim.kiem_tran_slow` | SLOW; `NEGATIVE\|SLOW` | `MOVE_SPEED x0.70` | 600ms (zone tick 500ms) | `REFRESH_DURATION` / TARGET | `kiem_tran` |
+| `effect.skill.moc.thanh_dang_slow` | SLOW; `NEGATIVE\|SLOW` | `MOVE_SPEED x0.60` | 1,100ms (zone tick 1,000ms) | `REFRESH_DURATION` / TARGET | `thanh_dang` |
+| `effect.skill.thuy.chill_3s` | CHILL; `NEGATIVE\|CHILL` | marker only; no stat change | 3,000ms | `STACK`, `max_stacks=3`; each added stack refreshes expiry / SOURCE | `thuy_tien`, `bang_phien`, `luu_bo`, `bang_giap_tam` |
+| `effect.basic.freeze_1200ms` | FREEZE; `NEGATIVE\|FREEZE\|HARD_CONTROL\|MOVEMENT_CONTROL` | per `status_effects.md` | 1,200ms | control / TARGET | `huyen_bang_kich` |
+| `effect.skill.thuy.freeze_han_khi` | FREEZE; `NEGATIVE\|FREEZE\|HARD_CONTROL\|MOVEMENT_CONTROL` | per `status_effects.md` | `han_khi` passive value (1,000..1,500ms) | control / TARGET | `han_khi` |
+| `effect.skill.thuy.freeze_2000ms` | FREEZE; `NEGATIVE\|FREEZE\|HARD_CONTROL\|MOVEMENT_CONTROL` | per `status_effects.md` | 2,000ms | control / TARGET | `thien_ha` |
+| `effect.basic.stun_400ms` | STUN; `NEGATIVE\|STUN\|HARD_CONTROL\|MOVEMENT_CONTROL` | cancels the target's unresolved startup | 400ms | control / TARGET | `pha_thach_kich` |
+| `effect.basic.stun_500ms` | STUN; `NEGATIVE\|STUN\|HARD_CONTROL\|MOVEMENT_CONTROL` | cancels the target's unresolved startup | 500ms | control / TARGET | `kim_cang_quyen`, `lien_bao` |
+| `effect.skill.tho.stun_1500ms` | STUN; `NEGATIVE\|STUN\|HARD_CONTROL\|MOVEMENT_CONTROL` | cancels the target's unresolved startup | 1,500ms | control / TARGET | `thien_son_tran` |
+| `effect.basic.root_1200ms` | ROOT; `NEGATIVE\|ROOT\|HARD_CONTROL\|MOVEMENT_CONTROL` | per `status_effects.md` | 1,200ms | control / TARGET | `dia_liet_kich` |
+| `effect.skill.moc.root_1500ms` | ROOT; `NEGATIVE\|ROOT\|HARD_CONTROL\|MOVEMENT_CONTROL` | per `status_effects.md` | 1,500ms | control / TARGET | `moc_bo` |
+| `effect.skill.tho.airborne_800ms` | AIRBORNE; `NEGATIVE\|AIRBORNE\|HARD_CONTROL\|MOVEMENT_CONTROL\|DISPLACEMENT` | vertical presentation apex `1.2m`; collision anchor stays on the combat plane | 800ms | control / TARGET | `dia_chan` |
+| `effect.basic.resist_shred_hoa_3s` | RESIST_SHRED; `NEGATIVE\|RESIST_SHRED` | `element=HOA`, `target_element_damage_taken_multiplier=1.10` | 3,000ms | `REFRESH_DURATION` / TARGET | `hoa_xa` |
+| `effect.basic.weaken_10_3s` | WEAKEN; `NEGATIVE\|WEAKEN` | target `ATTACK` `PERCENT_ADD -0.10` | 3,000ms | `REFRESH_DURATION` / TARGET | `tran_quyen`, `thach_kich` |
+| `effect.basic.weaken_12_3s` | WEAKEN; `NEGATIVE\|WEAKEN` | target `ATTACK` `PERCENT_ADD -0.12` | 3,000ms | `REFRESH_DURATION` / TARGET | `kim_cang_quyen` |
+| `effect.skill.kim.hoi_kiem_guard` | `POSITIVE` | caster `DAMAGE_REDUCTION` `FLAT_ADD +0.20` (clamped by `stats.md`) | 2,000ms | `REFRESH_DURATION` / TARGET | `hoi_kiem` |
+| `effect.skill.thuy.luu_bo_haste` | `POSITIVE` | caster `MOVE_SPEED` `PERCENT_ADD +0.30`; on application removes the caster's `SLOW`-tagged instances | 1,500ms | `REFRESH_DURATION` / TARGET | `luu_bo` |
+| `effect.skill.thuy.thuy_kinh_ward` | `POSITIVE\|SLOW_IMMUNE` | holder gains `SLOW_IMMUNE` | lifetime of the holder's `effect.skill.thuy.thuy_kinh_shield`; removed when it breaks, expires or is removed | `REFRESH_DURATION` / TARGET | `thuy_kinh` |
+| `effect.skill.tho.tho_giap_ward` | `POSITIVE\|DISPLACEMENT_IMMUNE` | caster gains `DISPLACEMENT_IMMUNE` (allies receiving the shared shield do not) | lifetime of the caster's `effect.skill.tho.tho_giap_shield` | `REFRESH_DURATION` / TARGET | `tho_giap` |
+| `effect.skill.hoa.hoa_giap_aura` | `POSITIVE` | caster `MOVE_SPEED` `PERCENT_ADD +0.15`; each hostile component that satisfies `spatial.reactive.melee_source` makes the caster deal `0.20 ATTACK` HOA damage to that attacker (`can_crit=false`), at most once per attacker per 500ms | 6,000ms | `REFRESH_DURATION` / TARGET | `hoa_giap` |
+| `effect.skill.hoa.cuong_hoa_buff` | `POSITIVE` | caster `ATTACK` `PERCENT_ADD` + `cuong_hoa` passive value | 4,000ms | `REFRESH_DURATION` / TARGET | `cuong_hoa` |
+
+Shield templates (shield system in `../01_gameplay/combat.md`; not statuses; amount scaled by `support_scale(S)`):
+
+| effect_id | amount | lifetime | used by |
+|---|---|---|---|
+| `effect.skill.thuy.thuy_kinh_shield` | `floor((0.15 * MAX_HP + 0.30 * ATTACK) * support_scale(S))` on self | 5,000ms | `thuy_kinh` |
+| `effect.skill.tho.tho_giap_shield` | `floor((0.18 * MAX_HP + 0.40 * DEFENSE) * support_scale(S))` on self; up to 2 allies in radius receive `floor(0.50 * caster_amount)` | 6,000ms | `tho_giap` |
+| `effect.skill.tho.thien_son_tran_shield` | `floor(0.15 * MAX_HP * support_scale(S))` on self | 6,000ms | `thien_son_tran` |
+
+### CHILL Consumption (`han_khi`)
+When a damage component from the THUY caster connects with a target carrying 3 stacks of that caster's own `effect.skill.thuy.chill_3s` instance, the instance is consumed (all stacks removed) and `effect.skill.thuy.freeze_han_khi` is applied after the component commits. Another source's CHILL stacks never count. Per `(caster, target)`, `han_khi` triggers at most once per 5,000ms; during that lockout CHILL keeps stacking (capped at 3) and is not consumed. Without `han_khi` learned, CHILL is never consumed and only expires.
+
 ### Basic Attack Cooldown & Status Proc Matrix
 `base_coefficient` is the authoritative Lv1 damage coefficient for the basic attack's primary hit. `stats.md` defines no override. Per-class valid ranges (from `classes.md` reference): KIM 1.00–1.25, THUY 0.92–1.18, MOC 0.90–1.15, HOA 0.95–1.22, THO 1.05–1.35. All values below are within those ranges. Every row's `base_cd` and `max_cd` must lie inside its class band in `skills.md`; `skills.md` is the authoritative owner of per-class cooldown bands.
 
-| basic_skill_id | base_coefficient | base_cd (s) | max_cd (s) | cd_step (s) | base_proc | max_proc | proc_step | status_effect |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| `skill.kim.basic.kiem_thuc` | 1.00 | 0.500 | 0.200 | 0.0273 | 0.08 | 0.25 | 0.0155 | `effect.basic.bleed_3s` |
-| `skill.kim.basic.truy_phong_kiem` | 1.08 | 0.520 | 0.220 | 0.0273 | 0.06 | 0.22 | 0.0145 | VULNERABLE (4s, -8% DEF) |
-| `skill.kim.basic.pha_khong_kiem` | 1.15 | 0.560 | 0.240 | 0.0291 | 0.07 | 0.24 | 0.0155 | CRIT_MARK (3s, attackers gain +0.10 crit chance) |
-| `skill.kim.basic.vo_song_kiem` | 1.25 | 0.500 | 0.200 | 0.0273 | 0.08 | 0.25 | 0.0155 | `effect.basic.bleed_3s` + PENETRATE (`defense_penetration_ratio=0.15`) |
-| `skill.moc.basic.linh_diep` | 0.90 | 0.700 | 0.350 | 0.0318 | 0.08 | 0.25 | 0.0155 | `effect.basic.poison_4s` |
-| `skill.moc.basic.thao_kich` | 0.95 | 0.720 | 0.360 | 0.0327 | 0.07 | 0.23 | 0.0145 | `effect.basic.poison_4s` + HEAL_REDUCTION (3s, x0.75 healing received) |
-| `skill.moc.basic.truc_phi_tieu` | 1.02 | 0.700 | 0.350 | 0.0318 | 0.08 | 0.25 | 0.0155 | `effect.basic.poison_stack_4s` |
-| `skill.moc.basic.co_thu_kich` | 1.15 | 0.690 | 0.340 | 0.0318 | 0.08 | 0.24 | 0.0145 | `effect.basic.poison_4s` + SLOW (2s, x0.85 MOVE_SPEED) |
-| `skill.thuy.basic.thuy_tien` | 0.92 | 0.650 | 0.300 | 0.0318 | 0.08 | 0.25 | 0.0155 | CHILL (3s) + SLOW (3s, -20% MOVE_SPEED) |
-| `skill.thuy.basic.bang_phien` | 0.98 | 0.650 | 0.300 | 0.0318 | 0.07 | 0.24 | 0.0155 | CHILL (stack to FREEZE); guaranteed 1 CHILL on every 3rd connected hit regardless of proc roll |
-| `skill.thuy.basic.am_luu` | 1.05 | 0.680 | 0.320 | 0.0327 | 0.06 | 0.22 | 0.0145 | SLOW (3s, -25% speed) + KNOCKBACK |
-| `skill.thuy.basic.huyen_bang_kich` | 1.18 | 0.620 | 0.300 | 0.0291 | 0.05 | 0.18 | 0.0118 | FREEZE (1.2s hard stop) |
-| `skill.hoa.basic.hoa_phu` | 0.95 | 0.800 | 0.400 | 0.0364 | 0.08 | 0.25 | 0.0155 | `effect.basic.burn_3s` |
-| `skill.hoa.basic.viem_dan` | 1.02 | 0.820 | 0.410 | 0.0373 | 0.07 | 0.23 | 0.0145 | `effect.basic.burn_3s` + `effect.basic.area_splash_50` |
-| `skill.hoa.basic.hoa_xa` | 1.08 | 0.780 | 0.390 | 0.0355 | 0.08 | 0.24 | 0.0145 | `effect.basic.burn_3s` + RESIST_SHRED (3s, HOA damage taken x1.10) |
-| `skill.hoa.basic.lua_tao_quan` | 1.22 | 0.800 | 0.400 | 0.0364 | 0.08 | 0.25 | 0.0155 | `effect.basic.burn_true_3s` |
-| `skill.tho.basic.tran_quyen` | 1.05 | 0.950 | 0.500 | 0.0409 | 0.08 | 0.25 | 0.0155 | WEAKEN (3s, -10% ATK) |
-| `skill.tho.basic.pha_thach_kich` | 1.10 | 0.980 | 0.500 | 0.0436 | 0.05 | 0.18 | 0.0118 | STUN (0.4s micro-interrupt) |
-| `skill.tho.basic.dia_liet_kich` | 1.15 | 1.000 | 0.500 | 0.0455 | 0.07 | 0.22 | 0.0136 | ROOT (1.2s immobilize) |
-| `skill.tho.basic.kim_cang_quyen` | 1.28 | 0.950 | 0.480 | 0.0427 | 0.06 | 0.20 | 0.0127 | STUN (0.5s) + WEAKEN (-12% ATK) |
+| basic_skill_id | base_coefficient | base_cd (s) | max_cd (s) | cd_step (s) | base_proc | max_proc | status_effect (on successful proc) |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `skill.kim.basic.kiem_thuc` | 1.00 | 0.500 | 0.200 | 0.0273 | 0.08 | 0.25 | `effect.basic.bleed_3s` |
+| `skill.kim.basic.truy_phong_kiem` | 1.08 | 0.520 | 0.220 | 0.0273 | 0.06 | 0.22 | `effect.basic.vulnerable_8_4s` |
+| `skill.kim.basic.pha_khong_kiem` | 1.15 | 0.560 | 0.240 | 0.0291 | 0.07 | 0.24 | `effect.basic.crit_mark_3s` |
+| `skill.kim.basic.vo_song_kiem` | 1.25 | 0.500 | 0.200 | 0.0273 | 0.08 | 0.25 | `effect.basic.bleed_3s`; component PENETRATE (`defense_penetration_ratio=0.15`) on every hit |
+| `skill.moc.basic.linh_diep` | 0.90 | 0.700 | 0.350 | 0.0318 | 0.08 | 0.25 | `effect.basic.poison_4s` |
+| `skill.moc.basic.thao_kich` | 0.95 | 0.720 | 0.360 | 0.0327 | 0.07 | 0.23 | `effect.basic.poison_4s` + `effect.basic.heal_reduction_3s` |
+| `skill.moc.basic.truc_phi_tieu` | 1.02 | 0.700 | 0.350 | 0.0318 | 0.08 | 0.25 | `effect.basic.poison_stack_4s` |
+| `skill.moc.basic.co_thu_kich` | 1.15 | 0.690 | 0.340 | 0.0318 | 0.08 | 0.24 | `effect.basic.poison_4s` + `effect.basic.slow_15_2s` |
+| `skill.thuy.basic.thuy_tien` | 0.92 | 0.650 | 0.300 | 0.0318 | 0.08 | 0.25 | `effect.skill.thuy.chill_3s` (1 stack) + `effect.basic.slow_20_3s` |
+| `skill.thuy.basic.bang_phien` | 0.98 | 0.650 | 0.300 | 0.0318 | 0.07 | 0.24 | `effect.skill.thuy.chill_3s` (1 stack); guaranteed 1 stack on every 3rd connected hit regardless of proc roll |
+| `skill.thuy.basic.am_luu` | 1.05 | 0.680 | 0.320 | 0.0327 | 0.06 | 0.22 | `effect.basic.slow_25_3s` + `spatial.skill.thuy.basic.am_luu.knockback` |
+| `skill.thuy.basic.huyen_bang_kich` | 1.18 | 0.620 | 0.300 | 0.0291 | 0.05 | 0.18 | `effect.basic.freeze_1200ms` |
+| `skill.hoa.basic.hoa_phu` | 0.95 | 0.800 | 0.400 | 0.0364 | 0.08 | 0.25 | `effect.basic.burn_3s` |
+| `skill.hoa.basic.viem_dan` | 1.02 | 0.820 | 0.410 | 0.0373 | 0.07 | 0.23 | `effect.basic.burn_3s` + `effect.basic.area_splash_50` |
+| `skill.hoa.basic.hoa_xa` | 1.08 | 0.780 | 0.390 | 0.0355 | 0.08 | 0.24 | `effect.basic.burn_3s` + `effect.basic.resist_shred_hoa_3s` |
+| `skill.hoa.basic.lua_tao_quan` | 1.22 | 0.800 | 0.400 | 0.0364 | 0.08 | 0.25 | `effect.basic.burn_true_3s` |
+| `skill.tho.basic.tran_quyen` | 1.05 | 0.950 | 0.500 | 0.0409 | 0.08 | 0.25 | `effect.basic.weaken_10_3s` |
+| `skill.tho.basic.pha_thach_kich` | 1.10 | 0.980 | 0.500 | 0.0436 | 0.05 | 0.18 | `effect.basic.stun_400ms` |
+| `skill.tho.basic.dia_liet_kich` | 1.15 | 1.000 | 0.500 | 0.0455 | 0.07 | 0.22 | `effect.basic.root_1200ms` |
+| `skill.tho.basic.kim_cang_quyen` | 1.28 | 0.950 | 0.480 | 0.0427 | 0.06 | 0.20 | `effect.basic.stun_500ms` + `effect.basic.weaken_12_3s` |
 
 ## Active Skill Scaling
 For active skills (`S = 1..12`, `step = S - 1`):
@@ -180,7 +230,6 @@ At Level 12:
 - `support_scale(12) = 1.275x` (+27.5% heal/shield)
 - `cooldown(12) = 0.67x base_cooldown` (-33% cooldown reduction)
 
-Pure-utility actives (without damage/heal/shield) reduce cooldown by `0.040 * step` (-44% at Lv12).
 
 ## Passive Skill Scaling (Levels 1..6)
 For passive skills (`S = 1..6`, `step = S - 1`):
@@ -246,7 +295,7 @@ Every damaging combat action is bounded by `MAX_MONSTER_TARGETS = 4` and `MAX_PL
 | 1 / 1 | 1 / 1 |
 
 **Cleave / Small AoE (Lv8, Lv14, Lv22)** — expands to 3/2 at Lv6.
-`moc_bo`, `trieu_quyen`, `hoi_kiem`, `pha_giap`, `lien_bao`, `dia_chan`
+`moc_bo`, `trieu_quyen`, `hoi_kiem`, `pha_giap`, `lien_bao`, `thanh_dang`, `dia_chan`
 
 | Lv1..5 (M/P) | Lv6..12 (M/P) | ceiling (M/P) |
 |:---:|:---:|:---:|
@@ -301,7 +350,7 @@ Total audited primary geometries: `45`. No damage coefficient, cooldown, MP cost
 | `skill.moc.basic.linh_diep` | ATTACK_SPEED | 200/50/450 | `PROJECTILE(range=7.5m, speed=11.0m/s, radius=0.25m)` | 0.70s | 0 MP |
 | `skill.moc.basic.thao_kich` | ATTACK_SPEED | 210/50/460 | `PROJECTILE(range=8.0m, speed=11.5m/s, radius=0.25m)` | 0.72s | 0 MP |
 | `skill.moc.basic.truc_phi_tieu` | ATTACK_SPEED | 190/50/460 | `PROJECTILE(range=8.5m, speed=12.5m/s, radius=0.22m)` | 0.70s | 0 MP |
-| `skill.moc.basic.co_thu_kich` | ATTACK_SPEED | 200/60/420 | `PROJECTILE(range=8.0m, speed=10.5m/s, radius=0.30m)` | 0.68s | 0 MP |
+| `skill.moc.basic.co_thu_kich` | ATTACK_SPEED | 200/60/430 | `PROJECTILE(range=8.0m, speed=10.5m/s, radius=0.30m)` | 0.69s | 0 MP |
 | `skill.moc.active.moc_bo` | CAST_SPEED | 360/100/400 | `AREA_POSITION(cast=7.0m, radius=2.5m)` | 9.0s | 14 MP |
 | `skill.moc.active.hoi_xuan` | CAST_SPEED | 280/80/320 | `SINGLE_TARGET_RANGE(range=7.5m)` | 8.0s | 16 MP |
 | `skill.moc.active.thanh_dang` | CAST_SPEED | 380/80/380 | `AREA_POSITION(cast=7.0m, radius=3.0m)` | 14.0s | 20 MP |
@@ -470,7 +519,7 @@ Khi đứng trong khu vực hiệu ứng của `thanh_dang` hoặc `van_moc_hoi_
 
 ### Basic 4 — `skill.moc.basic.co_thu_kich` (Lv36)
 Bắn mầm rễ cổ thụ ngàn năm tầm xa 8.0m gây `1.15 ATTACK` (`base_coefficient = 1.15`). Tỉ lệ gây POISON nặng kèm làm chậm 15% tốc độ của đối thủ trong 2s. Mục tiêu tối đa: 1 quái vật / 1 người chơi (tất cả cấp độ).
-- Cooldown: 0.68s (Lv1) -> 0.34s (Lv12).
+- Cooldown: 0.69s (Lv1) -> 0.34s (Lv12).
 - Tỉ lệ hiệu ứng: 8% (Lv1) -> 24% (Lv12).
 
 ### Active 4 — `skill.moc.active.van_doc` (Lv32)
@@ -649,7 +698,7 @@ Dựng một vách đá tại điểm mặt đất chọn trong tầm `6.5m`; v�
 - Cooldown: 15.0s (Lv1) -> 10.05s (Lv12). Tiêu hao: 24 MP.
 
 ### Active 5 — `skill.tho.active.thien_son_tran` (Lv45, Signature)
-Niệm chú giáng ngọn núi hùng vĩ đè bẹp vùng 3.8m xung quanh. Gây `2.60 ATTACK`, làm choáng (STUN) tất cả mục tiêu trong 1.5s, đồng thời cấp khiên chắn 15% MAX_HP cho bản thân.
+Niệm chú giáng ngọn núi hùng vĩ đè bẹp vùng 3.8m xung quanh. Gây `2.60 ATTACK`, làm choáng (STUN) tất cả mục tiêu trong 1.5s, đồng thời cấp khiên chắn 15% MAX_HP cho bản thân trong 6s (`effect.skill.tho.thien_son_tran_shield`).
 - Cooldown: 27.0s (Lv1) -> 18.09s (Lv12). Tiêu hao: 40 MP.
 
 # Content Validation Assertions
@@ -657,12 +706,7 @@ Validation suite must reject:
 1. Any class having anything other than 4 basics, 5 actives, and 3 passives (12 skills total).
 2. Basic attack or active skill level `< 1` or `> 12`.
 3. Passive skill level `< 1` or `> 6`.
-4. Cooldown at Level 12 exceeding class maximum speed bounds:
-   - Kim > 0.20s
-   - Thuy > 0.30s
-   - Moc > 0.35s
-   - Hoa > 0.40s
-   - Tho > 0.50s
+4. Any basic whose Lv1 or Lv12 cooldown lies outside its class band in `../01_gameplay/skills.md`, or whose `startup_ms + active_ms + recovery_ms` differs from `1000 * base_cd`.
 5. Any basic attack missing a status proc chance or scaling formula.
 6. Any active skill missing cooldown reduction scaling across levels 1..12.
 7. Any skill level upgrade that produces zero numeric delta.
@@ -677,3 +721,6 @@ Validation suite must reject:
 16. A spatial effect outside the primary geometry missing from `Secondary Spatial Effects and Displacement`, or missing origin, shape/distance, collision rule, deterministic selection order, or target-cap interaction.
 17. A skill with `DISPLACEMENT` but no forced-position/canonical `AIRBORNE` result, or such a result without the `DISPLACEMENT` tag.
 18. `skill.hoa.active.boc_bo` compiling an ember-trail zone, additional target query, damage tick, or second BURN application.
+19. Any status applied by a class skill without a template in `Canonical Basic Effect Templates` or `Canonical Non-DoT Status Templates` (effect_id, tags, payload, duration, reapply rule, instance key).
+20. Any class-skill damage component whose `damage_element` differs from the owning class element.
+21. Any skill whose tags contradict its payload under the tag rules in `../01_gameplay/skills.md` (e.g. a damage payload without `DAMAGING`), or any active skill not listed in exactly one Active Skill Target Scaling group.

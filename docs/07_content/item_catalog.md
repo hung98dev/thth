@@ -380,7 +380,7 @@ binding_trigger = ON_USE
 stack_limit = 99
 shared_cooldown_group = FOOD
 ```
-Use: Fed to active Linh Thú to grant `+6 bond_points` under ADR-0024.
+Use: Fed to any owned Linh Thú via `C2S_BEAST_FEED` to grant `+5 bond_points` (canonical value; daily cap and clamp in `../03_systems/spirit_beasts.md`, ADR-0024).
 
 ## `item.consumable.food.ca_chep_nuong`
 Display: **Cá Chép Nướng Mộc**
@@ -392,7 +392,7 @@ binding_trigger = ON_USE
 stack_limit = 99
 shared_cooldown_group = FOOD
 ```
-Use: Fed to active Linh Thú to grant `+10 bond_points` under ADR-0024.
+Use: Fed to any owned Linh Thú via `C2S_BEAST_FEED` to grant `+8 bond_points` (canonical value; daily cap and clamp in `../03_systems/spirit_beasts.md`, ADR-0024).
 
 ## `item.consumable.food.tom_nuong`
 Display: **Tôm Nướng Than**
@@ -404,7 +404,7 @@ binding_trigger = ON_USE
 stack_limit = 99
 shared_cooldown_group = FOOD
 ```
-Use: Fed to active Linh Thú to grant `+5 bond_points` under ADR-0024.
+Use: Fed to any owned Linh Thú via `C2S_BEAST_FEED` to grant `+10 bond_points` (canonical value; daily cap and clamp in `../03_systems/spirit_beasts.md`, ADR-0024).
 
 # Cosmetic Redemption Material
 ## `item.material.vai_hoa_van`

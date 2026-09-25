@@ -26,7 +26,7 @@ Dead characters cannot:
 - interact with normal NPCs/portals
 - receive normal healing
 
-They may use UI/chat and request respawn when available.
+They may use UI/chat and request respawn when available: in the normal world the client sends `C2S_RESPAWN_REQUEST` once `RESPAWN_DELAY` has elapsed since death (earlier or non-dead requests reject with `INVALID_STATE`; `../05_network/messages.md`). A character that never requests stays `DEAD`, including across reconnect. Dungeon, PvP and Guild War respawn is server-driven by that content's rules below.
 
 ## Status and Cooldown Cleanup
 - Temporary statuses are removed according to `status_effects.md`.

@@ -44,7 +44,13 @@ REPLACE_STRONGER
 IGNORE
 ```
 
-Different effect IDs may coexist.
+Semantics:
+- `REFRESH_DURATION`: `expires_at = now + duration`; magnitude and source snapshot take the new application; a DoT keeps its first-application tick anchor. Control templates (STUN, ROOT, FREEZE, AIRBORNE) use `expires_at = max(expires_at, now + duration)`.
+- `STACK`: add one stack up to `max_stacks`, then refresh as above; all stacks share one expiry and tick schedule.
+- `REPLACE_STRONGER`: keep the instance with the larger absolute magnitude; on a tie keep the later `expires_at`.
+- `IGNORE`: the reapply changes nothing.
+
+Instance key: one instance per `(target, effect_id)` unless the template declares a per-source key `(target, effect_id, source_id)`. DoT templates, CHILL, CRIT_MARK and MA_AM are per-source. Different effect IDs may coexist. Launch class templates: `../07_content/class_skill_catalog.md` § Canonical Basic Effect Templates and § Canonical Non-DoT Status Templates. Launch beast template: `effect.beast.emergency_shield` (absorb shield, per-target key; `../03_systems/spirit_beasts.md` § Passive Skills & Clutch Counter Mechanics).
 
 ## Core Effects
 ### BURN
@@ -53,7 +59,7 @@ Different effect IDs may coexist.
 - does not directly block movement/actions
 
 ### BLEED
-- periodic physical damage
+- periodic elemental damage using the template element (launch `effect.basic.bleed_3s` = KIM)
 - carries tags `NEGATIVE|DOT|BLEED`
 - does not directly block movement/actions
 - default reapply is `REFRESH_DURATION`; a stacking bleed must explicitly define `STACK`, `max_stacks`, tick interval, and per-stack magnitude
@@ -70,6 +76,7 @@ Different effect IDs may coexist.
 - canonical launch CHILL uses `STACK`, `max_stacks = 3`, and refreshes its duration when a valid stack is added
 - CHILL by itself does not reduce movement or block actions; skills may consume stacks to create another status such as FREEZE
 - stack ownership is source-aware when a skill explicitly says "by the caster"; one player's CHILL must not satisfy another player's caster-owned combo unless the skill opts into shared stacks
+- launch CHILL (`effect.skill.thuy.chill_3s`, 3s, per-source) is consumed only by `han_khi` (`../07_content/class_skill_catalog.md` § CHILL Consumption)
 
 ### SLOW
 - reduces MOVE_SPEED
@@ -167,9 +174,11 @@ HEAL_REDUCTION
 RESIST_SHRED
 WEAKEN
 AIRBORNE
+SLOW_IMMUNE
+DISPLACEMENT_IMMUNE
 ```
 
-Immunity is tag-based and checked before instance creation. Content that tests whether a target is burning, poisoned, or chilled must test the canonical semantic tag rather than localized names or presentation state.
+Immunity is tag-based and checked before instance creation. `SLOW_IMMUNE` on a target rejects creation of `SLOW`-tagged instances (existing ones remain). `DISPLACEMENT_IMMUNE` rejects `DISPLACEMENT`-tagged instances and every forced-position result (PULL, KNOCKBACK, AIRBORNE); the rest of the hit still resolves. Launch sources: `effect.skill.thuy.thuy_kinh_ward` and `effect.skill.tho.tho_giap_ward`. Content that tests whether a target is burning, poisoned, or chilled must test the canonical semantic tag rather than localized names or presentation state.
 
 ## Dispel
 A normal cleanse can remove only negative effects with `dispellable=true`.

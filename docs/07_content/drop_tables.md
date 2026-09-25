@@ -274,7 +274,7 @@ The completion also emits the non-loot `currency.bound` grant owned by `economy_
 ```text
 T1 5, T2 10, T3 15, T4 20, T5 25
 ```
-This side grant uses the same dungeon completion eligibility/idempotency identity and is not an inventory reward slot.
+This side grant is the `DAILY_FIRST` dungeon bound grant owned by `economy_catalog.md`: once per character per UTC day across all dungeons (key `dungeon.bound.daily.<utc_date>.<character_id>`), not per run; it is not an inventory reward slot.
 
 | Tier | completion table | dungeon_id | Set A |
 |---|---|---|---|
@@ -346,7 +346,8 @@ Every `.endgame` table gives:
 GUARANTEED:
   9000..12000 common currency
   12..16 item.material.nui_thieng.da_suong
-  30 currency.bound side grant
+DAILY_FIRST:
+  30 currency.bound side grant (economy_catalog.md daily dungeon bound; not per run)
 RARE_ROLL independent:
   2000 bp -> random-slot set.t6.nui_thieng piece
   1000 bp -> random-slot set.t6.dau_cu piece   (Set A nui_thieng is the dungeon-accelerated set; Set B dau_cu at half weight keeps T6 Set B repeatable at Lv60, equipment_catalog.md)
@@ -371,7 +372,7 @@ drop.event.spirit_surge.<tier>.completion
 drop.event.spirit_surge.<tier>.daily_first
 ```
 
-Completion requires authoritative event contribution threshold; presence alone is insufficient.
+Completion requires authoritative event contribution threshold; presence alone is insufficient. Settlement keys (once per character per UTC hour / UTC day) are canonical in `world_event_catalog.md` § Rewards.
 
 Baseline completion:
 ```text

@@ -135,7 +135,7 @@ One chain is available in the selected map:
 3. `event.spirit_surge.wave.03`
    - defeat `1` regional ELITE Surge variant + `2` NORMAL variants
 
-Only one chain instance may be active per map instance at a time. Completion starts a `90s` local cooldown before another chain may begin while the global event is still active.
+Only one chain instance may be active per map channel at a time. Completion starts a `90s` local cooldown before another chain may begin while the global event is still active. Chain identity: `spirit_surge.<utc_hour_start>.<map_id>.<channel_id>.<chain_seq>` (`chain_seq` = 1, 2, ... per map channel within the hour; ADR-0061).
 
 No PUBLIC major boss is required for Spirit Surge completion.
 
@@ -160,14 +160,14 @@ AND character was in the same map_instance_id when wave.03 completed
 Presence alone gives zero points.
 
 # Rewards
-Eligible completion settles:
+Eligible completion settles, at most once per character per UTC hour (later chains in the same hour grant contribution credit only):
 ```text
-drop.event.spirit_surge.<tier>.completion
+drop.event.spirit_surge.<tier>.completion      key surge.completion.drop.<utc_hour>.<character_id>
 ```
 
 If the character has not yet received the UTC-day event bonus, also settle:
 ```text
-drop.event.spirit_surge.<tier>.daily_first
+drop.event.spirit_surge.<tier>.daily_first     key surge.daily_first.<utc_date>.<character_id>
 ```
 
 Daily-first is an accelerator/cosmetic-material opportunity only; baseline completion remains repeatable during later Surges.
@@ -188,7 +188,7 @@ EXP act = `min(character_act, region_act + 1)`: a character earns its own act ra
 # Restart / Idempotency
 Event instance key:
 ```text
-spirit_surge.<UTC-hour-start>.<map_instance_id>
+spirit_surge.<UTC-hour-start>.<map_id>.<channel_id>   (chain instances append .<chain_seq>)
 ```
 
 On restart, active event selection is recomputed from UTC time. Already committed completion/daily-first reward keys remain committed.

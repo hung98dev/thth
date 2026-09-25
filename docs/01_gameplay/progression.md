@@ -68,8 +68,8 @@ From Level 25 onward, characters unlock bonus book studies that grant extra allo
 | **Total by 60** | **12** | **12** | **+120 potential, +12 skill** |
 
 Rules:
-- Each book is earned via eligible MAIN quest, dungeon FIRST_CLEAR, or explicit level-milestone reward; client cannot invent books.
-- A book is consumed via `operation_id` idempotent grant: `book_instance -> points`. Duplicate consumption is rejected; retry reconstructs the same grant.
+- Books come only from this level-milestone schedule; no quest, dungeon, drop or shop grants books, and the client cannot invent them. The level-up transaction that reaches a milestone level grants that level's books and sets its `progression.book.<type>.<level>` flags atomically. If the inventory cannot hold them, the books are delivered as a Reward Claim (`../03_systems/reward_claims.md`, `source_type = LEVEL_MILESTONE`, `source_reference = progression.book.<type>.<level>`) in the same transaction; the flag is still set, so the grant never repeats.
+- A book is consumed via `C2S_INVENTORY_MUTATE{op=USE}` (`../05_network/messages.md`) as an `operation_id` idempotent grant: `book_instance -> points`. Duplicate consumption is rejected; retry reconstructs the same grant.
 - `item.book.potential`: grants `+10` unspent potential points (subject to the 60% per-stat cap in `stats.md` over total earned potential = 236 + books consumed).
 - `item.book.skill`: grants `+1` unspent skill point (same upgrade rules as level-up skill points; contributes to the Lv60 total of 59 + 12 books + 4 bonus = 75 out of 114 to max all skills).
 - Books count toward the character's persistent `bonus_books_claimed` flags (`progression.book.potential.<level>` and `progression.book.skill.<level>`). At Level 60, 16 flags are set if all books claimed (8 milestone levels × 2 flag types — potential and skill — per level).
@@ -90,7 +90,9 @@ Conversion and per-stat allocation caps follow `stats.md`.
 - Class skills are learned automatically at level milestones from `skills.md` (Levels 1, 4, 8, 11, 14, 18, 22, 27, 32, 36, 45, 50).
 - Level 55 and Level 60 no longer grant a skill unlock; each instead grants **+2 bonus skill points** (in addition to the normal +1 skill point from level-up).
 - Skill points upgrade learned skills: Basic Attacks (max Lv12), Actives (max Lv12), Passives (max Lv6).
-- Upgrading one skill level costs `1` skill point.
+- Upgrading one skill level costs `1` skill point, via `C2S_SKILL_UPGRADE` (`../05_network/messages.md`); rejects: `SKILL_POINTS_INSUFFICIENT` (no unspent point), `SKILL_MAX_LEVEL` (already at max), `SKILL_NOT_LEARNED`.
+- Potential allocation uses `C2S_POTENTIAL_ALLOCATE`: all-or-nothing; sum above unspent potential rejects with `POTENTIAL_POINTS_INSUFFICIENT`; a delta that would push a stat past the 60% cap in `stats.md` rejects the whole request with `POTENTIAL_CAP_EXCEEDED`. Allocation is permanent until a potential respec.
+- Spend results return in `S2C_PROGRESSION_MUTATE_RESULT` (`../05_network/messages.md`).
 - At Level 60, character earns `59` skill points from leveling plus up to `12` from skill books (`Bonus Books` above) plus `4` bonus points granted at Levels 55 and 60 (2 bonus points each), for a total of `75` (out of 114 required to max all skills).
 - Skill points have no other source in the initial ruleset beyond level-up, skill books, and the two level-milestone bonus grants.
 
@@ -99,7 +101,8 @@ Conversion and per-stat allocation caps follow `stats.md`.
 |---:|---|
 | 1 | core world, quests, equipment, friends |
 | 5 | crafting/enhancement |
-| 10 | party dungeons, guild join |
+| 8 | party dungeons (first dungeon `minimum_level = 8`, `../07_content/dungeon_catalog.md`) |
+| 10 | guild join |
 | 15 | auction house |
 | 20 | guild creation, Spirit Meridian, Soul Contracts |
 | 25 | Formations + first Bonus Books (1 potential + 1 skill) |
@@ -107,7 +110,8 @@ Conversion and per-stat allocation caps follow `stats.md`.
 | 35 | Bonus Books |
 | 40 | Bonus Books |
 | 45 | Active 5 (SIGNATURE) unlocked + Bonus Books x2 |
-| 50 | final main-world region + Passive 3 unlocked + Bonus Books x2 |
+| 50 | Passive 3 unlocked + Bonus Books x2 |
+| 51 | final main-world region (Act VI entry gate, `../07_content/world_route_catalog.md`) |
 | 55 | +2 bonus skill points (no new skill unlock) + Bonus Books x2 |
 | 60 | max-level repeatable endgame activities + 2 bonus skill points (no new skill unlock) + Bonus Books x2 |
 
@@ -138,11 +142,11 @@ Lv21 = 11,025 common
 Lv40 = 40,000 common
 Lv60 = 90,000 common
 ```
-A successful respec refunds all spent points of that type.
+A successful respec refunds all spent points of that type. Request: `C2S_RESPEC` at an NPC with the respec service (`../05_network/messages.md`); the common-currency charge and the refund commit in one transaction (`INSUFFICIENT_CURRENCY` rejects with no change). A skill respec resets every learned skill to level 1 (learned skills stay learned; loadout is kept) and refunds all spent skill points; a potential respec zeroes all allocations and refunds all spent potential.
 
 The previous `100 * level^2` value made normal build experimentation disproportionately expensive compared with authored launch currency faucets. Respec remains a meaningful common-currency sink without discouraging players from testing active-skill build choices.
 
-Respec is rejected while `in_combat`, inside active PvP, or under an encounter build lock. No respec cooldown exists.
+Respec is rejected while `in_combat` (`IN_COMBAT`), inside active PvP, or under an encounter build lock (`INVALID_STATE`). No respec cooldown exists.
 
 ## Max-Level Endgame
 Launch max-level PvE reuses existing systems rather than adding a new progression tree:

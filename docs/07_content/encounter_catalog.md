@@ -203,7 +203,7 @@ NUOC_DANG -> temporarily floods lowest platform tier
 CUON_SONG -> three ordered water strikes
 ```
 
-At 40% HP two mechanics may overlap; at least one reachable safe platform must remain.
+Phase 2 starts below 50% HP (`boss_catalog.md`); below 40% HP two mechanics may overlap; at least one reachable safe platform must remain.
 
 ## Public Boss — Ma Da Chúa
 `boss.ma_da_chua`, recommended Lv30.
@@ -429,7 +429,7 @@ One dungeon per week is designated the weekly highlight and adds a cosmetic/mate
 ### Selection Rule
 The weekly highlighted dungeon is derived deterministically:
 ```text
-utc_week_number = floor(server_utc_seconds / (7 * 86400))
+utc_week_number = floor((server_utc_seconds - 345600) / (7 * 86400))   -- 345600 s = 4 days: Unix epoch was Thursday, so weeks start Monday 00:00 UTC
 highlight_index  = utc_week_number mod 5
 ```
 

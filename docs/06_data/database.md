@@ -50,18 +50,32 @@ For multi-aggregate transactions:
 2. stable UUID byte/lexical order,
 3. child rows by stable slot/index/ID.
 
-Aggregate-type priority (canonical; lock lower number first):
+Aggregate-type priority (canonical; lock lower number first; ADR-0053, ADR-0060):
 ```text
-1 accounts, account_password_credentials     9 guild storage rows + guild storage claims
-2 characters                                10 trade_sessions
-3 character_currencies                      11 auction_listings, auction_proceeds
-4 character_inventories                     12 reward_claims, boss_chest_eligibility
-5 item_instances / item_locations           13 world_consequence_relics, region_di_tich_markers
-6 account_iap_entitlements                  14 character_feats, character_feat_milestones, character_atlas
-7 account_cosmetic_entitlements,            15 economy daily rollups
-  account_entitlement_claims
-8 guilds, guild_memberships, guild_stone_category_completions
+1  accounts, account_password_credentials
+2  characters
+3  character_currencies
+4  character_inventories
+5  item_instances / item_locations
+6  character_beasts, character_beast_food_daily, beast_equipment_locations
+7  character_souls, character_soul_resonance
+8  account_iap_entitlements, account_refund_consumed_events
+9  account_cosmetic_entitlements, account_entitlement_claims,
+   character_cosmetic_entitlements, character_cosmetic_equips
+10 friends, friend_requests, blocks
+11 guilds, guild_memberships, guild_invites, guild_applications, guild_stone_category_completions
+12 guild_progression, guild_ritual_cycles, guild_blessing_votes
+13 guild storage rows + guild storage claims
+14 trade_settlement_records
+15 auction_listings, auction_proceeds
+16 pvp_ratings, pvp_match_settlements, pvp_sanctions,
+   guild_war_ratings, guild_war_settlements
+17 reward_claims, boss_chest_eligibility
+18 world_consequence_relics, region_di_tich_markers, public_boss_schedules
+19 character_feats, character_feat_milestones, character_atlas
+20 economy daily rollups
 ```
+Direct trade has no session row; its settlement locks the two characters' rows in priorities 2..5 (UUID order), then inserts priority 14 and 20 rows.
 `operations` rows are inserted last in the same transaction.
 
 An owning feature may define a stricter deterministic order.

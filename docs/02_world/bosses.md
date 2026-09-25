@@ -65,7 +65,9 @@ Track valid damage, effective support, mechanics. Eligibility normally requires 
 PERSONAL loot. Configured EXP/currency/material/equipment/quest/cosmetic rewards. Boss kill EXP is granted only by PUBLIC bosses (monster level adjustment unless fixed); INSTANCED bosses grant no kill EXP (`../07_content/boss_catalog.md`). Earned item bundles that cannot fit inventory use `../03_systems/reward_claims.md`.
 
 ## Victory Ceremony & Gold Chest Claim
-When a major boss is defeated, the server triggers an in-channel victory celebration under ADR-0024:
+The Gilded Chest applies only to PUBLIC bosses (ADR-0061). An INSTANCED boss (dungeon or finale) plays the same celebration presentation without a chest; its personal rewards settle at the kill under the INSTANCED repeat key (§ Reward Idempotency), and bundles that do not fit use Reward Claims.
+
+When a PUBLIC major boss is defeated, the server triggers an in-channel victory celebration under ADR-0024:
 1. The boss collapses and a massive **Gilded Dragon Chest** (`chest.world_boss.<boss_id>`) appears at the arena center amidst festive firecrackers and celebratory effects.
 2. The chest remains interactable for 3 minutes before despawning.
 3. Every eligible participant (meeting the contribution threshold above) interacts with the chest to claim their personal reward settlement.
@@ -74,7 +76,7 @@ When a major boss is defeated, the server triggers an in-channel victory celebra
 ## Boss Aftermath — Di Tich (He Qua The Gioi)
 Defeating a major boss leaves a 60-minute world consequence in that map/channel:
 
-- **Spawn**: Upon `DEFEATED -> COOLDOWN`, the server spawns `relic.boss.<boss_id>` at the arena center in that defeated `map_instance_id` for 60 minutes. It is visible only to characters in that map instance; each channel copy may independently have its own relic.
+- **Spawn**: Upon `DEFEATED -> COOLDOWN`, the server spawns `relic.boss.<boss_id>` for 60 minutes. PUBLIC boss: at the arena center of the defeated channel copy (`map_id` + `channel_id` of that copy). INSTANCED boss (ADR-0061): on the source field map of the instance (the portal source map in `../07_content/world_route_catalog.md`) at its authored `anchor.relic.<boss_key>` (`<boss_key>` = `boss_id` without `boss.`), in the entry channel recorded when the instance was created (`dungeons.md` § Entry / Membership). It is visible only to characters in that map channel; each channel may independently have its own relic. An already-active relic with the same `(map_id, channel_id, relic_id)` is not refreshed; the region marker is still updated.
 - **Channel-wide Buff**: Every character in the same `map_instance_id` (same channel) receives `buff.di_tich.<boss_id>` while the relic is active:
   ```
   +5% monster EXP in this map
@@ -86,7 +88,7 @@ Defeating a major boss leaves a 60-minute world consequence in that map/channel:
 - **Authority**: Server owns relic spawn/despawn and buff application; client cannot forge relic.
 
 ## Seasonal Di Tich Relics
-While the matching `season_region_index` is active, seasonal relics reuse the same 60-minute witness, channel-wide `buff.di_tich.*` effects, persistence, and authority as launch Di Tích. Atlas pages point at these relic IDs. They are not extra power. Duration 60 minutes; witness range 60m. Durable key `(map_id, channel_id, relic_id)` in `../06_data/data_model.md` `world_consequence_relics` (`source_id` = the dungeon or monster that spawned it). Seasonal relics apply `buff.di_tich.season`, whose payload equals the launch `buff.di_tich.*` payload; they write no region marker. Spawn trigger: dungeon completion spawns the relic on the listed map in the channel the party entered the dungeon from; a monster kill spawns it on the kill's channel; an already-active relic with the same key is not refreshed.
+While the matching `season_region_index` is active, seasonal relics reuse the same 60-minute witness, channel-wide `buff.di_tich.*` effects, persistence, and authority as launch Di Tích. Atlas pages point at these relic IDs. They are not extra power. Duration 60 minutes; witness range 60m. Durable key `(map_id, channel_id, relic_id)` in `../06_data/data_model.md` `world_consequence_relics` (`source_id` = the dungeon or monster that spawned it). Seasonal relics apply `buff.di_tich.season`, whose payload equals the launch `buff.di_tich.*` payload; they write no region marker. Spawn trigger: a dungeon completion or an INSTANCED boss defeat (the finale `boss.than_trung`) spawns the relic on the listed map in the entry channel recorded by that instance; a monster kill spawns it on the kill's channel; an already-active relic with the same key is not refreshed.
 
 | relic_id | season_region_index | spawn after | map |
 |---|---:|---|---|
@@ -133,15 +135,30 @@ When a new PUBLIC boss spawn begins, the server atomically assigns a new `public
 
 The **Gilded Chest** entity produced by a spawn carries the `public_boss_spawn_generation_id` of the spawn that created it. The chest interaction payload echoes this ID to the server. At commit time the server re-validates that the interacting character holds a non-expired contribution record whose `public_boss_spawn_generation_id` matches the chest's ID. Chest eligibility is therefore scoped to exactly one generation; a character cannot use a contribution earned in a prior or concurrent generation to claim from a different generation's chest.
 
-Channel copies representing the same logical spawn generation already share the same `public_boss_spawn_generation_id` under the PUBLIC Cross-Channel Settlement rules above. A new spawn on any channel in the same region causes all channels to retire the old generation ID together; this is coordinated by the Ephemeral Global subsystem, which owns `public_boss_spawn_generation_id` (`../04_architecture/service_boundaries.md`). Per-character eligibility is persisted in `boss_chest_eligibility` (`../06_data/data_model.md`).
+Channel copies representing the same logical spawn generation already share the same `public_boss_spawn_generation_id` under the PUBLIC Cross-Channel Settlement rules above. Opening a new generation of the same `boss_id` (§ PUBLIC Generation Lifecycle) retires the old generation ID for all channel copies together; this is coordinated by the Ephemeral Global subsystem, which owns `public_boss_spawn_generation_id` (`../04_architecture/service_boundaries.md`). Per-character eligibility is persisted in `boss_chest_eligibility` (`../06_data/data_model.md`).
+
+## PUBLIC Generation Lifecycle (ADR-0061)
+One lifecycle per standalone PUBLIC `boss_id`, owned by Ephemeral Global and persisted in `public_boss_schedules` (`../06_data/data_model.md`):
+```text
+SCHEDULED(next_spawn_at) --server time >= next_spawn_at--> OPEN --all copies terminal--> SCHEDULED
+OPEN: new public_boss_spawn_generation_id (same transaction as the state change, retires the prior ID);
+      one copy spawns in every running channel partition of the boss map; a channel partition that
+      starts while OPEN spawns its copy with the same ID; a channel spawns at most one copy per generation
+GENERATION_TIMEOUT = 30m after opened_at: copies in SPAWNING/READY/RESETTING despawn at once (no rewards);
+      an ACTIVE copy finishes (DEFEATED, or despawns instead of returning to READY on reset);
+      an ACTIVE copy still undefeated 15m after the timeout despawns with no rewards
+copy terminal = DEFEATED or despawned; generation closes when every spawned copy is terminal
+on close: next_spawn_at = close_time + uniform(30m..45m) (server RNG, whole seconds), persisted with state SCHEDULED
+```
+Boot: a `SCHEDULED` row keeps its `next_spawn_at` (opens immediately if already past); an `OPEN` row found at boot is closed (combat is not reconstructed) and rescheduled at `boot_time + uniform(30m..45m)`; a boss with no row gets `next_spawn_at = boot_time + uniform(30m..45m)`. Every state change is one single-row `CHECKPOINT_DURABLE` write.
 
 ## Respawn
-Standalone PUBLIC bosses use random delay `30m..45m` after logical generation completion/reset cleanup unless scheduled-event owned. Server coordinates generation identity across channels. Spirit Surge bosses follow world-event lifecycle.
+Standalone PUBLIC bosses respawn only through § PUBLIC Generation Lifecycle unless scheduled-event owned. Spirit Surge bosses follow world-event lifecycle.
 
 PUBLIC bosses are optional open-world encounters by default. A MAIN story quest must not require waiting for a standalone PUBLIC generation unless the content provides an always-available instanced story equivalent.
 
 ## Reconnect / Restart
-Participation retained `120s` after disconnect. Restart does not reconstruct active combat; incomplete encounter fails, committed rewards remain, next spawn derives from authoritative server time.
+Participation retained `120s` after disconnect. Restart does not reconstruct active combat; incomplete encounter fails, committed rewards remain, next spawn derives from the persisted `public_boss_schedules` row (§ PUBLIC Generation Lifecycle).
 
 ## Reward Idempotency
 INSTANCED repeat slot:
@@ -165,4 +182,7 @@ hard CC -> stagger by default
 generation ID rotation is atomic with spawn; prior-generation contribution records are expired at rotation
 Gilded Chest carries its generation's public_boss_spawn_generation_id; server re-validates at commit time
 chest eligibility is scoped to one generation only; contribution from generation N does not authorise a claim against generation N+1
+Gilded Chest = PUBLIC bosses only; INSTANCED boss rewards settle at the kill
+INSTANCED boss relic = source field map, recorded entry channel
+PUBLIC generation: SCHEDULED -> OPEN -> SCHEDULED; timeout 30m (+15m for ACTIVE copies); respawn 30m..45m after close; persisted
 ```

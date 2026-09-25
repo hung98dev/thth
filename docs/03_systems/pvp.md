@@ -125,7 +125,7 @@ Duel ends on defeat, surrender, disconnect timeout, or authoritative invalidatio
 Canonical format:
 ```text
 1v1
-best of 3
+best of 3 (draws extend up to 5 regular rounds)
 first to 2 round wins
 round duration = 90s
 inter-round delay = 8s
@@ -143,10 +143,18 @@ If the 90s timer expires, round winner is determined in order:
 2. higher total valid player damage dealt in the round
 3. if still tied, round is drawn
 
-If both players have one round win and the final round draws, one sudden-death round starts:
+Round sequencing:
+```text
+max regular rounds  = 5 (a drawn round counts as played)
+match ends early    = as soon as one player has 2 round wins
+after round 5       = player with more round wins wins the match
+still tied after 5  = round wins equal (0-0 or 1-1) -> one sudden-death round
+```
+Sudden-death round:
 ```text
 duration = 45s
 healing received multiplier = 0.50
+winner = same tiebreak order as a regular round
 ```
 If sudden death still ties on HP percentage and damage, the match becomes `VOID`; no rating change is applied.
 
@@ -188,7 +196,7 @@ Player kill grants:
 Objective control remains the primary victory path.
 
 ## Capture
-Only alive eligible players inside the capture area count.
+Only alive eligible players inside the capture area count. Capture area: an axis-aligned rectangle `6.0m wide x 4.0m tall` centred on the altar anchor, bottom edge on the floor; a player counts when its authoritative position is inside.
 
 An eligible contributor is a non-AFK, non-ABANDONED player in `ACTIVE` state, physically inside the authoritative altar area. Capture is simulated every `1s` with integer `capture_units` in `[-60000, 60000]`; positive values belong to TEAM_A and negative values to TEAM_B. `0` is NEUTRAL. An altar is owned only at the corresponding endpoint (`+60000` = TEAM_A, `-60000` = TEAM_B). Partial progress is visible but grants neither score nor ownership.
 
@@ -228,12 +236,12 @@ The server derives the rotation deterministically from `pvp_match_id` and uses a
 
 Attunement changes the local battlefield mechanic; it never grants automatic bonus damage to a matching class.
 
-Canonical mechanic themes:
-- `KIM`: periodically creates a short projectile-blocking barrier across part of the altar space
-- `MOC`: creates a small visible regeneration zone for the controlling team; healing is `1% MAX_HP/s` and stops while the target is under hard control
-- `THUY`: creates a movement-flow zone granting `+10% MOVE_SPEED` inside the marked area, still respecting PvP caps
-- `HOA`: creates telegraphed neutral flame hazards every `10s`; each hit deals `5% MAX_HP`, cannot crit, and cannot reduce HP below `1`
-- `THO`: capture progress against the current owner decays `25%` slower after attackers leave
+Canonical mechanics (times relative to the start of the attunement's 90s window; all zones are axis-aligned rectangles centred horizontally on the altar anchor, bottom edge on the floor):
+- `KIM`: a vertical projectile-blocking barrier `0.5m wide x 3.0m tall` at the altar anchor, active `3s` every `12s` starting at `6s` (6, 18, ..., 78s). It blocks projectiles of both teams, not movement, melee or area effects.
+- `MOC`: regeneration zone `4.0m x 3.0m` for the controlling team only; healing `1% MAX_HP` per 1s tick, not applied while the target is under hard control; inactive while the altar is NEUTRAL or CONTESTED.
+- `THUY`: movement-flow zone equal to the capture area granting `+10% MOVE_SPEED` to every player inside, still respecting PvP caps.
+- `HOA`: every `10s` starting at `10s`, two neutral flame strips `2.0m wide x 1.0m tall` appear with a `1.5s` telegraph, centred at `anchor.x - 1.5m` and `anchor.x + 1.5m`; each hit deals `5% MAX_HP` once per strip per player, cannot crit, and cannot reduce HP below `1`.
+- `THO`: capture decay after attackers leave (the post-`3s` decay step) is `0.75 x last_capture_rate_units_per_s`, floored to an integer.
 
 These are map mechanics, not class passives.
 
@@ -308,6 +316,8 @@ Ready-check timeout:
 ```
 
 A missed ready check does not count as a played match.
+
+Failure handling: the `pvp_match_id` becomes `CANCELLED`. Every player (or queued party) that missed, declined or disconnected leaves the queue and gets a counted miss; every player/party that accepted re-enters `QUEUED` keeping its original `queued_at` and search-range expansion. A queued party is removed from the queue (no penalty) when any member leaves the party, logs out, or enters a build lock of another mode; a character holds at most one ranked queue entry at a time.
 
 Queue cooldown for repeated misses:
 ```text
@@ -391,14 +401,43 @@ MP_REGEN
 
 let:
 ```text
-R = mode reference value for the character class/stat
+R = reference value for the character class/stat from § PvP Reference Vectors (one set shared by every PvP mode)
 S = normal final stat before PvP transformation
 ratio = S / R
 compressed_ratio = 1 + 0.50 * (ratio - 1)
 S_pvp = R * clamp(compressed_ratio, 0.75, 1.35)
 ```
 
-Reference vectors are versioned competitive data and represent a healthy Level-60 build, not a live population average.
+## PvP Reference Vectors
+Reference vectors are versioned competitive data (`pvp.reference.v1`) and represent a healthy Level-60 build, not a live population average. They are the synthetic fully-geared Lv60 reference build of `../01_gameplay/stats.md` § Spirit Beast Power Budget Reference Values (`../07_content/balance_validation.md` § Synthetic PvE Reference Build) evaluated for every class: Level-1 base + 59 levels of class growth, potential 356 = 178 offensive primary / 89 VIT / 89 AGI, 14 T6 base lines at +8 (`floor(floor(k × unit) × 1.20)` per line); each component rounds down separately, regen keeps two decimals.
+
+```text
+component                         KIM    MOC    THUY   HOA    THO
+MAX_HP   base+growth              2388   2624   2388   2270   3096
+         VIT 89 x 6                534    534    534    534    534
+         T6 +8 equipment          1164   1164   1164   1164   1164
+MAX_MP   base+growth               672    908    908   1026    672
+         INT (primary only)          0    178    178    178      0
+         T6 +8 equipment           187    187    187    187    187   necklace 68 + talisman 51 + relic 68 (M=72)
+ATTACK   base+growth               364    323    335    364    299
+         primary 178 x 0.75        133    133    133    133    133
+         T6 +8 equipment           226    226    226    226    226
+DEFENSE  base+growth               138    149    132    126    197
+         VIT 89 x 0.20              17     17     17     17     17
+         T6 +8 equipment           212    212    212    212    212
+HP_REGEN 2 + 0.12 x 59            9.08   9.08   9.08   9.08   9.08
+MP_REGEN 3 + 0.10 x 59            8.90   8.90   8.90   8.90   8.90
+```
+
+| class | MAX_HP | MAX_MP | ATTACK | DEFENSE | HP_REGEN | MP_REGEN |
+|---|---:|---:|---:|---:|---:|---:|
+| `class.kim` | 4086 | 859 | 723 | 367 | 9.08 | 8.90 |
+| `class.moc` | 4322 | 1273 | 682 | 378 | 9.08 | 8.90 |
+| `class.thuy` | 4086 | 1273 | 694 | 361 | 9.08 | 8.90 |
+| `class.hoa` | 3968 | 1391 | 723 | 355 | 9.08 | 8.90 |
+| `class.tho` | 4794 | 859 | 658 | 426 | 9.08 | 8.90 |
+
+The THO MAX_HP/DEFENSE and KIM ATTACK cells equal the pinned `reference_lv60_*` values in `stats.md`. A content revision that changes class growth, potential rules, T6 base lines or the +8 multiplier recomputes this table in the same change; the content compiler rejects a mismatch (`pvp.reference_vector_mismatch`).
 
 PvP-specific caps after transformation:
 ```text
@@ -694,7 +733,7 @@ After five eligible completions:
 - configured cosmetic/season progress may continue,
 - no additional repeatable bound completion grant is created that UTC day.
 
-Season milestone rewards are granted once per character per season and are idempotent.
+Season rewards are the tier cosmetics in `../07_content/cosmetic_catalog.md` § Competitive Season Rewards, settled once per character per season at season end (key `cosmetic.pvp.season.<season_id>.<cosmetic_id>.<character_id>`) and idempotent.
 
 # Guild Blessings
 Guild Blessing effects do not apply to ranked PvP unless the effect explicitly declares:
@@ -759,7 +798,7 @@ open-world PK = disabled
 ranked inventory consumables = disabled
 PvP death -> no persistent loss
 Arena = 5v5 / 10m / 600 score / 8s respawn
-Ranked Duel = Bo3 / 90s rounds
+Ranked Duel = first to 2 round wins, max 5 regular rounds (draws count) / 90s rounds
 duel space = map.pvp.duel_court / 2.00x1.25 screens / MIRRORED_DUEL_BOWL
 arena space = map.pvp.five_element_arena / 4.00x1.75 screens / TRI_ALTAR_CIRCUIT
 competitive geometry is mirror-symmetric within 0.001m

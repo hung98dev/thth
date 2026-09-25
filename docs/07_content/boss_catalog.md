@@ -53,7 +53,7 @@ DUOI_DEN  -> 1.30 ATTACK physical along selected lane, lane tell >=1.10s
 
 Phase 2 (below 50% HP):
 ```text
-BAT_DAY_GIAN -> 1.25 ATTACK physical; simultaneous duplicate-lane tell shown; one lane is authored feint with no hitbox
+BAT_DAY_GIAN -> two lane marks shown sequentially (encounter_catalog.md): each 1.25 ATTACK physical, lane tell >=1.10s, second tell starts when the first strike resolves; one safe route always remains (ADR-0061)
 CHIEM_HON    -> targets nearest valid character within 5.0m; applies WEAKEN 15% ATTACK for 3.0s and 1 MA_AM stack; startup 0.90s; max 2 targets per cast
 ```
 
@@ -86,6 +86,7 @@ Phase 2 (below 50% HP):
 ```text
 VUNG_DU   -> full-arena horizontal sweep: 0.65 ATTACK THUY; authored above-tier safe window >=1.5s; tell >=1.0s
 CUON_NUOC -> NUOC_DANG active tier count increases from 2 to 3; one tier always authored safe for the sequence duration
+below 40% HP: at most two mechanics may overlap; at least one reachable safe platform remains (encounter_catalog.md)
 ```
 
 ## `boss.ma_da_chua`
@@ -169,20 +170,28 @@ CUOC_BUNG    -> at 20% HP: spawns up to 5 fragments (same stat rules as 70%/40% 
 ```
 
 ## `boss.than_trung`
-Phase structure and motif order are owned by `encounter_catalog.md`.
+Phase structure and motif order are owned by `encounter_catalog.md`: three phases with thresholds `70%` and `35%` HP (overrides the default 50%, ADR-0061).
 
-Phase 1 numeric payload:
+Phase 1 (`100-70%`) numeric payload:
 ```text
 normal motif coefficient = 0.80..1.10 ATTACK
 heavy authored motif      = max 1.30 ATTACK
-combined pattern may deal at most two damaging resolutions to one target within 1.0s
+at most two damaging resolutions to one target within 1.0s
+successful motif resolution opens a 5s boss damage-taken 1.15 window
 ```
 
-Phase 2 numeric payload:
+Phase 2 (`70-35%`) numeric payload:
 ```text
-heavy authored motif Phase 2 = max 1.50 ATTACK
-combined pattern two-hit limit within 0.8s (tighter than Phase 1)
-final-phase successful pattern resolution opens a 5s boss damage-taken 1.20 window (was 1.15 in Phase 1)
+heavy authored motif = max 1.50 ATTACK
+at most two damaging resolutions to one target within 0.8s
+Pair 2 panel shatter opens a 3.5s boss damage-taken 1.20 window
+```
+
+Phase 3 (`35-0%`) numeric payload:
+```text
+heavy authored motif = max 1.50 ATTACK (authored pattern values 1.25..1.40 in encounter_catalog.md)
+at most two damaging resolutions to one target within 0.8s
+successful pattern resolution opens a 5s boss damage-taken 1.20 window
 ```
 
 No phase reduces telegraph time below the source motif's authored Phase 1 value.

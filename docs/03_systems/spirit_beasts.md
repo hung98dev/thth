@@ -30,7 +30,7 @@ beast.tho.trau_dong
 ## Ownership & Active Slot
 - **Character-Scoped Collection**: A character may collect and own multiple Linh Thú. Once acquired, a Linh Thú belongs permanently to that character. Beasts never move to another character (ADR-0029).
 - **Identity (ADR-0043)**: `beast_grant` is 1:1 `(character_id, beast_id)`. There is no `beast_instance_id` UUID. Primary key of `character_beasts` is `(character_id, beast_id)`.
-- **Single Active Slot**: `active_beast_count = 0..1`. A character may have no active beast; when present, exactly one is `ACTIVE` (Xuất chiến).
+- **Single Active Slot**: `active_beast_count = 0..1`. A character may have no active beast; when present, exactly one is `ACTIVE` (Xuất chiến). Returning to no active beast uses the deactivate form of `C2S_BEAST_SET_ACTIVE` (`../05_network/messages.md`) under the same swap rules.
 
 ## Acquisition
 Operation `beast_grant` is idempotent per `character_id + beast_id`.
@@ -148,7 +148,7 @@ Enemy-crit debuff (on-self aura):     <= 0.05  (5% absolute)
 ```
 
 **Passive 2 — excluded from stat budget**
-Passive 2 effects are situational clutch triggers with 45s–90s ICDs, not permanent stat bonuses. Temporary short-duration buffs arising from a P2 trigger (e.g. a 4s DEFENSE boost, a 5s MOVE_SPEED grant) are excluded from this budget because they are non-persistent and already constrained by the legal-P2-effects list above. This exclusion must be stated in the catalog for any P2 effect that grants a temporary stat bonus; the effect must still use only legal P2 verbs.
+Passive 2 effects are situational clutch triggers with 45s–90s ICDs, not permanent stat bonuses, and are excluded from this budget. Launch P2 payloads grant no stat modifier (legal P2 list below).
 
 **Passive budget audit — post-scale catalog values**
 
@@ -253,7 +253,7 @@ Each Linh Thú has exactly three dedicated equipment slots:
 
 ### Beast Equipment Rules
 - Beast equipment items belong to `item_kind = BEAST_EQUIPMENT`.
-- Items have character/beast level requirements (Lv10, Lv20, Lv30, Lv40, Lv50, Lv60 tiers).
+- Each item has `required_level` = its tier (10, 20, 30, 40, 50, 60). Equipping requires `beast_level >= required_level` of the target beast (character level is implied by `beast_level <= character_level`); otherwise `LEVEL_TOO_LOW`. A later beast level never drops, so equipped items never become invalid.
 - Launch beast equipment has only the fixed stats in `../07_content/spirit_beast_catalog.md`; it has no random rolls, enhancement level, crafting recipe, or independent power progression at launch.
 - Unequipped BEAST_EQUIPMENT lives in `CHARACTER_INVENTORY`. Equipped occupies `BEAST_EQUIPMENT_SLOT` keyed by `(character_id, beast_id, slot_id)`.
 - Unequipping beast equipment requires inventory capacity.
@@ -270,10 +270,11 @@ Each Linh Thú possesses two unique passive skills:
 - Unlocks at `beast_level = 20`, upgrades at `beast_level = 40`, and achieves ultimate power at `beast_level = 60`.
 - Operates on an internal cooldown (ICD) of **45s–90s**. Catalog values outside this range fail validation.
 - Legal P2 effects (must already exist in `combat.md` / `status_effects.md` / `stats.md`):
-  - Emergency Shield: HP below 20% → absorb shield instance.
-  - CC Cleanse: on STUN/FREEZE → dispel that status (no knockback required).
-  - Anti-Heal: on hitting a target below 20% HP → `HEALING_RECEIVED = 0.50` for 4s.
-  - Mist Escape: on ROOT or SLOW → remove that status and 2.0s immunity to ROOT/SLOW (not invulnerability).
+  - Emergency Shield: a committed hit leaves the living owner below 20% `MAX_HP` → one absorb shield instance `effect.beast.emergency_shield`, amount `floor(0.20 × owner MAX_HP)`, lifetime 3.0s (absorption lifecycle `combat.md`). Never prevents death, never grants invulnerability.
+  - CC Cleanse: a STUN or FREEZE commits on the owner → dispel that status instance in the same tick. No knockback or other rider.
+  - Anti-Heal: the owner's DAMAGING hit commits on a hostile target below 20% `MAX_HP` → `HEALING_RECEIVED = 0.50` on that target for 4s.
+  - Mist Escape: a ROOT or SLOW (any magnitude) commits on the owner → remove that status instance and grant 2.0s immunity to ROOT and SLOW application (not invulnerability).
+  - Each beast has exactly one P2 type with the fixed payload above; tiers Lv20/Lv40/Lv60 change only the ICD (`../07_content/spirit_beast_catalog.md`).
   - Kill/Assist Resource Restore: `ON_KILL` or `ON_ASSIST` of a hostile actor → restore MP or HP equal to a percentage of the owner's own `MAX_MP` or `MAX_HP`. Constraints: trigger must be a confirmed kill or assist of a hostile actor only; payload is a single resource restore (MP or HP only) expressed as `<= 3%` of the owner's `MAX_MP` or `MAX_HP` per trigger; must carry an ICD within the legal 45s–90s range; may NOT simultaneously grant damage, mitigation, shields, crowd control, status application, or any stat modifier.
 - Banned: Blind, accuracy-100, pre-mitigation reflect, backstab, iframe/invulnerability, projectile-speed as a transferred stat.
 - **MA_AM folklore link**: When `status_effects.md` resolves the next BURN or POISON tick on a target at 3 MA_AM stacks, the active beast's Passive 2 receives one `beast_trigger.ma_am_burn_poison` eligibility evaluation. It uses that beast's normal authored trigger predicate and current Passive-2 ICD; it is not a guaranteed proc and does not bypass the ICD. The MA_AM owner consumes all three stacks after this one evaluation regardless of whether the passive is absent, locked, on cooldown, rejects its predicate, or succeeds. Status-stack ownership/consumption and the tick ordering remain canonical in `status_effects.md`.
@@ -294,17 +295,14 @@ HOA sinh THO (class.tho)
 
 The character activates **Linh Khí Tương Sinh (Elemental Resonance)**:
 - `+8%` bonus to all transferred beast stats (attributes transferred from the beast increase by 1.08x).
-- `-10%` reduction to the internal cooldown of the beast's Passive 2.
+- `-10%` reduction to the internal cooldown of the beast's Passive 2: `effective_icd = max(45s, authored_icd × 0.90)`; the 45s floor applies after resonance. Resonance may make two tiers share an effective ICD; the ladder-distinctness check applies to authored ICDs only.
 
 Cross-element or neutral pairings function normally without penalty, but do not gain the resonance bonus.
 
 ## Affection / Bond System (Khế Ước Tâm Giao)
 - **Affection Range**: `bond_points = 0..100` (starts at 50 upon acquisition).
-- **Feeding**: Feeding traditional folk delicacies prepared at Village Hearths via `C2S_BEAST_FEED` (416) increases bond:
-  - `item.consumable.food.ca_bong_kho`: +5 bond points
-  - `item.consumable.food.ca_chep_nuong`: +8 bond points
-  - `item.consumable.food.tom_nuong`: +10 bond points
-  Daily cap = 20 points gained via food per `(character_id, utc_date)`.
+- **Feeding**: Feeding traditional folk delicacies prepared at Village Hearths via `C2S_BEAST_FEED` (416) increases bond of any owned beast (active or not). Bond value per food item is canonical in `../07_content/item_catalog.md` (`ca_bong_kho` +5, `ca_chep_nuong` +8, `tom_nuong` +10).
+  Daily cap = 20 points gained via food per `(character_id, utc_date)`, shared by all beasts. Each unit is applied in order: `gain = min(food_bond, 20 − daily_gained, 100 − bond_points)`; a unit with `gain < food_bond` still consumes the item (clamp, not reject). A request is rejected without consuming anything only when the first unit would gain 0 (`DAILY_FOOD_CAP_REACHED` or `MAX_BOND_REACHED`); units after the cap/max within the same request are not consumed.
 - **No decay**: Bond never decreases due to inactivity, logout, disconnect, or season reset.
 - **High-Bond Perks (bond >= 80)**:
   - **Auto-Loot Aura**: Companion automatically collects dropped personal loot within a 4.0m radius (disabled in PvP).
@@ -319,7 +317,7 @@ Cross-element or neutral pairings function normally without penalty, but do not 
   - `character_beasts` PK `(character_id, beast_id)` plus `level, bond_points, is_active, created_at`
   - `beast_equipment_locations` PK `(character_id, beast_id, slot_id)` plus `item_instance_id`; FK -> `character_beasts`
 - No `beast_instance_id` UUID (ADR-0043).
-- Operations (level-up, equip item, unequip item, swap active beast, feed) use stable `operation_id` and mutate atomically.
+- Operations (level-up, equip item, unequip item, swap/deactivate active beast, feed) use stable `operation_id` and mutate atomically; each has a registered message pair in `../05_network/messages.md` (level-up = `C2S_BEAST_LEVEL_UP` 430 / `S2C_BEAST_LEVEL_UP_RESULT` 431; errors `LEVEL_TOO_LOW` above character level, `CAPACITY_FULL` at 60; it consumes the Linh Đan + `currency.common` cost of the next level from `../07_content/spirit_beast_catalog.md` and fails with no change if `beast_level + 1 > character_level` or `> 60`).
 - All passive cooldown timers, triggers, and stat transfers are evaluated server-side.
 - Base-stat and continuous-passive values are derived from the exact level curves in `../07_content/spirit_beast_catalog.md`. A catalog entry must provide either an explicit value for every level `1..60`, or `linear(start_value, end_value, rounding)` with an explicit rounding mode; prose endpoints alone fail content validation.
 
@@ -356,9 +354,9 @@ Rule D: AoE splash effectiveness         <= 0.25
 Rule D: control resistance               <= 0.20
 Rule D: enemy-crit aura debuff           <= 0.05
 -- Passive 2 --
-Passive 2 temporary clutch-trigger stat bonuses are excluded from the stat budget;
-  they must use only legal P2 verbs and the ICD must be 45s..90s
-Passive 2 ICD ladder: all three tiers (Lv20/Lv40/Lv60) must compile to distinct effective ICDs;
+Passive 2 is excluded from the stat budget; exactly one legal P2 type per beast with the fixed payload;
+  authored ICD 45s..90s; effective ICD after resonance = max(45s, authored x 0.90)
+Passive 2 ICD ladder: all three tiers (Lv20/Lv40/Lv60) must have distinct authored ICDs;
   two tiers that clamp to the same floor value are a content authoring error (invisible upgrade)
 Kill/Assist Resource Restore (5th P2 type): payload_pct <= 0.03 per trigger; no stat modifier, no damage,
   no mitigation, no shield, no CC, no status application; trigger restricted to hostile kill/assist only

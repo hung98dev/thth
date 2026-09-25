@@ -1,6 +1,10 @@
 # ADR-0041: Anti-RMT Trade Gates and IAP Entitlement Integrity
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0060)**: `accounts.iap_refund_consumed_score` is no longer stored or incremented; the score is derived from `account_refund_consumed_events` over the last 180 days (`../06_data/data_model.md`).
+
+> **AMENDMENT NOTICE (2026-09-25)**: §2 is amended by ADR-0063: every Auction House operation (including buying) requires Level 15; listing additionally requires age >= 24 h. Direct-trade gates are unchanged.
+
 > **AMENDMENT NOTICE (2026-09-24)**: Season-track refund/chargeback revokes every cosmetic claimed under the entitlement on every character (ADR-0053, `../03_systems/account_storage.md`); the earlier "claimed items remain in inventory" rule is superseded. Claims close at `claim_deadline_at` = season end + 14 days.
 
 ## Context

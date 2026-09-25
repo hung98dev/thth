@@ -281,7 +281,7 @@ SHIELD_REMOVED -> explicit removal/replacement/cleanup
 Death and map-transfer cleanup remove ordinary shields unless an explicit effect persistence rule says otherwise.
 
 ## Element
-Elemental control uses `classes.md`. Skill data declares physical/elemental/mixed components.
+Elemental control uses `classes.md`. Skill data declares physical/elemental/mixed components; every launch class-skill component is elemental with the owning class element (`../07_content/class_skill_catalog.md` § Canonical Runtime Matrix).
 
 ## Resources
 Initial active combat resources are HP and MP only. Skill costs follow `skills.md`.

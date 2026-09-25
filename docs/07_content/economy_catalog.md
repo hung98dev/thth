@@ -122,7 +122,7 @@ Shrine variants:          60k+100k+150k+220k+320k+500k = 1,350,000 common
 Title glows:              30k*5+75k*2+120k = 420,000 common
 Total cosmetic sink surface = 2,850,000 common per character
 ```
-Reference income (lower bound, FIELD_COMBAT only): `REFERENCE_ENDGAME_COMMON_PER_HOUR = 76,500` = T6 NORMAL mean drop 170 common × 450 kills/hour. Quest, bounty and dungeon common add to this, so real income is higher. At the lower bound the full catalog takes about 37 hours of Lv60 play, keeping cosmetics aspirational but reachable.
+Reference income (lower bound, FIELD_COMBAT only): `REFERENCE_ENDGAME_COMMON_PER_HOUR = 76,500` = T6 NORMAL mean drop 170 common × 450 kills/hour. This is the single canonical reference-income constant; every hour estimate in other specs (`../03_systems/crafting.md`, `equipment_catalog.md`) divides by it. Quest, bounty and dungeon common add to this, so real income is higher. At the lower bound the full catalog takes about 37 hours of Lv60 play, keeping cosmetics aspirational but reachable.
 
 # `currency.bound`
 Bound currency is character-scoped and cannot transfer between players.
@@ -140,19 +140,17 @@ bound = 10 * owning_tier
 Therefore one side quest grants `10/20/30/40/50/60` from T1..T6.
 
 ### Dungeon completion
-Eligible NORMAL dungeon repeat completion grants the following bound on the **first completion per character per UTC day** only (`daily_first`):
+The **first eligible dungeon completion per character per UTC day, across all dungeons** grants bound currency once (`DAILY_FIRST` slot). The amount follows the completed run's tier/context:
 ```text
 T1  5
 T2 10
 T3 15
 T4 20
 T5 25
+ENDGAME_L60 30
+idempotency key = dungeon.bound.daily.<utc_date>.<character_id>   (utc_date of the completion commit)
 ```
-`ENDGAME_L60` completion grants:
-```text
-30 bound (daily_first per UTC day)
-```
-Subsequent dungeon completions on the same UTC day grant no bound currency. The EXP and item rewards of repeatable dungeons are unaffected.
+The first completion of the UTC day fixes the amount; later completions that day grant no bound currency, even in a higher tier. The EXP and item rewards of repeatable dungeons are unaffected.
 
 Rationale: previously these grants were repeatable with no daily lockout, producing ~90+ bound/hour against a total sink surface of 975. The `daily_first` conversion brings the bound faucet into sustainable balance while preserving the dungeon's core EXP/item value.
 
@@ -197,39 +195,15 @@ offer.bound.bua_giu_bac.cao_cap  -> item.consumable.bua_giu_bac.cao_cap  cost 30
 ```
 The same items remain craftable from PvE materials/common currency, so bound currency is an alternate convenience path rather than a required progression gate.
 
-### Additional Bound Convenience Sinks
-Non-power convenience offers to expand the bound sink surface. All outputs are `CHARACTER_BOUND`, non-tradable, and have a free-to-acquire alternative via gameplay:
-
-```text
-offer.bound.map_reveal        -> unlocks full mini-map overlay for current map session  cost 15 bound
-offer.bound.fast_travel.t1    -> T1-zone safe-anchor fast-travel charge (3 uses)        cost 20 bound
-offer.bound.fast_travel.t2    -> T2-zone safe-anchor fast-travel charge (3 uses)        cost 30 bound
-offer.bound.fast_travel.t3    -> T3-zone safe-anchor fast-travel charge (3 uses)        cost 40 bound
-offer.bound.fast_travel.t4    -> T4-zone safe-anchor fast-travel charge (3 uses)        cost 50 bound
-offer.bound.fast_travel.t5    -> T5-zone safe-anchor fast-travel charge (3 uses)        cost 60 bound
-offer.bound.fast_travel.t6    -> T6-zone safe-anchor fast-travel charge (3 uses)        cost 75 bound
-offer.bound.pity_view         -> reveals current soft-pity counter for one item (information only, no reset) cost 10 bound
-offer.bound.material_sort     -> triggers immediate material bag auto-sort pass          cost 5 bound
-offer.bound.craft_queue.x5    -> crafts next guaranteed recipe 5 times in one confirm    cost 30 bound
-offer.bound.enhance_preview   -> shows expected-cost range for chosen target level before committing  cost 5 bound
-offer.bound.potion_nuoc_la    -> item.consumable.nuoc_la (CHARACTER_BOUND copy)         cost 8 bound
-offer.bound.potion_tra_sen    -> item.consumable.tra_sen (CHARACTER_BOUND copy)         cost 15 bound
-```
-
-Fast-travel via normal gameplay uses `currency.common` as a service; the bound variant is an alternate path. Pity view, material sort, craft queue, and enhance preview are pure convenience tools with no stat effect. Potion offers have the same freely purchasable NPC equivalents.
-
-None of these offers may be used to purchase equipment, Soul instances, stat/skill points, enhancement levels, or randomized loot boxes.
-
-Total expanded sink catalog (Lucky/Insurance + convenience):
+Total addressable bound sink surface (the offer set above is the complete launch bound offer set):
 ```text
 Lucky Charm sinks:  25 + 50 + 120 + 300 = 495
 Insurance sinks:    60 + 120 + 300 = 480
-Convenience sinks:  15+20+30+40+50+60+75+10+5+30+5+8+15 = 363
-Total addressable sink surface = 1,338 bound
+Total addressable sink surface = 975 bound
 ```
 
 ### Bound-Purchase Output Rule
-Any item created by spending `currency.bound` must be non-transferable to other characters/accounts. For the two launch offers:
+Any item created by spending `currency.bound` must be non-transferable to other characters/accounts. For every bound offer above:
 ```text
 source binding override = CHARACTER_BOUND
 binding trigger = ON_ACQUIRE
@@ -449,6 +423,6 @@ Guild War bound cap is character-wide across guild changes
 special grants key on character_id, never account_id
 special launch PvE supply per character (4 canonical sources) = 20
 special launch sink total catalog >= 500 per character
-dungeon bound grant = daily_first per UTC day
-bound expanded sink surface = 1,338 (Lucky/Insurance/convenience)
+bound sink surface = 975 (Lucky/Insurance offers only)
+dungeon bound = one DAILY_FIRST grant per character per UTC day across all dungeons
 ```

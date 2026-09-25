@@ -72,7 +72,7 @@ boss/special arenas required by encounter content
 ## Hidden Folklore Chests (Rương Cổ Bí Ẩn)
 Every adventure FIELD map (18 maps total) features exactly `2` hidden chests under ADR-0023:
 - Perched on high 2D platforms (banyan tree limbs, limestone cave outcroppings, temple gables) requiring precise jumping, except the first-session chest below.
-- Chest object ID: `chest.hidden.<map_id>.<index>` (e.g. `chest.hidden.map.lang_da.bo_ruong.01`).
+- Chest object ID: `chest.hidden.<map_id>.<index>` (e.g. `chest.hidden.map.lang_da.bo_ruong.01`); seasonal extra chests use `chest.hidden.season.<season_region_index>.<region_key>.<index>` and name their map in `../07_content/world_route_catalog.md` (ADR-0061).
 - Opening consumes 1 **Chìa Khóa Cổ** (`item.consumable.chia_khoa_co`).
 - Rewards: Guaranteed Linh Đan (`item.material.linh_dan.*`), regional crafting materials, common currency, and a chance at Lucky Charms.
 - **Personal availability**: A chest is visible and openable independently per `character_id + chest_id`; it is not a race for a shared channel object. A successful open starts a 30-minute cooldown for that character/chest. Changing channel does not bypass this cooldown.
@@ -142,6 +142,8 @@ Restore previous valid instance/position when possible; otherwise:
 1. route to a valid instance of the same map at a legal reconnect/entry spawn,
 2. if the map is unavailable/invalid, use the active checkpoint,
 3. if the active checkpoint is invalid, use `checkpoint.lang_da.dinh_lang`.
+
+Every step places the character under forced placement (`world_rules.md` § Forced Placement); reconnect never fails with `MAP_CAPACITY_FULL`.
 
 Client coordinates are never authoritative.
 

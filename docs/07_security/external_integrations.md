@@ -32,6 +32,13 @@ Chỉ hỗ trợ 3 nhà cung cấp xác thực liên kết (Federated Identity P
 - **Google Play:**
   - Google Play Developer API (Android Publisher v3): `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{packageName}/purchases/products/{productId}/tokens/{token}`
   - Xác thực qua OAuth2 Service Account với quyền `androidpublisher`.
+  - Sau khi `GRANTED`: gọi `.../purchases/products/{productId}/tokens/{token}:acknowledge` (retry có backoff; Google tự hoàn tiền nếu chưa acknowledge sau 3 ngày và báo qua RTDN).
+- **Steam (PC, ADR-0060):** nhà cung cấp thanh toán duy nhất trên PC là Steam Microtransactions (Steamworks Web API, publisher key):
+  - Khởi tạo: `POST https://partner.steam-api.com/ISteamMicroTxn/InitTxn/v3/` (server gọi khi client gọi `/api/v1/iap/steam/init`; `orderid` do server sinh, 64-bit, lưu làm `platform_receipt = orderid`).
+  - Hoàn tất: `POST https://partner.steam-api.com/ISteamMicroTxn/FinalizeTxn/v2/` sau callback `MicroTxnAuthorizationResponse_t` phía client; `GRANTED` chỉ khi kết quả `OK` và `QueryTxn/v3` trả `Succeeded`/`Approved` đã finalize.
+  - Hoàn tiền/chargeback: không có webhook; worker gọi `GetReport/v5` (`type=GAMESALES`) mỗi 10 phút với con trỏ `time` bền vững, xử lý các dòng `Refunded`/`Chargedback` giống notification refund (dedup theo `orderid + status` trong `iap_notification_dedup`).
+  - Sandbox: `ISteamMicroTxnSandbox` khi `IAP_SANDBOX=true`.
+- **Client submission:** mọi nền tảng gửi kết quả mua qua `POST /api/v1/iap/verify` (`validation.md` § IAP Receipt Verification); "regional payment gateway" trong `../03_systems/monetization.md` = Steam trên PC.
 
 ### 2.2 Server Notifications & Webhooks
 - **Apple Server Notifications v2:** Nhận qua webhook endpoint `/api/v1/iap/apple/webhook`. Payload là signed JWS. Server verify chữ ký bằng chứng chỉ Apple root CA.
@@ -86,13 +93,15 @@ Mọi cấu hình môi trường được nạp qua biến môi trường tiêu 
 | `APPLE_PRIVATE_KEY_PEM` | Khi bật IAP | Nội dung private key ES256 |
 | `OPERATOR_TOTP_KEY` | Luôn luôn | 32-byte key (base64) mã hóa AES-256-GCM cho `operators.totp_secret_encrypted` (`auth.md` § Operator) |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Khi bật IAP | Nội dung JSON của Google Service Account |
+| `STEAM_APP_ID` | Khi bật IAP | Steam App ID của game |
+| `STEAM_PUBLISHER_KEY` | Khi bật IAP | Steamworks Web API publisher key (MicroTxn, GetReport) |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | Không | Địa chỉ OpenTelemetry collector |
 
 ## Invariants
 
 ```text
 first-party password = enabled (provider `password`, ADR-0051); federated: Apple, Google, Steam; no password reset at launch
-IAP verification = server-to-server qua Apple/Google official APIs
+IAP verification = server-to-server qua Apple/Google/Steam official APIs; client chỉ gửi receipt qua POST /api/v1/iap/verify
 rate limiting = in-memory L1 + PostgreSQL L2; cấm dùng Redis
 secrets = environment variables only; không hardcode trong repo
 ```

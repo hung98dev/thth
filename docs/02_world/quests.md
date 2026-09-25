@@ -99,6 +99,7 @@ Each character receives a deterministic server-generated board of:
 ```text
 6 DAILY bounty choices (5 revealed + 1 MYSTERY)
 ```
+Seed, template weights (standard and mystery), draw order and target resolution are canonical in `../07_content/quest_catalog.md` § Board Generation.
 
 The player may accept/complete at most:
 ```text
@@ -172,7 +173,7 @@ map/content unlocks
 cosmetics/titles when explicitly defined
 ```
 
-Quest completion does **not** directly grant extra permanent skill points or potential points, except for the explicit MAIN/dungeon FIRST_CLEAR book rewards that grant `item.book.*` consumables per `../01_gameplay/progression.md`. Those books are items, not direct point grants; consuming the item grants the point.
+Quest completion never grants skill points, potential points or `item.book.*`; books come only from the level-milestone schedule in `../01_gameplay/progression.md`.
 
 `currency.special` may only be granted by quests that explicitly belong to a configured special-currency source.
 
@@ -188,7 +189,7 @@ If an item reward cannot fit inventory:
 
 ## Abandon
 Global behavior:
-- `SIDE`, `DAILY`, and eligible `EVENT` quests may be abandoned
+- `SIDE`, `DAILY`, and eligible `EVENT` quests may be abandoned with `C2S_QUEST_ABANDON` (`../05_network/messages.md`); abandoning a DAILY does not consume one of the 3 completions, and that bounty cannot be re-accepted in the same reset cycle
 - `MAIN` quests cannot be abandoned
 
 Abandon resets active objective progress for that quest attempt unless the quest explicitly persists a world progression flag already committed.
@@ -289,9 +290,9 @@ Uses existing objective types only. `CUSTOM` is not required for launch mystery 
 | `DROP_THROUGH` | Authentic endpoint is **below** a one-way platform. Progress only after a legal drop-through (`movement.md`: down + jump). Walking the solid-looking top does not complete. Reuses existing one-way platforms; no extra VFX. |
 | `HEIGHT_BAND` | Authentic INTERACT/REACH requires a standing point above the main path (double-jump perch: banyan limb, gable, cave lip). Main-path volume does not complete. Static sprite. |
 | `WATER_GATE` | Dungeon-only (`mystery_owner = dungeon.*`). Existing sluice/platform stages. Not a field quest type. |
-| `TESTIMONY` | Field only. `TALK` to any 3 of a defined pool of 5 ambient NPCs in the region (`talk_pool[]`). Server resolves which object their accounts jointly implicate and sets `implicated_id`. Player then `INTERACT` the implicated object. Interacting a wrong authored object resets the INTERACT step without failing the quest; `implicated_id` is never changed by a wrong guess. NPC TALK order is free; partial progress persists across death and log-out. `mystery_owner = quest`. |
+| `TESTIMONY` | Field only. `TALK` to any 3 of a pool of exactly 5 NPCs of the region's safe anchor: its 4 ambient NPCs plus its `nguoi_dan_duong` (`talk_pool[]`; a DAY_ONLY/NIGHT_ONLY NPC is talkable only while present). Server resolves which object their accounts jointly implicate and sets `implicated_id`. Player then `INTERACT` the implicated object. Interacting a wrong authored object resets the INTERACT step without failing the quest; `implicated_id` is never changed by a wrong guess. NPC TALK order is free; partial progress persists across death and log-out. `mystery_owner = quest`. |
 
-Payload: spatial `sequence[]` (≤2 authentic; `zone.nui_thieng` field LIGHT_ORDER may use 3), `authentic_ids[]`, `decoy_ids[]`, one-way platform id, perch id, static hazard ids, `talk_pool[]` (exactly 5 ambient NPC ids), `implicated_id`, `wrong_object_ids[]`. Banned: `EVIDENCE` fetch, `TIMING_WINDOW` telegraph loops. `LISTEN` is available as an objective type and is not banned.
+Payload: spatial `sequence[]` (≤2 authentic; `zone.nui_thieng` field LIGHT_ORDER may use 3), `authentic_ids[]`, `decoy_ids[]`, one-way platform id, perch id, static hazard ids, `talk_pool[]` (exactly 5 NPC ids: 4 ambient + the guide), `implicated_id`, `wrong_object_ids[]`. Banned: `EVIDENCE` fetch, `TIMING_WINDOW` telegraph loops. `LISTEN` is available as an objective type and is not banned.
 
 ## Event Quests
 EVENT availability is derived from the owning event's authoritative state.
@@ -370,7 +371,7 @@ quest rewards are idempotent
 MAIN/SIDE mystery_type in {LIGHT_ORDER,FALSE_TRAIL,FORBIDDEN_GROUND,DROP_THROUGH,HEIGHT_BAND,WATER_GATE,TESTIMONY}
 field LIGHT_ORDER authentic <= 2 except zone.nui_thieng field may use 3
 field mystery_owner=quest never WATER_GATE or TIMING_WINDOW
-TESTIMONY talk_pool = exactly 5 ambient NPC ids; INTERACT wrong object resets, does not fail
+TESTIMONY talk_pool = the 4 ambient NPCs + guide of the region anchor; INTERACT wrong object resets, does not fail
 FORBIDDEN_GROUND spawns no extra entities
 DROP_THROUGH uses movement.md one-way drop-through
 HEIGHT_BAND perch requires double-jump, not main-path REACH

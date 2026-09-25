@@ -36,7 +36,7 @@ Tài liệu này là đặc tả đầu vào duy nhất cho Content Compiler (`I
 | # | Catalog File | Primary Key | Mô tả thực thể |
 |---|---|---|---|
 | 1 | `monster_catalog.md` | `monster_id` | 58 quái vật (46 Normal + 12 Elite) |
-| 2 | `boss_catalog.md` | `boss_id` | 10 trùm (8 thế giới/phó bản + 2 giai đoạn finale) |
+| 2 | `boss_catalog.md` | `boss_id` | 8 trùm (2 PUBLIC + 5 boss phó bản + finale `boss.than_trung`; các giai đoạn finale là phase, không phải boss_id riêng) |
 | 3 | `class_skill_catalog.md` | `skill_id` | 60 kỹ năng (12 kỹ năng × 5 phái) |
 | 4 | `equipment_catalog.md` | `equipment_id` | 168 trang bị (12 bộ × 14 vị trí) |
 | 5 | `item_catalog.md` | `item_id` | Vật phẩm tiêu hao, nguyên liệu, đá nâng cấp |
@@ -48,7 +48,7 @@ Tài liệu này là đặc tả đầu vào duy nhất cho Content Compiler (`I
 | 11 | `world_route_catalog.md` | `map_id` | 24 bản đồ, 52 cổng dịch chuyển, checkpoints |
 | 12 | `map_spawn_catalog.md` | `spawn_group_id` | 54 nhóm quái cố định trên 18 field maps |
 | 13 | `atlas_catalog.md` | `atlas_page_id` | 104 trang nhật ký dân gian (4 danh mục) |
-| 14 | `cosmetic_catalog.md` | `cosmetic_id` | 284 ngoại trang (135 cày cuốc, 13 IAP, 136 mùa) |
+| 14 | `cosmetic_catalog.md` | `cosmetic_id` | 294 ngoại trang (145 cày cuốc, 13 IAP, 136 mùa) |
 | 15 | `soul_catalog.md` | `soul_id` | 25 khế ước linh hồn thu thập |
 | 16 | `build_catalog.md` | `entry_id` | Mạch khí (Meridian) và Trận pháp (Formations) |
 | 17 | `spirit_beast_catalog.md` | `beast_id` | 10 linh thú đồng hành |

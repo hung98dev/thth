@@ -108,7 +108,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-082` | Durable Command Queue & Backpressure | `NOT_STARTED` | IMP-005, IMP-068, IMP-098 | `../06_data/database.md`, `../06_data/save_rules.md` |
 | `IMP-083` | Task-Graph & Architecture Conformance (Q0/Q4) | `NOT_STARTED` | IMP-000, IMP-061 | `architecture_conformance.md`, `repository_layout.md` |
 | `IMP-084` | Death / Respawn | `NOT_STARTED` | IMP-014, IMP-016, IMP-018 | `../01_gameplay/death_respawn.md`, `../01_gameplay/combat.md` |
-| `IMP-085` | Folklore Feats & Titles | `NOT_STARTED` | IMP-019, IMP-022, IMP-027, IMP-038, IMP-040, IMP-058 | `../03_systems/cosmetics.md`, `../07_content/cosmetic_catalog.md` |
+| `IMP-085` | Folklore Feats & Titles | `NOT_STARTED` | IMP-019, IMP-022, IMP-027, IMP-038, IMP-040, IMP-042, IMP-058 | `../03_systems/cosmetics.md`, `../07_content/cosmetic_catalog.md` |
 | `IMP-086` | Chivalry Points & Titles | `NOT_STARTED` | IMP-023, IMP-034, IMP-038 | `../03_systems/social.md`, `../06_data/data_model.md` |
 | `IMP-087` | Open Sparring Ring | `NOT_STARTED` | IMP-018, IMP-039 | `../03_systems/pvp.md`, `../02_world/world_rules.md` |
 | `IMP-088` | Weapon Glow & Aura | `NOT_STARTED` | IMP-027, IMP-101 | `../03_systems/crafting.md`, `../04_architecture/client_assets.md` |
@@ -326,11 +326,12 @@ Execute `../07_content/integration_validation.md` + `balance_validation.md` befo
 - invalid revision leaves previous valid revision active,
 - missing/mismatched size profile, bounds, topology, scene key or geometry export rejects activation,
 - out-of-band skill reach, viewport envelope overflow, prose-only secondary geometry, or displacement tag/effect mismatch rejects activation,
+- `class_skill_catalog.md` validation assertions 4 and 19-21 (cooldown bands and phase sums, status template completeness, class damage element, tag/payload and target-group consistency) reject activation,
 - hard balance failure rejects activation.
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
 
 ## Tests
-- `server/internal/config/activation_test.go`: TestAtomicActivationLifecycle, TestInvalidRevisionPreservesPrevious, TestSpatialGeometryIntegrationRejection, TestSkillReachActivationRejection, TestSkillSecondaryGeometryRejection, TestSkillDisplacementTagRejection, TestHardBalanceFailureRejection.
+- `server/internal/config/activation_test.go`: TestAtomicActivationLifecycle, TestInvalidRevisionPreservesPrevious, TestSpatialGeometryIntegrationRejection, TestSkillReachActivationRejection, TestSkillSecondaryGeometryRejection, TestSkillDisplacementTagRejection, TestSkillCooldownBandAndPhaseSumRejection, TestSkillStatusTemplateCompletenessRejection, TestSkillDamageElementRejection, TestSkillTagTargetGroupRejection, TestHardBalanceFailureRejection.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -345,7 +346,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../05_network/protocol.md`, `../05_network/messages.md`, `../05_network/errors.md`, `../05_network/protobuf_conventions.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `repository_layout.md`]
-adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
+adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-000]
 owned_paths: [`proto/thinhthan/v1/`, `proto/testdata/golden/`, `scripts/codegen.ps1`, `server/internal/protocol/v1/`, `server/internal/testing/protocol/`, `client/Assets/Scripts/Protocol/`, `client/Assets/Tests/EditMode/ProtocolParity/`]
 forbidden_paths: [`server/cmd/server/`]
@@ -359,6 +360,7 @@ consumers_checked: [AGENTS.md, docs/05_network/messages.md, docs/05_network/prot
 - Target `server/internal/protocol/v1/` and `client/Assets/Scripts/Protocol/` with zero manual edits; never generate a duplicate flat Go package.
 - Add codegen drift detection to verification harness.
 - Prepend the deterministic generated-C# header `#nullable disable` + protobuf `#pragma warning disable` set (`engineering_conventions.md` §2.7) inside `scripts/codegen.ps1`.
+- Author the ADR-0060 additions: IDs 111..117, 208, 426..438, 507..515, 650..652, 814..818 and the completed field lists for 103, 200..207, 304, 400..409, 504/505, 700..709, 730..744, 802, 808, 628, 632; every new `errors.md` code in the generated error enum.
 
 ## Acceptance
 - Every message ID registered in `../05_network/messages.md` compiles deterministically across Go and C# targets,
@@ -366,10 +368,12 @@ consumers_checked: [AGENTS.md, docs/05_network/messages.md, docs/05_network/prot
 - Wire schema tests confirm one-to-one mapping between envelope and payloads.
 - CODE-004: every generated C# file begins with the `#nullable disable` + pragma header, compiles under `csc.rsp` with 0 warnings and stays byte-identical on regeneration.
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
+- ADR-0060: every message and field list added by ADR-0060 exists in the proto schemas and the registry; every `errors.md` code (incl. ADR-0060 codes) is in the generated error enum.
 
 ## Tests
 - `server/internal/testing/protocol/registry_test.go`: TestMessageRegistryMapping, TestBinaryEncodingParity, TestCodegenDriftCheck, TestGeneratedCSharpHeader (CODE-004).
 - `client/Assets/Tests/EditMode/ProtocolParity/ProtocolParityTests.cs`: generated registry coverage and shared binary golden decode/encode parity.
+- `server/internal/testing/protocol/registry_test.go`: TestAdr0060MessagesRegistered, TestErrorEnumMatchesErrorsMd (ADR-0060).
 
 generated_artifacts: [`server/internal/protocol/v1/*.pb.go`, `client/Assets/Scripts/Protocol/*.cs`]
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -672,7 +676,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../06_data/database.md`, `../06_data/data_model.md`]
-adrs: [`0040-world-consequence-durable-aggregate.md`, `0053-durable-contract-reconciliation.md`]
+adrs: [`0040-world-consequence-durable-aggregate.md`, `0053-durable-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-005, IMP-068, IMP-098]
 owned_paths: [`server/internal/durable/lockorder/`]
 forbidden_paths: [`server/migrations/`, `client/`, `server/internal/sim/`]
@@ -683,13 +687,17 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement the helper every multi-aggregate transaction uses to lock rows in the canonical aggregate order of `../06_data/database.md`.
 
+- Encode the ADR-0060 lock-order table (20 priorities, `database.md` § Lock Order).
+
 ## Acceptance
 - multi-aggregate transactions lock in `database.md` order with a deterministic key sort inside one aggregate type,
 - out-of-order acquisition fails with a typed error in test builds,
 - concurrent transfer fixture runs 1,000 iterations on PostgreSQL 18.6 without deadlock.
+- ADR-0060: helper priorities equal `database.md` § Lock Order exactly (incl. beasts, souls, character cosmetics, friends/blocks, guild progression, PvP/Guild War settlements).
 
 ## Tests
 - `server/internal/durable/lockorder/lockorder_test.go`: TestCanonicalOrder, TestOutOfOrderRejected, TestNoDeadlockConcurrentTransfers.
+- `server/internal/durable/lockorder/lockorder_test.go`: TestLockOrderMatchesDatabaseMd (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -847,7 +855,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../06_data/database.md`, `../06_data/save_rules.md`, `../06_data/data_model.md`, `../06_data/migrations.md`, `../06_data/physical_schema_contract.md`]
-adrs: [`0011-postgresql-relational-persistence.md`, `0040-world-consequence-durable-aggregate.md`, `0048-character-update-timestamp.md`, `0053-durable-contract-reconciliation.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
+adrs: [`0011-postgresql-relational-persistence.md`, `0040-world-consequence-durable-aggregate.md`, `0048-character-update-timestamp.md`, `0053-durable-contract-reconciliation.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-001]
 owned_paths: [`server/internal/durable/idempotency/`, `server/internal/durable/db/`, `server/internal/durable/schema/`, `server/migrations/`, `server/cmd/migrate/`, `server/internal/testing/pgtest/`]
 forbidden_paths: [`server/internal/sim/`, `client/Assets/Scripts/`]
@@ -860,6 +868,8 @@ Implement PostgreSQL-backed stable operation dedupe/result replay under `../06_d
 
 IMP-005 is the only migration owner. No other packet adds a migration; a later schema change is a spec change whose new numbered pair is owned by a new packet.
 
+- Baseline also creates the ADR-0060 tables/columns: `character_cosmetic_entitlements`, `character_cosmetic_equips`, `character_souls`, `character_beast_food_daily`; `account_iap_entitlements.grant_state` incl. `REJECTED` + `reject_reason` + `platform`; `account_cosmetic_entitlements.first_equipped_at`; no `accounts.iap_refund_consumed_score` column.
+
 ## Acceptance
 - duplicate/retry/restart settlement commits at most once,
 - commit-before-response retry reconstructs the same outcome,
@@ -868,11 +878,13 @@ IMP-005 is the only migration owner. No other packet adds a migration; a later s
 - baseline 000001 applies, rolls back and re-applies on PostgreSQL 18.6; committed migration files are immutable (hash-checked),
 - per-constraint schema snapshot: every table, column, key, check, foreign key and index of `physical_schema_contract.md` matches the migrated catalog, one assertion per constraint,
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
+- ADR-0060: baseline schema contains the ADR-0060 tables, columns and CHECKs; `accounts` has no refund-score column.
 
 ## Tests
 - `server/internal/durable/idempotency/idempotency_test.go`: TestOperationDeduplication, TestCommitBeforeResponseRetry, TestConflictingPayloadRejection, TestPostgresUniqueConstraint.
 - `server/internal/durable/schema/schema_snapshot_test.go`: TestBaselineApplyDownApply, TestPerConstraintSnapshot, TestMigrationsImmutable.
 - `server/internal/testing/pgtest/pgtest_test.go`: TestUsesPresetDsn, TestStartsEdbBinariesWhenDsnUnset.
+- `server/internal/durable/schema/schema_snapshot_test.go`: TestBaselineAdr0060Tables, TestNoStoredRefundScore (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -991,7 +1003,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/items.md`, `../06_data/data_model.md`, `../06_data/physical_schema_contract.md`]
-adrs: [`0029-character-resource-isolation.md`, `0043-spirit-beast-instance-identity.md`]
+adrs: [`0029-character-resource-isolation.md`, `0043-spirit-beast-instance-identity.md`, `0063-economy-contract-reconciliation.md`]
 depends_on: [IMP-005, IMP-068, IMP-082, IMP-097]
 owned_paths: [`server/internal/durable/items/`]
 forbidden_paths: [`server/internal/sim/`, `client/Assets/Scripts/`]
@@ -1007,9 +1019,11 @@ Implement item definitions/instances/binding/source binding override and exactly
 - inventory/equipped/storage/trade/Auction/claim custody cannot coexist for the same item instance,
 - binding never loosens,
 - bound-purchase laundering regression passes.
+- items offered in a direct trade stay trade-locked in `CHARACTER_INVENTORY` (no `TRADE_ESCROW` location); definition defaults (`discard_allowed`, `shared_cooldown_group` with HP 8s/MP 8s/BUFF 5s/FOOD 1s) apply when a catalog row omits them (ADR-0063).
 
 ## Tests
 - `server/internal/durable/items/items_test.go`: TestItemInstanceCreation, TestSingleItemLocationConstraint, TestCharacterBoundOwnership, TestAccountScopedAccess.
+- `server/internal/durable/items/items_defaults_test.go`: TestTradeLockBlocksMoveUseDiscard, TestDefinitionDefaultsDiscardAllowed, TestSharedCooldownGroups.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1024,7 +1038,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/inventory.md`, `../03_systems/account_storage.md`, `../06_data/physical_schema_contract.md`]
-adrs: [`0029-character-resource-isolation.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0053-durable-contract-reconciliation.md`]
+adrs: [`0029-character-resource-isolation.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0053-durable-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-008, IMP-066]
 owned_paths: [`server/internal/durable/inventory/`, `client/Assets/Scripts/Systems/Inventory/`, `client/Assets/Scripts/UI/Inventory/`, `client/Assets/Tests/PlayMode/InventoryPanel/`]
 forbidden_paths: [`server/internal/sim/`]
@@ -1035,12 +1049,16 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement inventory capacity/stacking/expansion. `account_storage.md` is the IAP entitlement panel only (ADR-0029): it is not a gameplay item vault and does not introduce an `ACCOUNT_STORAGE` item location.
 
+- Implement `C2S_INVENTORY_MUTATE` ops MOVE/SPLIT/MERGE/SORT/DISCARD/USE framing, `C2S_INVENTORY_EXPAND` (428/429) and the state pushes `S2C_WALLET_STATE` (432), `S2C_INVENTORY_STATE` (433), `S2C_ENTITLEMENT_PANEL_STATE` (435) after attach and every change.
+
 ## Acceptance
 - full inventory, split/merge, and entitlement-panel (non-vault) tests pass; no item instance may occupy account storage.
+- ADR-0060: 400 ops and 428 follow `messages.md` field lists; expansion price steps and `CAPACITY_FULL` at 120; 432/433/435 are full snapshots sent after attach and every committed change.
 
 ## Tests
 - `server/internal/durable/inventory/inventory_test.go`: TestInventoryCapacityStacking, TestInventoryExpansionLimits, TestIAPEntitlementPanelAccess.
 - `client/Assets/Tests/PlayMode/InventoryPanel/InventoryPanelTests.cs`: authoritative inventory snapshot/delta, claim overflow, IAP panel separation.
+- `server/internal/durable/inventory/inventory_test.go`: TestInventoryMutateOps, TestInventoryExpandSteps, TestStatePushAfterAttachAndChange (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1055,7 +1073,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/reward_claims.md`, `../06_data/data_model.md`, `../06_data/physical_schema_contract.md`]
-adrs: [`0012-reward-claim-item-materialization.md`]
+adrs: [`0012-reward-claim-item-materialization.md`, `0063-economy-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-005, IMP-007, IMP-008, IMP-009, IMP-011]
 owned_paths: [`server/internal/durable/reward/`, `client/Assets/Scripts/Systems/Rewards/`, `client/Assets/Scripts/UI/Rewards/`, `client/Assets/Tests/PlayMode/RewardClaimUi/`]
 forbidden_paths: [`server/internal/sim/`]
@@ -1066,12 +1084,18 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement persistent overflow/recovery claims and compatible currency aggregation.
 
+- Persist `source_type` (enum in `reward_claims.md`, incl. `LEVEL_MILESTONE`) and `source_reference`; implement 408/409 field lists and the `S2C_REWARD_CLAIMS_STATE` (434) push.
+
 ## Acceptance
 - independent reward slots settle without sibling rollback/reroll.
+- at the 100-claim cap an item claim consolidates per `owner_character_id + item_id + effective_binding` (never per-instance state); preventable sources reject with `CLAIM_CAP_REACHED` and consume nothing; non-preventable sources exceed the cap; no reward is deleted (ADR-0063).
+- ADR-0060: unknown `source_type` is rejected; 409 returns granted lines; 434 lists every PENDING claim with `cap = 100`.
 
 ## Tests
 - `server/internal/durable/reward/reward_test.go`: TestRewardClaimMaterialization, TestPersistentOverflowClaims, TestCompatibleCurrencyAggregation.
 - `client/Assets/Tests/PlayMode/RewardClaimUi/RewardClaimUiTests.cs`: claim list, retry, overflow materialization, and authoritative rejection/result states.
+- `server/internal/durable/reward/claim_cap_test.go`: TestClaimCapConsolidatesSameItemBinding, TestClaimCapNeverConsolidatesInstances, TestClaimCapRejectsPreventableSource, TestClaimCapSoftForNonPreventableLoot.
+- `server/internal/durable/reward/reward_test.go`: TestRewardClaimSourceTypeEnum, TestRewardClaimsStatePush (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1086,7 +1110,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../01_gameplay/progression.md`, `../01_gameplay/stats.md`]
-adrs: [`0031-exp-scale-x100-and-corrected-act-budgets.md`, `0032-seven-channel-exp-source-portfolio.md`, `0033-skill-unlock-schedule-remap.md`, `0034-just-guard-edge-trigger-streak.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`]
+adrs: [`0031-exp-scale-x100-and-corrected-act-budgets.md`, `0032-seven-channel-exp-source-portfolio.md`, `0033-skill-unlock-schedule-remap.md`, `0034-just-guard-edge-trigger-streak.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-007, IMP-066, IMP-100]
 owned_paths: [`server/internal/sim/progression/`, `server/internal/durable/progression/`, `client/Assets/Scripts/Systems/Progression/`, `client/Assets/Scripts/UI/Progression/`, `client/Assets/Tests/EditMode/ProgressionPresentation/`]
 forbidden_paths: [`server/migrations/`]
@@ -1097,12 +1121,17 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement level/EXP, skill/potential points, allocation/respec, final stat pipeline.
 
+- Implement `C2S_SKILL_UPGRADE` (511), `C2S_POTENTIAL_ALLOCATE` (512), `C2S_RESPEC` (513), `S2C_PROGRESSION_MUTATE_RESULT` (514) and `S2C_PROGRESSION_STATE` (515).
+
 ## Acceptance
-- formula vectors and Level-60 stop pass exactly.
+- formula vectors and Level-60 stop pass exactly,
+- `C2S_SKILL_UPGRADE`, `C2S_POTENTIAL_ALLOCATE` and `C2S_RESPEC` follow `progression.md` § Skill Points / § Respec: all-or-nothing, idempotent by `operation_id`, rejects `SKILL_POINTS_INSUFFICIENT`, `SKILL_MAX_LEVEL`, `SKILL_NOT_LEARNED`, `POTENTIAL_POINTS_INSUFFICIENT`, `POTENTIAL_CAP_EXCEEDED`, `INSUFFICIENT_CURRENCY`, `IN_COMBAT`, `INVALID_STATE`; respec charge and refund commit in one transaction.
+- ADR-0060: skill upgrade costs 1 point and rejects `SKILL_NOT_LEARNED`/`SKILL_MAX_LEVEL`/`SKILL_POINTS_INSUFFICIENT`; allocation is all-or-nothing with `POTENTIAL_POINTS_INSUFFICIENT`/`POTENTIAL_CAP_EXCEEDED`; respec refunds all points of its kind at the `progression.md` price; `expected_level` mismatch is `STATE_CONFLICT`.
 
 ## Tests
-- `server/internal/sim/progression/progression_test.go`: TestLevelEXPCurve, TestPotentialPointAllocation, TestSkillPointBudget59, TestStatPipelineResolution.
+- `server/internal/sim/progression/progression_test.go`: TestLevelEXPCurve, TestPotentialPointAllocation, TestSkillPointBudget59, TestStatPipelineResolution, TestSkillUpgradeRejects, TestPotentialAllocateAllOrNothingCap, TestRespecChargeAndRefundAtomic, TestProgressionOpsIdempotent.
 - `client/Assets/Tests/EditMode/ProgressionPresentation/ProgressionPresentationTests.cs`: level/EXP/potential/skill-point authoritative projection.
+- `server/internal/sim/progression/progression_test.go`: TestSkillUpgradeMessage, TestPotentialAllocateAllOrNothing, TestRespecMessage, TestProgressionStatePush (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1117,7 +1146,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/equipment.md`, `../07_content/equipment_catalog.md`]
-adrs: [`0021-hardcore-enhancement-rate-curve.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`]
+adrs: [`0021-hardcore-enhancement-rate-curve.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-008, IMP-009, IMP-011]
 owned_paths: [`server/internal/sim/equipment/`, `server/internal/durable/equipment/`, `client/Assets/Scripts/Systems/Equipment/`, `client/Assets/Scripts/UI/Equipment/`, `client/Assets/Tests/PlayMode/EquipmentUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -1128,12 +1157,16 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement 14 slots, 3 loadouts, ACTIVE/SUPPORT selection, persistent rolls/enhancement state.
 
+- Implement `C2S_LOADOUT_CHANGE` kinds EQUIP/UNEQUIP/SWITCH_ACTIVE and `S2C_LOADOUT_RESULT` field lists (`messages.md` 402/403).
+
 ## Acceptance
 - one-instance-one-slot/loadout contribution tests pass.
+- ADR-0060: EQUIP displaces to inventory, UNEQUIP requires capacity and returns a contracted Soul to Collection atomically, SWITCH_ACTIVE follows `equipment.md`.
 
 ## Tests
 - `server/internal/sim/equipment/equipment_test.go`: TestFourteenEquipmentSlots, TestThreeLoadoutSwitching, TestEnhancementSuccessCurve, TestLuckyCharmProtection.
 - `client/Assets/Tests/PlayMode/EquipmentUi/EquipmentUiTests.cs`: equip/loadout rejection and authoritative stat refresh.
+- `server/internal/sim/equipment/equipment_test.go`: TestLoadoutChangeEquipUnequipSwitch (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1239,7 +1272,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../01_gameplay/combat.md`, `../01_gameplay/skills.md`, `../04_architecture/realtime_loop.md`, `../09_testing/gameplay.md`, `../05_network/protocol.md`]
-adrs: [`0018-combat-target-caps-and-skill-scaling.md`, `0026-just-guard-and-ma-am-status.md`, `0034-just-guard-edge-trigger-streak.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0040-world-consequence-durable-aggregate.md`, `0047-skill-reach-budget-and-collider-aware-resolution.md`, `0054-wire-message-completion.md`]
+adrs: [`0018-combat-target-caps-and-skill-scaling.md`, `0026-just-guard-and-ma-am-status.md`, `0034-just-guard-edge-trigger-streak.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0040-world-consequence-durable-aggregate.md`, `0047-skill-reach-budget-and-collider-aware-resolution.md`, `0054-wire-message-completion.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-011, IMP-013, IMP-081]
 owned_paths: [`server/internal/sim/combat/`, `client/Assets/Scripts/Systems/Combat/`, `client/Assets/Tests/PlayMode/CombatPresentation/`]
 forbidden_paths: [`server/migrations/`, `server/internal/durable/`, `client/Assets/Scripts/UI/`]
@@ -1251,16 +1284,20 @@ consumers_checked: [docs/01_gameplay/combat.md, docs/01_gameplay/skills.md, docs
 Implement STARTUP->ACTIVE->RECOVERY, action IDs, interruption, `in_combat`, and death-state entry (respawn is IMP-084).
 Implement Just Guard (ADR-0034, ADR-0038) and its latency model per `../01_gameplay/combat.md`: edge trigger from `C2S_MOVEMENT_EDGE`, streak, per-session `RTT_estimate` = EWMA(alpha 1/8) of IMP-081 heartbeat RTT samples (200 ms before the first sample), 80 ms compensation clamp.
 
+- Implement the ADR-0060 field lists of 200..207 and `S2C_COMBAT_EVENT` (304): `sint32` millimetre positions, `facing`, `area_center_*_mm`, `outcome`, `is_crit`, `damage_element`, damage terms, HP/shield after, `killed`.
+
 ## Acceptance
 - replay/interrupt/combat-lock tests pass,
 - target eligibility uses authoritative shape/hurtbox intersection and stable tie-breaking; sprite/pivot/client distance never decides a hit.
 - Just Guard fires on the server in a synthetic round trip with simulated latency within the 80 ms clamp and does not fire beyond it,
 - Just Guard streak follows ADR-0034; a coalesced or missing movement edge never produces a true positive,
 - `RTT_estimate` follows the EWMA rule and 200 ms default; client-declared latency is never trusted.
+- ADR-0060: `S2C_ACTION_REJECTED` carries `request_message_id` and a listed error code (incl. `INSUFFICIENT_MP`); combat events carry every field in `messages.md`.
 
 ## Tests
 - `server/internal/sim/combat/combat_test.go`: TestStartupActiveRecoveryTiming, TestActionInterruptionRules, TestInCombatStateLifecycle, TestTargetCapsEnforcement, TestClosestHurtboxRangeBoundary, TestSpriteBoundsCannotCreateHit, TestJustGuardWithinClampFires, TestJustGuardBeyondClampRejected, TestJustGuardStreak, TestRttEwmaLatencyModel.
 - `client/Assets/Tests/PlayMode/CombatPresentation/CombatPresentationTests.cs`: action start/reject/interrupt/death authoritative presentation.
+- `server/internal/sim/combat/combat_test.go`: TestCombatWireFieldLists, TestActionRejectedCodes (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1313,7 +1350,7 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../01_gameplay/status_effects.md`, `../01_gameplay/combat.md`]
+specs: [`../01_gameplay/status_effects.md`, `../01_gameplay/combat.md`, `../07_content/class_skill_catalog.md`]
 adrs: [`0002-effect-value-shield-contract.md`, `0034-just-guard-edge-trigger-streak.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0038-discrete-movement-edge-input-message.md`, `0054-wire-message-completion.md`]
 depends_on: [IMP-014, IMP-015]
 owned_paths: [`server/internal/sim/effects/`, `client/Assets/Scripts/Systems/Effects/`, `client/Assets/Tests/PlayMode/EffectPresentation/`]
@@ -1326,10 +1363,13 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 Implement damage/heal/status/buff/debuff/shield/displacement/resource effects and recursion safety.
 
 ## Acceptance
-- `../09_testing/gameplay.md` combat/status tests pass.
+- `../09_testing/gameplay.md` combat/status tests pass,
+- reapply semantics (`REFRESH_DURATION`, `STACK`, `REPLACE_STRONGER`, `IGNORE`; control templates never shorten) and `(target, effect_id)` vs per-source instance keys follow `status_effects.md` § Reapply Rule,
+- DoT ticks are anchored at first application; a refresh extends expiry and replaces the ATTACK snapshot without moving the anchor; stacked DoTs tick `stack_count` times the per-stack value,
+- `SLOW_IMMUNE` rejects new SLOW instances; `DISPLACEMENT_IMMUNE` rejects DISPLACEMENT instances and forced-position results while the rest of the hit resolves.
 
 ## Tests
-- `server/internal/sim/effects/effects_test.go`: TestDamageResolutionOrder, TestShieldAbsorptionLifecycle, TestStatusEffectStacking, TestRecursionSafetyCap.
+- `server/internal/sim/effects/effects_test.go`: TestDamageResolutionOrder, TestShieldAbsorptionLifecycle, TestStatusEffectStacking, TestRecursionSafetyCap, TestReapplySemantics, TestControlRefreshNeverShortens, TestInstanceKeyTargetVsSource, TestDotTickAnchorOnRefresh, TestImmunityTagsSlowAndDisplacement.
 - `client/Assets/Tests/PlayMode/EffectPresentation/EffectPresentationTests.cs`: status/shield/heal/secondary-result rendering and pooling.
 
 generated_artifacts: []
@@ -1345,7 +1385,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../01_gameplay/classes.md`, `../07_content/class_skill_catalog.md`]
-adrs: [`0016-twelve-skill-pool-upgradeable-basics.md`, `0033-skill-unlock-schedule-remap.md`]
+adrs: [`0016-twelve-skill-pool-upgradeable-basics.md`, `0033-skill-unlock-schedule-remap.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-015, IMP-016]
 owned_paths: [`server/internal/sim/classes/`, `client/Assets/Scripts/Systems/Classes/`, `client/Assets/Tests/EditMode/ClassPresentation/`]
 forbidden_paths: [`server/migrations/`, `server/internal/durable/`, `client/Assets/Scripts/UI/`]
@@ -1356,17 +1396,24 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement all five class kits and Level1..12 / Level1..6 scaling under ADR-0016.
 
+- Implement `C2S_LOADOUT_CHANGE kind=SKILL_SET` (1 basic + 5 active slots).
+
 ## Acceptance
 - 60 upgradeable skills (4 basic + 5 active + 3 passive per class),
 - basic and active skills scale 1..12; passive skills scale 1..6,
-- basic attack cooldown scales to class speed caps (0.2s..0.5s) with status proc scaling,
+- every basic's Lv1/Lv12 cooldown lies inside its class band in `skills.md` and its startup/active/recovery sum equals `base_cd`; `proc_bp` interpolates linearly from `base_proc` (Lv1) to exactly `max_proc` (Lv12),
+- every damage component uses the owning class element; every applied status uses its catalog template,
+- `han_khi` consumes only the caster's own 3 CHILL stacks, applies its FREEZE, and respects the 5,000ms per-target lockout,
+- KHAC detonation follows `classes.md` § KHAC DETONATION resolution (remaining scheduled ticks x stacks, x1.50, one result per consumed instance, 2.0s limit),
 - only `skill.kim.basic.vo_song_kiem` carries PENETRATE at ratio 0.15; other basic_4 skills have neither the tag nor a ratio,
 - every upgrade changes a numeric outcome,
 - synthetic class combat fixtures pass.
+- ADR-0060: SKILL_SET rejects unlearned, wrong-type or duplicate skills with `SKILL_LOADOUT_INVALID`; empty active slots are valid.
 
 ## Tests
-- `server/internal/sim/classes/classes_test.go`: TestFiveClassKitsResolution, TestBasicAttackScalingLevel12, TestActiveSkillScalingLevel12, TestPassiveScalingLevel6.
+- `server/internal/sim/classes/classes_test.go`: TestFiveClassKitsResolution, TestBasicAttackScalingLevel12, TestActiveSkillScalingLevel12, TestPassiveScalingLevel6, TestProcInterpolationReachesMaxAtLevel12, TestDamageElementIsClassElement, TestHanKhiConsumesOwnChillWithLockout, TestKhacDetonationRemainingTicks.
 - `client/Assets/Tests/EditMode/ClassPresentation/ClassPresentationTests.cs`: five class kits and skill-level data projection.
+- `server/internal/sim/classes/classes_test.go`: TestSkillLoadoutSet (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1395,11 +1442,11 @@ Implement `death_respawn.md`: atomic death steps, dead-state restrictions, statu
 ## Acceptance
 - death processing is atomic and idempotent,
 - dead characters cannot move, attack, interact or be healed; UI/chat and respawn request stay available,
-- respawn after 3 s at the marked checkpoint with `floor(MAX * 0.40)` HP/MP; an invalid checkpoint falls back to `checkpoint.lang_da.dinh_lang`; client coordinates are never accepted,
+- normal-world respawn happens only on `C2S_RESPAWN_REQUEST` at least 3 s after death (earlier or non-dead requests reject with `INVALID_STATE`; without a request the character stays `DEAD`, including across reconnect), at the marked checkpoint with `floor(MAX * 0.40)` HP/MP; an invalid checkpoint falls back to `checkpoint.lang_da.dinh_lang`; client coordinates are never accepted,
 - during the 3 s invulnerability incoming hostile damage and harmful statuses are ignored and outgoing damage is 0.
 
 ## Tests
-- `server/internal/sim/death/death_test.go`: TestDeathAtomicSteps, TestDeathIdempotent, TestDeadStateRestrictions, TestRespawnDelay3s, TestRespawnHpMp40Percent, TestInvalidCheckpointFallback, TestRespawnInvulnerability3s, TestOutgoingDamageZeroWhileInvulnerable.
+- `server/internal/sim/death/death_test.go`: TestDeathAtomicSteps, TestDeathIdempotent, TestDeadStateRestrictions, TestRespawnDelay3s, TestRespawnRequestBeforeDelayRejected, TestNoRespawnWithoutRequest, TestRespawnHpMp40Percent, TestInvalidCheckpointFallback, TestRespawnInvulnerability3s, TestOutgoingDamageZeroWhileInvulnerable.
 - `client/Assets/Tests/PlayMode/DeathPresentation/DeathPresentationTests.cs`: dead/respawning/active presentation from server events.
 
 generated_artifacts: []
@@ -1587,7 +1634,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../02_world/README.md`, `../02_world/maps_zones.md`, `../02_world/world_rules.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/world_route_catalog.md`, `../04_architecture/client_performance.md`]
-adrs: [`0020-map-channel-capacity-contract.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
+adrs: [`0020-map-channel-capacity-contract.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0060-wire-and-durable-contract-completion.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-013, IMP-066, IMP-100]
 owned_paths: [`server/internal/sim/world/`, `server/internal/durable/world/`, `client/Assets/Scripts/Systems/World/`, `client/Assets/Tests/PlayMode/WorldTransferPresentation/`]
 forbidden_paths: [`server/migrations/`, `client/Assets/Scripts/UI/`]
@@ -1598,16 +1645,22 @@ consumers_checked: [docs/02_world/maps_zones.md, docs/04_architecture/client_exp
 ## Change
 Implement normal-world map instances, entry spawns, portals, checkpoints, transfer failure/reconnect fallback.
 
+- Implement `C2S_INTERACT` `NPC_SERVICE` with `service_id` `set_checkpoint | travel` and `service_param`, and `S2C_INTERACT_RESULT` (116) for every interact.
+
 ## Acceptance
 - 24-map/52-portal route compile and anti-softlock tests pass,
 - all 24 maps load exact, mutually distinct width-height spans and distinct topology profiles; camera scrolls inside map bounds instead of treating `1280x720` as map size,
 - every release-scope destination resolves a compatible Addressables dependency set,
 - missing/download-failed presentation assets cannot cause client-selected transfer fallback or authoritative state mutation.
 - PERF-018: map load pre-sizes that map's pools (actors, projectiles, VFX, floating text, UI rows) from content counts through `Pool<T>` and loads the map's Addressables group before the loading screen closes.
+- ADR-0060: travel validates discovery (`NOT_DISCOVERED`), charges the tier fee once per `operation_id` and starts the transfer flow; every 103 gets exactly one 116.
+- forced placement (ADR-0061, `world_rules.md` § Forced Placement): respawn, instance return, reconnect fallback and first login never return `MAP_CAPACITY_FULL`; preferred channel, else least-populated below `FORCED_PLACEMENT_HARD_CAP = 22`, else 5s retry with the character held in place; player-initiated entry still rejects at 18.
 
 ## Tests
 - `server/internal/sim/world/world_test.go`: TestMapInstanceLifecycle, TestTwentyFourMapBoundsAndDistinctTopologies, TestCheckpointTransferHandshake, TestTransferTimeoutFallback, TestPortalTransition.
 - `client/Assets/Tests/PlayMode/WorldTransferPresentation/WorldTransferPresentationTests.cs`: preload/ready/failure/recovery and channel-switch UI; TestMapLoadPrewarmsPoolsAndGroup (PERF-018).
+- `server/internal/sim/world/world_test.go`: TestInteractTravelService, TestInteractResultAlwaysSent (ADR-0060).
+- `server/internal/sim/world/forced_placement_test.go`: TestForcedPlacementNeverReturnsCapacityFull, TestForcedPlacementPreferredThenLeastPopulated, TestForcedPlacementHardCap22Retry, TestPlayerInitiatedEntryStillCapsAt18.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1622,7 +1675,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../02_world/spawning.md`, `../02_world/monsters.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/monster_catalog.md`, `../07_content/map_spawn_catalog.md`]
-adrs: [`0003-spawn-selector-anchor-contract.md`, `0031-exp-scale-x100-and-corrected-act-budgets.md`, `0035-spawn-density-increase.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`]
+adrs: [`0003-spawn-selector-anchor-contract.md`, `0031-exp-scale-x100-and-corrected-act-budgets.md`, `0035-spawn-density-increase.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-003, IMP-016, IMP-018]
 owned_paths: [`server/internal/sim/spawning/`, `client/Assets/Scripts/Systems/Monsters/`, `client/Assets/Tests/PlayMode/MonsterPresentation/`]
 forbidden_paths: [`server/migrations/`, `server/internal/durable/`, `client/Assets/Scripts/UI/`]
@@ -1636,10 +1689,12 @@ Implement 54 persistent groups, pool selectors, respawn/leash/basic AI.
 ## Acceptance
 - population/restart/reward-once tests pass; spawn-pool rolls use Go `math/rand/v2` PCG-64,
 - every spawned monster uses its compiled canonical size profile; sprite/Transform scale cannot change authoritative collision.
+- ELITE groups `max_alive = 2` with respawn `45..75s`; Season-0 variant pool entries are selectable only while `season_region_index = 0` (ADR-0061, `map_spawn_catalog.md`).
 
 ## Tests
 - `server/internal/sim/spawning/spawning_test.go`: TestFiftyFourSpawnGroups, TestMonsterSizeProfileResolution, TestPoolSelectorWeights, TestMonsterLeashRespawnLifecycle, TestSimpleAIBehavior.
 - `client/Assets/Tests/PlayMode/MonsterPresentation/MonsterPresentationTests.cs`: spawn/despawn/AI-state interpolation without client authority.
+- `server/internal/sim/spawning/spawn_catalog_rules_test.go`: TestEliteMaxAliveTwoAndRespawnBand, TestSeasonZeroVariantsOnlyInSeasonZero.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1685,7 +1740,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../02_world/quests.md`, `../07_content/quest_catalog.md`]
-adrs: [`0025-peak-moments-and-progression-books.md`, `0031-exp-scale-x100-and-corrected-act-budgets.md`]
+adrs: [`0025-peak-moments-and-progression-books.md`, `0031-exp-scale-x100-and-corrected-act-budgets.md`, `0060-wire-and-durable-contract-completion.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-010, IMP-011, IMP-018, IMP-019]
 owned_paths: [`server/internal/sim/quests/`, `server/internal/durable/quests/`, `client/Assets/Scripts/Systems/Quests/`, `client/Assets/Scripts/UI/Quests/`, `client/Assets/Tests/PlayMode/QuestUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -1696,12 +1751,20 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement MAIN/SIDE/Daily/Event objective state/prerequisites/rewards.
 
+- Implement `C2S_QUEST_ABANDON` (507/508) and `C2S_STORY_BRANCH_CHOOSE` (509/510).
+
 ## Acceptance
 - 24 MAIN chain,12 SIDE, Daily board and no-public-boss-gate tests pass.
+- ADR-0060: MAIN abandon rejects `INVALID_STATE`; abandon removes quest items and grants nothing; a branch choice is permanent (`ALREADY_OWNED` on repeat) and only while the owning MAIN quest is active.
+- daily board is generated from the `quest_catalog.md` § Board Generation seed, weight tables and target rules (ADR-0061); same `character_id` + UTC date always yields the same six templates and targets; daily anchors resolve per FIELD map,
+- `C2S_QUEST_ABANDON` follows `quests.md` § Abandon; `C2S_STORY_BRANCH_CHOOSE` sets an act branch once and dungeon/finale entry with the flag unset is rejected `STORY_CHOICE_REQUIRED`; TESTIMONY `talk_pool` = 4 ambient NPCs + region guide.
 
 ## Tests
 - `server/internal/sim/quests/quests_test.go`: TestMainSideDailyQuestStates, TestPrerequisiteValidation, TestQuestObjectiveProgress, TestQuestRewardSettlement.
 - `client/Assets/Tests/PlayMode/QuestUi/QuestUiTests.cs`: objective delta, completion, rejection, and tracker limits.
+- `server/internal/sim/quests/quests_test.go`: TestQuestAbandonMessage, TestStoryBranchChoose (ADR-0060).
+- `server/internal/sim/quests/daily_board_test.go`: TestDailyBoardDeterministicFromSeed, TestDailyBoardWeightsAndFamilyCap, TestDailyTargetResolutionRules, TestDailyAnchorsPresentPerField.
+- `server/internal/sim/quests/abandon_branch_test.go`: TestQuestAbandonRules, TestStoryBranchChooseOnce, TestTestimonyTalkPoolAmbientPlusGuide.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1758,15 +1821,15 @@ contract_outputs: [book grants, atomic consumption to potential/skill points]
 consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/spec_traceability.md]
 
 ## Change
-Implement `progression.md` § Bonus Books: `item.book.potential`/`item.book.skill` grants from eligible sources from Level 25 and atomic consumption into allocation points.
+Implement `progression.md` § Bonus Books: `item.book.potential`/`item.book.skill` grants in the level-up transaction at milestone levels from Level 25 and atomic consumption into allocation points.
 
 ## Acceptance
-- books come only from eligible MAIN quests, dungeon FIRST_CLEAR or level-milestone rewards per the schedule table,
+- books come only from the level-milestone schedule, granted with their flags inside the level-up transaction; a full inventory delivers them as a `LEVEL_MILESTONE` Reward Claim and the grant never repeats,
 - consumption is atomic and grants exactly the listed points once,
 - books are character-bound and cannot be traded or auctioned.
 
 ## Tests
-- `server/internal/sim/books/books_test.go`: TestBookScheduleFromLevel25, TestConsumeAtomicallyGrantsPoints, TestBooksNotTradable, TestOnlyEligibleSourcesGrant.
+- `server/internal/sim/books/books_test.go`: TestBookScheduleFromLevel25, TestConsumeAtomicallyGrantsPoints, TestBooksNotTradable, TestOnlyEligibleSourcesGrant, TestMilestoneBooksToRewardClaimWhenInventoryFull.
 - `client/Assets/Tests/PlayMode/BooksUi/BooksUiTests.cs`: grant/consume/rejection states.
 
 generated_artifacts: []
@@ -1782,7 +1845,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../02_world/world_rules.md`, `../07_content/world_event_catalog.md`]
-adrs: [`0027-world-liveliness-mystery-bounty-capacity.md`, `0035-spawn-density-increase.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+adrs: [`0027-world-liveliness-mystery-bounty-capacity.md`, `0035-spawn-density-increase.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-010, IMP-019, IMP-021, IMP-080]
 owned_paths: [`server/internal/global/spirit_surge/`, `server/internal/sim/world/surge/`, `client/Assets/Scripts/Systems/WorldEvents/`, `client/Assets/Scripts/UI/WorldEvents/`, `client/Assets/Tests/PlayMode/SpiritSurgePresentation/`]
 forbidden_paths: [`server/migrations/`, `server/internal/durable/`]
@@ -1795,10 +1858,12 @@ Implement deterministic hourly event selection/waves/contribution/rewards.
 
 ## Acceptance
 - world-event regression suite passes.
+- chain identity `spirit_surge.<utc_hour_start>.<map_id>.<channel_id>.<chain_seq>`; completion drop and EXP settle at most once per character per UTC hour, daily-first once per UTC day; up to 2 temporary groups are added and persistent groups are unchanged (ADR-0061).
 
 ## Tests
 - `server/internal/global/spirit_surge/spirit_surge_test.go`: TestHourlySurgeEventSelection, TestWaveContributionTracking, TestSurgeRewardDistribution.
 - `client/Assets/Tests/PlayMode/SpiritSurgePresentation/SpiritSurgePresentationTests.cs`: global activation/deactivation and region UI.
+- `server/internal/sim/world/surge/surge_idempotency_test.go`: TestSurgeChainIdentityPerChannel, TestSurgeCompletionOncePerHour, TestSurgeDailyFirstOncePerDay.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1932,8 +1997,8 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../02_world/bosses.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/boss_catalog.md`, `../07_content/world_route_catalog.md`, `../07_content/dungeon_catalog.md`]
-adrs: [`0031-exp-scale-x100-and-corrected-act-budgets.md`, `0040-world-consequence-durable-aggregate.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0053-durable-contract-reconciliation.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`]
+specs: [`../02_world/bosses.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/boss_catalog.md`, `../07_content/world_route_catalog.md`, `../07_content/dungeon_catalog.md`, `../06_data/data_model.md`]
+adrs: [`0031-exp-scale-x100-and-corrected-act-budgets.md`, `0040-world-consequence-durable-aggregate.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0053-durable-contract-reconciliation.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-005, IMP-010, IMP-016, IMP-019]
 owned_paths: [`server/internal/sim/bosses/`, `server/internal/durable/worldconsequence/`, `client/Assets/Scripts/Systems/Bosses/`, `client/Assets/Scripts/UI/Bosses/`, `client/Assets/Tests/PlayMode/BossPresentation/`]
 forbidden_paths: [`server/migrations/`]
@@ -1961,10 +2026,12 @@ Additional scope:
 - simulated server restart after boss kill but before client acknowledgement recovers the consequence row and delivers the correct result without duplication,
 - partition-start recovery blocks new player acceptance until all pending `WorldConsequence` rows are resolved,
 - no boss relic or world-state row keys on `map_instance_id`; a migration test verifies any pre-existing such row is rejected or migrated to a stable key.
+- PUBLIC generation lifecycle of `bosses.md` § PUBLIC Generation Lifecycle (ADR-0061): `SCHEDULED -> OPEN -> SCHEDULED`, one copy per running channel, 30m generation timeout (+15m for ACTIVE copies), next spawn `uniform(30m..45m)` after close, state persisted in `public_boss_schedules` through `server/internal/durable/worldconsequence/`, boot restore/reschedule.
 
 ## Tests
 - `server/internal/sim/bosses/bosses_test.go`: TestInstancedPublicBossLifecycle, TestBossSpaceAndSizeProfiles, TestPartyPublicScalingResolution, TestWriteWorldConsequenceDurableCommand.
 - `client/Assets/Tests/PlayMode/BossPresentation/BossPresentationTests.cs`: telegraph, generation ID, chest, and world-consequence rendering.
+- `server/internal/sim/bosses/generation_test.go`: TestPublicGenerationOpenSpawnsPerRunningChannel, TestGenerationTimeoutDespawnRules, TestNextSpawnWindowAfterClose, TestScheduleRestoreAndRescheduleOnBoot.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1979,7 +2046,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../02_world/bosses.md`, `../06_data/data_model.md`, `../06_data/save_rules.md`, `../07_security/validation.md`]
-adrs: [`0024-fishing-cooking-feats-titles-boss-chest-ceremony.md`, `0040-world-consequence-durable-aggregate.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0053-durable-contract-reconciliation.md`]
+adrs: [`0024-fishing-cooking-feats-titles-boss-chest-ceremony.md`, `0040-world-consequence-durable-aggregate.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0053-durable-contract-reconciliation.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-010, IMP-022, IMP-023]
 owned_paths: [`server/internal/sim/bosses/relics/`, `server/internal/sim/bosses/chest/`, `client/Assets/Scripts/Systems/Bosses/Relics/`, `client/Assets/Tests/PlayMode/RelicChestPresentation/`]
 forbidden_paths: [`server/migrations/`]
@@ -1994,11 +2061,13 @@ Implement launch Di Tích relics and markers and the Gilded Chest ceremony of `b
 - `DEFEATED -> COOLDOWN` spawns `relic.boss.<boss_id>` for 60 min in that map instance; the channel buff is non-stacking and ends on despawn or map exit,
 - an active relic is restored after restart with remaining duration (>= 1 s); the marker records last defeat time, participants and active state,
 - the chest stays interactable 3 min; eligibility requires a non-expired contribution with the chest generation ID; one claim never depletes another; unclaimed rewards go to Reward Claims.
+- the Gilded Chest exists only for PUBLIC bosses; INSTANCED boss rewards settle at the kill; an INSTANCED boss relic spawns on the source field map at `anchor.relic.<boss_key>` in the recorded entry channel; an active relic with the same key is not refreshed (ADR-0061).
 
 ## Tests
 - `server/internal/sim/bosses/relics/relics_test.go`: TestRelicSpawnOnDefeated, TestChannelBuffNonStacking, TestRelicRestoreAfterRestart, TestDiTichMarkerUpdate.
 - `server/internal/sim/bosses/chest/chest_test.go`: TestChestThreeMinuteWindow, TestGenerationScopedEligibility, TestPersonalLootNoDepletion, TestUnclaimedToRewardClaims.
 - `client/Assets/Tests/PlayMode/RelicChestPresentation/RelicChestPresentationTests.cs`: relic, marker and chest ceremony presentation.
+- `server/internal/sim/bosses/relics/instanced_relic_test.go`: TestInstancedBossRelicOnSourceMapEntryChannel, TestGildedChestPublicOnly, TestActiveRelicNotRefreshed.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2044,8 +2113,8 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../02_world/dungeons.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/dungeon_catalog.md`, `../07_content/encounter_catalog.md`]
-adrs: [`0004-party-dungeon-scaling-reward-slots.md`, `0036-seasons-as-launch-infrastructure.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`]
+specs: [`../02_world/dungeons.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/dungeon_catalog.md`, `../07_content/encounter_catalog.md`, `../02_world/world_rules.md`, `../07_content/world_route_catalog.md`]
+adrs: [`0004-party-dungeon-scaling-reward-slots.md`, `0036-seasons-as-launch-infrastructure.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0063-economy-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-010, IMP-018, IMP-019, IMP-022]
 owned_paths: [`server/internal/sim/dungeons/`, `server/internal/durable/dungeons/`, `client/Assets/Scripts/Systems/Dungeons/`, `client/Assets/Scripts/UI/Dungeons/`, `client/Assets/Tests/PlayMode/DungeonPresentation/`]
 forbidden_paths: [`server/migrations/`]
@@ -2056,13 +2125,21 @@ consumers_checked: [docs/02_world/dungeons.md, docs/04_architecture/physics_geom
 ## Change
 Implement five NORMAL dungeons/stages/checkpoints/scaling/repeat+first-clear settlement.
 
+- Implement dungeon entry/exit messages 111..115 and 117 (`messages.md` § Dungeon Entry and Exit): pending party entry (30 s), member responses, re-entry of an existing snapshot membership, `EXIT`/`ABANDON`.
+
 ## Acceptance
 - 1p/5p tests and five first-progression-clear EXP values pass,
 - five exact dungeon bounds/layout profiles load; mandatory stages, checkpoints, branches and boss areas remain legally connected.
+- dungeon bound currency is granted once per character per UTC day across all dungeons under `dungeon.bound.daily.<utc_date>.<character_id>`; the first completion of the day fixes the amount (T1..T5 5..25, `ENDGAME_L60` 30); later runs grant none (ADR-0063).
+- ADR-0060: the instance snapshot equals ACCEPTED members; non-responders count as DECLINED at expiry; a snapshot member re-enters without a prompt; `STORY_CHOICE_REQUIRED` blocks entry before the branch choice; ABANDON removes eligibility and re-entry.
+- stage waves spawn exactly as listed in `dungeon_catalog.md` (fixed counts, area/sequence triggers, full restore on stage wipe); the instance records `source_map_id`/`source_channel_id` and every transfer out uses forced placement into that channel; the finale `instance.finale.than_trung` runs the same lifecycle; weekly highlight uses the Monday-aligned `utc_week_number` (ADR-0061).
 
 ## Tests
 - `server/internal/sim/dungeons/dungeons_test.go`: TestFiveNormalDungeonsLifecycle, TestDungeonBoundsAndTopologyProfiles, TestPartyDungeonScalingRewardSlots, TestFirstClearVsRepeatSettlement.
 - `client/Assets/Tests/PlayMode/DungeonPresentation/DungeonPresentationTests.cs`: stage/party scaling/reconnect/result states.
+- `server/internal/sim/dungeons/dungeon_bound_test.go`: TestDungeonBoundDailyFirstAcrossDungeons, TestDungeonBoundAmountFromFirstRun, TestDungeonBoundRetryIdempotent.
+- `server/internal/sim/dungeons/dungeons_test.go`: TestDungeonEntryPrompt, TestDungeonEntryExpiryDeclines, TestDungeonReentrySnapshotMember, TestDungeonEntryStoryChoiceRequired, TestDungeonLeaveExitAbandon (ADR-0060).
+- `server/internal/sim/dungeons/waves_test.go`: TestStageWavesMatchCatalog, TestWaveRestoreOnWipe, TestReturnToRecordedEntryChannel, TestFinaleUsesDungeonLifecycle, TestWeeklyHighlightMondayBoundary.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2109,7 +2186,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/spirit_beasts.md`, `../07_content/spirit_beast_catalog.md`]
-adrs: [`0019-spirit-beast-companion-system.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0043-spirit-beast-instance-identity.md`]
+adrs: [`0019-spirit-beast-companion-system.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0043-spirit-beast-instance-identity.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-008, IMP-010, IMP-016, IMP-019, IMP-100]
 owned_paths: [`server/internal/sim/beasts/`, `server/internal/durable/beasts/`, `client/Assets/Scripts/Systems/Beasts/`, `client/Assets/Scripts/UI/Beasts/`, `client/Assets/Tests/PlayMode/SpiritBeastPresentation/`]
 forbidden_paths: [`server/migrations/`]
@@ -2122,18 +2199,23 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - Implement messages 410–417: `C2S_BEAST_SET_ACTIVE`/`S2C_BEAST_SET_ACTIVE_RESULT`, `C2S_BEAST_EQUIP`/`S2C_BEAST_EQUIP_RESULT`, `C2S_BEAST_UNEQUIP`/`S2C_BEAST_UNEQUIP_RESULT`, `C2S_BEAST_FEED`/`S2C_BEAST_FEED_RESULT`. Payloads carry `operation_id`, `beast_id`, and `slot_id`/`item_instance_id` as needed.
 - Equipped `BEAST_EQUIPMENT` occupies `BEAST_EQUIPMENT_SLOT` only; unequipped `BEAST_EQUIPMENT` lives in `CHARACTER_INVENTORY`.
 - Distinct from IMP-050 (compile-time passive budget only).
+- Implement `C2S_BEAST_LEVEL_UP` (430/431), the deactivate form of 410 (empty `beast_id`), `character_beast_food_daily` and `S2C_BEAST_STATE` (436).
 
 ## Acceptance
 - 10 launch beasts persist and reconstruct on reconnect; PK is `(character_id, beast_id)`.
 - Active beast swap during a PvP match is rejected; PREPARING snapshot includes active `beast_id`.
 - Messages 410–417 parse and settle once per `operation_id`.
 - 18 `item.beast_eq.*` equip/unequip without an account item vault.
+- Feeding any owned beast applies `gain = min(food_bond, 20 - daily_gained, 100 - bond_points)` per unit with food values from `item_catalog.md` (+5/+8/+10), consuming clamped units; beast equipment requires `beast_level >= required_level`; the deactivate form of 410 leaves zero active beasts; level-up consumes the catalog cost and is rejected above `character_level` or 60; P2 payloads are exactly the fixed legal payloads of `spirit_beasts.md` and resonance ICD = `max(45s, 0.90 x authored)`.
+- ADR-0060: level-up consumes exactly the next-level cost, rejects above character level (`LEVEL_TOO_LOW`) or 60 (`CAPACITY_FULL`); deactivate leaves no active beast; the food counter is per `(character_id, utc_date)` shared by all beasts.
 
 ## Tests
 - `server/internal/sim/beasts/beasts_test.go`: Unit: composite PK uniqueness; second grant of the same `beast_id` is idempotent.
 - `server/internal/sim/beasts/beasts_test.go`: Integration: 410–417 round-trip; unequipped beast_eq in `CHARACTER_INVENTORY`; equipped in `BEAST_EQUIPMENT_SLOT`.
 - `server/internal/sim/beasts/beasts_test.go`: Regression: IMP-050 compile pass is not a substitute for this runtime.
 - `client/Assets/Tests/PlayMode/SpiritBeastPresentation/SpiritBeastPresentationTests.cs`: summon/passive/proc/reconnect identity projection.
+- `server/internal/sim/beasts/beasts_test.go`: TestFeedClampConsumesItem, TestFeedAnyOwnedBeast, TestBeastEquipLevelGate, TestDeactivateActiveBeast, TestBeastLevelUpCostAndCap, TestPassive2FixedPayloads, TestResonanceIcdFloor45.
+- `server/internal/sim/beasts/beasts_test.go`: TestBeastLevelUpMessage, TestBeastDeactivate, TestBeastFoodDailyShared (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2165,12 +2247,14 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - Launch atlas pages follow `../03_systems/atlas.md` and `../07_content/atlas_catalog.md`; no world-domain duplicate may be introduced.
 - Claim is idempotent; auto-settled returns existing.
 - Atlas tier-up grants LIFE_SKILL EXP per the character's current act from the progression-route table.
+- Tier promotion, EXP and reward bundle settle atomically under `atlas.tier.<character_id>.<atlas_page_id>.<tier>`; 504 only acknowledges (sets `acknowledged_at` once) and a tier not reached returns `ATLAS_TIER_NOT_REACHED` without change.
 
 ## Tests
 - `server/internal/sim/atlas/atlas_test.go`: Unit: duplicate 504 returns the existing row.
 - `server/internal/sim/atlas/atlas_test.go`: Integration: `MONSTER_KILLED` / `FISH_CAUGHT` / `CHEST_OPENED` / `DISH_COOKED` / `BOSS_DEFEATED` promote tiers once.
 - `server/internal/sim/atlas/atlas_test.go`: Regression: IMP-052 seasonal chapters reuse this runtime and do not fork a second atlas store.
 - `client/Assets/Tests/PlayMode/AtlasUi/AtlasUiTests.cs`: Seen/Studied/Mastered and reward-tier claim states.
+- `server/internal/sim/atlas/atlas_test.go`: TestTierRewardAutoSettlesAtPromotion, TestClaimAcknowledgeOnly, TestClaimUnreachedTierRejected.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2249,7 +2333,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/crafting.md`, `../07_content/crafting_catalog.md`]
-adrs: [`0022-four-tier-lucky-charm-system.md`]
+adrs: [`0022-four-tier-lucky-charm-system.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-007, IMP-008, IMP-009, IMP-026]
 owned_paths: [`server/internal/sim/crafting/`, `server/internal/durable/crafting/`, `client/Assets/Scripts/Systems/Crafting/`, `client/Assets/Scripts/UI/Crafting/`, `client/Assets/Tests/PlayMode/CraftingUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -2260,12 +2344,16 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement 168 guaranteed recipes, Lucky/Insurance, +0..+16 transition/cost tables.
 
+- Implement the 404..407 field lists (`npc_id`, `batch_quantity`, `target_level`, optional charm instances).
+
 ## Acceptance
 - exact transition and expected-cost regression vectors pass.
+- ADR-0060: stacked or level-ineligible charms reject `CHARM_INELIGIBLE` and consume nothing; `target_level != current + 1` is `STATE_CONFLICT`.
 
 ## Tests
 - `server/internal/sim/crafting/crafting_test.go`: TestOneHundredSixtyEightRecipes, TestGuaranteedCraftingSettlement, TestEnhancementPlusZeroToSixteen.
 - `client/Assets/Tests/PlayMode/CraftingUi/CraftingUiTests.cs`: recipe/enhancement/charm authoritative outcomes.
+- `server/internal/sim/crafting/crafting_test.go`: TestEnhanceCharmIneligible, TestEnhanceTargetLevelMismatch (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2280,7 +2368,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../02_world/npcs.md`, `../07_content/npc_shop_catalog.md`]
-adrs: [`0028-atlas-soft-pity-guild-stone-morning-market.md`]
+adrs: [`0028-atlas-soft-pity-guild-stone-morning-market.md`, `0063-economy-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`, `0061-world-lifecycle-and-content-reconciliation.md`]
 depends_on: [IMP-007, IMP-009, IMP-018, IMP-027]
 owned_paths: [`server/internal/sim/shops/`, `server/internal/durable/shops/`, `client/Assets/Scripts/Systems/NpcServices/`, `client/Assets/Scripts/UI/Shops/`, `client/Assets/Tests/PlayMode/ShopUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -2291,12 +2379,20 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement recovery shop, bound utility shop, crafting/enhancement, storage/auction/travel/respec service gates.
 
+- Implement `C2S_NPC_SHOP_SELL` (426/427) at the catalog `sell_back_price`.
+
 ## Acceptance
 - price/access/bound-output/travel safety tests pass.
+- the bound offer set is exactly the seven `offer.bound.bua_may.*` / `offer.bound.bua_giu_bac.*` offers (bound sink surface 975); no other bound offer exists (ADR-0063).
+- ADR-0060: sell-back pays `sell_back_price x quantity`, rejects items without a price (`INVALID_STATE`), locked items and cap overflow.
+- ambient NPCs have `DIALOGUE, QUEST, DECORATIVE` and act only while their DAY_ONLY/NIGHT_ONLY schedule is present; NPC follow-ups map to wire messages per `npcs.md` (ADR-0061).
 
 ## Tests
 - `server/internal/sim/shops/shops_test.go`: TestRecoveryShopPurchases, TestBoundUtilityShopLimits, TestServiceGateValidation.
 - `client/Assets/Tests/PlayMode/ShopUi/ShopUiTests.cs`: NPC range/service/price/rejection presentation.
+- `server/internal/sim/shops/bound_offers_test.go`: TestBoundOfferSetExactlySeven.
+- `server/internal/sim/shops/shops_test.go`: TestNpcShopSellBack (ADR-0060).
+- `server/internal/sim/shops/ambient_npc_test.go`: TestAmbientNpcQuestCapabilityAndSchedule, TestNpcServiceWireMapping.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2311,7 +2407,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/trading_auction.md`, `../06_data/data_model.md`]
-adrs: [`0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`]
+adrs: [`0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0063-economy-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-007, IMP-008, IMP-009, IMP-011]
 owned_paths: [`server/internal/sim/trade/`, `server/internal/durable/trade/`, `client/Assets/Scripts/Systems/Trade/`, `client/Assets/Scripts/UI/Trade/`, `client/Assets/Tests/PlayMode/TradeUi/`]
 forbidden_paths: [`server/migrations/`, `proto/`, `server/internal/protocol/v1/`, `client/Assets/Scripts/Protocol/`]
@@ -2322,12 +2418,18 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement same-map/range two-player atomic trade.
 
+- Direct trade sessions are runtime-only in the owning map-instance simulation; offered items stay in `CHARACTER_INVENTORY` under a session lock; settlement is one transaction (ADR-0060). Implement the 700..709 field lists.
+
 ## Acceptance
 - disconnect/cap/ownership/concurrent mutation rejects whole trade safely.
+- same-account trade rejects with `SAME_ACCOUNT_FORBIDDEN`; at most 12 item entries per side; offered items stay trade-locked in `CHARACTER_INVENTORY`, and cancel/timeout/disconnect/restart before `COMPLETED` releases every lock without moving items (ADR-0063).
+- ADR-0060: no trade escrow row exists; other mutations of a locked offered item return `ITEM_LOCKED`; a restart cancels open sessions without any value change; same-account trade rejects `SAME_ACCOUNT_FORBIDDEN`.
 
 ## Tests
-- `server/internal/sim/trade/trade_test.go`: TestSameMapDistanceFourMetersCheck, TestTwoPlayerAtomicExchange, TestTradeEscrowSettlement.
+- `server/internal/sim/trade/trade_test.go`: TestSameMapDistanceFourMetersCheck, TestTwoPlayerAtomicExchange, TestTradeLockInPlaceSettlement.
 - `client/Assets/Tests/PlayMode/TradeUi/TradeUiTests.cs`: offer/lock/confirm/cancel/disconnect state machine.
+- `server/internal/sim/trade/trade_lock_test.go`: TestSameAccountTradeForbidden, TestTwelveEntriesPerSide, TestRestartReleasesTradeLocks.
+- `server/internal/sim/trade/trade_test.go`: TestTradeLockInPlace, TestTradeRestartCancelsSessions, TestTradeSameAccountForbidden (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2342,7 +2444,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/trading_auction.md`, `../06_data/data_model.md`, `../06_data/physical_schema_contract.md`]
-adrs: [`0028-atlas-soft-pity-guild-stone-morning-market.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`]
+adrs: [`0028-atlas-soft-pity-guild-stone-morning-market.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0063-economy-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-005, IMP-007, IMP-008, IMP-009]
 owned_paths: [`server/internal/durable/auction/`, `client/Assets/Scripts/Systems/Auction/`, `client/Assets/Scripts/UI/Auction/`, `client/Assets/Tests/PlayMode/AuctionUi/`]
 forbidden_paths: [`server/internal/sim/`]
@@ -2353,12 +2455,18 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement listing escrow, fixed-price purchase, fee/tax, pending seller proceeds.
 
+- Implement the 730..744 field lists (total lot price, expected price on buy).
+
 ## Acceptance
 - buyer debit+tax+item transfer+SOLD+seller credit/proceeds is duplication-safe.
+- every auction operation requires level 15 (`AH_ELIGIBILITY_LEVEL_REQUIRED`) and listing also age >= 24 h; the listing floor is `max(100, npc_base_buy_price) × quantity` (`AH_PRICE_FLOOR_NOT_MET`); same-account purchase returns `SAME_ACCOUNT_FORBIDDEN` (ADR-0063).
+- ADR-0060: floor violations reject `AH_PRICE_FLOOR_NOT_MET`; same-account purchase rejects `SAME_ACCOUNT_FORBIDDEN`; expected-price mismatch is `STATE_CONFLICT`.
 
 ## Tests
 - `server/internal/durable/auction/auction_test.go`: TestFixedPriceListingEscrow, TestFixedPricePurchaseSettlement, TestTaxDeductionAndProceedsEscrow.
 - `client/Assets/Tests/PlayMode/AuctionUi/AuctionUiTests.cs`: fixed-price list/buy/cancel/proceeds state machine.
+- `server/internal/durable/auction/auction_gates_test.go`: TestAuctionLevel15GateAllOperations, TestListingAgeGate, TestListingFloorPerUnitTimesQuantity, TestSameAccountPurchaseForbidden.
+- `server/internal/durable/auction/auction_test.go`: TestAuctionPriceFloorCode, TestAuctionSameAccountBuy, TestAuctionExpectedPrice (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2375,7 +2483,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/soul_contracts.md`, `../07_content/soul_catalog.md`]
-adrs: [`0012-reward-claim-item-materialization.md`]
+adrs: [`0012-reward-claim-item-materialization.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-010, IMP-012, IMP-016]
 owned_paths: [`server/internal/sim/souls/`, `server/internal/durable/souls/`, `client/Assets/Scripts/Systems/Souls/`, `client/Assets/Scripts/UI/Souls/`, `client/Assets/Tests/PlayMode/SoulUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -2386,12 +2494,18 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement collection/contract limits/Soul EXP/level effects.
 
+- Persist `character_souls` (`contracted_item_instance_id` UNIQUE); implement `C2S_LOADOUT_CHANGE kind=SOUL_CONTRACT` CREATE/REMOVE/MOVE/REPLACE and `S2C_SOUL_STATE` (437).
+
 ## Acceptance
 - 25-Soul, duplicate-instance, transfer-lock and EXP-source tests pass.
+- Soul effect values are a step function (Lv2 = Lv1 value, Lv4 = Lv3 value); `memory_resonance_count` persists per `(character_id, soul_id)` in `character_soul_resonance` and unlocks the BOSS sheen once at 10.
+- ADR-0060: every soul contract limit rejects `SOUL_CONTRACT_LIMIT_REACHED`; REPLACE returns the displaced soul to Collection in the same transaction.
 
 ## Tests
 - `server/internal/sim/souls/souls_test.go`: TestSoulCollectionLimits, TestSoulContractEquipEffects, TestSoulEXPGrowthPipeline.
 - `client/Assets/Tests/PlayMode/SoulUi/SoulUiTests.cs`: contract/EXP/active-support projection.
+- `server/internal/sim/souls/souls_test.go`: TestSoulEffectStepLevels, TestMemoryResonancePersistsAndSheenOnce.
+- `server/internal/sim/souls/souls_test.go`: TestSoulContractActions, TestSoulContractLimits (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2470,7 +2584,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/social.md`, `../05_network/messages.md`]
-adrs: [`0013-canonical-unicode-text-normalization.md`]
+adrs: [`0013-canonical-unicode-text-normalization.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-018, IMP-080, IMP-100]
 owned_paths: [`server/internal/global/social/`, `server/internal/durable/social/`, `client/Assets/Scripts/Systems/Social/`, `client/Assets/Scripts/UI/Social/`, `client/Assets/Tests/PlayMode/SocialChatUi/`]
 forbidden_paths: [`server/internal/sim/combat/`, `server/migrations/`]
@@ -2481,12 +2595,16 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement social graph and LOCAL/WORLD/GUILD/party-compatible messaging gates.
 
+- Chat wire carries `chat_message_id`; `C2S_REPORT_PLAYER` uses the `social.md` reason list, optional `chat_message_id` and notes, limit 10 per 24 h per account.
+
 ## Acceptance
 - block/direct-interaction/range/level tests pass.
+- ADR-0060: 600 accepts 1..240 graphemes; reports reference `chat_message_id`; the 11th report within 24 h per account is `RATE_LIMITED`.
 
 ## Tests
 - `server/internal/global/social/social_test.go`: TestSocialGraphFriendBlock, TestChatRateLimitingChannels, TestCanonicalTextNormalization.
 - `client/Assets/Tests/PlayMode/SocialChatUi/SocialChatUiTests.cs`: friend/block/mute/chat channel/filter states.
+- `server/internal/global/social/social_test.go`: TestChatMessageIdOnWire, TestReportReasonsAndLimit (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2534,7 +2652,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/party.md`, `../05_network/messages.md`]
-adrs: [`0004-party-dungeon-scaling-reward-slots.md`]
+adrs: [`0004-party-dungeon-scaling-reward-slots.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-018, IMP-080, IMP-100]
 owned_paths: [`server/internal/global/party/`, `client/Assets/Scripts/Systems/Party/`, `client/Assets/Scripts/UI/Party/`, `client/Assets/Tests/PlayMode/PartyUi/`]
 forbidden_paths: [`server/internal/sim/combat/`, `server/migrations/`]
@@ -2545,12 +2663,18 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement max5 membership/leader/invites/disconnect/dungeon snapshot.
 
+- A partyless character's `C2S_PARTY_INVITE` atomically creates the party with the sender as leader (`party.md`).
+
 ## Acceptance
 - concurrent join/leave/reward-range fixtures pass.
+- A partyless inviter's invite atomically creates an ACTIVE party with the inviter as leader (join_sequence 1); declined/expired invites leave the solo party valid.
+- ADR-0060: partyless invite creates exactly one party and carries its `party_id` in 603.
 
 ## Tests
 - `server/internal/global/party/party_test.go`: TestMaxFivePartyMembership, TestLeaderPromotionAndTransfer, TestDisconnectTimeoutGracePeriod.
 - `client/Assets/Tests/PlayMode/PartyUi/PartyUiTests.cs`: invite/membership/leader/restart dissolution states.
+- `server/internal/global/party/party_test.go`: TestInviteWhilePartylessCreatesParty.
+- `server/internal/global/party/party_test.go`: TestPartylessInviteCreatesParty (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2565,7 +2689,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/guild.md`, `../03_systems/guild_progression.md`, `../06_data/physical_schema_contract.md`]
-adrs: [`0028-atlas-soft-pity-guild-stone-morning-market.md`]
+adrs: [`0028-atlas-soft-pity-guild-stone-morning-market.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-007, IMP-034, IMP-100]
 owned_paths: [`server/internal/durable/guild/`, `server/internal/global/guild/`, `client/Assets/Scripts/Systems/Guild/`, `client/Assets/Scripts/UI/Guild/`, `client/Assets/Tests/PlayMode/GuildUi/`]
 forbidden_paths: [`server/internal/sim/`]
@@ -2576,12 +2700,18 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement roles/lifecycle/create/join/capacity/Guild EXP/Ritual/Blessing.
 
+- Implement 650..652 (`C2S_GUILD_SETTINGS_SET`, `C2S_GUILD_INVITE_CANCEL`, `C2S_GUILD_APPLICATION_CANCEL`), the `S2C_GUILD_STATE` roster fields and `GUILD_NAME_TAKEN`/`GUILD_NAME_INVALID`.
+
 ## Acceptance
 - permission, one-guild, Ritual and disband guards pass.
+- Guild EXP/ritual grants follow the eligible-event table (>= 3 credited current members; Guild Bonfire Gathering <= 1/UTC day); boss grants go to the boss element vessel, other sources use the SERVER_ROTATION pointer that skips full vessels; M counts members attached within 14 days; Blessing candidates are the 3 lowest SHA-256 ranks of the unlocked pool and ties/zero votes resolve by the fixed priority; disband is rejected while any Guild War registration is QUEUED..RESOLVING.
+- ADR-0060: only LEADER sets recruitment mode; invite cancel by inviter/LEADER/VICE_LEADER; VICE_LEADER may demote OFFICER; 628 includes the member roster with role and online state.
 
 ## Tests
 - `server/internal/durable/guild/guild_test.go`: TestGuildCreateJoinRoles, TestGuildEXPRitualBlessing, TestGuildCapacityCaps.
 - `client/Assets/Tests/PlayMode/GuildUi/GuildUiTests.cs`: membership/role/progression/permission states.
+- `server/internal/durable/guild/guild_test.go`: TestEligibleGuildEventThreshold, TestGuildBonfireGatheringDaily, TestRitualRotationSkipsFullVessel, TestRitualActiveMemberSnapshot, TestBlessingDraftRankAndPriority, TestDisbandBlockedByGuildWarRegistration.
+- `server/internal/durable/guild/guild_test.go`: TestGuildSettingsSet, TestGuildInviteApplicationCancel, TestGuildStateRoster, TestGuildNameErrors (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2596,7 +2726,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/guild_storage.md`, `../06_data/data_model.md`, `../07_security/anti_cheat.md`, `../05_network/messages.md`]
-adrs: [`0029-character-resource-isolation.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0049-guild-storage-same-account-transfer-prohibition.md`, `0053-durable-contract-reconciliation.md`]
+adrs: [`0029-character-resource-isolation.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0049-guild-storage-same-account-transfer-prohibition.md`, `0053-durable-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-008, IMP-009, IMP-036]
 owned_paths: [`server/internal/durable/guild_storage/`, `client/Assets/Scripts/Systems/GuildStorage/`, `client/Assets/Scripts/UI/GuildStorage/`, `client/Assets/Tests/PlayMode/GuildStorageUi/`]
 forbidden_paths: [`server/internal/sim/`]
@@ -2607,15 +2737,19 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 Implement COMMON/RESERVE storage and pending/approved/expired claims.
 
+- Enforce `C2S_GUILD_STORAGE_CLAIM_DECIDE` actors: APPROVE/REJECT = LEADER/VICE_LEADER; CANCEL = requester/LEADER/VICE_LEADER; DELIVER = requester only.
+
 ## Acceptance
 - reservation/expiry/full-inventory/restart tests pass,
 - withdraw or Reserve delivery of an item deposited by a different character of the same account is rejected with `GUILD_STORAGE_SAME_ACCOUNT`; same-character withdrawal is allowed,
 - withdrawing another character's deposit before 72h membership is rejected with `GUILD_MEMBERSHIP_TOO_NEW`,
 - storage rows persist `depositor_character_id`/`depositor_account_id`, and cross-character withdrawals update `item_partner_counts`.
+- ADR-0060: a non-requester DELIVER is `PERMISSION_DENIED`; DELIVER with a full inventory keeps the claim APPROVED.
 
 ## Tests
 - `server/internal/durable/guild_storage/guild_storage_test.go`: TestCommonReserveStoragePartitions, TestStorageClaimApprovalFlow, TestClaimExpirationSettlement, TestSameAccountWithdrawRejected, TestSameAccountReserveDeliveryRejected, TestMembershipAgeGate, TestItemPartnerCountsUpdated.
 - `client/Assets/Tests/PlayMode/GuildStorageUi/GuildStorageUiTests.cs`: deposit/withdraw/claim rejection and retry states.
+- `server/internal/durable/guild_storage/guild_storage_test.go`: TestStorageClaimDecideActors (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2630,7 +2764,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/cosmetics.md`, `../07_content/cosmetic_catalog.md`]
-adrs: [`0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0053-durable-contract-reconciliation.md`]
+adrs: [`0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0053-durable-contract-reconciliation.md`, `0063-economy-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-007, IMP-008, IMP-036, IMP-100]
 owned_paths: [`server/internal/durable/cosmetics/`, `client/Assets/Scripts/Systems/Cosmetics/`, `client/Assets/Scripts/UI/Cosmetics/`, `client/Assets/Tests/PlayMode/CosmeticsUi/`]
 forbidden_paths: [`server/internal/sim/`]
@@ -2639,14 +2773,22 @@ contract_outputs: [durable entitlement/equip state and no-power client projectio
 consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md]
 
 ## Change
-Implement play-earned CHARACTER-scoped cosmetics, GUILD crest/banner/shrine, IAP account-entitled store cosmetics, and seasonal free/paid/atlas-title cosmetics. Equip and material/special redemption. Launch stable ID counts: `TITLE_PLAY=125`, `PROFILE_FRAME_PLAY=3`, `APPEARANCE_PLAY=4`, `GUILD=3`, `PLAY_PLUS_GUILD=135`, `COMMON_SINKS=20`, `SPECIAL_CURRENCY_SINKS=20`, `SEASONAL_ATLAS_TITLES=60`, `SEASON_FREE=18`, `SEASON_PAID=18`, `IAP_STORE_IDS=13`, `TOTAL_STABLE_COSMETIC_IDS=284`.
+Implement play-earned CHARACTER-scoped cosmetics, GUILD crest/banner/shrine, IAP account-entitled store cosmetics, and seasonal free/paid/atlas-title cosmetics. Equip and material/special redemption. Launch stable ID counts: `TITLE_PLAY=127`, `PROFILE_FRAME_PLAY=9`, `APPEARANCE_PLAY=4`, `GUILD=5`, `PLAY_PLUS_GUILD=145`, `COMMON_SINKS=20`, `SPECIAL_CURRENCY_SINKS=20`, `SEASONAL_ATLAS_TITLES=60`, `SEASON_FREE=18`, `SEASON_PAID=18`, `IAP_STORE_IDS=13`, `TOTAL_STABLE_COSMETIC_IDS=294`.
+
+- Persist `character_cosmetic_entitlements` and `character_cosmetic_equips`; implement `S2C_COSMETIC_STATE` (438) and the `GUILD_STONE_INSCRIPTION` slot; set `first_equipped_at` on first equip of an account IAP cosmetic.
 
 ## Acceptance
-- `TOTAL_STABLE_COSMETIC_IDS = 284` with the breakdown above; play cosmetics are CHARACTER-scoped; IAP store cosmetics are account-entitled (`account_cosmetic_entitlements`) and equippable on any character of the account; no-power and duplicate/no-double-consume tests pass. Do not treat 18 or 135 as an unexplained launch total.
+- `TOTAL_STABLE_COSMETIC_IDS = 294` with the breakdown above; play cosmetics are CHARACTER-scoped; IAP store cosmetics are account-entitled (`account_cosmetic_entitlements`) and equippable on any character of the account; no-power and duplicate/no-double-consume tests pass. Do not treat 20 or 145 as an unexplained launch total.
+- `character_cosmetic_entitlements` keeps one row per grant source and ownership holds while any row exists; `cosmetic.guild_stone.inscription.*` equip into slot `guild_stone_inscription`; the first equip of an IAP cosmetic sets `first_equipped_at` once (ADR-0063).
+- Launch cosmetic counts are `TITLE_PLAY=127`, `PROFILE_FRAME_PLAY=9`, `GUILD=5`, `PLAY_PLUS_GUILD=145`, `TOTAL_STABLE_COSMETIC_IDS=294` (competitive season frames/titles/guild shrine and banner included).
+- ADR-0060: ownership = any character row or account row; repeated grants are idempotent per `source_ref`; season-track revoke deletes only rows of that entitlement; `first_equipped_at` is set once.
 
 ## Tests
 - `server/internal/durable/cosmetics/cosmetics_test.go`: TestPlayEarnedCharacterCosmetics, TestIAPAccountEntitledWardrobe, TestCosmeticEquipValidation.
 - `client/Assets/Tests/PlayMode/CosmeticsUi/CosmeticsUiTests.cs`: entitlement/equip/preview/account-vs-character scope.
+- `server/internal/durable/cosmetics/cosmetic_sources_test.go`: TestMultiSourceOwnershipSurvivesOneRevoke, TestGuildStoneInscriptionSlot, TestFirstEquippedAtSetOnce.
+- `server/internal/durable/cosmetics/cosmetics_test.go`: TestLaunchCosmeticCounts294.
+- `server/internal/durable/cosmetics/cosmetics_test.go`: TestCharacterCosmeticOwnershipAnyRow, TestSeasonTrackRevokeBySource, TestFirstEquippedAtSetOnce (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2695,10 +2837,10 @@ blocked_by: ""
 
 specs: [`../03_systems/cosmetics.md`, `../07_content/cosmetic_catalog.md`]
 adrs: [`0024-fishing-cooking-feats-titles-boss-chest-ceremony.md`, `0053-durable-contract-reconciliation.md`]
-depends_on: [IMP-019, IMP-022, IMP-027, IMP-038, IMP-040, IMP-058]
+depends_on: [IMP-019, IMP-022, IMP-027, IMP-038, IMP-040, IMP-042, IMP-058]
 owned_paths: [`server/internal/durable/feats/`, `client/Assets/Scripts/UI/Feats/`, `client/Assets/Tests/PlayMode/FeatsUi/`]
 forbidden_paths: [`server/migrations/`, `server/internal/sim/`]
-contract_inputs: [MONSTER_KILLED, BOSS_DEFEATED, FISH_CAUGHT, ENHANCEMENT_COMPLETED, PVP_SEASON_SETTLED events]
+contract_inputs: [MONSTER_KILLED, BOSS_DEFEATED, FISH_CAUGHT, ENHANCEMENT_COMPLETED, PVP_SEASON_SETTLED, GUILD_WAR_SEASON_SETTLED events]
 contract_outputs: [feat counters, title entitlements]
 consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/spec_traceability.md]
 
@@ -2709,10 +2851,12 @@ Implement `cosmetics.md` § Folklore Feats Tracking for every feat in `cosmetic_
 - every catalog feat counts only its listed event filter and grants its title once,
 - grants are idempotent per the `cosmetics.md` key; counters survive restart and season boundaries,
 - titles grant zero stats, multipliers or hidden perks.
+- PvP and Guild War season settlement grant the `cosmetic_catalog.md` § Competitive Season Rewards roster once per season key (tier ladder grants all lower rows; >= 10 eligible ranked completions; Guild War member/guild rows); repeats of a later season grant nothing new.
 
 ## Tests
 - `server/internal/durable/feats/feats_test.go`: TestCatalogFeatCounters, TestFeatGrantIdempotent, TestCountersSurviveSeasonAndRestart, TestTitleGrantsNoStats.
 - `client/Assets/Tests/PlayMode/FeatsUi/FeatsUiTests.cs`: progress and unlocked-title states.
+- `server/internal/durable/feats/season_rewards_test.go`: TestPvpSeasonTierCosmeticsLadder, TestGuildWarSeasonCosmetics, TestSeasonRewardIdempotentAcrossSeasons.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2812,7 +2956,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/monetization.md`, `../03_systems/account_storage.md`, `../03_systems/cosmetics.md`, `../06_data/data_model.md`, `../06_data/physical_schema_contract.md`, `../07_security/external_integrations.md`]
-adrs: [`0029-character-resource-isolation.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0051-first-party-username-password-login.md`, `0053-durable-contract-reconciliation.md`]
+adrs: [`0029-character-resource-isolation.md`, `0041-anti-rmt-trade-gates-and-iap-entitlement-integrity.md`, `0051-first-party-username-password-login.md`, `0053-durable-contract-reconciliation.md`, `0063-economy-contract-reconciliation.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-038, IMP-100]
 owned_paths: [`server/internal/durable/monetization/`, `server/internal/edge/iap/`]
 forbidden_paths: [`server/internal/sim/`, `client/`, `server/migrations/`]
@@ -2823,9 +2967,10 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Change
 - Store catalog from `monetization.md` § Store Structure: 13 `cosmetic.iap.*` `DIRECT_ACCOUNT_COSMETIC` products, bundle `product.cosmetic.bundle.nguoi_hung_lang_da` (three grants) and `product.service.season_track.<season_number>` (`ACCOUNT_SCOPED_ACCESS`). No mounts, no character-slot product.
 - Receipt verification: opaque receipt -> platform confirmation -> entitlement row; a receipt binds permanently to the first account (`IAP_RECEIPT_ACCOUNT_MISMATCH` + security anomaly otherwise).
-- Grant state machine `PENDING -> GRANTED | REFUNDED`, `GRANTED -> REFUNDED | REFUNDED_CONSUMED` with the per-type refund rules: `DIRECT_ACCOUNT_COSMETIC` revokes and deletes the account cosmetic row (`REFUNDED_CONSUMED` plus slot reset if it was ever equipped); `ACCOUNT_SCOPED_ACCESS` revokes every claimed tier cosmetic on all characters (`REFUNDED_CONSUMED` if any tier was claimed); `ONE_SHOT` keeps materialized items.
-- `account_refund_consumed_events` ledger and rolling 180-day `iap_refund_consumed_score`; at 2 the account becomes `SUSPENDED_PAYMENT_RECONCILIATION` (blocks IAP, character creation, Ranked PvP).
-- At most one live season track per `(account, season_number)`; a second verified receipt is not granted and is flagged for platform refund.
+- Grant state machine `PENDING -> GRANTED | REJECTED | REFUNDED`, `GRANTED -> REFUNDED | REFUNDED_CONSUMED` with the per-type refund rules: `DIRECT_ACCOUNT_COSMETIC` revokes and deletes the account cosmetic row (`REFUNDED_CONSUMED` plus slot reset if `first_equipped_at` is set); `ACCOUNT_SCOPED_ACCESS` revokes every claimed tier cosmetic on all characters (`REFUNDED_CONSUMED` if any tier was claimed); `ONE_SHOT` keeps materialized items.
+- `account_refund_consumed_events` ledger and the derived rolling 180-day refund score (no stored counter); at 2 the account becomes `SUSPENDED_PAYMENT_RECONCILIATION` (blocks IAP, character creation, Ranked PvP).
+- At most one live season track per `(account, season_number)`; a second verified receipt becomes `REJECTED` and is flagged for platform refund.
+- Implement `POST /api/v1/iap/verify` and `POST /api/v1/iap/steam/init`, Steam Microtransactions (InitTxn/FinalizeTxn/QueryTxn, GetReport refund polling), Google acknowledge, terminal `REJECTED` with `reject_reason`, and the derived refund score (no stored column).
 
 ## Acceptance
 - no entitlement row exists without platform confirmation; a forged receipt is rejected first,
@@ -2835,10 +2980,14 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - suspension happens at the 2nd `REFUNDED_CONSUMED` inside 180 days; one event does not suspend,
 - duplicate receipt on a GRANTED entitlement returns the existing record; a second track receipt for the same season is not granted,
 - any product with `power_granting`, `tradable`, `durability` or `rent` = true is rejected at content activation.
+- a failed verification or a second season-track receipt ends `REJECTED`, is excluded from the live-track unique index and never blocks a later valid purchase; receipts arrive only through the HTTPS IAP verify endpoint (Google Play Billing on Android, Steam on PC); the refund score is derived from the ledger, never stored (ADR-0063).
+- ADR-0060: a definitive negative answer sets `REJECTED` and frees the season slot; a duplicate season receipt is stored `REJECTED` (`IAP_SEASON_TRACK_DUPLICATE`); refund-consumed is decided by `first_equipped_at`; suspension triggers when the derived 180-day count reaches 2.
 
 ## Tests
 - `server/internal/durable/monetization/monetization_test.go`: TestGrantStateMachine, TestDirectCosmeticRefundRevokes, TestEquippedCosmeticRefundConsumed, TestSeasonTrackRefundRevokesAllCharacters, TestOneShotRefundKeepsItems, TestSuspensionThreshold180Days, TestOneTrackPerSeason, TestDuplicateReceiptNoop, TestPowerGrantingProductRejected.
 - `server/internal/edge/iap/iap_test.go`: TestForgedReceiptRejected, TestCrossAccountReceiptMismatch, TestBundleGrantsThree.
+- `server/internal/durable/monetization/rejected_test.go`: TestFailedVerificationRejectedTerminal, TestRejectedDoesNotBlockLaterPurchase, TestRefundScoreDerivedFromLedger, TestRefundConsumedUsesFirstEquippedAt.
+- `server/internal/durable/monetization/monetization_test.go`: TestIapVerifyEndpointIdempotent, TestIapRejectedFreesSeasonSlot, TestSteamMicroTxnFlow, TestSteamRefundPolling, TestDerivedRefundScore (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2902,10 +3051,12 @@ Implement competitive build lock, reference-vector transform/caps, control DR. P
 
 ## Acceptance
 - transformed state is temporary and mutation stays locked through match; Linh Thú swap during match is rejected.
+- Reference vectors are the `pvp.md` § PvP Reference Vectors table (`pvp.reference.v1`, shared by all modes); content compile recomputes it from class growth, potential split and T6 +8 lines and rejects a mismatch (`pvp.reference_vector_mismatch`).
 
 ## Tests
 - `server/internal/sim/pvp/pvp_test.go`: TestPVPBuildSnapshotNormalization, TestReferenceVectorTransform, TestControlDiminishingReturns.
 - `client/Assets/Tests/PlayMode/PvpBuildUi/PvpBuildUiTests.cs`: preparing snapshot/lock/transform projection.
+- `server/internal/sim/pvp/pvp_test.go`: TestReferenceVectorTableMatchesDerivation, TestReferenceVectorSharedAcrossModes.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2920,7 +3071,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/pvp.md`, `../05_network/messages.md`, `../04_architecture/physics_geometry_contract.md`]
-adrs: [`0008-client-network-transport-protocol.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`]
+adrs: [`0008-client-network-transport-protocol.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-010, IMP-034, IMP-039]
 owned_paths: [`server/internal/sim/pvp/duel/`, `server/internal/durable/pvp/duel/`, `server/internal/global/matchmaking/duel/`, `client/Assets/Scripts/Systems/Pvp/Duel/`, `client/Assets/Scripts/UI/Pvp/Duel/`, `client/Assets/Tests/PlayMode/DuelUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -2931,13 +3082,19 @@ consumers_checked: [docs/03_systems/pvp.md, docs/04_architecture/physics_geometr
 ## Change
 Implement duel/Bo3 lifecycle/MMR/season/reconnect/surrender/reward eligibility.
 
+- Implement duel messages 814..818 and the `C2S_RANKED_QUEUE_JOIN` (802) payload.
+
 ## Acceptance
 - rating/reward/VOID/abandon/first5-bound-per-day tests pass,
 - `map.pvp.duel_court` bounds/topology and `0.001m` mirror parity pass.
+- Ranked Duel: draws count as played rounds, max 5 regular rounds, first to 2 wins; after round 5 more round wins wins; equal -> one sudden-death round; sudden-death tie -> VOID. Ready-check failure cancels the match, counts a miss only for players who missed/declined and re-queues acceptors with their original `queued_at`.
+- ADR-0060: duel challenge lifetime 60 s, one pending outbound and inbound per character, level >= 10; accepted duels run the normal match lifecycle via 806/807.
 
 ## Tests
 - `server/internal/sim/pvp/duel/duel_test.go`: TestDuelBo3Lifecycle, TestDuelCourtGeometryMirrorParity, TestRatingSettlementIdempotency, TestDisconnectSurrenderResolution.
 - `client/Assets/Tests/PlayMode/DuelUi/DuelUiTests.cs`: queue/accept/active/result/void state machine.
+- `server/internal/sim/pvp/duel/duel_test.go`: TestRankedDuelDrawSequencesMaxFiveRounds, TestRankedDuelSuddenDeathAndVoid, TestReadyCheckFailureRequeuesAcceptors.
+- `server/internal/sim/pvp/duel/duel_test.go`: TestDuelChallengeLifecycle, TestRankedQueueJoinPayload (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -2985,7 +3142,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/pvp.md`, `../05_network/messages.md`, `../04_architecture/physics_geometry_contract.md`]
-adrs: [`0008-client-network-transport-protocol.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`]
+adrs: [`0008-client-network-transport-protocol.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-035, IMP-039, IMP-040]
 owned_paths: [`server/internal/sim/pvp/arena/`, `server/internal/durable/pvp/arena/`, `server/internal/global/matchmaking/arena/`, `client/Assets/Scripts/Systems/Pvp/Arena/`, `client/Assets/Scripts/UI/Pvp/Arena/`, `client/Assets/Tests/PlayMode/ArenaUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -2996,13 +3153,19 @@ consumers_checked: [docs/03_systems/pvp.md, docs/04_architecture/physics_geometr
 ## Change
 Implement5v5 altars/attunements/Harmony Pulse/overtime/score.
 
+- Implement `C2S_RANKED_QUEUE_JOIN with_party` for Five Element Arena.
+
 ## Acceptance
 - objective-first scoring and team/friendly-fire tests pass,
 - `map.pvp.five_element_arena` bounds, tri-altar topology and `0.001m` mirror parity pass.
+- Altar capture area is the 6.0m x 4.0m rectangle; attunement geometry/timings (KIM barrier 3s every 12s, MOC 4x3m zone, THUY capture-area zone, HOA two 2x1m strips every 10s, THO decay x0.75) match `pvp.md`.
+- ADR-0060: the party leader queues the whole party atomically; a member leaving the queue removes the whole party entry.
 
 ## Tests
 - `server/internal/sim/pvp/arena/arena_test.go`: TestFiveElementAltarAttunements, TestArenaGeometryMirrorParity, TestHarmonyPulseCapture, TestOvertimeScoreResolution.
 - `client/Assets/Tests/PlayMode/ArenaUi/ArenaUiTests.cs`: party queue, score, reconnect, and result states.
+- `server/internal/sim/pvp/arena/arena_test.go`: TestAltarCaptureAreaBounds, TestAttunementGeometryAndTimings.
+- `server/internal/sim/pvp/arena/arena_test.go`: TestArenaPartyQueue (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -3017,7 +3180,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../03_systems/guild_war.md`, `../05_network/messages.md`, `../04_architecture/physics_geometry_contract.md`]
-adrs: [`0008-client-network-transport-protocol.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`]
+adrs: [`0008-client-network-transport-protocol.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0060-wire-and-durable-contract-completion.md`]
 depends_on: [IMP-010, IMP-036, IMP-039]
 owned_paths: [`server/internal/sim/guild_war/`, `server/internal/durable/guild_war/`, `server/internal/global/matchmaking/guild_war/`, `client/Assets/Scripts/Systems/GuildWar/`, `client/Assets/Scripts/UI/GuildWar/`, `client/Assets/Tests/PlayMode/GuildWarUi/`]
 forbidden_paths: [`server/migrations/`]
@@ -3028,13 +3191,19 @@ consumers_checked: [docs/03_systems/guild_war.md, docs/04_architecture/physics_g
 ## Change
 Implement 10v10 roster/matchmaking/five seals/rating/weekly progression/reward caps.
 
+- Implement the `C2S_GUILD_WAR_QUEUE_JOIN` roster payload (exactly 10 distinct eligible members) and 810 fields.
+
 ## Acceptance
 - no Blessing advantage, no territory, and the bound cap survives guild change,
 - `map.guild_war.five_seal_conflict` bounds, braided-front topology and `0.001m` mirror parity pass.
+- Seals use the arena capture-unit model with rates 8572/12000/15000 units/s and a 6.0m x 4.0m capture area; capturing an enemy seal erases to NEUTRAL first; queue/ready-check transitions (decline, member leave while QUEUED/ACCEPTING, cancel) follow the `guild_war.md` table; a guild holds at most one registration in QUEUED..RESOLVING.
+- ADR-0060: roster size != 10, duplicates or an ineligible member reject `TARGET_INVALID`; only LEADER/VICE_LEADER may join/leave.
 
 ## Tests
 - `server/internal/sim/guild_war/guild_war_test.go`: TestTenVersusTenRosterMatchmaking, TestGuildWarGeometryMirrorParity, TestFiveSealsCaptureMechanics, TestWeeklyRatingProgression.
 - `client/Assets/Tests/PlayMode/GuildWarUi/GuildWarUiTests.cs`: roster/accept/objective/result/void states.
+- `server/internal/sim/guild_war/guild_war_test.go`: TestSealCaptureUnitsRatesAndErase, TestReadyCheckFailureTransitions, TestRosterMemberLeaveWhileQueued, TestOneRegistrationPerGuild.
+- `server/internal/sim/guild_war/guild_war_test.go`: TestGuildWarQueueRosterPayload (ADR-0060).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -3302,7 +3471,7 @@ consumers_checked: [docs/01_gameplay/combat.md, docs/01_gameplay/skills.md, docs
 Re-verify all existing TTK windows and the heavy-hit survivability window against current equipment roll magnitudes now that the four new combat stats (LIFESTEAL, REFLECT, ABSORB, HEAL_REDUCTION) are present in `../07_content/balance_validation.md`. Also emit and gate the complete ADR-0047 skill-reach/camera-readability matrix. This is a release gate: every window and reach rule must remain inside its declared guardrail. If a combat window falls outside, the fix is to adjust equipment secondary roll magnitudes — never the guardrail value.
 
 ## Acceptance
-- tooling run against the pinned reference character (balance_validation.md synthetic Lv60) produces TTK results for all window brackets,
+- tooling run against the pinned reference character (balance_validation.md synthetic Lv60) produces TTK results for all window brackets, using the reference basic attack (`basic_1` at `skill_level = 1`, § Reference Basic Attack) for every basic-only benchmark and rotation downtime,
 - every existing TTK window falls within its guardrail,
 - heavy-hit survivability window falls within its guardrail,
 - reject rules for LIFESTEAL / REFLECT / ABSORB / HEAL_REDUCTION pass at cap values,
@@ -3313,7 +3482,7 @@ Re-verify all existing TTK windows and the heavy-hit survivability window agains
 - tooling run evidence is attached to the activation artifact for IMP-004.
 
 ## Tests
-- `server/internal/config/validation/balance/balance_test.go`: TestTTKWindowsAgainstFourNewStats, TestHeavyHitSurvivabilityGuardrail, TestSecondaryRollBounds, TestSkillReachMatrix45, TestSkillReachSeparationRatio, TestSkillCameraReadabilityMargin, TestSkillColliderBoundaryProfiles.
+- `server/internal/config/validation/balance/balance_test.go`: TestTTKWindowsAgainstFourNewStats, TestReferenceBasicAttackPin, TestHeavyHitSurvivabilityGuardrail, TestSecondaryRollBounds, TestSkillReachMatrix45, TestSkillReachSeparationRatio, TestSkillCameraReadabilityMargin, TestSkillColliderBoundaryProfiles.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -3346,9 +3515,11 @@ Implement the compile-time evaluation for all Spirit Beast passive budgets (Rule
 - ICD ladder check rejects any Passive 2 ladder where two tiers compile to the same effective ICD value (clamp to [45s, 90s]) — OBJ-SBB-003 class defect,
 - Kill/Assist Resource Restore payload check rejects any instance where payload_pct > 0.03 or payload includes a banned modifier,
 - all 10 launch beasts pass without rejection.
+- Every catalog P2 is one legal type with its fixed payload and three distinct authored ICDs in 45s..90s; a P2 rider (knockback, damage, stat modifier, death prevention) is rejected.
 
 ## Tests
 - `server/internal/config/validation/beast/beast_budget_test.go`: TestBeastPassiveBudgetRulesAD, TestTenLaunchBeastsPassiveValidation, TestResourceRestoreCaps.
+- `server/internal/config/validation/beast/beast_budget_test.go`: TestPassive2LegalTypeAndFixedPayload, TestPassive2AuthoredIcdLadderDistinct, TestPassive2RiderRejected.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]

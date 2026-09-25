@@ -25,7 +25,7 @@ atlas.page.co_vat.<key>
 All lowercase, ASCII. `<monster_key>` is suffix of `monster.*` after first dot (e.g. `lang_da.dom_dom_ma`). `<soul_key>` is suffix of `soul.*` after `soul.<rank>.` (e.g. `coc_thanh_tinh`). `<boss_key>` is suffix of `boss.*` (e.g. `quy_nhap_trang`).
 
 ## Shared Tier Model
-Each page has up to 3 tiers. Each tier resolves one non-power, idempotent `atlas_reward_bundle` per `character_id + atlas_page_id + tier`; a bundle may include the shown `currency.special` amount and the shown presentation entitlement together. The bundle is one settlement, not two independently rerollable rewards.
+Each page has up to 3 tiers. Each tier resolves one non-power, idempotent `atlas_reward_bundle` per `atlas.tier.<character_id>.<atlas_page_id>.<tier>` (auto-settled at promotion, `../03_systems/atlas.md`); a bundle may include the shown `currency.special` amount and the shown presentation entitlement together. The bundle is one settlement, not two independently rerollable rewards.
 
 | Tier | Name | Generic condition | Reward type |
 |---|---|---|---|
@@ -347,11 +347,11 @@ Seasonal pages grant `0` `currency.special`. The lifetime per-character special 
 ## Persistence & Idempotency
 Same as `03_systems/atlas.md`:
 ```
-character_atlas(character_id, atlas_page_id, tier, seen_count, completed_at, reward_operation_id)
+character_atlas(character_id, atlas_page_id, tier, seen_count, completed_at, reward_operation_id, acknowledged_at NULL)
 ```
 Idempotency key per tier:
 ```
-character_id + atlas_page_id + tier
+atlas.tier.<character_id>.<atlas_page_id>.<tier>   (canonical in 03_systems/atlas.md; promotion, EXP and reward settle atomically)
 ```
 Retry never duplicates special/title. `currency.special` cap (1,000,000 per character) applies; special overflow is not allowed to block atlas; atlas special is character-scoped (ADR-0029) and credits the character's special balance directly.
 

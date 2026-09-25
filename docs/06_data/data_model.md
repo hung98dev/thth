@@ -26,6 +26,7 @@ auth_refresh_credentials
 auth_revocations
 account_cosmetic_entitlements
 account_iap_entitlements
+account_refund_consumed_events
 ~~~
 
 Relations:
@@ -39,8 +40,6 @@ Relations:
 account_id                 UUID PRIMARY KEY
 status                     VARCHAR(32) NOT NULL DEFAULT 'ACTIVE'
                            -- CHECK (status IN ('ACTIVE', 'SUSPENDED_PAYMENT_RECONCILIATION', 'BANNED', 'PENDING_DELETION', 'TOMBSTONE_ERASED'))
-iap_refund_consumed_score  INTEGER NOT NULL DEFAULT 0
-last_refund_consumed_at    TIMESTAMPTZ NULL
 deletion_requested_at      TIMESTAMPTZ NULL
 created_at                 TIMESTAMPTZ NOT NULL
 ```
@@ -48,7 +47,7 @@ created_at                 TIMESTAMPTZ NOT NULL
 
 `TOMBSTONE_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001'` is the reserved non-personal tombstone account owner for anonymized characters after data erasure.
 
-When `iap_refund_consumed_score >= 2` within rolling 180 days (evaluated from `account_refund_consumed_events`), `status` automatically transitions to `SUSPENDED_PAYMENT_RECONCILIATION`.
+`iap_refund_consumed_score` is **derived only** (ADR-0060): the count of `account_refund_consumed_events` rows for the account with `occurred_at >= now - 180 days`; it is never stored or incremented. The transaction that inserts a refund-consumed event evaluates the score including the new row and, when it is `>= 2`, transitions `status` to `SUSPENDED_PAYMENT_RECONCILIATION` in the same transaction.
 
 ### account_password_credentials schema (ADR-0051)
 ```text
@@ -73,7 +72,7 @@ occurred_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
 
 INDEX (account_id, occurred_at)
 ```
-`accounts.iap_refund_consumed_score` is the derived count of events where `account_id = $1 AND occurred_at >= NOW() - INTERVAL '180 days'`.
+The derived `iap_refund_consumed_score` is the count of events where `account_id = $1 AND occurred_at >= $now - INTERVAL '180 days'` (`$now` = Go UTC); no score column exists.
 
 There is no gameplay item vault or `account_storage` container (ADR-0029). `../03_systems/account_storage.md` is the IAP entitlement panel.
 
@@ -83,20 +82,27 @@ entitlement_id       -- stable UUID; one per purchase event; primary key
 account_id           -- FK -> accounts
 product_id           -- references store catalog in monetization.md
 entitlement_type     -- discriminator; CHECK (entitlement_type IN ('ONE_SHOT', 'ACCOUNT_SCOPED_ACCESS', 'DIRECT_ACCOUNT_COSMETIC'))
-grant_state          -- PENDING | GRANTED | REFUNDED | REFUNDED_CONSUMED
-platform_receipt     -- opaque platform verification token; UNIQUE across all accounts
+grant_state          -- PENDING | GRANTED | REJECTED | REFUNDED | REFUNDED_CONSUMED
+reject_reason        -- NULL unless REJECTED: RECEIPT_INVALID | PRODUCT_MISMATCH | SEASON_TRACK_DUPLICATE
+platform             -- GOOGLE_PLAY | APP_STORE | STEAM
+platform_receipt     -- opaque platform verification token (Google purchaseToken, Apple transactionId,
+                     --   Steam orderid); UNIQUE across all accounts
+created_at           -- UTC timestamp of the PENDING row (first verify call)
 granted_at           -- UTC timestamp of GRANTED transition
 season_number        -- INT NULL; required (NOT NULL) when product_id is a season track, else NULL
 claim_deadline_at    -- TIMESTAMPTZ NULL; season track only = season end + 14 days
 
 UNIQUE (entitlement_id, account_id, entitlement_type)  -- composite FK target for account_entitlement_claims
 UNIQUE (account_id, season_number) WHERE season_number IS NOT NULL AND grant_state IN ('PENDING','GRANTED')  -- one live season track per account per season
+CHECK ((grant_state = 'REJECTED') = (reject_reason IS NOT NULL))
 ```
+
+`grant_state` transitions: `PENDING -> GRANTED | REJECTED`; `GRANTED -> REFUNDED | REFUNDED_CONSUMED`. `REJECTED`, `REFUNDED` and `REFUNDED_CONSUMED` are terminal. A definitive negative provider answer sets `REJECTED` (`RECEIPT_INVALID` or `PRODUCT_MISMATCH`), so a forged or failed receipt never holds the per-season unique slot. A valid season-track receipt for a season in which the account already holds a `PENDING`/`GRANTED` row is inserted as `REJECTED` with `SEASON_TRACK_DUPLICATE` (payment handling: `../03_systems/monetization.md`). Verification flow: `../07_security/validation.md` § IAP Receipt Verification.
 
 The `entitlement_type` discriminator is mandatory and enforced at the DB layer by a `CHECK` constraint on `account_iap_entitlements`:
 - `ONE_SHOT` — consumed by the first character to claim it; the one-shot claim rule in `../03_systems/account_storage.md` applies; no per-character claim rows are created.
 - `ACCOUNT_SCOPED_ACCESS` — never consumed by a claim; the access entitlement remains GRANTED for its full validity period. Per-character reward claims are tracked in `account_entitlement_claims` (see below). The one-shot claim rule does NOT apply to this type.
-- `DIRECT_ACCOUNT_COSMETIC` — store cosmetic purchases (`product.cosmetic.*`) granting account-wide wardrobe unlocks in `account_cosmetic_entitlements`. Equippable directly by all characters on the account. On refund: if unequipped/not consumed -> `REFUNDED`, deletes row from `account_cosmetic_entitlements`; if active/used in session -> `REFUNDED_CONSUMED`, deletes row, un-equips on session sync, logs `IAP_REFUND_CONSUMED` audit event, and increments `accounts.iap_refund_consumed_score`.
+- `DIRECT_ACCOUNT_COSMETIC` — store cosmetic purchases (`product.cosmetic.*`) granting account-wide wardrobe unlocks in `account_cosmetic_entitlements`. Equippable directly by all characters on the account. On refund: if every row of that entitlement has `first_equipped_at IS NULL` -> `REFUNDED`, deletes its rows; otherwise -> `REFUNDED_CONSUMED`, deletes its rows, un-equips on session sync, logs `IAP_REFUND_CONSUMED` audit event and inserts one `account_refund_consumed_events` row (the derived score then includes it).
 
 ### account_cosmetic_entitlements schema (DIRECT_ACCOUNT_COSMETIC)
 Stores account-wide wardrobe unlocks for direct store cosmetics (`cosmetic.iap.*`).
@@ -105,6 +111,8 @@ account_id           UUID NOT NULL REFERENCES accounts(account_id)
 cosmetic_id          TEXT NOT NULL -- references cosmetic.iap.* in cosmetic_catalog.md
 entitlement_id       UUID NOT NULL REFERENCES account_iap_entitlements(entitlement_id)
 granted_at           TIMESTAMPTZ NOT NULL
+first_equipped_at    TIMESTAMPTZ NULL      -- set once, in the transaction of the first successful equip of this
+                                           --   cosmetic by any character of the account while this row exists
 
 PRIMARY KEY (account_id, cosmetic_id, entitlement_id)
 FOREIGN KEY (account_id) REFERENCES accounts(account_id)
@@ -112,6 +120,39 @@ FOREIGN KEY (entitlement_id) REFERENCES account_iap_entitlements(entitlement_id)
 ```
 
 An account owns a store cosmetic while **any** row for `(account_id, cosmetic_id)` exists. A bundle and a standalone purchase of the same cosmetic each keep their own row; refunding one purchase deletes only its rows, so the other purchase keeps the unlock (ADR-0053).
+
+### character_cosmetic_entitlements (ADR-0060)
+Character-scoped cosmetic ownership (`../03_systems/cosmetics.md` § Identity / Ownership): story, feat, atlas, chivalry, bond, PvP, Guild War, world-event and Guild Stone grants, redemptions, and season-track tier claims.
+```text
+character_id           UUID NOT NULL REFERENCES characters(character_id)
+cosmetic_id            VARCHAR(64) NOT NULL
+source_kind            VARCHAR(16) NOT NULL  -- CHECK IN ('PLAY', 'REDEMPTION', 'SEASON_TRACK')
+source_entitlement_id  UUID NULL REFERENCES account_iap_entitlements(entitlement_id)
+                       -- CHECK ((source_kind = 'SEASON_TRACK') = (source_entitlement_id IS NOT NULL))
+source_ref             VARCHAR(64) NOT NULL  -- source_entitlement_id as text for SEASON_TRACK, else source_kind
+grant_operation_id     UUID NOT NULL
+granted_at             TIMESTAMPTZ NOT NULL
+
+PRIMARY KEY (character_id, cosmetic_id, source_ref)
+INDEX (source_entitlement_id) WHERE source_entitlement_id IS NOT NULL
+```
+A character owns a cosmetic while **any** row for `(character_id, cosmetic_id)` exists, or while the account owns it through `account_cosmetic_entitlements`. A repeated grant of the same `(character, cosmetic, source_ref)` is idempotent. A season-track refund deletes exactly the rows whose `source_entitlement_id` is the refunded entitlement on every character of the account (`../03_systems/account_storage.md`), so the same cosmetic granted by another purchase or by play stays owned.
+
+### character_cosmetic_equips
+```text
+character_id   UUID NOT NULL REFERENCES characters(character_id)
+slot           VARCHAR(32) NOT NULL  -- character slots of cosmetics.md § Categories (incl. GUILD_STONE_INSCRIPTION)
+cosmetic_id    VARCHAR(64) NOT NULL
+PRIMARY KEY (character_id, slot)
+```
+Equip validates ownership at commit time; a lost entitlement removes the row (fallback to default) at the next state sync.
+
+### character_feats / character_feat_milestones
+Declared for the baseline migration; columns are canonical in `../03_systems/cosmetics.md` § Persistence Schema.
+```text
+character_feats            PK (character_id, feat_id); character_id FK characters
+character_feat_milestones  PK (character_id, feat_id, milestone_threshold); reward_operation_id UNIQUE
+```
 
 An `ACCOUNT_SCOPED_ACCESS` entitlement MUST NOT be stored or processed using the one-shot claim path. Enforcement uses a **denormalized discriminator column on the claim row backed by a composite foreign key** (see `account_entitlement_claims` below). A PostgreSQL `CHECK` constraint cannot reference another table's columns, so application-layer guards alone are insufficient; the composite FK mechanism enforces this invariant at commit time. The composite FKs and the `UNIQUE (entitlement_id, account_id, entitlement_type)` constraint on `account_iap_entitlements` are migration-versioned alongside these tables.
 
@@ -172,9 +213,9 @@ created_at
 
 Exactly one item_locations row exists for every live owned item instance.
 
-Canonical location kinds are CHARACTER_INVENTORY, EQUIPPED, BEAST_EQUIPMENT_SLOT, GUILD_STORAGE, TRADE_ESCROW and AUCTION_ESCROW.
+Canonical location kinds are CHARACTER_INVENTORY, EQUIPPED, BEAST_EQUIPMENT_SLOT, GUILD_STORAGE and AUCTION_ESCROW. There is no trade escrow kind (ADR-0060): items offered in a direct trade stay in CHARACTER_INVENTORY until settlement.
 
-The location row carries only fields legal for its kind, such as character/guild/listing/trade reference, inventory slot, or loadout/slot. `GUILD_STORAGE` rows also carry `depositor_character_id` and `depositor_account_id` (ADR-0049 same-account check and item-transfer signal). No account-storage slot exists.
+The location row carries only fields legal for its kind, such as character/guild/listing reference, inventory slot, or loadout/slot. `GUILD_STORAGE` rows also carry `depositor_character_id` and `depositor_account_id` (ADR-0049 same-account check and item-transfer signal). No account-storage slot exists.
 
 
 DB checks/FKs plus transactional validation enforce:
@@ -200,7 +241,24 @@ Slot occupancy is derived from/validated with item_locations. Exactly three equi
 
 
 # Souls / Builds
-Persist owned Soul instances, Soul EXP/level, contract placements, Meridian/loadout configuration, Formation selection and the inputs needed to reconstruct the build snapshot.
+Persist owned Soul instances, Soul EXP/level, contract placements, Meridian/loadout configuration, Formation selection, the skill loadout and the inputs needed to reconstruct the build snapshot.
+
+### character_souls
+```text
+soul_instance_id             UUID PRIMARY KEY
+character_id                 UUID NOT NULL REFERENCES characters(character_id)
+soul_id                      VARCHAR(64) NOT NULL
+level                        SMALLINT NOT NULL      -- CHECK (level BETWEEN 1 AND 5)
+current_soul_exp             INTEGER NOT NULL       -- CHECK (current_soul_exp >= 0)
+contracted_item_instance_id  UUID NULL UNIQUE REFERENCES item_instances(item_instance_id)
+                             -- NULL = in Collection; one equipment <= 1 soul
+```
+Per-loadout limits (3 souls, 1 BOSS soul, same `soul_id` once, 9 contracts total) are validated transactionally under the character lock (`../03_systems/soul_contracts.md`).
+
+```text
+character_soul_resonance PK (character_id, soul_id) plus memory_resonance_count int default 0, sheen_unlocked_at NULL
+```
+Vanity-only duplicate counter (`../03_systems/soul_contracts.md` § Memory Resonance); written in the duplicate-acquisition transaction.
 
 Static effects remain immutable content IDs; do not copy full static definitions into every player row.
 
@@ -223,6 +281,7 @@ The projection is recomputed from those inputs whenever the build changes (equip
 Persist owned Linh Thú, level, bond_points, active state, and 3 equipment slot references under ADR-0019 / ADR-0043. No `beast_instance_id` UUID. Linh Thú levels advance only by the material/common transition table; no EXP accumulator exists:
 ~~~
 character_beasts PK (character_id, beast_id) plus level, bond_points, is_active, updated_at
+character_beast_food_daily PK (character_id, utc_date) plus food_points_gained (0..20; shared by all beasts, spirit_beasts.md)
 beast_equipment_locations PK (character_id, beast_id, slot_id) plus item_instance_id
 FK beast_equipment_locations -> character_beasts
 ~~~
@@ -235,13 +294,13 @@ One-time completion/reward uses UNIQUE owner + stable identity so retry cannot r
 # Atlas
 Persist atlas pages per character:
 ```
-character_atlas(character_id, atlas_page_id, tier, seen_count, completed_at, reward_operation_id)
+character_atlas(character_id, atlas_page_id, tier, seen_count, completed_at, reward_operation_id, acknowledged_at NULL)
 atlas_milestones(character_id, milestone_id, completed_at)
 ```
-Atlas rewards are idempotent per page tier.
+Atlas rewards are idempotent per page tier and auto-settle at tier promotion; `acknowledged_at` is set once by `C2S_ATLAS_CLAIM` (504), which never grants (`../03_systems/atlas.md`).
 
 # Reward Claims
-Root reward_claims stores claim ID, owner character, source, reward_slot, state and timestamps.
+Root reward_claims stores claim ID, owner character, `source_type` (enum canonical in `../03_systems/reward_claims.md` § Claim Creation, incl. `LEVEL_MILESTONE`), `source_reference`, reward_slot, state and timestamps.
 
 Claim value is represented by typed child lines for item/currency/other explicitly supported types. Random choices are finalized before rows commit.
 
@@ -259,7 +318,7 @@ Auction uses auction_listings, auction_proceeds and item location AUCTION_ESCROW
 
 Purchase atomically changes listing state, buyer balance, item location, tax sink and seller proceeds.
 
-Direct trade uses trade root/participants/offers plus TRADE_ESCROW custody when required. Final settlement is atomic.
+Direct trade sessions (offers, revision, confirmations, `OPEN -> LOCKED -> COMMITTING`) are runtime state of the map-instance simulation that owns both participants; they are not persisted. Offered items stay in `CHARACTER_INVENTORY` with a session lock and are revalidated (owner, location, quantity, binding, not otherwise locked) inside the settlement transaction. Settlement is one atomic transaction that moves items/common, applies the fee and inserts `trade_settlement_records` + rollups; its `operation_id` is recorded in `operations`. A process restart drops every unsettled session; nothing needs recovery because no value moved before settlement.
 
 ## Economy Aggregation Fields (Anti-Cheat Support)
 The behavioural anomaly signals defined in `../07_security/anti_cheat.md` (net 7-day common outflow per account; 30-day trade-partner concentration per character) require rolling-window aggregation over settled economy records. Every settled record in the two families below MUST carry the following fields to make those queries bounded:
@@ -348,7 +407,7 @@ When an account erasure request is executed under `../07_security/data_protectio
    - `characters.account_id` is updated to `TOMBSTONE_ACCOUNT_ID` (`00000000-0000-0000-0000-000000000001`).
    - `characters.name` is replaced with deterministic non-personal placeholder: `Anonymized_` + substring(character_id, 1, 8).
    - `characters.name_key` is updated accordingly, freeing the original display name for release to other players.
-5. Active Auction House listings and in-flight direct trades are cancelled and escrow drained to avoid orphaned market exposure.
+5. Active Auction House listings are cancelled and auction escrow drained, and in-flight direct trade sessions are cancelled, to avoid orphaned market exposure.
 6. Progression, completed quests, and historical economy logs remain intact to preserve relational integrity and prevent world economy corruption.
 # Guild Stone & Boss Relic
 Guild Stone weekly display is derived from guild_war rating and progression tables (updated Monday 00:00 UTC), not a separate persisted currency.
@@ -374,7 +433,7 @@ expires_at            -- UTC timestamp when the relic naturally despawns (spawn_
 PRIMARY KEY (map_id, channel_id, relic_id)
 ```
 `region_di_tich_markers` is written only for launch boss relics (`relic.boss.*`); seasonal relics have no region marker.
-Lifecycle: launch boss relics are written on `DEFEATED -> COOLDOWN`; seasonal relics are written when their source completes (dungeon completion → the channel of the map in `../02_world/bosses.md` that the party entered the dungeon from; monster kill → the kill's channel), and an already-active row with the same key is not refreshed; `relic_active` is set false on expiry or explicit despawn; row may be cleaned up after expiry. On server restart, all rows with `relic_active = true` and `expires_at > now()` are reloaded and the relic restored with remaining duration clamped to at least 1 second.
+Lifecycle: launch boss relics are written on `DEFEATED -> COOLDOWN` (PUBLIC: the defeated copy's map/channel; INSTANCED: the instance's source field map in its recorded entry channel, ADR-0061); seasonal relics are written when their source completes (dungeon completion or INSTANCED boss defeat → the listed map in `../02_world/bosses.md`, entry channel recorded by the instance; monster kill → the kill's channel), and an already-active row with the same key is not refreshed; `relic_active` is set false on expiry or explicit despawn; row may be cleaned up after expiry. On server restart, all rows with `relic_active = true` and `expires_at > now()` are reloaded and the relic restored with remaining duration clamped to at least 1 second.
 
 ### region_di_tich_markers
 One row per `(region_id, boss_id)`, written and updated on every `DEFEATED` transition. This is the permanent social-proof marker displayed at the safe anchor to all characters in the region regardless of channel:
@@ -394,7 +453,7 @@ The marker is written transactionally with the `world_consequence_relics` upsert
 **Restart recovery**: On startup the server queries all `world_consequence_relics` rows with `relic_active = true` and `expires_at > now()`, restores each relic with `remaining_duration = expires_at - now()` (floor 1 second), resolves the running partition by `map_id + channel_id`, and reapplies the channel-wide buff to all connected characters in that partition. Players are not accepted into the partition until this recovery read completes.
 
 # Guild
-Logical roots include guilds, guild_memberships, invites, applications, progression, weekly ritual state, storage and storage requests.
+Logical roots include `guilds` (incl. `recruitment_mode CLOSED | APPLICATIONS`), `guild_memberships`, `guild_invites`, `guild_applications`, `guild_progression`, `guild_ritual_cycles`, `guild_blessing_votes`, storage and storage requests.
 
 ### guild_stone_category_completions
 ```text
@@ -417,16 +476,29 @@ PRIMARY KEY (character_id, public_boss_spawn_generation_id)
 ```
 Written when a character first meets the contribution threshold; character-scoped (ADR-0029). At despawn, rows without `claim_operation_id` settle into Reward Claims (`../02_world/bosses.md`).
 
+### public_boss_schedules
+```text
+boss_id                          TEXT PRIMARY KEY          -- standalone PUBLIC boss content identity
+state                            TEXT NOT NULL CHECK (state IN ('SCHEDULED','OPEN'))
+public_boss_spawn_generation_id  UUID NULL                 -- set while OPEN, NULL while SCHEDULED
+opened_at                        TIMESTAMPTZ NULL          -- set while OPEN
+next_spawn_at                    TIMESTAMPTZ NULL          -- set while SCHEDULED
+revision                         BIGINT NOT NULL
+CHECK ((state = 'OPEN' AND public_boss_spawn_generation_id IS NOT NULL AND opened_at IS NOT NULL AND next_spawn_at IS NULL)
+    OR (state = 'SCHEDULED' AND public_boss_spawn_generation_id IS NULL AND opened_at IS NULL AND next_spawn_at IS NOT NULL))
+```
+World-scoped PUBLIC generation lifecycle (`../02_world/bosses.md` § PUBLIC Generation Lifecycle, ADR-0061). Written only by Ephemeral Global in single-row `CHECKPOINT_DURABLE` transactions (never combined with another aggregate); revision-checked.
+
 Constraints include one current guild membership per character, exactly one leader for an ACTIVE guild through transactional role rules, revision-checked permission/capacity, and one canonical location for shared items.
 
 # Social / Party
-Persist friends, blocks, chivalry_points lifetime and utc-day counter, and durable sanction/abandon data where owning PvP rules require it.
+Persist `friends`, `friend_requests`, `blocks`, chivalry_points lifetime and utc-day counter, and durable sanction/abandon data where owning PvP rules require it.
 
 Party runtime membership may remain in memory unless an owning reconnect/dungeon rule explicitly requires a recovery record. Ordinary world parties are ephemeral-global runtime (`../04_architecture/service_boundaries.md`) and do not persist across full process restart.
 
 
 # PvP / Guild War
-Persist only durable rating/season/result/reward/sanction state. Do not persist every simulation tick/combat event into primary gameplay tables.
+Persist only durable rating/season/result/reward/sanction state. Do not persist every simulation tick/combat event into primary gameplay tables. Logical families: `pvp_ratings` (character + mode + season), `pvp_match_settlements`, `pvp_sanctions`, `guild_war_ratings` (guild + season), `guild_war_settlements`.
 
 # Session / Routing
 PostgreSQL may persist session/revocation metadata and transfer/handoff records needed for ambiguous ownership recovery.
@@ -481,6 +553,11 @@ one item instance -> one current location
 currency balance has one canonical row per owner/currency scope
 one-time rewards are unique/idempotent
 escrow/value settlement is transactional
+no trade escrow location; trade sessions are runtime-only and settle in one transaction
+iap_refund_consumed_score is derived from account_refund_consumed_events (180 days); never stored
+account_iap_entitlements.grant_state includes terminal REJECTED (with reject_reason); REJECTED rows never hold the per-season unique slot
+character_cosmetic_entitlements PK (character_id, cosmetic_id, source_ref); ownership = any character row or account row
+character_souls.contracted_item_instance_id UNIQUE; memory resonance persisted per (character_id, soul_id) in character_soul_resonance
 static definitions use immutable content IDs
 audit/history does not replace primary truth
 runtime combat state is not per-tick DB rows

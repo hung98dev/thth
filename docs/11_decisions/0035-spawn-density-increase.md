@@ -49,3 +49,7 @@ The `WORLD_EVENT` Spirit Surge channel (12% of total EXP at 2,000 hours) uses `H
 > At 18 players × 450/hour sustained = 8,100/hour demand. Supply at the slowest respawn band (16s, 40 alive) is ~9,000/hour — demand is met with headroom. At the average 13s respawn supply rises to ~11,077/hour with greater headroom. The repo carries both figures derived from different respawn assumptions; `~9,000/hour` (16s respawn) is the conservative planning number for capacity decisions.
 >
 > **Specs requiring update**: `02_world/world_rules.md` and `02_world/maps_zones.md` (`MAX_PLAYERS_PER_CHANNEL` constant and band thresholds), ADR-0020 (cross-reference amendment added there).
+
+## Amendment — ELITE respawn band (ADR-0061)
+
+> ELITE `max_alive = 2` is confirmed. The ELITE respawn band changes from `75..120s` to `45..75s` so that 2 alive per group still meets ELITE demand (authored mean 60s → 120 kills/hour; slowest 75s → 96/hour vs 90/hour demand). Canonical values: `07_content/map_spawn_catalog.md`.

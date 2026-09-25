@@ -99,7 +99,19 @@ Timeout:
 
 The match starts only if all ten accept.
 
-If any member fails, the guild returns to queue without a played-match result. Repeated intentional ready-check failures may trigger the same queue-abuse protections used by `pvp.md`.
+Queue and ready-check transitions (per registration; `guild_war_match_id` becomes `CANCELLED` whenever a matched pair is dissolved):
+```text
+event                                                        failing guild                                   opposing guild
+member declines / times out / disconnects during ACCEPTING   registration CANCELLED; ready-check miss counted  re-enters QUEUED keeping its original queued_at
+                                                             for the guild (pvp.md cooldown ladder, per guild)  (queue priority and search-range expansion kept)
+roster member leaves/kicked/guild role loss while QUEUED     registration CANCELLED (no penalty); LEADER/VICE_LEADER must resubmit
+roster member leaves/kicked during ACCEPTING                 same as decline row                              same as decline row
+roster member leaves/kicked at PREPARING or later            member is ABANDONED for this match (AFK/abandon rules below); match continues
+LEADER/VICE_LEADER cancels while QUEUED                      registration CANCELLED, no penalty
+LEADER/VICE_LEADER cancel during ACCEPTING                   counted as a decline by that guild               re-enters QUEUED as above
+guild enters DISBANDING                                      impossible: disband requires no registration (guild.md)
+```
+A guild holds at most one registration in `QUEUED..RESOLVING` at a time. The failing guild's next registration starts a fresh `queued_at` after its ready-check cooldown.
 
 ## Matchmaking
 Guild War queues are the ephemeral global runtime in `../04_architecture/service_boundaries.md`. After `MATCHED`, instance placement is a typed command to Instance Simulation.
@@ -213,22 +225,18 @@ GUILD_B
 Only living roster members inside the authoritative capture area count.
 
 ## Capture
-Uncontested time from neutral to controlled:
+Seals use the Five Element Arena capture model of `pvp.md` § Capture unchanged (signed integer `capture_units` in `[-60000, 60000]`, GUILD_A positive, 1s simulation step, ownership only at an endpoint, erase-first against opposing progress, contested freeze, `3s` absence hold then decay at `last_capture_rate_units_per_s`), with Guild War rates:
 
 ```text
-1 contributor = 7s
-2 contributors = 5s
-3+ contributors = 4s
+contributors   rate (units/s)   uncontested time neutral -> owned
+1              8572             7s  (clamped at the endpoint)
+2              12000            5s
+3+             15000            4s
 ```
 
-If both guilds have eligible contributors inside:
+Capturing an enemy-owned seal first erases `60000` units (owned -> NEUTRAL at `0`, seal stops scoring for its owner at that instant) and then builds toward the attacker endpoint, e.g. 3+ contributors: 4s to neutral + 4s to owned.
 
-```text
-state = CONTESTED
-capture progress = frozen
-```
-
-After all attackers leave, unfinished hostile capture progress persists for `3s`, then decays toward the current owner/neutral state.
+Capture area: an axis-aligned rectangle `6.0m wide x 4.0m tall` centred on the seal anchor, bottom edge on the plaza floor; a contributor counts when its authoritative position is inside. Guild War seals have no elemental attunement.
 
 ## Scoring
 Match duration:
@@ -526,11 +534,7 @@ character completed >= 5 Guild War matches for that guild in the season
 character is still in that guild at season settlement
 ```
 
-Reward emphasis:
-- guild banner cosmetics
-- member profile frames/titles
-- shrine visual variants
-- prestige records
+Reward roster (member frame/title, guild shrine/banner by final MMR and leaderboard rank) is canonical in `../07_content/cosmetic_catalog.md` § Competitive Season Rewards; settlement is idempotent per `cosmetic.guild_war.season.<season_id>.<cosmetic_id>.<character_id | guild_id>`. The season leaderboard record is kept as a prestige record.
 
 High rating must not grant permanent stat bonuses.
 

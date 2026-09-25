@@ -100,8 +100,11 @@ expected_crit_multiplier = 1 + CRIT_CHANCE * (CRIT_DAMAGE - 1)
 ```
 Element multiplier is neutral `1.00` for benchmark purposes.
 
+# Reference Basic Attack
+Every basic-only benchmark and every basic used to fill rotation downtime uses the class `basic_1` (`kiem_thuc`, `linh_diep`, `thuy_tien`, `hoa_phu`, `tran_quyen`) at `skill_level = 1`: the reference vector spends no skill points on basics, so these benchmarks are a conservative floor. Its proc effects are ignored for TTK (no DoT ticks, no status multipliers). The "Current expected" ranges in this document are informative and are recomputed by the balance validator from this pin; only the "Release guardrail" ranges gate activation.
+
 # Field NORMAL Benchmark
-Use only the class basic attack against a same-level NORMAL generated from `monster_catalog.md`.
+Use only the reference basic attack against a same-level NORMAL generated from `monster_catalog.md`.
 
 All authoritative basic timings come from `class_skill_catalog.md`; ATTACK_SPEED applies normally.
 
@@ -173,7 +176,7 @@ A boss whose ordinary five-player reference time falls below the floor is at ris
 
 # Level-60 Rotation Benchmark
 For an offensive-throughput check at Level 60:
-- equip the five highest useful single-target damage actives available to that class; if fewer than five directly damage, use all damaging actives and fill downtime with basics,
+- equip the five highest useful single-target damage actives available to that class; if fewer than five directly damage, use all damaging actives; fill all downtime with the reference basic attack,
 - set those damaging actives to `skill_level = 10`, which costs at most `45` of the `75` earned Level-60 skill points (59 level-up + 12 books + 4 bonus),
 - use authored cooldown/startup/active/recovery values,
 - use `+8` T6 synthetic reference gear,

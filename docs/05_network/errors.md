@@ -89,7 +89,7 @@ INVALID_STATE
 MAP_CAPACITY_FULL
 ```
 
-`MAP_CAPACITY_FULL` is issued when a normal-map entry or channel-switch target cannot be placed because the destination channel is at 18 or all 30 channels of the map are at 18 (`../02_world/world_rules.md`). Retryability: **BACKOFF**. `retry_after_ms = 5000`. A retry uses the same entry intent and a new `operation_id` after that interval. The server does not queue, evict, or silently route to another map.
+`MAP_CAPACITY_FULL` is issued when a normal-map entry or channel-switch target cannot be placed because the destination channel is at 18 or all 30 channels of the map are at 18 (`../02_world/world_rules.md`). Retryability: **BACKOFF**. `retry_after_ms = 5000`. A retry uses the same entry intent and a new `operation_id` after that interval. The server does not queue, evict, or silently route to another map. Only player-initiated entries receive this code; server-initiated placements never do (`../02_world/world_rules.md` § Forced Placement, ADR-0061).
 
 Durable operation envelope:
 ```text
@@ -99,8 +99,13 @@ OPERATION_REJECTED
 TEMPORARY_DEPENDENCY_FAILURE
 IAP_RECEIPT_ACCOUNT_MISMATCH
 IAP_PRODUCT_MISMATCH
+IAP_RECEIPT_INVALID
+IAP_SEASON_TRACK_DUPLICATE
+IAP_VERIFICATION_PENDING
 CHEST_ELIGIBILITY_INVALID
 ```
+
+`IAP_RECEIPT_INVALID` (definitive negative provider answer: not purchased, cancelled, malformed, wrong app) and `IAP_SEASON_TRACK_DUPLICATE` (a second valid season-track purchase for a season the account already holds) set the entitlement `REJECTED`; retryability **NEVER**. `IAP_VERIFICATION_PENDING` (provider timeout/5xx/ambiguous after retries) keeps it `PENDING`; retryability **RETRY_SAME_OPERATION** with the same `platform_receipt` (`../07_security/validation.md` § IAP Receipt Verification).
 
 `IAP_PRODUCT_MISMATCH` is issued when a platform receipt's product ID does not match any registered product in the IAP catalog. Retryability: **NEVER**. Referenced in `../07_security/validation.md`.
 
@@ -117,13 +122,17 @@ AH_ELIGIBILITY_LEVEL_REQUIRED
 AH_ELIGIBILITY_AGE_REQUIRED
 TRADE_COMMON_BOTH_SIDES
 TRADE_PRICE_FLOOR_NOT_MET
+AH_PRICE_FLOOR_NOT_MET
+SAME_ACCOUNT_FORBIDDEN
 ```
 `TRADE_COMMON_BOTH_SIDES`, `TRADE_PRICE_FLOOR_NOT_MET`: `../03_systems/trading_auction.md`. Retryability: **NEVER** with the same offer.
-`TRADE_PARTNER_DISCONNECTED` is issued when a direct trade is cancelled because a participant disconnected. Retryability: **NEVER** — the trade is cancelled non-retryably; items have been returned to owner inventories. Both connected parties receive this code.
+`TRADE_PARTNER_DISCONNECTED` is issued when a direct trade is cancelled because a participant disconnected. Retryability: **NEVER** — the trade is cancelled non-retryably; offered items never left their owners' inventories and their session locks are released. Both connected parties receive this code.
 
 `TRADE_ELIGIBILITY_LEVEL_REQUIRED` and `TRADE_ELIGIBILITY_AGE_REQUIRED` (ADR-0041): issued when direct trade is initiated with or by a character with level < 10 or age < 24h. Retryability: **NEVER** (until eligibility condition is satisfied).
 
-`AH_ELIGIBILITY_LEVEL_REQUIRED` and `AH_ELIGIBILITY_AGE_REQUIRED` (ADR-0041): issued when an auction listing is attempted by a character with level < 10 or age < 24h. Retryability: **NEVER** (until eligibility condition is satisfied).
+`AH_ELIGIBILITY_LEVEL_REQUIRED` and `AH_ELIGIBILITY_AGE_REQUIRED` (ADR-0041, ADR-0063): `AH_ELIGIBILITY_LEVEL_REQUIRED` for any auction operation by a character below the Level-15 unlock; `AH_ELIGIBILITY_AGE_REQUIRED` for a listing by a character younger than 24h (`../03_systems/trading_auction.md` § Auction Eligibility Gates). Retryability: **NEVER** (until eligibility condition is satisfied).
+
+`AH_PRICE_FLOOR_NOT_MET`: listing price below the auction floor (`trading_auction.md` § Listing Price Floor). `SAME_ACCOUNT_FORBIDDEN`: direct trade between, or auction purchase of a listing from, characters of the same account. Retryability: **NEVER** with the same input.
 
 Domain operation results (shared by every durable/gameplay `*_RESULT` message; owning specs state which apply):
 ```text
@@ -138,8 +147,14 @@ AUCTION_LISTING_NOT_ACTIVE  CLAIM_WINDOW_CLOSED       DURABLE_BACKPRESSURE
 BEAST_NOT_OWNED           SLOT_MISMATCH             SLOT_EMPTY
 INSUFFICIENT_ITEM         DAILY_FOOD_CAP_REACHED    MAX_BOND_REACHED
 FRIEND_LIMIT_REACHED      TARGET_BLOCKED            ALREADY_FRIENDS
-PENDING_REQUEST_EXISTS
+PENDING_REQUEST_EXISTS    CLAIM_CAP_REACHED         CHARM_INELIGIBLE
+SKILL_NOT_LEARNED         SKILL_MAX_LEVEL           SKILL_POINTS_INSUFFICIENT
+SKILL_LOADOUT_INVALID     POTENTIAL_POINTS_INSUFFICIENT  POTENTIAL_CAP_EXCEEDED
+INSUFFICIENT_MP           SOUL_CONTRACT_LIMIT_REACHED    STORY_CHOICE_REQUIRED
+NOT_DISCOVERED            GUILD_NAME_TAKEN          GUILD_NAME_INVALID
+ATLAS_TIER_NOT_REACHED
 ```
+Meaning of the progression/build codes: `SKILL_NOT_LEARNED` (skill not unlocked yet), `SKILL_MAX_LEVEL` (Basic/Active 12, Passive 6), `SKILL_POINTS_INSUFFICIENT` / `POTENTIAL_POINTS_INSUFFICIENT` (no unspent points), `POTENTIAL_CAP_EXCEEDED` (60% per-stat cap, `../01_gameplay/stats.md`), `SKILL_LOADOUT_INVALID` (wrong skill type, duplicate or unlearned in a slot), `INSUFFICIENT_MP` (skill MP cost), `SOUL_CONTRACT_LIMIT_REACHED` (any `soul_contracts.md` § Contract limit), `STORY_CHOICE_REQUIRED` (dungeon entry before the MAIN story branch choice, message 509), `NOT_DISCOVERED` (travel destination not discovered), `CLAIM_CAP_REACHED` (100 PENDING Reward Claims, `../03_systems/reward_claims.md`), `CHARM_INELIGIBLE` (charm stacking or level eligibility, `../03_systems/crafting.md`), `GUILD_NAME_TAKEN` / `GUILD_NAME_INVALID` (`../06_data/text.md`), `ATLAS_TIER_NOT_REACHED` (atlas acknowledge for an unreached tier, `../03_systems/atlas.md`).
 `DURABLE_BACKPRESSURE` (retry after state refresh) is returned for boss activation, dungeon completion and quest turn-in while a partition is in durable backpressure (`../06_data/save_rules.md`).
 Retryability: `STATE_CONFLICT`, `COOLDOWN_ACTIVE` and `DURABLE_BACKPRESSURE` may be retried after the client refreshes state; the others are **NEVER** with the same input. A system needing a new reason adds it to this list in the same change.
 ## Disconnect Policy
