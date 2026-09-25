@@ -143,10 +143,10 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           set -uo pipefail
-          docker run --rm "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
+          docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
             lf=/github/workspace/unity-materialize.log; [ "$i" -eq 1 ] && lf=-
-            docker run --rm \
+            docker run --rm --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
               -w /github/workspace \
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -188,7 +188,7 @@ jobs:
           set -euo pipefail
           mkdir -p artifacts/unity-tests
           for mode in EditMode PlayMode; do
-            docker run --rm \
+            docker run --rm --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
               -w /github/workspace \
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
