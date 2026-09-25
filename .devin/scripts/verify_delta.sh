@@ -74,7 +74,9 @@ if [ "$FULL" -eq 1 ]; then
     canonical_ran=1
     before_status="$(git status --porcelain=v1 --untracked-files=all 2>/dev/null)"
     rm -f verify-report.json
-    canonical_out="$(run_ps_script scripts/verify.ps1 2>&1)"
+    # -LocalDeferMissing: a missing local Unity editor, PostgreSQL or Windows-only
+    # binary is DEFERRED(local-missing) in verify-report.json, never in CI (ADR-0072).
+    canonical_out="$(run_ps_script scripts/verify.ps1 -LocalDeferMissing 2>&1)"
     canonical_rc=$?
     after_status="$(git status --porcelain=v1 --untracked-files=all 2>/dev/null)"
     [ "$QUIET" -eq 0 ] && printf '%s\n' "$canonical_out"
@@ -82,6 +84,10 @@ if [ "$FULL" -eq 1 ]; then
     if [ "$canonical_rc" -eq 0 ]; then
       canonical_functional_pass=1
       pass "canonical Q0-Q6"
+      if has_cmd jq && [ -f verify-report.json ]; then
+        deferred_ids="$(jq -r '[.gates[].checks[] | select(.status == "DEFERRED") | .id] | sort | unique | join(" ")' verify-report.json 2>/dev/null || true)"
+        [ -n "$deferred_ids" ] && warn "DEFERRED(local-missing) to CI (authoritative): $deferred_ids"
+      fi
     else
       canonical_fail_ids=""
       if has_cmd jq && [ -f verify-report.json ]; then
@@ -117,7 +123,7 @@ if [ "$canonical_functional_pass" -eq 1 ]; then
   pass "task/DAG/evidence integrity covered by canonical Q0/Q6"
 elif in_scope DOCS || in_scope EVIDENCE; then
   if has_cmd go && [ -f server/go.mod ]; then
-    (cd server && run_limited 180 go test ./internal/conformance) \
+    (cd server && run_limited 180 go test ./internal/conformance/...) \
       && pass "canonical conformance tests" || fail "canonical conformance tests"
   elif [ "$BOOTSTRAP" -eq 1 ] || [ ! -f server/go.mod ]; then
     skip "SKIP(bootstrap): conformance tests do not exist yet (IMP-000)"
@@ -220,12 +226,19 @@ if in_scope GO || { [ "$FULL" -eq 1 ] && [ "$canonical_functional_pass" -eq 0 ] 
     if [ "$canonical_functional_pass" -eq 1 ]; then
       pass "architecture/import fences covered by canonical Q4"
     else
-      (cd server && run_limited 180 go test ./internal/conformance) \
+      (cd server && run_limited 180 go test ./internal/conformance/...) \
         && pass "canonical conformance tests" || fail "canonical conformance tests"
     fi
 
     pkgs="$(printf '%s\n' "$gofiles" | xargs -r -n1 dirname | sort -u | sed 's|^server/|./|; s|^server$|./|' || true)"
     race_pkgs="$(printf '%s\n' "$pkgs" | grep -E '(^|/)(sim|global|edge|durable)(/|$)' || true)"
+    # -race needs cgo + a C compiler; CI runs it on the Linux job only (ADR-0072).
+    race_ok=0
+    if [ "$(go env CGO_ENABLED 2>/dev/null)" = "1" ] && has_cmd "$(go env CC 2>/dev/null | awk '{print $1}')"; then race_ok=1; fi
+    if [ -n "$race_pkgs" ] && [ "$race_ok" -eq 0 ]; then
+      warn "go test -race deferred to the Linux CI job (no cgo C compiler locally): $race_pkgs"
+      race_pkgs=""
+    fi
     if [ "$canonical_functional_pass" -eq 1 ]; then
       pass "Go vet/tests/build covered by canonical Q3"
       if [ -n "$race_pkgs" ]; then
@@ -245,7 +258,7 @@ if in_scope GO || { [ "$FULL" -eq 1 ] && [ "$canonical_functional_pass" -eq 0 ] 
 
         if (cd server && for d in $pkgs; do
           extra=()
-          case "$d" in *sim*|*global*|*edge*|*durable*) extra=(-race) ;; esac
+          [ "$race_ok" -eq 1 ] && case "$d" in *sim*|*global*|*edge*|*durable*) extra=(-race) ;; esac
           run_limited 180 go test -count=1 "${extra[@]}" "$d" || exit 1
         done); then
           pass "go test affected packages ($pkgs)"
@@ -339,7 +352,7 @@ if in_scope CLIENT_CS || in_scope CLIENT_ASSETS; then
       fi
       unity_after_status="$(git status --porcelain=v1 --untracked-files=all 2>/dev/null)"
       if [ "$unity_before_status" != "$unity_after_status" ]; then
-        fail "Unity verification created worktree drift: $(printf '%s\n' "$unity_after_status" | tail -20)"
+        fail "Unity editor materialized files under client/ — review and commit them (same rule as CI artifact unity-materialized-<os>, ADR-0072): $(printf '%s\n' "$unity_after_status" | tail -20)"
       else
         pass "Unity verification created no worktree drift"
       fi

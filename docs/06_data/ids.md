@@ -77,7 +77,11 @@ Generator (ADR-0065):
 ```text
 client-initiated request (C2S message / HTTPS mutation)  client generates UUID v4 once per user intent and reuses it on retry;
                                                           server rejects nil, non-v4 or malformed IDs (`PROTOCOL_MALFORMED`)
-server-initiated job / admin / webhook                    authoritative Go code, crypto/rand UUID v4 persisted before first attempt
+server-initiated job / admin / webhook                    deterministic UUID v5 over SERVER_JOB_NAMESPACE_UUID and "<operation_family>:<job_key>"
+                                                          (ADR-0070); job_key = the stable natural key of the job: account_id (erasure),
+                                                          utc_date + scope (scheduled rollups/settlements), provider notification ID
+                                                          (webhooks), audit_event_id of the recorded operator request (admin);
+                                                          so a retry after a crash recomputes the same ID and nothing is persisted first
 simulation settlement                                     deterministic UUID v5 (save_rules.md)
 content grant                                             deterministic UUID v5 (§ Deterministic Content-Grant Idempotency Keys)
 ```

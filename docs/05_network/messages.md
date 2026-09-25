@@ -42,7 +42,8 @@ ID   Name
 13   S2C_CHARACTER_CREATE_RESULT
 14   S2C_CHARACTER_LIST
 15   S2C_PLACEMENT_PENDING
-16..99   (reserved, unassigned)
+16   S2C_RESUME_CREDENTIAL
+17..99   (reserved, unassigned)
 ```
 
 These validate authentication/session/protocol state before gameplay dispatch. Handshake order and pre-session rules: `protocol.md` § Handshake. Account login, refresh and the gameplay ticket are HTTPS (`../07_security/auth.md` § HTTPS Endpoints). Wire scalar types (UUID = 16-byte `bytes`, timestamps = int64 Unix ms UTC, `error_code` enum): `protobuf_conventions.md` § 6.
@@ -56,8 +57,9 @@ Session field lists (ADR-0064):
 2  S2C_HELLO_OK               session_id, session_epoch (uint64), account_id, server_time_ms, heartbeat_interval_ms (5000),
                               connection_timeout_ms (15000), resume_credential, resume_expires_at_ms, protocol_minor (server),
                               content_revision, pending_deletion (bool; ACCOUNT_PENDING_DELETION flow, data_protection.md),
-                              resumed_character_id (16 bytes; set only when a resume re-attached the character inside grace,
-                              followed by 7 without a 6 request)
+                              resumed_character_id (16 bytes; set when a resume OR a superseding ticket HELLO re-attached the
+                              account's live character (in the world or inside grace), followed by 7 without a 6 request; empty
+                              only when no character of the account is live), resume_rotate_interval_ms (300000)
 3  S2C_ERROR                  error_code, retryability (errors.md § Retryability), retry_after_ms (uint32), queue_position (uint32;
                               login queue only), safe_message_key, close_after (bool: the server closes the socket after sending).
                               Envelope correlation_id = client_seq of the rejected frame (0 if none).
@@ -65,25 +67,30 @@ Session field lists (ADR-0064):
 7  S2C_CHARACTER_ATTACH_OK    character_id, ownership_epoch (uint64), map_id, channel_index (uint32), instance_id (16 bytes,
                               empty in the normal world), content_revision; followed by S2C_WORLD_BASELINE (300) and every state push
                               (432..438, 515, 607, 616, 619, 628). Rejections use S2C_ERROR: CHARACTER_ALREADY_ACTIVE, NOT_OWNER,
-                              ACCOUNT_PENDING_DELETION, SERVER_OVERLOADED (login queue, session.md). A forced-placement wait answers
-                              with 15 instead (world_rules.md § Forced Placement).
+                              ACCOUNT_PENDING_DELETION. The login queue is enforced only at the ticket (session.md § Login
+                              Queue), never at attach. A forced-placement wait answers with 15 instead (world_rules.md § Forced Placement).
 8  S2C_SESSION_REPLACED       reason : NEWER_SESSION | REVOKED; the server closes the socket after sending
 9  S2C_SERVER_DRAINING        reason : MAINTENANCE, drain_deadline_ms (int64 absolute), reconnect_after_ms (uint32)
 10 C2S_CHARACTER_DETACH       (empty)
-11 S2C_CHARACTER_DETACH_OK    character_id; followed by 14
+11 S2C_CHARACTER_DETACH_OK    character_id; followed by 14. Rejections use S2C_ERROR: MESSAGE_NOT_ALLOWED_IN_STATE (no character
+                              attached, or TRANSFERRING_MAP / instance entry in progress), IN_COMBAT (character `in_combat`,
+                              ../01_gameplay/combat.md), INVALID_STATE (active trade session or PvP/Guild War match).
 12 C2S_CHARACTER_CREATE       operation_id, character_name (rules ../01_gameplay/character.md § Name, ../06_data/text.md), class_id
                               (class.kim | class.moc | class.thuy | class.hoa | class.tho). Legal only while no character is attached.
 13 S2C_CHARACTER_CREATE_RESULT operation_id, status, error_code (CHARACTER_NAME_INVALID | CHARACTER_NAME_TAKEN | CHARACTER_SLOTS_FULL
                               | TARGET_INVALID (unknown class)), character : CharacterSummary; followed by 14 on success
 14 S2C_CHARACTER_LIST         characters : list of CharacterSummary {character_id, character_name, class_id, level, map_id,
-                              last_online_at_ms}, character_slots (3, ../03_systems/monetization.md). REPLACEABLE_STATE; sent after
-                              2 (when no character was resumed), after 11 and after a successful 12.
+                              last_online_at_ms, is_attached (bool)}, character_slots (3, ../03_systems/monetization.md).
+                              REPLACEABLE_STATE; sent after 2 (when no character was resumed), after 11 and after a successful 12.
 15 S2C_PLACEMENT_PENDING      request_message_id (6 | 208 | 0 for server-initiated transfers), reason : RESPAWN | INSTANCE_RETURN
                               | RECONNECT | FIRST_LOGIN,
                               retry_after_ms (5000); the server keeps retrying and later sends 7 / 207 / 105. Never an error.
+16 S2C_RESUME_CREDENTIAL      resume_credential, resume_expires_at_ms; AUTHORITATIVE_EVENT; sent every 300 s while the session is
+                              live (sliding rotation, ../07_security/session.md § Resume); the previous credential stays valid
+                              until the new one is first presented or it expires
 ```
 
-`C2S_CHARACTER_DETACH` (10) returns the attached character to `OFFLINE` on this session. Success is `S2C_CHARACTER_DETACH_OK` (11). Attaching another character without this detach is `CHARACTER_ALREADY_ACTIVE`. Character deletion does not exist (`../01_gameplay/character.md` § Deletion); character select = `C2S_CHARACTER_ATTACH`.
+`C2S_CHARACTER_DETACH` (10) returns the attached character to `OFFLINE` on this session. Success is `S2C_CHARACTER_DETACH_OK` (11). Attaching another character without this detach is `CHARACTER_ALREADY_ACTIVE`. Superseding login (ADR-0069): a HELLO (ticket or resume) for an account whose previous session is live replaces it (`S2C_SESSION_REPLACED` `NEWER_SESSION` to the old connection); when a character of the account is live (in the world or inside grace) the new session re-attaches that same character exactly like a resume (`resumed_character_id` set, 7 without 6). The replacing client never receives `CHARACTER_ALREADY_ACTIVE`; it switches character only through 10. Character deletion does not exist (`../01_gameplay/character.md` § Deletion); character select = `C2S_CHARACTER_ATTACH`.
 
 ## Input / Movement
 ```text
@@ -112,6 +119,8 @@ Input/transfer field lists (envelope `client_seq` identifies every C2S frame; pa
 ```text
 101 C2S_JUMP                  client_mono_ms (advisory)
 102 C2S_DROP_THROUGH          client_mono_ms (advisory)
+103 C2S_INTERACT              fields below the list. 202 C2S_TARGET_INTENT (Combat) is the only way to set a target: client-side
+                              target cycling (Tab / R3 / tap) always sends 202 and waits for the stored target in the state push.
 104 C2S_PORTAL_USE            operation_id, portal_id (portal object ID, ../02_world/maps_zones.md); answered by exactly one 116 with
                               interact_kind = PORTAL (LEVEL_TOO_LOW | OUT_OF_RANGE | IN_COMBAT | MAP_CAPACITY_FULL | STATE_CONFLICT);
                               SUCCESS is followed by 105
@@ -122,7 +131,11 @@ Input/transfer field lists (envelope `client_seq` identifies every C2S frame; pa
 106 C2S_PRESENTATION_READY    transfer_id
 107 S2C_MOVEMENT_CORRECTION   last_processed_client_seq (uint64), server_tick, x_mm, y_mm (sint32), vx_mm_s, vy_mm_s (sint32),
                               facing, movement_state : IDLE | RUN | JUMP | FALL | KNOCKBACK (../01_gameplay/movement.md),
-                              platform_id (string; empty = none)
+                              platform_id (string; empty = none), reason : ILLEGAL_MOVE | KNOCKBACK | PORTAL | RESPAWN | FORCED
+                              (ADR-0069). Sent only when the server rejects or overrides the predicted path (illegal move,
+                              knockback/displacement, portal, respawn, other forced placement); ordinary prediction error is
+                              computed by the client from S2C_STATE_DELTA.self_ack. The client snaps/replays per
+                              synchronization.md § Local Reconciliation.
 110 S2C_CHANNEL_SWITCH_RESULT operation_id, status, error_code (MAP_CAPACITY_FULL | COOLDOWN_ACTIVE | IN_COMBAT | STATE_CONFLICT),
                               target_channel_index, retry_after_ms; SUCCESS is followed by 105
 ```
@@ -293,8 +306,13 @@ EntityState               entity_id, entity_kind : PLAYER | MONSTER | NPC | BEAS
                           encounters : list of {encounter_id, encounter_content_id, phase_number, active_mechanic_ids}
 301 S2C_ENTITY_SPAWN      baseline_id, server_tick, entity : EntityState
 302 S2C_ENTITY_DESPAWN    baseline_id, server_tick, entity_id, reason : LEFT_AOI | DIED | REMOVED | TRANSFERRED | SHED
-303 S2C_STATE_DELTA       baseline_id, server_tick, entities : list of EntityDelta {entity_id, then every EntityState field
-                          except entity_id/entity_kind/content_id/character_id as proto3 `optional`; absent = unchanged}
+303 S2C_STATE_DELTA       baseline_id, server_tick, self_ack : SelfAck {last_processed_client_seq (uint64), x_mm, y_mm,
+                          vx_mm_s, vy_mm_s (sint32), movement_state, platform_id} (always present; the authoritative self
+                          state after the last processed input, used by client reconciliation, synchronization.md § Local
+                          Reconciliation), entities : list of EntityDelta {entity_id, then every scalar EntityState field
+                          except entity_id/entity_kind/content_id/character_id as proto3 `optional` (absent = unchanged); list
+                          fields are wrapped: `statuses : StatusList {repeated entries}` and `equipped_cosmetics : CosmeticList
+                          {repeated entries}` as message fields (absent = unchanged; present = full replacement, possibly empty)}
 306 C2S_BASELINE_ACK      baseline_id
 ```
 
@@ -686,15 +704,15 @@ ID   Name                       Direction   Notes
   - `S2C_CHAT_MESSAGE`: `chat_message_id : UUID` (= `chat_messages.message_id`; referenced by reports), `channel`, `sender_character_id : UUID`, `sender_name : string`, `message_text : string`, `sent_at_ms : int64`.
   - `S2C_CHAT_SEND_RESULT` (655): `operation_id`, `status`, `error_code` (`RATE_LIMITED`, `TARGET_BLOCKED`, `TARGET_INVALID` (whisper target offline/unknown), `PERMISSION_DENIED` (muted, not in party/guild), `CHAT_TEXT_INVALID` (text rejected by `social.md` § Message Content)), `chat_message_id` (SUCCESS).
 - **Friends & Blocks (611..619)**:
-  - `C2S_FRIEND_REQUEST` (611): `operation_id : UUID`, `target_character_id : UUID`. Rate limit: social invite (10/60s). Error codes: `FRIEND_LIMIT_REACHED`, `TARGET_BLOCKED`, `ALREADY_FRIENDS`, `PENDING_REQUEST_EXISTS`.
+  - `C2S_FRIEND_REQUEST` (611): `operation_id : UUID`, `target_character_id : UUID`. Rate limit: social invite (10/60s). Error codes: `FRIEND_LIMIT_REACHED`, `TARGET_BLOCKED`, `ALREADY_FRIENDS`, `PENDING_REQUEST_EXISTS`, `CAPACITY_FULL` (100 outgoing pending, `../03_systems/social.md`).
   - `C2S_FRIEND_ACCEPT` (613): `operation_id : UUID`, `requester_character_id : UUID`. Mutual friendship created in `friends`.
   - `C2S_FRIEND_DECLINE` (614): `operation_id : UUID`, `requester_character_id : UUID`. Request marked DECLINED.
   - `C2S_FRIEND_REMOVE` (615): `operation_id : UUID`, `target_character_id : UUID`. Friendship severed atomically.
   - `S2C_FRIEND_STATE` (616) — delivery class `AUTHORITATIVE_EVENT` (never superseded): `full_snapshot : bool`, `entries : list of {friend_character_id : UUID, display_name, online_state : ONLINE | OFFLINE, zone_id, activity : WORLD | DUNGEON | PVP, change : UPSERT | REMOVED}`, `incoming_requests : list of {requester_character_id, display_name, expires_at_ms}`, `outgoing_requests : list of {target_character_id, display_name, expires_at_ms}`. After attach the server sends `full_snapshot = true` (complete list, <= 100 friends, `social.md`); later messages carry only changed entries (presence or list change) and the complete request lists; the client applies them in `server_seq` order.
-  - `C2S_BLOCK_ADD` (617): `operation_id : UUID`, `target_character_id : UUID`. Inserts block, severs mutual friendship, cancels pending requests.
+  - `C2S_BLOCK_ADD` (617): `operation_id : UUID`, `target_character_id : UUID`. Inserts block, severs mutual friendship, cancels pending requests. `CAPACITY_FULL` at 500 blocks (`../03_systems/social.md`).
   - `C2S_BLOCK_REMOVE` (618): `operation_id : UUID`, `target_character_id : UUID`. Removes block.
   - `S2C_BLOCK_STATE` (619) — `REPLACEABLE_STATE`, full snapshot after attach and after every change: `blocked : list of {blocked_character_id : UUID, display_name, blocked_at_ms}`.
-  - `S2C_SOCIAL_RESULT` (654): `operation_id`, `request_message_id (611 | 613 | 614 | 615 | 617 | 618)`, `status`, `error_code` (`FRIEND_LIMIT_REACHED`, `TARGET_BLOCKED`, `ALREADY_FRIENDS`, `PENDING_REQUEST_EXISTS`, `TARGET_INVALID`, `RATE_LIMITED`), `target_character_id`.
+  - `S2C_SOCIAL_RESULT` (654): `operation_id`, `request_message_id (611 | 613 | 614 | 615 | 617 | 618)`, `status`, `error_code` (`FRIEND_LIMIT_REACHED`, `TARGET_BLOCKED`, `ALREADY_FRIENDS`, `PENDING_REQUEST_EXISTS`, `CAPACITY_FULL`, `TARGET_INVALID`, `RATE_LIMITED`), `target_character_id`.
 - **Party (602..607, 620..622, 634..636)**:
   - `C2S_PARTY_INVITE` (602): `operation_id : UUID`, `target_character_id : UUID`. Sender must be leader, or partyless: a partyless sender's first invite atomically creates a party with the sender as leader (`party_revision = 1`) before the invite is issued; if that invite then ends without acceptance the one-member party remains valid until the leader leaves (`../03_systems/party.md`). Target online, partyless, unblocked. 60s TTL. Rate limit: social invite (10/60s).
   - `S2C_PARTY_INVITE` (603): `party_id : UUID`, `inviter_character_id : UUID`, `inviter_name : string`, `expires_in_seconds : uint32`.
@@ -761,12 +779,12 @@ ID   Name                       Direction   Notes
 810  S2C_GUILD_WAR_STATE        S→C         guild-war match/queue state
 811  S2C_SPARRING_CHALLENGE     S→C         challenge delivered to target: challenger, expires_in_seconds
 812  C2S_SPARRING_DECLINE       C→S         target declines; carries operation_id
-813  S2C_SPARRING_RESULT        S→C         to both: ACCEPTED | DECLINED | EXPIRED | REJECTED(+error_code)
+813  S2C_SPARRING_OUTCOME        S→C         to both: ACCEPTED | DECLINED | EXPIRED | REJECTED(+error_code)
 814  C2S_DUEL_CHALLENGE         C→S         challenge a character to pvp.mode.duel
 815  S2C_DUEL_CHALLENGE         S→C         challenge delivered to target
 816  C2S_DUEL_RESPOND           C→S         target accepts or declines
 817  C2S_DUEL_CANCEL            C→S         challenger cancels a pending challenge
-818  S2C_DUEL_RESULT            S→C         to both: ACCEPTED | DECLINED | CANCELLED | EXPIRED | REJECTED(+error_code)
+818  S2C_DUEL_OUTCOME            S→C         to both: ACCEPTED | DECLINED | CANCELLED | EXPIRED | REJECTED(+error_code)
 819  S2C_PVP_RESULT             S→C         typed result for every PvP / Guild War C2S request
 820..899  (reserved, unassigned)
 ```
@@ -788,7 +806,7 @@ Queue and duel payloads (every C2S carries `operation_id`; domain outcomes never
 815 S2C_DUEL_CHALLENGE        challenge_id, challenger_character_id, challenger_name, expires_in_seconds (60)
 816 C2S_DUEL_RESPOND          operation_id, challenge_id, decision : ACCEPT | DECLINE
 817 C2S_DUEL_CANCEL           operation_id, challenge_id
-818 S2C_DUEL_RESULT           challenge_id, outcome : ACCEPTED | DECLINED | CANCELLED | EXPIRED | REJECTED, error_code
+818 S2C_DUEL_OUTCOME           challenge_id, outcome : ACCEPTED | DECLINED | CANCELLED | EXPIRED | REJECTED, error_code
 800 C2S_SPARRING_REQUEST      operation_id, target_character_id
 801 C2S_SPARRING_ACCEPT       operation_id, challenge_id
 812 C2S_SPARRING_DECLINE      operation_id, challenge_id
@@ -799,14 +817,14 @@ Queue and duel payloads (every C2S carries `operation_id`; domain outcomes never
                               team), rating_before, rating_after (ranked only; 0 otherwise)
 807 C2S_MATCH_SURRENDER       operation_id, match_id
 811 S2C_SPARRING_CHALLENGE    challenge_id, challenger_character_id, challenger_name, expires_in_seconds (60)
-813 S2C_SPARRING_RESULT       challenge_id, outcome : ACCEPTED | DECLINED | EXPIRED | REJECTED, error_code
+813 S2C_SPARRING_OUTCOME       challenge_id, outcome : ACCEPTED | DECLINED | EXPIRED | REJECTED, error_code
 819 S2C_PVP_RESULT            operation_id, request_message_id (800 | 801 | 802 | 803 | 805 | 807 | 808 | 809 | 812 | 814 | 816
                               | 817), status, error_code, reference_id (challenge_id or match_id; empty when none).
                               Every PvP C2S gets exactly one 819; 804 / 806 / 810 / 813 / 818 are the resulting state events.
 ```
 Duel (`../03_systems/pvp.md` § Duel, § Eligibility): both characters level >= 10, online, not queued/matched/dead/transferring, `social.md` direct-interaction gate; at most one pending outbound and one pending inbound challenge per character. `ACCEPTED` creates a `pvp.mode.duel` match that follows the normal match lifecycle through 806 (`S2C_MATCH_STATE`) and 807 (surrender); `S2C_TRANSFER_PREPARE` moves both to `map.pvp.duel_court`. Queue rejections: `LEVEL_TOO_LOW`, `STATE_CONFLICT` (already queued/matched, dead, transferring, forbidden instance), `COOLDOWN_ACTIVE` (queue sanction or ready-check miss cooldown), `PERMISSION_DENIED` (not party leader / not LEADER or VICE_LEADER), `TARGET_INVALID` (roster member ineligible; `error_code` names the first failing rule).
 
-`C2S_SPARRING_REQUEST` is sent by either player standing on the Sparring Ring platform to issue a casual duel challenge to a target character in the same channel (`pvp.mode.sparring`, ADR-0023). `C2S_SPARRING_ACCEPT` is the target's acceptance response. `C2S_SPARRING_REQUEST` carries `target_character_id`, `C2S_SPARRING_ACCEPT` / `C2S_SPARRING_DECLINE` carry the `challenge_id` from 811, and all carry a stable `operation_id`; the server validates platform eligibility, channel co-location, and the `social.md` direct-interaction gate before creating the sparring match. Challenge lifetime is `60s`. The target receives `S2C_SPARRING_CHALLENGE` (811) and answers with `C2S_SPARRING_ACCEPT` (801) or `C2S_SPARRING_DECLINE` (812); both parties receive `S2C_SPARRING_RESULT` (813) for accept, decline, expiry or a validation rejection. `S2C_ERROR` is never used for these domain outcomes.
+`C2S_SPARRING_REQUEST` is sent by either player standing on the Sparring Ring platform to issue a casual duel challenge to a target character in the same channel (`pvp.mode.sparring`, ADR-0023). `C2S_SPARRING_ACCEPT` is the target's acceptance response. `C2S_SPARRING_REQUEST` carries `target_character_id`, `C2S_SPARRING_ACCEPT` / `C2S_SPARRING_DECLINE` carry the `challenge_id` from 811, and all carry a stable `operation_id`; the server validates platform eligibility, channel co-location, and the `social.md` direct-interaction gate before creating the sparring match. Challenge lifetime is `60s`. The target receives `S2C_SPARRING_CHALLENGE` (811) and answers with `C2S_SPARRING_ACCEPT` (801) or `C2S_SPARRING_DECLINE` (812); both parties receive `S2C_SPARRING_OUTCOME` (813) for accept, decline, expiry or a validation rejection. `S2C_ERROR` is never used for these domain outcomes.
 
 ## Error Result Shape
 Rejected requests use either:

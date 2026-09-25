@@ -159,11 +159,12 @@ services            constructor injection from ThinhThan.App       constructor i
 ## 4a. Branch, Commit and PR Conventions
 
 ```text
-branches   imp/IMP-XXX-<slug>   spec/BLK-XXX-<slug>   claim/<yyyymmdd>-<n>   revert/<sha>
+branches   imp/IMP-XXX-<slug>   imp/IMP-XXX-done   spec/BLK-XXX-<slug>   claim/<yyyymmdd>-<n>
+           block/IMP-XXX-<n>   ops/OPS-XXX-<open|resolved>   revert/<sha>   (roles: audit_gates.md § Protected Paths)
 titles     <type>(IMP-XXX): <summary>      type = feat | fix | test | chore | docs | ci | perf
 PR body    Change Packet (.github/pull_request_template.md, agent_execution_protocol.md §4a)
-updates    git merge origin/main only; never rebase, amend, force-push or push to main
-merge      squash via auto-merge after the §5a sequence
+updates    git merge origin/main only, and only while holding the merge slot; never rebase, amend, force-push or push to main
+merge      squash via auto-merge enabled by the merge-slot holder after the §5a sequence (ADR-0072)
 ```
 
 ## 5. Clean Cutover & Anti-Drift Rule

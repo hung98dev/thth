@@ -19,3 +19,6 @@ The round-2 architecture/ops/testing review found gates that could not be measur
 - Specs changed: `../04_architecture/client_performance.md`, `../04_architecture/realtime_loop.md`, `../04_architecture/service_boundaries.md`, `../04_architecture/client_experience_contract.md`, `../08_scale_ops/capacity.md`, `../08_scale_ops/deployment.md`, `../08_scale_ops/observability.md`, `../08_scale_ops/sharding.md`, `../09_testing/load.md`, `../09_testing/test_and_release_evidence.md`, `../09_testing/gameplay.md`, `../09_testing/network.md`, `../00_context/constraints.md`, `../00_context/technology_versions.md`.
 - Packets: IMP-018, IMP-022, IMP-025, IMP-046, IMP-048, IMP-055, IMP-065, IMP-066, IMP-067, IMP-069, IMP-079, IMP-095, IMP-098, IMP-099.
 - ADR-0039 is amended (22 reserved player slots, 58 non-player entities).
+
+## Amendment (ADR-0070)
+The entity cap is 100 with per-class budgets (was 80/58); `PERF-002` excludes every rendering marker (`-job-worker-count 2`, `LP_NUM_THREADS=1`); a shutdown flush timeout journals the remaining queue to the durable outbox (`../08_scale_ops/deployment.md`).

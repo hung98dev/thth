@@ -163,7 +163,10 @@ Test IAP entitlement persistence, delivery, and refund lifecycle:
 Test the WorldConsequence aggregate load path:
 - normal start: partition loads WorldConsequence aggregate before accepting its first player; player acceptance is blocked until load completes,
 - load timeout: if WorldConsequence load exceeds `WORLD_CONSEQUENCE_LOAD_TIMEOUT = 5 s` (`../06_data/data_model.md`), the partition fails closed and emits an observable error — it does not accept players against unloaded state,
-- aggregate validity: an unreadable table or a row with unknown content IDs is a hard failure; zero rows (fresh database) starts normally; expired relics and stale `relic_active_in_region` markers are repaired by the load, not fatal,
+- aggregate validity: an unreadable table or a row of this partition with unknown content IDs keeps only this partition closed (quarantine) while other partitions start; zero rows (fresh database) starts normally; expired relics and stale `relic_active_in_region` markers are repaired by the load, not fatal (ADR-0070),
+- relic expiry sweep: a relic in a stopped channel is marked inactive within 60 s after `expires_at`, the marker guard runs under the marker-first lock order, and an expired-but-unswept row (`relic_active = true`, `expires_at <= now`) never blocks an INSTANCED/seasonal relic spawn (ADR-0070),
+- durable outbox journal: a shutdown whose flush times out journals every queued command; the next start replays them before readiness (chest eligibility of a copy defeated in the last tick settles into Reward Claims, not deleted); replaying a command that had already committed changes nothing; a bad CRC stops startup (ADR-0070),
+- erasure ledger: a crash after the erasure commit and before the PUT leaves a `pending_erasure_ledger` row that the next sweeper run PUTs; `LEDGER_REPLAY` erases an `ACTIVE` restored account; a guild whose other members all belong to the erased account is disbanded; a refund event on a `PENDING_DELETION` or tombstone account does not change its status (ADR-0070),
 - load after PITR restore: partition started against the restored database loads the restored aggregate correctly and does not use a stale in-memory version from a prior process,
 - concurrent partition starts for the same world must not race to overwrite the aggregate; ownership semantics must be deterministic.
 

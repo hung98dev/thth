@@ -23,7 +23,7 @@ All personal data is held in server-authoritative storage. Client caches may hol
 | A — Account Identity | Username, email address (unverified), password hash, account creation timestamp | `account_password_credentials.username_key`, `.email`, `.password_hash`, `accounts.created_at` | Contract (account creation) |
 | B — Platform Provider Links | OAuth tokens, platform user IDs (App Store, Google Play, regional gateway) | Sign in with Apple token, Google account token | Contract (platform authentication) |
 | C — Session & Device Metadata | Session families, refresh credential hashes, platform, app version, device model class | `auth_session_families.*`, `auth_refresh_credentials.*` | Contract (login security) |
-| D — IP / Security Signals | Revocations, salted device and IP-prefix hashes of logins, rate-limit keys | `auth_revocations.*`, `account_login_history.*`, `rate_limit_counters.*` | Legitimate interest (security) |
+| D — IP / Security Signals | Revocations, salted device and IP-prefix hashes of logins, rate-limit keys | `auth_revocations.*`, `account_login_history.*`, `rate_limit_counters.*`, `auth_failure_backoff.*` | Legitimate interest (security) |
 | E — Payment Receipt Tokens | Opaque platform transaction tokens; not raw card data (card data never held by this server) | `entitlement.platform_receipt` | Contract + Legal obligation (financial records) |
 | F — Chat Logs | Text content of WORLD, PARTY, GUILD, and direct messages sent in-game | `chat_messages.*` | Legitimate interest (moderation / safety) |
 | G — Gameplay Records & Event Logs | Characters/progression (anonymised on erasure, retained) and the event stream used for anti-cheat/economy analysis (180-day rolling) | `characters.*`, settlements, AH listings | Contract / legitimate interest (economy integrity) |
@@ -44,7 +44,7 @@ Account deletion can be started in the game client (required by Apple App Store 
 POST /api/v1/account/delete   (authenticated; requires re-authentication in the last 5 minutes:
                                password for provider `password`, fresh provider token otherwise)
 ```
-1. The account enters `PENDING_DELETION` for a **7-day cancel window**; logging in and confirming cancels it. All session families are revoked at request time.
+1. The account enters `PENDING_DELETION` for a **7-day cancel window**; only `POST /api/v1/account/delete/cancel` (after login) cancels it; a login alone never cancels (ADR-0069). All session families are revoked at request time.
 2. After the window the erasure transaction in `../06_data/data_model.md` § Account Erasure executes (always within 15 calendar days of the request); per-category actions are in `personal_data_register.md` § 1.
 3. Closure and legal erasure are the same flow; there is no separate slower closure path.
 

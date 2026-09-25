@@ -373,7 +373,7 @@ Reject:
 - direct permanent skill/potential reward,
 - rare RNG collection requirement with no deterministic fallback,
 - Daily template targeting inaccessible content,
-- more than two generated Daily choices from one primary objective family.
+- more than two generated Daily choices from one primary objective family, except the single 3rd template placed by the slot-6 uncapped fallback (`quest_catalog.md` § Board Generation; ADR-0062).
 
 Every act-complete flag used as a cross-region gate must be produced by exactly one MAIN quest and consumed by the matching forward route gate.
 

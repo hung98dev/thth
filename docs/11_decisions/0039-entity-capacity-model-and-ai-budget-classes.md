@@ -54,3 +54,6 @@ This is the canonical entity capacity benchmark validating `MAX_ENTITIES_PER_CHA
 
 ## Amendment — Forced-placement worst case (ADR-0066)
 `MAX_ENTITIES_PER_CHANNEL = 80` now reserves 22 player slots (`FORCED_PLACEMENT_HARD_CAP`, ADR-0061); at most 58 non-player entities (42 monsters + 16 projectiles/transients) share the cap, player placement is never refused by it, and the canonical hotspot benchmark uses 42 named-mechanic monsters + 22 players (`../04_architecture/realtime_loop.md` § Entity Capacity Model).
+
+## Amendment (ADR-0070)
+`MAX_ENTITIES_PER_CHANNEL` is now 100 with per-class budgets (22 players, 42 spawn-group, 12 event, 8 boss, 16 transient); see `../04_architecture/realtime_loop.md` § Entity Capacity Model.

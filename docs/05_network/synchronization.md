@@ -37,15 +37,14 @@ per-client replication sustained ceiling = 25 KiB/s  (capacity.md:58, read-only)
 
 When the 40-entity cap binds, the server sheds entities from the visible set in reverse priority order (lowest priority dropped first):
 
-Always-relevant entities are **never shed** and consume slots before distance-sorted entities:
-1. **Own character** — always replicated (priority 1).
-2. **Current party members** — bounded summary state required by UI; never shed (priority 2).
-3. **Active encounter/boss objective state** — never shed (priority 3).
+The own character is always sent as `self`, never in `entities`, and does not count toward `MAX_ENTITIES_IN_AOI_PER_CLIENT` (ADR-0071). Always-relevant entities in `entities` are **never shed** and consume slots before distance-sorted entities:
+1. **Current party members** — bounded summary state required by UI; never shed (priority 1).
+2. **Active encounter/boss objective state** — never shed (priority 2).
 
 Remaining entities are shed in this order (lowest priority dropped first) when the cap is reached:
-4. **Entities in active combat with this client** — retained while combat is live (priority 4).
-5. **Nearest hostiles** — retained by ascending distance (priority 5).
-6. **Everything else** — shed first (remote neutral NPCs, distant players, etc.; priority 6).
+3. **Entities in active combat with this client** — retained while combat is live (priority 3).
+4. **Nearest hostiles** — retained by ascending distance (priority 4).
+5. **Everything else** — shed first (remote neutral NPCs, distant players, etc.; priority 5).
 
 Shedding is subject to an integer count hysteresis: an entity shed due to the 40-entity cap is not re-added until the client's visible entity count falls to 35 or below (≤ 35 entities, i.e. `MAX_ENTITIES_IN_AOI_PER_CLIENT - AOI_COUNT_HYSTERESIS`) to prevent cap-boundary flapping. Spatial distance hysteresis (35.0m / 40.0m) operates independently in the spatial filter.
 
@@ -79,17 +78,18 @@ A delta never implies that omitted fields became zero/default.
 ## Local Player Prediction
 Unity predicts only responsiveness-critical local movement/presentation.
 
-Each movement intent carries `client_seq`. Authoritative correction contains:
+Each movement intent carries `client_seq`. Every `S2C_STATE_DELTA` carries `self_ack` (ADR-0069):
 - last_processed_client_seq,
-- server tick,
-- authoritative transform/movement state.
+- the authoritative self transform/movement state after that input (the delta's `server_tick`).
 
-Unity:
-1. restores authoritative state,
-2. discards acknowledged local input,
-3. replays still-pending legal local input,
-4. visually smooths small error,
-5. snaps/corrects large or illegal divergence.
+### Local Reconciliation
+On every `self_ack`, Unity:
+1. drops buffered inputs with `client_seq <= last_processed_client_seq`,
+2. replays the remaining buffered inputs from the acknowledged state (deterministic movement rules, `../04_architecture/physics_geometry_contract.md`),
+3. computes `error = |replayed position - currently displayed predicted position|`,
+4. `error <= 0.50 m`: smooths the difference over 100 ms; `error > 0.50 m`: snaps (`../04_architecture/client_performance.md` § Network Smoothness).
+
+`S2C_MOVEMENT_CORRECTION` (107) is sent only when the server rejects or overrides the predicted path (`reason = ILLEGAL_MOVE | KNOCKBACK | PORTAL | RESPAWN | FORCED`): Unity restores that state, drops inputs up to its `last_processed_client_seq`, replays the rest, and snaps (KNOCKBACK plays the knockback presentation instead of a snap).
 
 Server never accepts the replayed client transform as truth.
 

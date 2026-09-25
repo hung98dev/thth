@@ -1,6 +1,8 @@
 # ADR-0057: Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0072)**: branch roles add `block/` (implementer) and `ops/` (coordinator); merges are serialized by the coordinator's merge slot; `verify.yml` starts on `pull_request` and moves to `pull_request_target` by the two-step `IMP-068` cutover; `AUTO_MERGE_FROZEN` fails every PR except `revert/` and `ops/`; CI materializes Unity files for agents to commit; item 6 two-phase list includes `IMP-083`.
+
 > **AMENDMENT NOTICE (ADR-0058)**: Owner Setup runner/GPU/WARP items (item 1), concurrency = runner slots (item 8), cloud-execution runner rules (item 13) and the Windows-only PostgreSQL pin note are superseded: GitHub-hosted Linux + Windows runners, no GPU, concurrency limit 5, `postgres:18.6` container on Linux and EDB binaries on Windows. Where this ADR differs, ADR-0058 governs.
 
 > **AMENDMENT NOTICE (ADR-0068)**: item 2 gate skipping is tied to the gate owner's `DONE` state (main or PR head) before and after `IMP-068` (`SKIP(owner-not-done)`); item 6 two-phase evidence comes from the follow-up status PR's own `verify.yml` run, not a post-merge `main` run.

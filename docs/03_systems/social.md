@@ -23,6 +23,11 @@ Friend-list capacity:
 100 friends per character
 ```
 
+Outgoing pending friend requests (ADR-0065 completion):
+```text
+100 PENDING requests per requester (CAPACITY_FULL)
+```
+
 Friend request lifetime:
 ```text
 7 days
@@ -60,6 +65,8 @@ Creating a block atomically removes any existing friendship and invalidates pend
 Block does **not** automatically remove either player from an existing party, guild, dungeon, world map, boss, or PvP match.
 
 Unblocking does not restore old friendship/invitations.
+
+Block-list capacity: `500` blocked characters per blocker (`CAPACITY_FULL`).
 
 Blocked-authored player chat is filtered from the blocker when practical. SYSTEM messages are never filtered by player block.
 
@@ -291,6 +298,6 @@ block = directional
 block either direction -> direct interaction denied
 friends and block cannot coexist
 SYSTEM cannot be player-authored
-friend cap = 100
+friend cap = 100; outgoing pending requests = 100; block list = 500
 message max = 240 graphemes
 ```

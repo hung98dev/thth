@@ -50,7 +50,7 @@ Load status thresholds:
 - `12..17 players`: Busy (Đông)
 - `18 players`: Full (Đầy)
 
-When a channel reaches 18 players, player-initiated arrivals and transfer requests into that channel are rejected. Automatic placement routes new players to the **most populated** channel with `player_count < 18`. If all 30 channels are at 18, reject with `MAP_CAPACITY_FULL` as below.
+When a channel reaches 18 players, player-initiated arrivals and transfer requests into that channel are rejected. Automatic placement routes new players to the **most populated running** channel with `player_count < 18`; if no running channel is below 18, it starts the lowest-index stopped channel (`../08_scale_ops/sharding.md` § Channel Partition Lifecycle, ADR-0070). If all 30 channels are running at 18, reject with `MAP_CAPACITY_FULL` as below.
 
 When all 30 channels are at capacity, player-initiated normal-map entry (portal, travel service, map selection) and channel-transfer requests are rejected with `MAP_CAPACITY_FULL`; the server does not queue, evict, or silently route the character to another map. The response includes `retry_after_ms = 5000`. A retry uses the same entry intent but a new operation ID after that interval.
 
@@ -61,10 +61,13 @@ FORCED_PLACEMENT_HARD_CAP = 22 players per channel (MAX_PLAYERS_PER_CHANNEL + 4)
 1 preferred channel if player_count < 22
     respawn: current channel if the checkpoint is on the same map (else none); instance exit/return: the
     recorded entry channel; reconnect: previous channel; first login: none
-2 else the least-populated channel with player_count < 22 (tie -> lowest channel index)
-3 else (all 30 channels at 22): placement pending; the server sends S2C_PLACEMENT_PENDING
+2 else the running channel with the lowest player_count < 18 (tie -> lowest channel index)
+3 else the lowest-index stopped channel (started for this placement, ../08_scale_ops/sharding.md)
+4 else (all 30 channels running and >= 18) the running channel with the lowest player_count < 22
+    (tie -> lowest channel index)
+5 else (all 30 channels at 22): placement pending; the server sends S2C_PLACEMENT_PENDING
     {reason : RESPAWN | INSTANCE_RETURN | RECONNECT | FIRST_LOGIN, retry_after_ms = 5000} and repeats
-    steps 1..3 every 5s until placed; the normal transfer/respawn/attach messages then follow
+    steps 1..5 every 5s until placed; the normal transfer/respawn/attach messages then follow
 ```
 While placement is pending (ADR-0062):
 ```text

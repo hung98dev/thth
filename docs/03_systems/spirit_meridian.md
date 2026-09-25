@@ -50,7 +50,7 @@ Requires `N` consecutive ring links of one relation. Matching is cyclic and may 
 Counts all eight ring links of one or more named relations; predicates are AND-combined.
 
 ### RELATION_SUBSEQUENCE
-Matches one authored ordered relation subsequence around the cyclic ring. Reflection/reversal is not implicit.
+Matches one authored ordered relation sequence on consecutive (contiguous) ring links; matching is cyclic and may wrap from `meridian.basic.08` to `.01`. Reflection/reversal is not implicit.
 
 ### FULL_RING
 Requires all eight BASIC slots occupied and may add `RELATION_COUNT` predicates. Occupancy alone grants no bonus.

@@ -22,6 +22,7 @@ scripts/              hook + verification scripts (Bash 5; Git Bash on Windows; 
 - Hook scripts must be deterministic and fast (<5s except the Stop gate). Safety guards block explicit policy violations; heavy verification runs only at Stop/checkpoints.
 - Scripts parse hook JSON with `jq` when present and use a minimal fallback otherwise.
 - `docs/**` is readable by all. Implementer sessions may not edit protected docs, `.devin/`, `AGENTS.md` or `README.md`; sessions started with `THINHTHAN_AGENT_ROLE=spec-owner` may edit protected specs/ADRs (spec-change PRs, `policy-review`). The rule is enforced by `pre_write_guard.sh` and `pre_exec_guard.sh` because `config.json` deny rules cannot depend on the role.
+- Secret material stays unreadable to every agent tool (`config.json` denies `*.pem`/`*.key`). The only exception is role-scoped in `pre_exec_guard.sh`: a session with `THINHTHAN_AGENT_ROLE=reviewer` may run exactly `pwsh -NoProfile -File .devin/scripts/policy_review.ps1 ...`, which reads the App key named by `THINHTHAN_POLICY_APP_KEY_FILE` in-process and posts the `policy-review` check run (ADR-0072).
 
 ## Adding a new agent / skill / rule
 
@@ -44,6 +45,8 @@ devin skills list
 
 ```bash
 echo '{"tool_input":{"command":"git push --force"}}' | bash .devin/scripts/pre_exec_guard.sh
+echo '{"tool_input":{"command":"pwsh -NoProfile -File .devin/scripts/policy_review.ps1 -Repo o/r"}}' | THINHTHAN_AGENT_ROLE=reviewer bash .devin/scripts/pre_exec_guard.sh   # allowed
+echo '{"tool_input":{"command":"cat key.pem"}}' | THINHTHAN_AGENT_ROLE=reviewer bash .devin/scripts/pre_exec_guard.sh                                        # blocked
 echo '{"tool_input":{"file_path":"x.pb.go"}}' | bash .devin/scripts/pre_write_guard.sh
 echo '{"tool_input":{"file_path":"docs/05_network/messages.md"}}' | bash .devin/scripts/pre_write_guard.sh      # blocked (implementer)
 echo '{"tool_input":{"file_path":"docs/05_network/messages.md"}}' | THINHTHAN_AGENT_ROLE=spec-owner bash .devin/scripts/pre_write_guard.sh   # allowed

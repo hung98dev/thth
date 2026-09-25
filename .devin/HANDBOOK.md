@@ -53,14 +53,14 @@ NO: routers, ORMs, zap/logrus/zerolog, Redis/Kafka/NATS, gRPC, math/rand v1
 |---|---|
 | Scoped iteration checks | `bash .devin/scripts/verify_delta.sh` |
 | Full local checkpoint / Stop equivalent | `bash .devin/scripts/verify_delta.sh --full` |
-| Canonical clean-tree Q0-Q6 | `pwsh -NoProfile -File scripts/verify.ps1` (CI: GitHub-hosted Linux + Windows jobs, ADR-0058) |
+| Canonical clean-tree Q0-Q6 | `pwsh -NoProfile -File scripts/verify.ps1` locally with `-LocalDeferMissing` (CI: GitHub-hosted Linux + Windows jobs without the switch, ADR-0058, ADR-0072) |
 | Diff risk classification | `bash .devin/scripts/diff_scope.sh` |
 | Regenerate protobuf + Unity metadata | `pwsh -NoProfile -File scripts/codegen.ps1` |
 | Regenerate golden fixtures | `cd server && go test ./internal/testing/protocol -run TestBinaryEncodingParity -update-golden` |
-| Go suite | `go -C server test ./...` / affected sim/edge/durable/global with `-race` |
+| Go suite | `go -C server test ./...` / affected sim/edge/durable/global with `-race` (needs cgo + C compiler; CI runs `-race` on Linux only) |
 | Unity EditMode | `"$UNITY_EDITOR_PATH" -batchmode -projectPath client -runTests -testPlatform EditMode -quit` |
 
-`.devin` auto-discovers the pinned Unity Hub editor path on Windows or Linux; a machine without it gets `WARN` and defers Unity to CI. Set `UNITY_EDITOR_PATH` only to another binary whose path contains `6000.6.1f1`. Codegen manages protoc under ignored `tools/`; global `protoc` is optional.
+`.devin` auto-discovers the pinned Unity Hub editor path on Windows or Linux; a machine without it gets `WARN` and defers Unity to CI, which also materializes editor-generated files into artifact `unity-materialized-<os>` for you to commit (`agent_execution_protocol.md` §4b). Set `UNITY_EDITOR_PATH` only to another binary whose path contains `6000.6.1f1`. Codegen manages protoc under ignored `tools/`; global `protoc` is optional.
 
 ## Read order for any task
 
@@ -80,7 +80,7 @@ Canonical live list: `docs/10_implementation/known_blockers.md` (currently empty
 
 ## DONE bar
 
-`docs/10_implementation/definition_of_done.md` is canonical. Implementation and tests must match the owning spec; protected spec/ADR changes are made only by the `spec-owner` agent in spec-change PRs that pass `policy-review`. Before commit, `verify_delta.sh --full` requires all functional canonical gates plus scoped supplements; it may defer only Q6 clean-tree when the worktree contains exactly the reviewed local diff and verification creates no new drift. A DONE/evidence claim still requires canonical `scripts/verify.*` PASS from a clean tested source. Every PR needs the independent `reviewer` and the App status `policy-review`. Merge sequence: `docs/10_implementation/agent_execution_protocol.md` §5a (canonical). Before IMP-000 exists, local checks report `SKIP(bootstrap)`.
+`docs/10_implementation/definition_of_done.md` is canonical. Implementation and tests must match the owning spec; protected spec/ADR changes are made only by the `spec-owner` agent in spec-change PRs that pass `policy-review`. Before commit, `verify_delta.sh --full` requires all functional canonical gates plus scoped supplements; it may defer only Q6 clean-tree when the worktree contains exactly the reviewed local diff and verification creates no new drift. A DONE/evidence claim still requires canonical `scripts/verify.*` PASS from a clean tested source. Every PR needs the independent `reviewer` and the App check run `policy-review` (`.devin/scripts/policy_review.ps1`). Merges are serialized by the merge slot; merge sequence: `docs/10_implementation/agent_execution_protocol.md` §5a (canonical). Before IMP-000 exists, local checks report `SKIP(bootstrap)`.
 
 ## Governance layer map
 
@@ -118,8 +118,8 @@ Canonical live list: `docs/10_implementation/known_blockers.md` (currently empty
 | `unity-engineer` | Unity/client only; no generated protocol or server contract edits |
 | `integration-engineer` | approved proto + both consumers + compatibility |
 | `debugger` | evidence-first root-cause analysis and regression fix |
-| `reviewer` | read-only conformance verdict |
+| `reviewer` | read-only conformance verdict; posts the `policy-review` check run via `.devin/scripts/policy_review.ps1` (`THINHTHAN_AGENT_ROLE=reviewer`) |
 | `verifier` | read-only diff-to-test-matrix execution |
 | `spec-owner` | Contract Owner: resolves blockers, edits protected specs/ADRs via spec-change PRs (`THINHTHAN_AGENT_ROLE=spec-owner`) |
-| `coordinator` | claims ready tasks (status-only PRs), unclaims stale claims, keeps concurrency within the limit of 5 tasks |
+| `coordinator` | claims ready tasks (status-only PRs), grants the merge slot, records/resolves OPS entries (`ops/` PRs), unclaims stale claims, keeps concurrency within the limit of 5 tasks (2 with `client/`) |
 | `asset-producer` | art/audio production within asset task owned paths; never gameplay/server/spec |

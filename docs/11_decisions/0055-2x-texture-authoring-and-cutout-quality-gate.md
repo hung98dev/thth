@@ -15,3 +15,6 @@ ADR-0046 fixes presentation at `ART_PIXELS_PER_METER = 50` reference pixels for 
 - `../07_content/presentation_asset_manifest.md` owns sizes, quality checks and review evidence; `../04_architecture/physics_geometry_contract.md` notes reference px vs texture px.
 - Texture memory is ~4x per sprite versus 1x; Addressables budgets in the manifest stay binding and IMP-063/IMP-076 must measure them.
 - IMP-063 (validator), IMP-070 (register/validator), IMP-071..075, IMP-104, IMP-105 (production) and IMP-076 (release audit) implement and evidence the gate.
+
+## Amendment — UI and far-parallax PPU (ADR-0071)
+UI sprites are 2x textures imported at **PPU 200** (Canvas Reference PPU 100) so they render at reference size; `PARALLAX_FAR` layers authored at 1x import at **PPU 50**. All other gameplay rasters stay 2x at PPU 100. Canonical: `../07_content/presentation_asset_manifest.md` §3.

@@ -37,15 +37,22 @@ A gameplay command is accepted only when:
 ## Login Queue (ADR-0052)
 ```text
 trigger        attached sessions >= WORLD_CCU_CAP (runtime config, ../08_scale_ops/capacity.md)
-order          FIFO by gameplay-ticket request time; one queue entry per account
-response       SERVER_OVERLOADED with retry_after_ms (5000..30000, grows with queue position) and queue_position
-admission      when a slot frees, the oldest entry may attach within 60 s or loses its place
-reconnect      a character reconnecting inside its grace window (reconnect.md) bypasses the queue
+order          FIFO by first gameplay-ticket request time; one queue entry per account
+response       SERVER_OVERLOADED with retry_after_ms and queue_position (ticket endpoint only)
+admission      when a slot frees, the oldest entry's next ticket request succeeds; it must request it within 60 s of
+               becoming position 1 or it loses its place
+reconnect      an account with a character live or inside its grace window (reconnect.md) bypasses the queue on both the
+               resume path and the ticket path
+reservation    the queue slot is reserved when POST /api/v1/gameplay/ticket succeeds (ticket issued = admitted); the
+               admission window is 60 s from ticket issue until S2C_HELLO_OK, then the slot is held while the session is on
+               character select (no timeout) and is released on detach-to-logout, disconnect without grace, or logout
+retry          retry_after_ms = 5000 when queue_position <= 10, else min(30000, 5000 + 1000 * floor(queue_position / 10))
+attach         C2S_CHARACTER_ATTACH never returns SERVER_OVERLOADED; the ticket is the only admission gate
 ```
 The queue lives in memory in the single world process; a restart clears it and clients simply retry.
 
 ## Duplicate Login
-A newer successful **account** gameplay login, attach, or resume supersedes the older account session epoch.
+A newer successful **account** gameplay login, attach, or resume supersedes the older account session epoch. When a character of the account is live (in the world or inside reconnect grace) the new session re-attaches that same character exactly like a resume, whether the HELLO carried a ticket or a resume credential (`../05_network/messages.md` § Connection / Session, ADR-0069).
 
 Old session:
 - stops receiving gameplay authority,
@@ -58,7 +65,7 @@ Account-level parallel gameplay sessions are **not** allowed, even if they would
 Character switch: send `C2S_CHARACTER_DETACH` (10) or return to character select on the current session, then attach another owned character. The previous character is `OFFLINE` before the next attach commits. Success is `S2C_CHARACTER_DETACH_OK` (11).
 
 ## Resume
-Resume credential is bound to the session lineage and, when attached, character identity. It is issued in every `S2C_HELLO_OK`, presented only in `C2S_HELLO` (`../05_network/protocol.md` § Handshake) and single-use: each successful HELLO rotates it. A resume inside the character's reconnect grace re-attaches that character without `C2S_CHARACTER_ATTACH` and bypasses the login queue.
+Resume credential is bound to the session lineage and, when attached, character identity. It is issued in every `S2C_HELLO_OK` and re-issued by `S2C_RESUME_CREDENTIAL` (16) every 300 s while the session is live (sliding rotation, ADR-0069); TTL 10 minutes from issue (`auth.md` § Credential Types), so a disconnect always leaves a credential valid for at least 5 minutes, longer than every grace window. At most two credentials of a session are valid at once (the newest and its predecessor); presenting the newest invalidates the predecessor. It is presented only in `C2S_HELLO` (`../05_network/protocol.md` § Handshake) and single-use: each successful HELLO rotates it. A resume inside the character's reconnect grace re-attaches that character without `C2S_CHARACTER_ATTACH` and bypasses the login queue.
 
 Resume cannot:
 - attach a different account,

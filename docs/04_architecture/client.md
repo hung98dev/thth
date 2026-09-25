@@ -12,7 +12,7 @@ platforms = PC + mobile
 
 Exact Unity editor, language/API profile, production scripting backend, Unity packages, and Protocol Buffer runtime are pinned in `../00_context/technology_versions.md`. The project must match those pins through `ProjectVersion.txt`, `Packages/manifest.json`, and `Packages/packages-lock.json`; a locally installed newer editor/package is not permission to upgrade the project.
 
-Rendering uses the URP 2D Renderer (ADR-0056): `Sprite-Lit-Default`, one Global Light2D per map driven by the day/night cycle (`../02_world/world_rules.md`), point Light2D for lanterns/bonfires/skill VFX (≤ 8 active in view on mobile, ≤ 16 desktop), a runtime soft contact shadow under every actor, no normal maps and no `ShadowCaster2D` at launch. Art rules: `../07_content/presentation_asset_manifest.md` §3.5.
+Rendering uses the URP 2D Renderer (ADR-0056): `Sprite-Lit-Default`, one Global Light2D per map driven by the day/night cycle (`../02_world/world_rules.md`), point Light2D for lanterns/bonfires/skill VFX (active-in-view budget per quality preset only: `LOW` 4, `MEDIUM` 8, `HIGH` 16; `client_performance.md` § Platforms and Device Tiers), a runtime soft contact shadow under every actor, no normal maps and no `ShadowCaster2D` at launch. Art rules: `../07_content/presentation_asset_manifest.md` §3.5.
 
 Launch presentation uses Unity `6000.6.1f1`, URP `17.6.0`, SRP Core `17.6.0`, the pinned Input System for shared PC/mobile controls, and IL2CPP for production player builds under the version matrix. Shader Graph, when used, remains pinned to `17.6.0`.
 

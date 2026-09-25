@@ -30,7 +30,7 @@ account_refund_consumed_events
 ~~~
 
 Relations:
-- account -> at most 3 characters,
+- account -> at most 3 characters (enforced by the character-create transaction; `TOMBSTONE_ACCOUNT_ID` is exempt because erasure re-points every erased character to it),
 - account -> many provider identities,
 - provider_id + provider_subject is UNIQUE,
 - account -> account-scoped IAP cosmetics (`account_cosmetic_entitlements`, equippable on any character of that account) and account IAP entitlement records (`account_iap_entitlements`).
@@ -48,7 +48,7 @@ economy_review_flagged_at  TIMESTAMPTZ NULL      -- ECONOMY_REVIEW queue entry (
                                                  --   blocks nothing; set NULL when the signal clears
 created_at                 TIMESTAMPTZ NOT NULL
 ```
-`PENDING_DELETION` = player requested deletion; login is allowed only to cancel it; erasure runs after 7 days (`../07_security/data_protection.md`). `deletion_requested_at TIMESTAMPTZ NULL` records the request. After erasure the row keeps only `account_id`, `status = 'TOMBSTONE_ERASED'`, `created_at`, `deletion_requested_at` and `erased_at` (no personal column exists on `accounts`); nothing references it by FK (§ Account Erasure), so the 1-year purge is a plain `DELETE`.
+`PENDING_DELETION` = player requested deletion; login is allowed; only `POST /api/v1/account/delete/cancel` cancels it (ADR-0069); erasure runs after 7 days (`../07_security/data_protection.md`). `deletion_requested_at TIMESTAMPTZ NULL` records the request. After erasure the row keeps only `account_id`, `status = 'TOMBSTONE_ERASED'`, `created_at` (overwritten with the erasure day), `deletion_requested_at` and `erased_at`; every other column is NULL (no personal column remains); nothing references it by FK (§ Account Erasure), so the 1-year purge is a plain `DELETE`.
 
 `TOMBSTONE_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001'` is the reserved non-personal owner of anonymized characters and of financial records whose account link was severed. The baseline migration inserts it (`status = 'TOMBSTONE_ERASED'`, `created_at` = migration time); it can never log in, own a provider/password credential, or be erased or purged. `WORLD_OWNER_ID = '00000000-0000-0000-0000-000000000002'` is the reserved `operations.owner_id` for world-scoped operations; it is not an account row.
 
@@ -65,7 +65,7 @@ INDEX (observed_at)                   -- retention purge
 ```
 One row per successful login (password or federated; refresh does not write). A password change or federated unlink checks for an `is_new_origin` row of the account within the last hour (takeover rule); a match revokes the other session families and sets `accounts.credential_guard_until = now + 24 h`.
 
-`iap_refund_consumed_score` is **derived only** (ADR-0060): the count of `account_refund_consumed_events` rows for the account with `occurred_at >= now - 180 days`; it is never stored or incremented. The transaction that inserts a refund-consumed event evaluates the score including the new row and, when it is `>= 2`, transitions `status` to `SUSPENDED_PAYMENT_RECONCILIATION` in the same transaction.
+`iap_refund_consumed_score` is **derived only** (ADR-0060): the count of `account_refund_consumed_events` rows for the account with `occurred_at >= now - 180 days`; it is never stored or incremented. The transaction that inserts a refund-consumed event evaluates the score including the new row and, when it is `>= 2` **and** the account `status = 'ACTIVE'`, transitions `status` to `SUSPENDED_PAYMENT_RECONCILIATION` in the same transaction (ADR-0070). Any other status is unchanged: `PENDING_DELETION` proceeds to erasure on schedule, `BANNED` stays banned, and `TOMBSTONE_ACCOUNT_ID` (which accumulates re-pointed refunds of every erased account) never changes status.
 
 ### account_password_credentials schema (ADR-0051)
 ```text
@@ -100,9 +100,11 @@ auth_session_families
   client_platform     VARCHAR(16) NOT NULL   -- CHECK IN ('WINDOWS','ANDROID')
   app_version         VARCHAR(32) NOT NULL
   device_model_class  VARCHAR(32) NULL
+  device_id_hash      BYTEA NOT NULL         -- SHA-256(ACCOUNT_SIGNAL_SALT || device_id) at login (ADR-0069)
+  absolute_expires_at TIMESTAMPTZ NOT NULL   -- created_at + 90 days (ADR-0069)
   created_at          TIMESTAMPTZ NOT NULL
   last_refreshed_at   TIMESTAMPTZ NOT NULL
-  expires_at          TIMESTAMPTZ NOT NULL   -- last_refreshed_at + 30 days
+  expires_at          TIMESTAMPTZ NOT NULL   -- min(last_refreshed_at + 30 days, absolute_expires_at)
   revoked_at          TIMESTAMPTZ NULL
   revoke_reason       VARCHAR(32) NULL       -- LOGOUT | REUSE_DETECTED | ACCOUNT_REVOKE | PASSWORD_CHANGE | TAKEOVER_RULE | ERASURE_REQUEST | ADMIN
   INDEX (account_id)
@@ -114,7 +116,9 @@ auth_refresh_credentials
   generation          INTEGER NOT NULL       -- 1, 2, ... per family
   issued_at           TIMESTAMPTZ NOT NULL
   expires_at          TIMESTAMPTZ NOT NULL
-  rotated_at          TIMESTAMPTZ NULL       -- set when superseded; presenting a rotated credential = reuse (auth.md)
+  first_presented_at  TIMESTAMPTZ NULL       -- first time this credential was presented (ADR-0069)
+  rotated_at          TIMESTAMPTZ NULL       -- set when superseded; presenting a rotated credential = reuse unless
+                                             --   ../07_security/auth.md § Refresh Rotation grace applies
   UNIQUE (session_family_id, generation)
 
 auth_revocations
@@ -283,7 +287,7 @@ Secrets store only verifier/hash material required by security specs.
 # Character
 Root includes character_id, account_id, display/normalized name, class_id, lifecycle, appearance (fixed class default at creation), `created_at`, and `updated_at`. Both timestamps are server-owned `timestamptz`; `updated_at` starts at creation and advances on every committed update to the `characters` row. Changes only to child/projection rows do not advance it. When migration `000003` is implemented, existing rows receive its transaction timestamp because their earlier edit times cannot be reconstructed.
 
-Owned projections include progression, potential allocation, skills, currencies, progression flags, discoveries/first-clears, checkpoint, cosmetic selection, fishing UTC-date catch count (`world_rules.md` daily cap 50), and chivalry lifetime plus utc-day counters.
+Owned projections include progression, potential allocation, skills, currencies, progression flags, discoveries/first-clears, checkpoint, cosmetic selection, fishing UTC-date catch count (`world_rules.md` daily cap 50), and chivalry lifetime plus utc-day counters (`character_chivalry`, § Social / Party).
 
 ### character_currencies
 ```text
@@ -445,6 +449,10 @@ reward_claim_lines                           -- typed value; no opaque value blo
   content_revision     BIGINT NULL
   currency_id          VARCHAR(32) NULL
   amount               BIGINT NULL            -- CHECK (amount > 0) for CURRENCY
+  CHECK ((line_kind = 'ITEM' AND item_id IS NOT NULL AND quantity > 0 AND effective_binding IS NOT NULL
+          AND content_revision IS NOT NULL AND currency_id IS NULL AND amount IS NULL)
+      OR (line_kind = 'CURRENCY' AND currency_id IS NOT NULL AND amount > 0 AND item_id IS NULL
+          AND quantity IS NULL AND effective_binding IS NULL AND item_state = '{}'::jsonb))   -- ADR-0070
   PRIMARY KEY (reward_claim_id, line_no)
 
 reward_claim_contributions                   -- idempotency ledger for every claim creation or merge
@@ -476,7 +484,9 @@ listing_fee_common    BIGINT NOT NULL        -- CHECK (listing_fee_common >= 10)
 state                 VARCHAR(16) NOT NULL   -- CHECK IN ('ACTIVE','SOLD','CANCELLED','EXPIRED','RECLAIMED','MOVED_TO_CLAIM')
 listed_at             TIMESTAMPTZ NOT NULL
 expires_at            TIMESTAMPTZ NOT NULL   -- listed_at + 24 h
-ended_at              TIMESTAMPTZ NULL       -- SOLD / CANCELLED / EXPIRED transition
+ended_at              TIMESTAMPTZ NULL       -- set on every transition out of ACTIVE and overwritten on RECLAIMED /
+                                             --   MOVED_TO_CLAIM, so it is the time of the latest state change (ADR-0070)
+CHECK ((state = 'ACTIVE') = (ended_at IS NULL))
 buyer_character_id    UUID NULL REFERENCES characters(character_id)
 revision              BIGINT NOT NULL
 UNIQUE (item_instance_id) WHERE state IN ('ACTIVE','CANCELLED','EXPIRED')  -- asset still in AUCTION_ESCROW
@@ -573,16 +583,26 @@ PRIMARY KEY (character_id, utc_day)
 
 The 7-day net-outflow signal (`anti_cheat.md`) sums `common_outflow - common_inflow` over at most 7 rows of `economy_account_daily_rollups`. The 30-day trade-partner concentration signal (`anti_cheat.md`) aggregates `trade_partner_volumes` over at most 30 rows of `economy_character_daily_rollups`. Both queries are bounded to a fixed small row count regardless of trade volume.
 
-## Account Erasure & Anonymization Lifecycle (Law 91/2025/QH15, Decree 356/2025/ND-CP; ADR-0065)
-Canonical erasure transaction; retention per category is canonical in `../07_security/personal_data_register.md`. It runs once per account after the 7-day `PENDING_DELETION` window (`../07_security/data_protection.md`), as one PostgreSQL transaction under operation family `account.erasure` (owner = the account) that begins with `SET CONSTRAINTS ALL DEFERRED`:
-1. Lock the account row; require `status = 'PENDING_DELETION'` (a retry after commit finds `TOMBSTONE_ERASED` and returns the recorded outcome).
-2. Delete personal rows: `account_password_credentials`, `account_identities`, `auth_session_families` (cascades `auth_refresh_credentials`), `auth_revocations`, `account_login_history`, `chat_messages` where `sender_account_id` is the account, `economy_account_daily_rollups` of the account, `friends` / `friend_requests` / `blocks` rows naming any of its characters, and `guild_blessing_votes` of the account.
-3. Re-point to `TOMBSTONE_ACCOUNT_ID` (financial and relational history; no row is copied): `account_iap_entitlements.account_id`, `account_entitlement_claims.account_id`, `account_cosmetic_entitlements.account_id`, `account_refund_consumed_events.account_id`, `auction_listings.seller_account_id`, `auction_proceeds.seller_account_id` / `buyer_account_id`, `trade_settlement_records.initiator_account_id` / `counterpart_account_id`, `item_locations.depositor_account_id`, `characters.account_id`. The tombstone is excluded from the season-track unique index, so re-pointed season rows never collide.
-4. Anonymize every re-pointed character: `name = 'Anonymized_' || replace(character_id::text, '-', '')`, `name_key = 'anonymized_' || replace(character_id::text, '-', '')` (full 32-hex UUID: collision-free; the `anonymized_` key prefix is reserved and rejected for player names by `text.md`), releasing the original `name_key`.
-5. Detach each character from its guild: a non-leader membership is removed under the normal leave rules (storage claims cancelled); a `LEADER` with other members first transfers leadership to the member with the highest role, then the earliest `joined_at`, then the lowest `character_id`; a sole-member guild moves every `GUILD_STORAGE` item into Reward Claims of that character (`source_type = GUILD`) and becomes `DISBANDED`.
-6. Cancel the characters' `ACTIVE` Auction listings (`CANCELLED`; assets follow the 7-day move to Reward Claims). Runtime direct-trade sessions and party membership were already ended when the deletion request revoked all sessions.
-7. Set `accounts.status = 'TOMBSTONE_ERASED'`, `erased_at = now`; insert the `operations` row. Deferred FKs are checked at commit.
-8. After commit, append `{account_id_hash, executed_at, operation_id}` to the erasure ledger (`../08_scale_ops/backup_recovery.md`; hash = SHA-256(`ERASURE_LEDGER_SALT` || account_id)).
+## Account Erasure & Anonymization Lifecycle (Law 91/2025/QH15, Decree 356/2025/ND-CP; ADR-0065, ADR-0070)
+Canonical erasure transaction; retention per category is canonical in `../07_security/personal_data_register.md`. It runs once per account after the 7-day `PENDING_DELETION` window (`../07_security/data_protection.md`), as one PostgreSQL transaction under operation family `account.erasure` (owner = the account) that begins with `SET CONSTRAINTS ALL DEFERRED`. Modes: `NORMAL` (scheduled erasure) and `LEDGER_REPLAY` (restore, `../08_scale_ops/backup_recovery.md` step 6c).
+1. Lock the account row. `NORMAL` requires `status = 'PENDING_DELETION'`; `LEDGER_REPLAY` requires only `status <> 'TOMBSTONE_ERASED'` (a restored account may be `ACTIVE`, `BANNED`, suspended or pending). A retry after commit finds `TOMBSTONE_ERASED` and returns the recorded outcome.
+2. Lock set, strictly in `database.md` priority order (lock-order rule for this transaction; later steps only mutate rows locked here or insert new rows): (1) the account's auth rows; (2) its characters in UUID order; (5) their `item_instances` / `item_locations`; (8) its `account_iap_entitlements`, `account_refund_consumed_events`; (9) its account/character cosmetic and claim rows; (10) `friends` / `friend_requests` / `blocks` naming its characters; (11) for each guild of its characters, in `guild_id` order, the `guilds` row and all its `guild_memberships`; (12) that guild's `guild_blessing_votes` of the account; (13) that guild's storage rows and claims; (14) its `trade_settlement_records`; (15) its `auction_listings` and `auction_proceeds`; (20) its `economy_account_daily_rollups`.
+3. Delete personal rows: `account_password_credentials`, `account_identities`, `auth_session_families` (cascades `auth_refresh_credentials`), `auth_revocations`, `account_login_history`, `chat_messages` where `sender_account_id` is the account, `economy_account_daily_rollups` of the account, `friends` / `friend_requests` / `blocks` rows naming any of its characters, and `guild_blessing_votes` of the account.
+4. Re-point to `TOMBSTONE_ACCOUNT_ID` (financial and relational history; no row is copied): `account_iap_entitlements.account_id`, `account_entitlement_claims.account_id`, `account_cosmetic_entitlements.account_id`, `account_refund_consumed_events.account_id`, `auction_listings.seller_account_id`, `auction_proceeds.seller_account_id` / `buyer_account_id`, `trade_settlement_records.initiator_account_id` / `counterpart_account_id`, `item_locations.depositor_account_id`, `characters.account_id`. The tombstone is excluded from the season-track unique index and from the 3-characters-per-account limit, so re-pointed rows never collide.
+5. Anonymize every re-pointed character: `name = 'Anonymized_' || replace(character_id::text, '-', '')`, `name_key = 'anonymized_' || replace(character_id::text, '-', '')` (full 32-hex UUID: collision-free; the `anonymized_` key prefix is reserved and rejected for player names by `text.md`), releasing the original `name_key`.
+6. Detach each character from its guild (guilds in `guild_id` order): a non-leader membership is removed under the normal leave rules (storage claims cancelled). A `LEADER` transfers leadership to the successor chosen **only among members whose character belongs to another account** (highest role, then earliest `joined_at`, then lowest `character_id`); when no such member exists, every remaining membership of the erased account's characters is removed, every `GUILD_STORAGE` item moves into Reward Claims (`source_type = GUILD`) of the erased leader's character, and the guild becomes `DISBANDED`. The guild `leader_character_id` CHECK therefore holds at commit.
+7. Cancel the characters' `ACTIVE` Auction listings (`CANCELLED`; assets follow the 7-day move to Reward Claims). Runtime direct-trade sessions and party membership were already ended when the deletion request revoked all sessions.
+8. Set `accounts.status = 'TOMBSTONE_ERASED'`, `erased_at = now`, `created_at = date_trunc('day', now)` (the original creation time is Category A personal data), `credential_guard_until = NULL`, `economy_review_flagged_at = NULL`; insert the `operations` row and one `pending_erasure_ledger` row. Deferred FKs are checked at commit.
+
+### pending_erasure_ledger (ADR-0070)
+```text
+operation_id     UUID PRIMARY KEY          -- the erasure operation_id (object key of the ledger entry)
+account_id_hash  BYTEA NOT NULL            -- SHA-256(ERASURE_LEDGER_SALT || account_id)
+executed_at      TIMESTAMPTZ NOT NULL
+attempts         INTEGER NOT NULL DEFAULT 0
+last_error       VARCHAR(256) NULL
+```
+Written inside the erasure transaction (`NORMAL` mode only; a `LEDGER_REPLAY` run writes none), so a crash after commit cannot lose the ledger entry. The **erasure ledger sweeper** (Durable Domain, every 60 s and at process start) PUTs each row as object `erasure-ledger/<operation_id>.json` to the backup repository (`../08_scale_ops/backup_recovery.md` § Erasure Ledger) and deletes the row after HTTP 200; a PUT of an existing key is idempotent. A row older than 24 h raises the critical alert `erasure_ledger_backlog`. Rows hold no personal data (salted hash only).
 
 Progression, quests, Reward Claims, items and settled economy records stay attached to the anonymized characters or the tombstone. `audit_events.subject_account_id` keeps the erased UUID without an FK (Category H). One year after `erased_at` the residual `accounts` row is deleted; no FK references it by then.
 
@@ -599,36 +619,41 @@ These two tables together constitute the **`WorldConsequence` aggregate** (`worl
 ### world_consequence_relics
 One row per active relic instance, keyed on stable content + channel identity (`map_id + channel_id + relic_id`, ADR-0053 amendment of ADR-0040). A durable aggregate must never be keyed on a runtime instance identity (`map_instance_id` is a runtime identity that changes on each process restart and cannot be used to match durable rows back to their running partition after restart — see ADR-0040):
 ```
-map_id                -- content identity of the map (stable across restarts)
-channel_id            -- channel within the map (stable logical identity)
-relic_id              -- content relic identity: relic.boss.<boss_id> (launch Di Tích) or relic.season.<i>.<key> (seasonal)
-source_id             -- content identity that spawned it: boss_id, dungeon_id or monster_id
-relic_active          -- boolean; false if expired or not yet started
-buff_effect_id        -- active buff identity (buff.di_tich.<boss_id> or buff.di_tich.season)
-expires_at            -- UTC timestamp when the relic naturally despawns (spawn_time + 60 min)
+map_id                VARCHAR(64) NOT NULL   -- content identity of the map (stable across restarts)
+channel_id            SMALLINT    NOT NULL CHECK (channel_id BETWEEN 1 AND 30)
+relic_id              VARCHAR(64) NOT NULL   -- relic.boss.<boss_id> (launch Di Tích) or relic.season.<i>.<key> (seasonal)
+source_id             VARCHAR(64) NOT NULL   -- content identity that spawned it: boss_id, dungeon_id or monster_id
+relic_active          BOOLEAN     NOT NULL   -- false once expired or explicitly despawned
+buff_effect_id        VARCHAR(64) NOT NULL   -- buff.di_tich.<boss_id> or buff.di_tich.season
+spawned_at            TIMESTAMPTZ NOT NULL
+expires_at            TIMESTAMPTZ NOT NULL CHECK (expires_at = spawned_at + INTERVAL '60 minutes')
 
 PRIMARY KEY (map_id, channel_id, relic_id)
-INDEX (relic_id) WHERE relic_active = true   -- world-wide "already active" check before an INSTANCED/seasonal spawn (ADR-0061)
+INDEX (relic_id, expires_at) WHERE relic_active = true   -- world-wide "already active" check (ADR-0061)
+INDEX (expires_at) WHERE relic_active = true             -- expiry sweep (ADR-0070)
 ```
+**Active** (every rule, check and query, ADR-0070): a relic is active iff `relic_active = true AND expires_at > now()`. A row with `relic_active = true` and `expires_at <= now()` is expired-but-unswept and never blocks a spawn, grants a buff or counts toward `relic_active_in_region`.
 `region_di_tich_markers` is written only for launch boss relics (`relic.boss.*`); seasonal relics have no region marker.
 Lifecycle: launch boss relics are written on `DEFEATED -> COOLDOWN` (PUBLIC: the defeated copy's map/channel; INSTANCED: the instance's source field map in its recorded entry channel, ADR-0061); seasonal relics are written when their source completes (dungeon completion or INSTANCED boss defeat → the listed map in `../02_world/bosses.md`, entry channel recorded by the instance; monster kill → the kill's channel), and an already-active row with the same key is not refreshed; `relic_active` is set false on expiry or explicit despawn; row may be cleaned up after expiry. On server restart, all rows with `relic_active = true` and `expires_at > now()` are reloaded and the relic restored with remaining duration clamped to at least 1 second.
 
 ### region_di_tich_markers
 One row per `(region_id, boss_id)`, written and updated on every `DEFEATED` transition. This is the permanent social-proof marker displayed at the safe anchor to all characters in the region regardless of channel:
 ```
-region_id                      -- owning region
-boss_id                        -- content identity
-last_defeated_utc              -- UTC timestamp of the most recent DEFEATED transition
-last_defeated_participant_count -- participant count at the most recent DEFEATED transition
-relic_active_in_region         -- true if any channel of this region currently has relic_active = true
+region_id                       VARCHAR(64) NOT NULL   -- owning region
+boss_id                         VARCHAR(64) NOT NULL   -- content identity
+last_defeated_utc               TIMESTAMPTZ NOT NULL   -- most recent DEFEATED transition
+last_defeated_participant_count INTEGER     NOT NULL CHECK (last_defeated_participant_count >= 1)
+relic_active_in_region          BOOLEAN     NOT NULL   -- true iff some relic of this boss in this region is active (definition above)
 
 PRIMARY KEY (region_id, boss_id)
 ```
 The marker is written transactionally with the `world_consequence_relics` upsert on each `DEFEATED` transition. **Lock order (every relic/marker transaction):** the `region_di_tich_markers` row is locked (upsert or `SELECT ... FOR UPDATE`) before any `world_consequence_relics` row; a seasonal relic transaction (no marker) locks only its relic row (`database.md` priority 18). `relic_active_in_region` is updated to false when the last active relic for this `(region_id, boss_id)` expires, subject to the following concurrent-update protocol:
 
-**Concurrent expiry locking**: On every relic expiry, the handler first acquires a `SELECT ... FOR UPDATE` lock on the `region_di_tich_markers` row for `(region_id, boss_id)`, before touching the relic row. Within the same transaction, it then sets `world_consequence_relics.relic_active = false` for the expiring row and applies the marker conditional false-update only when a `NOT EXISTS` subquery over `world_consequence_relics`—joining on region membership via the content map-to-region mapping and filtered to `relic_active = true`—confirms no remaining active relics for this `(region_id, boss_id)`. The `SELECT FOR UPDATE` serializes concurrent expiry handlers: the second handler waits for the first to commit, then reads the correct committed state before evaluating the guard. Without this lock, two handlers expiring the last two relics in a region simultaneously can each observe the other's row as still `relic_active = true` under `READ COMMITTED` isolation (uncommitted updates are not visible), both conclude active relics remain, and both skip the false-update — leaving `relic_active_in_region` permanently stale. This write is `CHECKPOINT_DURABLE` per `save_rules.md`.
+**Concurrent expiry locking**: On every relic expiry, the handler first acquires a `SELECT ... FOR UPDATE` lock on the `region_di_tich_markers` row for `(region_id, boss_id)`, before touching the relic row. Within the same transaction, it then sets `world_consequence_relics.relic_active = false` for the expiring row and applies the marker conditional false-update only when a `NOT EXISTS` subquery over `world_consequence_relics`—joining on region membership via the content map-to-region mapping and filtered to active relics (`relic_active = true AND expires_at > now()`)—confirms no remaining active relics for this `(region_id, boss_id)`. The `SELECT FOR UPDATE` serializes concurrent expiry handlers: the second handler waits for the first to commit, then reads the correct committed state before evaluating the guard. Without this lock, two handlers expiring the last two relics in a region simultaneously can each observe the other's row as still `relic_active = true` under `READ COMMITTED` isolation (uncommitted updates are not visible), both conclude active relics remain, and both skip the false-update — leaving `relic_active_in_region` permanently stale. This write is `CHECKPOINT_DURABLE` per `save_rules.md`.
 
-**Restart recovery**: On startup the server queries all `world_consequence_relics` rows with `relic_active = true` and `expires_at > now()`, restores each relic with `remaining_duration = expires_at - now()` (floor 1 second), resolves the running partition by `map_id + channel_id`, and reapplies the channel-wide buff to all connected characters in that partition. Players are not accepted into the partition until this recovery read completes. Load validity (ADR-0065): zero rows is a valid state (fresh launch or all relics expired); the load marks relic rows with `expires_at <= now` inactive and recomputes `relic_active_in_region` of every marker from the relic rows (markers left stale by a stop are repaired, not fatal); it fails closed only when a table is unreadable or a row references an unknown map, channel, relic or boss content ID. The read must finish within `WORLD_CONSEQUENCE_LOAD_TIMEOUT = 5 s`; a timeout or failure keeps the partition closed (`TEMPORARY_DEPENDENCY_FAILURE` to entry attempts) and the load is retried with backoff 1..30 s.
+**Expiry owners** (ADR-0070): a running partition expires its own relics at `expires_at` (handler above). Relics of a stopped or never-started channel partition (`../08_scale_ops/sharding.md` § Partition Lifecycle) are expired by the world-owned **relic expiry sweep** in Durable Domain: every `RELIC_SWEEP_INTERVAL = 60 s` it selects rows `relic_active = true AND expires_at <= now()` (index above, batch ≤ 256 rows), and for each `(region_id, boss_id)` group runs the same transaction as the expiry handler (marker `FOR UPDATE` first, then relic rows in `(map_id, channel_id, relic_id)` order, then the `NOT EXISTS` guard); seasonal rows (no marker) are updated alone. The sweep and a partition handler racing on the same row are both idempotent (`relic_active` already false → no-op). A sweep failure is retried on the next interval and raises `di_tich_sweep_failed` (`../08_scale_ops/observability.md`); correctness never depends on the sweep because every read uses the active definition above.
+
+**Restart recovery / partition load** (ADR-0065, ADR-0070): a partition loads only the rows of its own `map_id + channel_id` plus the markers of its region, when the partition starts (process start or lazy start). It restores each active relic with `remaining_duration = expires_at - now()` (floor 1 second) and reapplies the channel-wide buff to connected characters; players are not accepted into that partition until its load completes. Zero rows is valid (fresh launch or all relics expired); its own rows with `expires_at <= now` are marked inactive and the region markers' `relic_active_in_region` recomputed from the relic rows under the lock order above (stale markers are repaired, not fatal). A row of this partition that references an unknown map, channel, relic, boss or buff content ID is **quarantined for this partition only**: the partition start fails closed (`TEMPORARY_DEPENDENCY_FAILURE` to entry attempts, alert `world_consequence_load_failed`), other partitions are unaffected. The read must finish within `WORLD_CONSEQUENCE_LOAD_TIMEOUT = 5 s`; a timeout, unreadable table or quarantine keeps that partition closed and its load is retried with backoff 1..30 s.
 
 # Guild
 Logical roots include `guilds` (incl. `recruitment_mode CLOSED | APPLICATIONS`), `guild_memberships`, `guild_invites`, `guild_applications`, `guild_progression`, `guild_ritual_cycles`, `guild_blessing_votes`, storage and storage requests.
@@ -696,8 +721,13 @@ guild_storage_claims
   INDEX (guild_id, state)
 
 guild_storage_audit                              -- player-facing log, 180-day retention
-  audit_id UUID PRIMARY KEY; guild_id; operation_id; actor_character_id; action VARCHAR(24); section VARCHAR(8)
-  item_id; quantity; receiver_character_id NULL; before_quantity; after_quantity; occurred_at
+  audit_id UUID PRIMARY KEY; guild_id UUID NOT NULL; operation_id UUID NOT NULL; actor_character_id UUID NOT NULL
+  action VARCHAR(24) NOT NULL   -- CHECK IN ('DEPOSIT','WITHDRAW','MOVE','CLAIM_REQUEST','CLAIM_APPROVE','CLAIM_REJECT',
+                                --   'CLAIM_DELIVER','CLAIM_CANCEL','CLAIM_EXPIRE') (../03_systems/guild_storage.md § Audit)
+  section VARCHAR(8) NOT NULL   -- CHECK IN ('COMMON','RESERVE')
+  item_id VARCHAR(64) NOT NULL; quantity INTEGER NOT NULL CHECK (quantity > 0); receiver_character_id UUID NULL
+  before_quantity INTEGER NOT NULL CHECK (before_quantity >= 0); after_quantity INTEGER NOT NULL CHECK (after_quantity >= 0)
+  occurred_at TIMESTAMPTZ NOT NULL
   INDEX (guild_id, occurred_at)
 ```
 FKs: every `guild_id` column references `guilds`, every character column references `characters`.
@@ -747,13 +777,182 @@ World-scoped PUBLIC generation lifecycle (`../02_world/bosses.md` § PUBLIC Gene
 Constraints include one current guild membership per character, exactly one leader for an ACTIVE guild through transactional role rules, revision-checked permission/capacity, and one canonical location for shared items.
 
 # Social / Party
-Persist `friends`, `friend_requests`, `blocks`, chivalry_points lifetime and utc-day counter, and durable sanction/abandon data where owning PvP rules require it.
+Persisted social graph and chivalry (`../03_systems/social.md`); caps, lifetimes and states are canonical there. Party runtime membership may remain in memory unless an owning reconnect/dungeon rule explicitly requires a recovery record. Ordinary world parties are ephemeral-global runtime (`../04_architecture/service_boundaries.md`) and do not persist across full process restart.
 
-Party runtime membership may remain in memory unless an owning reconnect/dungeon rule explicitly requires a recovery record. Ordinary world parties are ephemeral-global runtime (`../04_architecture/service_boundaries.md`) and do not persist across full process restart.
+### friends
+```text
+character_low_id      UUID NOT NULL REFERENCES characters(character_id)   -- lexically smaller UUID of the pair
+character_high_id     UUID NOT NULL REFERENCES characters(character_id)
+created_at            TIMESTAMPTZ NOT NULL
+created_operation_id  UUID NOT NULL
+PRIMARY KEY (character_low_id, character_high_id)                         -- one friendship per unordered pair
+CHECK (character_low_id < character_high_id)
+INDEX (character_high_id)
+```
+The accept transaction locks both `characters` rows (priority 2, UUID order), counts each side's rows (`character_low_id = c OR character_high_id = c`) and rejects with `FRIEND_LIMIT_REACHED` when either side already has 100; the request then stays `PENDING`.
 
+### friend_requests
+```text
+friend_request_id        UUID PRIMARY KEY
+requester_character_id   UUID NOT NULL REFERENCES characters(character_id)
+target_character_id      UUID NOT NULL REFERENCES characters(character_id)
+state                    VARCHAR(16) NOT NULL   -- CHECK IN ('PENDING','ACCEPTED','DECLINED','CANCELLED','EXPIRED')
+created_at               TIMESTAMPTZ NOT NULL
+expires_at               TIMESTAMPTZ NOT NULL   -- created_at + 7 days
+resolved_at              TIMESTAMPTZ NULL
+create_operation_id      UUID NOT NULL
+resolve_operation_id     UUID NULL              -- NULL for EXPIRED and block-driven CANCELLED
+CHECK (requester_character_id <> target_character_id)
+CHECK (expires_at = created_at + INTERVAL '7 days')
+CHECK ((state = 'PENDING') = (resolved_at IS NULL))
+UNIQUE (LEAST(requester_character_id, target_character_id),
+        GREATEST(requester_character_id, target_character_id)) WHERE state = 'PENDING'
+INDEX (target_character_id, state), INDEX (requester_character_id, state)
+INDEX (expires_at) WHERE state = 'PENDING'
+```
+A `PENDING` row with `expires_at <= now()` is treated as `EXPIRED` by every check; the daily purge job marks such rows `EXPIRED` (`resolved_at = expires_at`). The pair-unique index makes a crossed request resolve the existing row as `ACCEPTED` (`social.md`). Outgoing `PENDING` requests per requester are capped at `100` (`social.md`; `CAPACITY_FULL`). Creating a block sets every `PENDING` row of the pair to `CANCELLED` in the block transaction.
+
+### blocks
+```text
+blocker_character_id   UUID NOT NULL REFERENCES characters(character_id)
+blocked_character_id   UUID NOT NULL REFERENCES characters(character_id)
+created_at             TIMESTAMPTZ NOT NULL
+operation_id           UUID NOT NULL
+PRIMARY KEY (blocker_character_id, blocked_character_id)                 -- one directional block per ordered pair
+CHECK (blocker_character_id <> blocked_character_id)
+INDEX (blocked_character_id)
+```
+The block transaction inserts the row, deletes the pair's `friends` row and cancels its pending requests (block wins, `social.md` § Concurrency). A blocker holds at most `500` rows (`social.md`; `CAPACITY_FULL`).
+
+### character_chivalry
+```text
+character_id      UUID PRIMARY KEY REFERENCES characters(character_id)
+lifetime_points   BIGINT NOT NULL DEFAULT 0 CHECK (lifetime_points >= 0)
+day_utc           DATE NULL                    -- UTC date of day_points; NULL before the first grant
+day_points        SMALLINT NOT NULL DEFAULT 0 CHECK (day_points BETWEEN 0 AND 100)
+revision          BIGINT NOT NULL DEFAULT 0
+```
+Written only inside the qualifying dungeon-completion settlement (its `operations` row dedupes a retry, so neither counter increments twice). A grant on a new UTC date first resets `day_points = 0`; the clamp and milestones are canonical in `social.md` § Chivalry System. Milestone titles are `character_cosmetic_entitlements` rows with `source_kind = PLAY` (idempotent by that table's primary key).
 
 # PvP / Guild War
-Persist only durable rating/season/result/reward/sanction state. Do not persist every simulation tick/combat event into primary gameplay tables. Logical families: `pvp_ratings` (character + mode + season), `pvp_match_settlements`, `pvp_sanctions`, `guild_war_ratings` (guild + season), `guild_war_settlements`.
+Persist only durable rating/season/result/reward/sanction state. Do not persist every simulation tick/combat event into primary gameplay tables. `season_id` is the `season_number` of `../03_systems/seasons.md` (INTEGER, same boundary for PvP and Guild War). Queues, ready checks and ready-check miss counters are ephemeral Global runtime and are not persisted (`../04_architecture/service_boundaries.md`).
+
+### pvp_ratings
+```text
+character_id          UUID NOT NULL REFERENCES characters(character_id)
+pvp_mode_id           VARCHAR(48) NOT NULL   -- CHECK IN ('pvp.mode.ranked_duel','pvp.mode.five_element_arena')
+season_id             INTEGER NOT NULL CHECK (season_id >= 0)
+pvp_mmr               INTEGER NOT NULL        -- hidden MMR; initial 1500; unclamped (pvp.md § Elo Update)
+season_rating         INTEGER NOT NULL CHECK (season_rating >= 0)   -- initial 1000; max(0, ...)
+ranked_games_played   INTEGER NOT NULL DEFAULT 0 CHECK (ranked_games_played >= 0)   -- this season, COMPLETED only
+lifetime_mode_games   INTEGER NOT NULL DEFAULT 0 CHECK (lifetime_mode_games >= 0)   -- all seasons; drives K (first 10 = 40)
+wins                  INTEGER NOT NULL DEFAULT 0 CHECK (wins >= 0)
+losses                INTEGER NOT NULL DEFAULT 0 CHECK (losses >= 0)
+draws                 INTEGER NOT NULL DEFAULT 0 CHECK (draws >= 0)
+updated_at            TIMESTAMPTZ NOT NULL
+revision              BIGINT NOT NULL DEFAULT 0
+PRIMARY KEY (character_id, pvp_mode_id, season_id)
+CHECK (wins + losses + draws = ranked_games_played)
+INDEX (pvp_mode_id, season_id, season_rating DESC)                        -- per-mode leaderboard
+```
+The row of a new season is created by the first settlement or queue join of that season: `season_rating = 1000`, `pvp_mmr = 1500 + round_half_away_from_zero(0.50 * (previous_mmr - 1500))` from the latest earlier row of the same mode (`1500` if none), `lifetime_mode_games` copied, other counters `0`. Sparring and consensual Duel have no rows.
+
+### pvp_match_settlements
+```text
+pvp_match_id              UUID NOT NULL
+character_id              UUID NOT NULL REFERENCES characters(character_id)
+pvp_mode_id               VARCHAR(48) NOT NULL   -- same CHECK as pvp_ratings
+season_id                 INTEGER NOT NULL
+match_state               VARCHAR(12) NOT NULL   -- CHECK IN ('COMPLETED','VOID')
+result                    VARCHAR(8) NULL        -- CHECK IN ('WIN','LOSS','DRAW'); NULL iff VOID
+participation             VARCHAR(12) NOT NULL   -- CHECK IN ('NORMAL','AFK','ABANDONED')
+mmr_before                INTEGER NOT NULL
+mmr_after                 INTEGER NOT NULL
+season_rating_before      INTEGER NOT NULL
+season_rating_after       INTEGER NOT NULL
+abandon_penalty           SMALLINT NOT NULL DEFAULT 0 CHECK (abandon_penalty IN (0, 20))
+reward_eligible           BOOLEAN NOT NULL
+ranked_bound_utc_date     DATE NULL
+ranked_bound_slot         SMALLINT NULL CHECK (ranked_bound_slot BETWEEN 1 AND 5)
+settlement_operation_id   UUID NOT NULL
+settled_at                TIMESTAMPTZ NOT NULL
+PRIMARY KEY (pvp_match_id, character_id)                                  -- RESOLVING settles each participant once
+CHECK ((match_state = 'VOID') = (result IS NULL))
+CHECK (match_state = 'COMPLETED' OR (mmr_after = mmr_before AND season_rating_after = season_rating_before
+                                     AND NOT reward_eligible AND abandon_penalty = 0))
+CHECK (participation = 'NORMAL' OR NOT reward_eligible)
+CHECK ((ranked_bound_slot IS NULL) = (ranked_bound_utc_date IS NULL))
+CHECK (ranked_bound_slot IS NULL OR reward_eligible)
+UNIQUE (character_id, ranked_bound_utc_date, ranked_bound_slot) WHERE ranked_bound_slot IS NOT NULL
+INDEX (character_id, settled_at)
+```
+The partial unique index is the daily identity `character_id + utc_date + ranked_bound_completion_index(1..5)` of `pvp.md` (character-wide across ranked modes). The same transaction updates `pvp_ratings` (revision-checked) and inserts any sanction and reward rows.
+
+### pvp_sanctions
+```text
+sanction_id           UUID PRIMARY KEY
+character_id          UUID NOT NULL REFERENCES characters(character_id)
+sanction_kind         VARCHAR(24) NOT NULL   -- CHECK IN ('QUEUE_RESTRICTION')
+reason                VARCHAR(12) NOT NULL   -- CHECK IN ('ABANDON','AFK')
+source_match_kind     VARCHAR(12) NOT NULL   -- CHECK IN ('PVP','GUILD_WAR')
+source_match_id       UUID NOT NULL          -- pvp_match_id or guild_war_match_id
+ladder_step           SMALLINT NOT NULL CHECK (ladder_step IN (1, 2, 3))   -- 1 = 15m, 2 = 30m, 3 = 2h (3rd+)
+starts_at             TIMESTAMPTZ NOT NULL
+ends_at               TIMESTAMPTZ NOT NULL
+operation_id          UUID NOT NULL
+CHECK (ends_at = starts_at + CASE ladder_step WHEN 1 THEN INTERVAL '15 minutes'
+                                              WHEN 2 THEN INTERVAL '30 minutes'
+                                              ELSE INTERVAL '2 hours' END)
+UNIQUE (character_id, source_match_kind, source_match_id)
+INDEX (character_id, starts_at), INDEX (character_id, ends_at)
+```
+`ladder_step = min(3, 1 + count of the character's rows with starts_at > now() - 24h)` (`pvp.md` § Disconnect / Reconnect). A sanction is active iff `ends_at > now()`; an active sanction rejects ranked queue joins and Guild War roster membership (both are the PvP queue sanction of `pvp.md` § Eligibility; Guild War AFK/abandon uses the same ladder, `guild_war.md` § AFK).
+
+### guild_war_ratings
+```text
+guild_id                 UUID NOT NULL REFERENCES guilds(guild_id)
+season_id                INTEGER NOT NULL CHECK (season_id >= 0)
+guild_war_mmr            INTEGER NOT NULL CHECK (guild_war_mmr >= 0)   -- initial 1500; max(0, ...)
+guild_war_games_played   INTEGER NOT NULL DEFAULT 0 CHECK (guild_war_games_played >= 0)   -- COMPLETED rated wars this season
+guild_war_wins           INTEGER NOT NULL DEFAULT 0 CHECK (guild_war_wins BETWEEN 0 AND guild_war_games_played)
+lifetime_rated_wars      INTEGER NOT NULL DEFAULT 0 CHECK (lifetime_rated_wars >= 0)   -- drives K (first 10 = 32)
+updated_at               TIMESTAMPTZ NOT NULL
+revision                 BIGINT NOT NULL DEFAULT 0
+PRIMARY KEY (guild_id, season_id)
+INDEX (season_id, guild_war_mmr DESC, guild_war_wins DESC, guild_war_games_played ASC)   -- leaderboard order
+```
+A new-season row follows the `pvp_ratings` creation rule with `guild_war.md` § Season (`new_mmr = 1500 + round_half_away_from_zero(0.50 * (old_mmr - 1500))`, clamped at `0`).
+
+### guild_war_settlements
+```text
+guild_war_match_id        UUID NOT NULL
+settlement_type           VARCHAR(24) NOT NULL   -- CHECK IN ('GUILD_RATING','GUILD_PROGRESSION','PERSONAL_REWARD','SEASON_PARTICIPATION')
+recipient_id              UUID NOT NULL          -- guild_id for GUILD_*; character_id for PERSONAL_REWARD / SEASON_PARTICIPATION
+guild_id                  UUID NOT NULL REFERENCES guilds(guild_id)   -- the recipient's guild in this match
+season_id                 INTEGER NOT NULL
+match_state               VARCHAR(12) NOT NULL   -- CHECK IN ('COMPLETED','VOID')
+result                    VARCHAR(8) NULL        -- CHECK IN ('WIN','LOSS'); NULL iff VOID
+mmr_before                INTEGER NULL           -- GUILD_RATING only
+mmr_after                 INTEGER NULL           -- GUILD_RATING only
+participation             VARCHAR(12) NULL       -- PERSONAL_REWARD / SEASON_PARTICIPATION: 'NORMAL','AFK','ABANDONED'
+reward_eligible           BOOLEAN NULL           -- PERSONAL_REWARD only
+bound_week_monday         DATE NULL              -- Monday 00:00 UTC week of a consumed personal bound slot
+bound_slot                SMALLINT NULL CHECK (bound_slot BETWEEN 1 AND 3)
+settlement_operation_id   UUID NOT NULL
+settled_at                TIMESTAMPTZ NOT NULL
+PRIMARY KEY (guild_war_match_id, settlement_type, recipient_id)            -- guild_war.md § Idempotency identity
+CHECK ((match_state = 'VOID') = (result IS NULL))
+CHECK ((settlement_type = 'GUILD_RATING') = (mmr_before IS NOT NULL AND mmr_after IS NOT NULL))
+CHECK (settlement_type NOT IN ('GUILD_RATING','GUILD_PROGRESSION') OR recipient_id = guild_id)
+CHECK ((settlement_type IN ('PERSONAL_REWARD','SEASON_PARTICIPATION')) = (participation IS NOT NULL))
+CHECK ((settlement_type = 'PERSONAL_REWARD') = (reward_eligible IS NOT NULL))
+CHECK ((bound_slot IS NULL) = (bound_week_monday IS NULL))
+CHECK (bound_slot IS NULL OR (settlement_type = 'PERSONAL_REWARD' AND reward_eligible))
+CHECK (match_state = 'COMPLETED' OR (mmr_after IS NOT DISTINCT FROM mmr_before AND bound_slot IS NULL))
+UNIQUE (recipient_id, bound_week_monday, bound_slot) WHERE bound_slot IS NOT NULL   -- weekly identity (character-wide)
+INDEX (recipient_id, season_id, guild_id) WHERE settlement_type = 'SEASON_PARTICIPATION' AND match_state = 'COMPLETED'
+```
+Season-reward eligibility ("≥ 5 completed matches for that guild in the season") counts `SEASON_PARTICIPATION` rows with `match_state = 'COMPLETED'` and `participation = 'NORMAL'` for `(recipient_id, season_id, guild_id)`. Season cosmetic grants are `character_cosmetic_entitlements` rows with `source_kind = PLAY`; their settlement keys (`guild_war.md` § Season Rewards, `pvp.md` § Rewards) are the `operations` identity of the grant; guild-scoped shrine/banner grants follow `../03_systems/cosmetics.md`.
 
 # Session / Routing
 PostgreSQL may persist session/revocation metadata and transfer/handoff records needed for ambiguous ownership recovery.
@@ -833,7 +1032,7 @@ Character deletion is disabled; character records are permanent. For other entit
 Physical deletion of non-character rows is allowed only after no escrow, pending reward/proceeds, membership/ownership orphan or required history remains.
 # Invariants
 ~~~
-account -> <=3 characters
+account -> <=3 characters (TOMBSTONE_ACCOUNT_ID exempt)
 character is permanent (no deletion)
 character name_key is globally UNIQUE
 durable roots use canonical UUIDs
@@ -873,5 +1072,8 @@ TOMBSTONE_ACCOUNT_ID row is seeded by the baseline migration and excluded from t
 erasure = one transaction (§ Account Erasure); anonymized name = 'Anonymized_' + 32-hex character_id; residual accounts row purged 1 year after erased_at
 access credentials, gameplay tickets and resume credentials are process memory only; refresh families and revocations persist
 relic/marker transactions lock region_di_tich_markers before world_consequence_relics
+relic active = relic_active AND expires_at > now(); stopped-channel relics are expired by the Durable relic expiry sweep (60 s)
+erasure ledger entry is written as pending_erasure_ledger inside the erasure transaction and PUT by the sweeper
+server-originated durable commands left at a shutdown flush timeout are journaled to DURABLE_OUTBOX_DIR and replayed before readiness
 boss_chest_eligibility of a defeated copy settles into Reward Claims at chest despawn or process start; undefeated-copy rows are deleted
 ~~~

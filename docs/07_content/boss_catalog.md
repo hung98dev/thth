@@ -202,6 +202,7 @@ Boss-created adds/fragments/summons:
 - cannot carry a Soul drop table
 - despawn on encounter reset/end
 - do not count toward ordinary field spawn population
+- at most 7 adds/fragments/summons alive per boss at once (`BOSS_SLOTS`, `../04_architecture/realtime_loop.md` § Entity Capacity Model, ADR-0070); a mechanic that would exceed it resolves without the extra add
 
 # Reward Semantics
 - repeat reward uses each row's `drop_table_id`,

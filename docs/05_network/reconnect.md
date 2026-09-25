@@ -21,7 +21,8 @@ A successful newer account login/reconnect:
 - creates/increments the account session epoch,
 - invalidates old-epoch traffic on every previous connection of that account,
 - sends `S2C_SESSION_REPLACED` when feasible,
-- preserves one simulation ownership authority for the attached character, if any.
+- preserves one simulation ownership authority for the attached character, if any,
+- re-attaches that live character (in the world or inside grace) to the new session exactly like a resume, whether the HELLO carried a resume credential or a gameplay ticket (`S2C_HELLO_OK.resumed_character_id` set, then `S2C_CHARACTER_ATTACH_OK` without `C2S_CHARACTER_ATTACH`; ADR-0069).
 
 The replacing client is not rejected with `CHARACTER_ALREADY_ACTIVE`. Late packets from replaced connections are rejected. After the new session is live, attaching a second character on that session without `C2S_CHARACTER_DETACH` (10) is `CHARACTER_ALREADY_ACTIVE`.
 
@@ -60,7 +61,7 @@ PvP/Guild-War disconnect handling uses their owning gameplay rules; network reco
 ## Reconnect Flow
 1. Unity detects transport loss.
 2. Client stops treating predicted state as final.
-3. Client opens `wss` and sends `C2S_HELLO` with its resume credential (no HTTPS step); if the credential expired (`RESUME_EXPIRED`) it refreshes and requests a new gameplay ticket (`../07_security/auth.md` § HTTPS Endpoints).
+3. Client opens `wss` and sends `C2S_HELLO` with its newest resume credential (from `S2C_HELLO_OK` or the latest `S2C_RESUME_CREDENTIAL` (16), rotated every 300 s, so it is at most 5 minutes old at disconnect); if it expired (`RESUME_EXPIRED`) the client refreshes and requests a new gameplay ticket (`../07_security/auth.md` § HTTPS Endpoints), which bypasses the login queue while a character of the account is live or inside grace (`../07_security/session.md` § Login Queue).
 4. Server authenticates and creates a newer valid session epoch.
 5. Routing resolves current simulation ownership.
 6. If previous live partition is recoverable, attach to it.

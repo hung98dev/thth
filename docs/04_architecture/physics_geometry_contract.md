@@ -72,6 +72,8 @@ Nhân vật ở idle/run/jump phải giữ silhouette cao `88..96px`; `96px` là
 
 Kích thước va chạm được tải tĩnh từ catalog; cấm suy ra từ mesh đồ họa hay khung xương hoạt hình (animation rig).
 
+Linh Thú là companion chỉ hiển thị, không có collider hay hurtbox (`../03_systems/spirit_beasts.md`); profile trình bày `SPIRIT_BEAST` nằm ở `../07_content/presentation_asset_manifest.md` §3, không thuộc bảng va chạm này.
+
 ### 3.1 Quy tắc resolve profile
 
 - Character luôn là `CHARACTER`.
@@ -125,10 +127,13 @@ ONE_WAY_DROP_IGNORE_MS  = 300 ms (cửa sổ bỏ qua va chạm khi drop through
 
 1. **Client Prediction:** Client Unity chạy mô phỏng dự đoán cục bộ theo đúng công thức trên để đảm bảo phản hồi tức thì cho người chơi. Tọa độ client gửi lên chỉ mang tính chất dự đoán/gợi ý (prediction hint); server **tuyệt đối không bao giờ lấy tọa độ client làm chân lý**.
 2. **Server Authority:** Server tính toán vị trí thực tế hợp lệ tại mỗi tick 20 Hz. Mọi hitbox chiến đấu, tương tác portal và nhặt đồ chỉ sử dụng tọa độ thẩm quyền của server.
-3. **Dung sai Sửa sai (Reconciliation Threshold):**
-   - Khoảng cách sai lệch: $\Delta r = \sqrt{(x_{\text{client}} - x_{\text{server}})^2 + (y_{\text{client}} - y_{\text{server}})^2}$.
-   - Nếu $\Delta r \le 0.50\text{ m}$: Server tiếp tục cập nhật trạng thái bình thường mà không ép dịch chuyển (tránh giật hình do jitter/latency nhỏ). Tọa độ server vẫn là chân lý duy nhất.
-   - Nếu $\Delta r > 0.50\text{ m}$: Server gửi gói tin `S2C_MOVEMENT_CORRECTION` (107) ép client snap về vị trí chuẩn của server và re-simulate các input chưa được xác nhận.
+3. **Dung sai Sửa sai (Reconciliation Threshold) — client tự tính (ADR-0069):**
+   - Client không gửi tọa độ. Mỗi `S2C_STATE_DELTA` mang `self_ack` gồm `last_processed_client_seq` và trạng thái self thẩm quyền tại tick đó (`../05_network/messages.md`; quy trình client: `../05_network/synchronization.md` § Local Reconciliation).
+   - Client giữ lịch sử dự đoán theo `client_seq`; khi nhận `self`: $\Delta r = \lVert p_{\text{pred}}(\text{last\_processed\_client\_seq}) - p_{\text{server}} \rVert$ (mm, lượng tử hóa).
+   - Nếu $\Delta r \le 0.50\text{ m}$: bỏ input đã xác nhận, replay input còn chờ từ trạng thái server, và làm mượt phần lệch hiển thị trong `100 ms`.
+   - Nếu $\Delta r > 0.50\text{ m}$: snap về trạng thái server rồi replay input còn chờ, không làm mượt.
+   - Tọa độ server luôn là chân lý duy nhất; client không bao giờ báo lệch cho server.
+4. **`S2C_MOVEMENT_CORRECTION` (107)** chỉ dùng khi server bác bỏ hoặc ghi đè đường đi dự đoán (ADR-0069): `ILLEGAL_MOVE` (input di chuyển bị từ chối/bỏ qua do khống chế, chết, trạng thái cấm, hoặc tốc độ đổi do status áp giữa lúc chạy), `KNOCKBACK` (displacement), `PORTAL`, `RESPAWN`, `FORCED` (chuyển map/instance, forced placement, kéo). Sai số dự đoán thông thường không bao giờ sinh 107. Client nhận 107 luôn snap về trạng thái trong 107 rồi replay input có `client_seq` > `last_processed_client_seq`.
 ## 6. Hợp đồng Kích thước và Hình dạng Map
 
 ### 6.1 Bounds và screen spans
@@ -160,30 +165,51 @@ Mỗi FIELD/dungeon phải có một main route liên tục từ entry đến ex
 - Camera gameplay có orthographic size `7.2m` tại vùng nhìn 16:9.
 - Thiết bị rộng hơn 16:9 giữ chiều cao `14.4m` và cho thấy thêm chiều ngang, tối đa tỷ lệ 21:9; phần vượt 21:9 dùng pillarbox.
 - Thiết bị hẹp hơn 16:9 dùng letterbox để giữ vùng gameplay 16:9; HUD đặt trong safe area.
-- Camera clamp theo authored camera regions nằm trong `bounds_m`, không clamp theo kích thước sprite nền.
+- Camera region là hình chữ nhật (mm) được author trong collision scene của IMP-062 và export trong `camera_regions[]` của `.geom.json` (§7); không catalog nào sở hữu camera region. Mỗi space có ≥ 1 region; mỗi region nằm trong `bounds_m`, rộng ≥ `25.6m` và cao ≥ `14.4m`; hợp các region phủ mọi segment đi được.
+- Quy tắc clamp duy nhất: region hoạt động = region chứa điểm neo của nhân vật đã dự đoán (nhiều region → `id` nhỏ nhất; không region nào → giữ region trước). Tâm camera clamp sao cho hình nhìn thấy nằm trong region hoạt động; nếu hình nhìn thấy rộng/cao hơn region thì căn giữa region theo trục đó. Đổi region không snap: tâm đích mới đi qua cùng bộ làm mượt critically damped (`client_performance.md` § Smoothness by Construction item 2). Không clamp theo kích thước sprite nền.
 - Parallax/background có thể vượt bounds nhưng không tạo collision hoặc spawn hợp lệ.
 
 ## 7. Hợp đồng Xuất Hình học (Unity Geometry Exporter)
 
 1. **Công cụ Xuất:** Script Unity Editor `ThinhThan.Core.Geometry.Editor.GeometryExporter` (assembly `ThinhThan.Core.Geometry.Editor`, IMP-062) quét các Collider trong Scene (gắn tag `ServerGeometry`) of the collision-only authoring scene `client/Assets/Scenes/Collision/<space_id>.unity` (IMP-062); visual scenes of IMP-072/IMP-105 contain no `ServerGeometry` colliders (ADR-0068).
 2. **Định dạng Xuất:** File JSON lưu tại `server/internal/sim/spatial/maps/<space_id>.geom.json`.
-3. **Cấu trúc dữ liệu:**
+3. **Cấu trúc dữ liệu (schema canonical, `schema_version = 1`, ADR-0071):** mọi tọa độ là số nguyên milimet (`int64`), gốc `(0,0)` = góc dưới-trái bounds; JSON sắp khóa theo thứ tự dưới đây, mảng sắp theo `id` tăng dần, không có số thực.
    ```json
    {
+     "schema_version": 1,
      "space_id": "map.lang_da.bo_ruong",
      "space_kind": "WORLD",
      "layout_profile": "IRRIGATION_BRAID",
      "content_revision": "sha256_hash",
-     "bounds": { "min_x": 0.0, "min_y": 0.0, "max_x": 76.8, "max_y": 18.0 },
+     "bounds_mm": { "max_x": 76800, "max_y": 18000 },
      "segments": [
-       { "id": 1, "kind": "SOLID_GROUND", "x1": 0.0, "y1": 2.0, "x2": 24.0, "y2": 2.0 },
-       { "id": 2, "kind": "ONE_WAY_PLATFORM", "x1": 27.0, "y1": 5.0, "x2": 35.0, "y2": 5.0 },
-       { "id": 3, "kind": "SLOPE", "x1": 35.0, "y1": 5.0, "x2": 43.0, "y2": 9.0 }
+       { "id": 1, "kind": "SOLID_GROUND", "x1": 0, "y1": 2000, "x2": 24000, "y2": 2000 },
+       { "id": 2, "kind": "ONE_WAY_PLATFORM", "x1": 27000, "y1": 5000, "x2": 35000, "y2": 5000 },
+       { "id": 3, "kind": "SLOPE", "x1": 35000, "y1": 5000, "x2": 43000, "y2": 9000 },
+       { "id": 4, "kind": "WALL", "x1": 0, "y1": 0, "x2": 0, "y2": 18000 }
+     ],
+     "camera_regions": [
+       { "id": 1, "min_x": 0, "min_y": 0, "max_x": 76800, "max_y": 18000 }
+     ],
+     "anchors": [
+       { "id": "spawn.entry.lang_da.bo_ruong", "x": 2000, "y": 2000 }
      ]
    }
    ```
-4. **Bất biến:** Server Go chỉ đọc file `.geom.json` này; tuyệt đối không import Unity runtime DLLs hay phụ thuộc vào file binary của Unity.
-5. Export fail nếu `space_id`, `space_kind`, `layout_profile`, bounds, camera region hoặc logical anchor không khớp catalog; segment/anchor nằm ngoài bounds; hay một FIELD/dungeon mất main route.
+   ```text
+   segment.kind      SOLID_GROUND   sàn/nền đặc: chặn từ trên xuống; |dốc| <= 5°
+                     SLOPE          sàn dốc đi được: 5° < |dốc| <= 45° (MAX_WALKABLE_SLOPE); chặn từ trên xuống
+                     WALL           chặn ngang hai phía: thẳng đứng hoặc |dốc| > 45°
+                     CEILING        mặt dưới khối đặc: chặn từ dưới lên; |dốc| <= 45°
+                     ONE_WAY_PLATFORM chỉ chặn khi rơi từ trên xuống (§4.2 bước 6); |dốc| <= 5°
+   segment           x1 < x2 (WALL: x1 = x2 và y1 < y2 được phép); mọi điểm trong bounds; không có hai segment trùng nhau
+   camera_regions    §6.2
+   anchors           mọi ID logic mà catalog đặt trong space này (spawn.*, anchor.*, checkpoint.*, portal ID, chest.hidden.*,
+                     bonfire.*, cooking_hearth.*, fishing_spot.*, marker.*, điểm đặt NPC, anchor bảng nhiệm vụ ngày);
+                     id duy nhất; điểm neo ở chân (y = mặt sàn đứng được)
+   ```
+4. **Bất biến:** Server Go chỉ đọc file `.geom.json` này; tuyệt đối không import Unity runtime DLLs hay phụ thuộc vào file binary của Unity. Client prediction đọc cùng file qua port hình học dùng chung.
+5. Export và content compile fail nếu: `space_id`, `space_kind`, `layout_profile` hoặc bounds không khớp catalog; tập `anchors[].id` khác tập anchor catalog yêu cầu cho `space_id` đó (thiếu hoặc thừa); segment, anchor hoặc camera region nằm ngoài bounds; camera region nhỏ hơn viewport hoặc hợp các region không phủ mọi segment đi được; anchor không nằm trên đường đi hợp lệ của `CHARACTER`; hay một FIELD/dungeon mất main route.
 
 ## Invariants
 
@@ -194,7 +220,7 @@ reference camera = 25.6m x 14.4m; orthographic size = 7.2m
 normal-world map width = 2.0..5.0 reference screens, never one screen by default
 fixed tick = 50ms (20 Hz); trọng lực g = -28.0 m/s²
 character silhouette <= 64x96px; collider = AABB 0.8m x 1.8m; điểm neo ở chân giữa
-dung sai sửa sai vị trí = 0.50m
-server geometry là file json tĩnh theo space_id; cấm suy ra từ sprite hay animation
+dung sai sửa sai vị trí = 0.50m, do client tự tính từ last_processed_client_seq; 107 chỉ cho dịch chuyển không dự đoán được
+server geometry là file json tĩnh theo space_id, tọa độ số nguyên mm, có camera_regions[] và anchors[]; cấm suy ra từ sprite hay animation
 map bounds là envelope; layout_profile + exported geometry mới quyết định vùng đi được
 ```

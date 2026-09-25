@@ -94,7 +94,7 @@ DONG_HE  00001010
 ```
 
 ## EXPLICIT — 3
-Matcher primitive: cyclic `RELATION_SUBSEQUENCE`.
+Matcher primitive: cyclic `RELATION_SUBSEQUENCE` = the required relations on consecutive ring links (contiguous, may wrap from `.08` to `.01`), per `../03_systems/spirit_meridian.md`. A witness is valid only if the resonance is the selected winner after FULL_RING suppression (enumerated over all 256 sequences; ADR-0071).
 
 | resonance_id | Display | priority | Required subsequence | Effect |
 |---|---|---:|---|---|
@@ -104,9 +104,9 @@ Matcher primitive: cyclic `RELATION_SUBSEQUENCE`.
 
 Selected-winner witnesses:
 ```text
-cau_tre 00111100
-ben_bo   00001000
-luy_tre  00101001
+cau_tre 00111101
+ben_bo   00100000
+luy_tre  10101100
 ```
 
 ## FULL_RING — 2

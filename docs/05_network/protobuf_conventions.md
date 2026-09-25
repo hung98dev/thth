@@ -129,7 +129,7 @@ error_code          ErrorCode enum     see below
 status              ResultStatus enum  RESULT_STATUS_UNSPECIFIED = 0, _SUCCESS = 1, _ERROR = 2
 ```
 
-`ErrorCode` (`common.proto`): `ERROR_CODE_UNSPECIFIED = 0` means `NONE` (success). Every other code listed in `errors.md` gets `ERROR_CODE_<CODE>` with an explicit number. The baseline (`IMP-061`) numbers the codes 1..N in order of first appearance in the fenced code blocks of `errors.md` § Canonical Codes, then any code that appears only in prose of that section in document order; from then on `common.proto` is the numbering authority: new codes append with the next unused number, numbers are never reused or reordered, and a parity test checks that every code in `errors.md` has exactly one enum value. `Retryability` mirrors `errors.md` § Retryability (`RETRYABILITY_UNSPECIFIED = 0`, then NEVER .. BACKOFF in listed order).
+`ErrorCode` (`common.proto`): `ERROR_CODE_UNSPECIFIED = 0` means `NONE` (success). Every other code listed in `errors.md` gets `ERROR_CODE_<CODE>` with an explicit number. The baseline (`IMP-061`) numbers the codes 1..N in order of first appearance of each `[A-Z][A-Z0-9_]{2,}` token inside the fenced code blocks of `errors.md` § Canonical Codes, blocks in document order, each block read row-major (left to right, then top to bottom); prose is never scanned, so every error code must appear in one of those fenced blocks (the baseline has 110); from then on `common.proto` is the numbering authority: new codes append with the next unused number, numbers are never reused or reordered, and a parity test checks that every code in `errors.md` has exactly one enum value. `Retryability` mirrors `errors.md` § Retryability (`RETRYABILITY_UNSPECIFIED = 0`, then NEVER .. BACKOFF in listed order).
 
 Shared messages (`common.proto`):
 ```text
@@ -142,7 +142,7 @@ CharacterSummary  messages.md ID 14
 EntityState       messages.md § Replication
 RewardClaimView   messages.md ID 434
 ```
-Every `*_RESULT` message embeds `OperationResult` as field 1.
+Every `*_RESULT` message embeds `OperationResult` as field 1. State events that report an outcome without an operation are named `*_OUTCOME` (e.g. 813 `S2C_SPARRING_OUTCOME`, 818 `S2C_DUEL_OUTCOME`) and never carry `OperationResult`. Attach (6), detach (10) and HELLO (1) are answered by their `*_OK` message or `S2C_ERROR` (3) (ADR-0069).
 
 ## Invariants
 

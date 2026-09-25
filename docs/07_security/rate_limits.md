@@ -46,20 +46,23 @@ sustained   = 20 messages / 60s
 Channel-specific stricter limits are allowed.
 
 ## Authentication
-Authentication endpoints (`auth.md` § HTTPS Endpoints) use the L2 limiter (`external_integrations.md` § 3, ADR-0064): key = action + scope (`ACCOUNT` | `USERNAME` | `IP`), approximate sliding window. Launch defaults (runtime security config may tighten, never loosen without security review):
+Authentication endpoints (`auth.md` § HTTPS Endpoints) use the L2 limiter (`external_integrations.md` § 3, ADR-0064): key = action + scope (`ACCOUNT` | `USERNAME` | `IP` | `IP_DEVICE`), approximate sliding window. Launch defaults (runtime security config may tighten, never loosen without security review):
 ```text
 action                     scope      limit / window
 auth.federated.login       IP         30 / 60 s
 auth.password.login        IP         20 / 60 s
 auth.password.login        USERNAME   10 / 60 s   + progressive backoff (below)
-auth.password.register     IP         5 / 3600 s  (only path revealing USERNAME_TAKEN / EMAIL_TAKEN: the enumeration control)
+auth.password.register     IP         60 / 3600 s (shared IPs: internet cafes, CGNAT)
+auth.password.register     IP_DEVICE  5 / 3600 s  (IP + device_id; only path revealing USERNAME_TAKEN / EMAIL_TAKEN: the
+                                                   enumeration control)
 auth.refresh               ACCOUNT    30 / 60 s
 auth.password.change       ACCOUNT    5 / 3600 s
 auth.link_unlink           ACCOUNT    10 / 3600 s
 gameplay.ticket            ACCOUNT    20 / 60 s
+account.delete_cancel      ACCOUNT    10 / 3600 s
 iap_verify                 ACCOUNT    10 / 60 s ; IP 30 / 60 s
 ```
-Progressive backoff (`auth_failure_backoff`, per `USERNAME` and per `IP`): from the 5th consecutive failed password login, `locked_until = now + min(30 s x 2^(failures - 5), 900 s)`; a success clears the USERNAME row. A locked request returns `RATE_LIMITED` with `retry_after_ms` without checking the password.
+Progressive backoff (`auth_failure_backoff`, per `USERNAME` and per `IP`; ADR-0069): from the 5th consecutive failed password login, `locked_until = now + min(30 s x 2^(failures - 5), 900 s)`. A request for a locked username or IP **still verifies the password**: a correct password succeeds (the lock only delays failures, so a third party cannot lock the owner out); a wrong password during the lock returns `RATE_LIMITED` with `retry_after_ms` (same shape and latency as `AUTH_INVALID`). A success clears the USERNAME row and the IP row of that source IP. Decay: `failures` of a row decreases by 1 per 10 minutes without a new failure (so shared IPs recover without a success). Only failures that were fully verified count.
 
 Login error shape must not enable account enumeration: unknown username, wrong password and locked username return the same shape and similar latency.
 

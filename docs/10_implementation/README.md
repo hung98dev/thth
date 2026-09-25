@@ -16,11 +16,11 @@ No task is `DONE`. Do not infer completed code from a planned path, test name, o
 | Role | Profile | Duty |
 |---|---|---|
 | Contract Owner | `spec-owner` | resolves blockers; only role that edits protected specs/ADRs (spec-change PRs) |
-| Coordinator | `coordinator` | selects and claims tasks, unclaims stale claims, keeps concurrency within the limit of 5 tasks |
-| Implementer | `backend-engineer`, `unity-engineer`, `integration-engineer`, `asset-producer`, `debugger` | implements one claimed task |
-| Conformance Reviewer | `reviewer` + App `thinhthan-policy-reviewer` | reviews every PR and posts `policy-review` |
+| Coordinator | `coordinator` | selects and claims tasks, unclaims stale claims, keeps concurrency within the limit of 5 tasks, grants the merge slot, records/resolves `OPS-xxx` |
+| Implementer | `backend-engineer`, `unity-engineer`, `integration-engineer`, `asset-producer`, `debugger` | implements one claimed task until its PR merges or it is blocked |
+| Conformance Reviewer | `reviewer` + App `thinhthan-policy-reviewer` | reviews every PR and posts the `policy-review` check run |
 | Verifier | `verifier` | read-only verification matrix |
-| Repository owner | human | Owner Setup and `OPS-xxx` entries only |
+| Repository owner | human | Owner Setup and fixing the environment behind `OPS-xxx` (closes the `ops-blocked` issue; never edits files) |
 
 ## Read Order for an Implementation Agent
 
@@ -57,13 +57,14 @@ No task is `DONE`. Do not infer completed code from a planned path, test name, o
 ## Status Semantics
 
 ```text
-NOT_STARTED -> IN_PROGRESS            coordinator claim PR
-IN_PROGRESS -> DONE                   task PR (two-phase tasks: follow-up status PR)
-IN_PROGRESS -> BLOCKED                implementer records a BLK/OPS entry
-IN_PROGRESS -> NOT_STARTED            coordinator unclaims a stale claim (24 h no PR activity)
-BLOCKED     -> NOT_STARTED            spec-owner or owner resolves the named blocker
-DONE        -> IN_PROGRESS            post-merge guard revert of this task's squash commit
-DONE        -> BLOCKED                a dependency was reverted (blocked_by: REVERT-<sha>)
+NOT_STARTED -> IN_PROGRESS            coordinator claim PR (claim/)
+IN_PROGRESS -> DONE                   task PR (two-phase tasks: follow-up status PR imp/IMP-XXX-done)
+IN_PROGRESS -> BLOCKED                implementer block PR (block/) appending the BLK/OPS entry
+IN_PROGRESS -> NOT_STARTED            coordinator unclaims a stale claim (claim/, 24 h no PR activity)
+BLOCKED     -> NOT_STARTED            spec-owner spec-change PR (spec/, BLK) or coordinator ops/ PR after the owner
+                                      closed the ops-blocked issue (OPS)
+DONE        -> IN_PROGRESS            post-merge guard revert of this task's squash commit (revert/)
+DONE        -> BLOCKED                a dependency was reverted (revert/, blocked_by: REVERT-<sha>)
 ```
 
 - `NOT_STARTED`: ready when every dependency is `DONE` on `main` and no applicable blocker is open.

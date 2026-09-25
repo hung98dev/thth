@@ -55,6 +55,7 @@ Chưa có migration nào tồn tại. IMP-005 tạo baseline `server/migrations/
 18. `character_souls` — Soul instance, cấp, EXP, `contracted_item_instance_id UNIQUE` (ADR-0060); `character_soul_resonance` — bộ đếm cộng hưởng ký ức theo `(character_id, soul_id)`.
 19. `character_beasts`, `character_beast_food_daily`, `beast_equipment_locations` — Linh Thú và bộ đếm điểm thức ăn theo ngày UTC.
 20. `reward_claims`, `reward_claim_lines`, `reward_claim_contributions`; `auction_listings`, `auction_proceeds`, `trade_settlement_records`; bảng guild (`guilds`, `guild_memberships`, `guild_member_contributions`, `guild_invites`, `guild_applications`, `guild_progression`, `guild_ritual_cycles`, `guild_blessing_votes`, `guild_storage_claims`, `guild_storage_audit`) — schema trong `data_model.md` (ADR-0065).
+21. `character_loadouts`, `character_atlas`, `atlas_milestones`, `chat_messages`, `guild_stone_category_completions`, `pending_erasure_ledger` (ADR-0070); `friends`, `friend_requests`, `blocks`, `character_chivalry`; `pvp_ratings`, `pvp_match_settlements`, `pvp_sanctions`, `guild_war_ratings`, `guild_war_settlements` — schema trong `data_model.md`.
 
 ## 4. Ràng buộc Toàn vẹn & Hành vi Khóa Ngoại (Foreign Keys)
 

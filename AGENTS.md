@@ -57,7 +57,7 @@ A change touching files in more than two numbered directories must list the comp
 | Dungeon / Spirit Surge EXP rules | `07_content/dungeon_catalog.md`, `07_content/world_event_catalog.md` (ADR-0032) |
 | Content catalog status values | `07_content/README.md` |
 | Asset size, cutout, volume and review gates | `07_content/presentation_asset_manifest.md` (ADR-0055, ADR-0056) |
-| CI, bootstrap, evidence, merge and review policy | `10_implementation/audit_gates.md`, `10_implementation/agent_execution_protocol.md` (ADR-0050, ADR-0057, ADR-0058, ADR-0068) |
+| CI, bootstrap, evidence, merge and review policy | `10_implementation/audit_gates.md`, `10_implementation/agent_execution_protocol.md` (ADR-0050, ADR-0057, ADR-0058, ADR-0068, ADR-0072) |
 | Client performance and smoothness | `04_architecture/client_performance.md` |
 | Client smoothness by construction (FrameLoop, FrameBudget, governor) / code-quality gates | `04_architecture/client_performance.md` § Smoothness by Construction, `10_implementation/engineering_conventions.md` §1.1, §1.7, §2.3–§2.7 (ADR-0059) |
 | Roles (spec-owner, coordinator, implementers, reviewer) | `10_implementation/README.md` |
@@ -100,7 +100,7 @@ CHARACTER_ALREADY_ACTIVE on replace login -> SESSION_REPLACED (ADR-0030)
 latest / floating / prerelease versions
 Bash verify/codegen wrappers (ADR-0050); self-hosted / GPU / larger runners, owner-managed VM, `*-latest` runner image (ADR-0058)
 fork PRs; job-level `if` that skips a required check; secrets before the fork guard (ADR-0058)
-git rebase / force-push / direct push to main / self-review (ADR-0050)
+git rebase / force-push / direct push to main / self-review; auto-merge without the merge slot (ADR-0050, ADR-0072)
 client runtime: Update/FixedUpdate/LateUpdate/OnGUI outside FrameLoop, coroutines, LINQ, Find*/SendMessage,
   Resources.Load, async void, Debug.Log outside Log, runtime material instances (ADR-0059; full list engineering_conventions.md §2.5)
 second pool / scheduler / logger / frame driver implementation (engineering_conventions.md §2.6)
@@ -126,6 +126,9 @@ hot-path allocations are exact gates; timing on hosted CI = median of 3; ns/op r
 Done:
 - `DONE` is defined only by `docs/10_implementation/definition_of_done.md`; the merge sequence only by `docs/10_implementation/agent_execution_protocol.md` §5a
 - spec changes land first in a spec-change PR; code + tests + status + CI-produced evidence land in the task PR
-- verify: `pwsh -NoProfile -File scripts/verify.ps1` locally and in CI (GitHub-hosted Linux + Windows jobs on every PR); Go: `go -C server ...`
-- a ready PR merges automatically (squash) when `Q0-Q6 verify (Linux)`, `Q0-Q6 verify (Windows)` and the App status `policy-review` are green
+- verify: `pwsh -NoProfile -File scripts/verify.ps1` (locally with `-LocalDeferMissing`; CI without it on GitHub-hosted Linux + Windows jobs on every PR); Go: `go -C server ...`; `-race` runs on the Linux job only
+- CI materializes Unity editor output as artifact `unity-materialized-<os>`; commit it byte-for-byte (`agent_execution_protocol.md` §4b); no local Unity editor is required
+- merges are serialized by the coordinator's merge slot (label `merge-slot`); only the slot holder updates from `main`, adds evidence and enables auto-merge; the PR merges (squash) when `Q0-Q6 verify (Linux)`, `Q0-Q6 verify (Windows)` and the App check run `policy-review` are green (ADR-0072)
+- blockers reach `main` through status-only `block/` (implementer) or `ops/` (coordinator) PRs; the owner only fixes the environment and closes `ops-blocked` issues
+- each role session uses its own agent token with the permissions listed in `docs/10_implementation/audit_gates.md` § Owner Setup; the reviewer posts `policy-review` only via `.devin/scripts/policy_review.ps1`
 - verify fail = not done

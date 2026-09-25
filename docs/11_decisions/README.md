@@ -50,7 +50,7 @@ Use `docs/templates/adr.md`.
 | 0036 | Seasons as Launch Infrastructure | ACCEPTED |
 | 0037 | Reflect, Lifesteal, Absorb, Heal-Reduction Stats | ACCEPTED |
 | 0038 | Discrete Movement-Edge Input Message | ACCEPTED |
-| 0039 | Entity Capacity Model and AI Budget Classes _(amended by ADR-0066)_ | ACCEPTED |
+| 0039 | Entity Capacity Model and AI Budget Classes _(amended by ADR-0066, ADR-0070)_ | ACCEPTED |
 | 0040 | WorldConsequence Durable Aggregate _(amended by ADR-0053)_ | ACCEPTED |
 | 0041 | Anti-RMT Trade Gates and IAP Entitlement Integrity _(amended by ADR-0060, ADR-0063)_ | ACCEPTED |
 | 0042 | Atlas Roster Expansion to 104 Launch Pages | ACCEPTED |
@@ -66,17 +66,21 @@ Use `docs/templates/adr.md`.
 | 0052 | Single Launch World | ACCEPTED |
 | 0053 | Durable Data Contract Reconciliation | ACCEPTED |
 | 0054 | Wire Message Completion | ACCEPTED |
-| 0055 | 2x Texture Authoring and Cutout Quality Gate | ACCEPTED |
-| 0056 | Volumetric Art Direction and URP 2D Lighting | ACCEPTED |
-| 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics _(amended by ADR-0058, ADR-0068)_ | ACCEPTED |
-| 0058 | Public Repository on GitHub-Hosted Linux and Windows Runners | ACCEPTED |
+| 0055 | 2x Texture Authoring and Cutout Quality Gate _(amended by ADR-0071)_ | ACCEPTED |
+| 0056 | Volumetric Art Direction and URP 2D Lighting _(amended by ADR-0071)_ | ACCEPTED |
+| 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics _(amended by ADR-0058, ADR-0068, ADR-0072)_ | ACCEPTED |
+| 0058 | Public Repository on GitHub-Hosted Linux and Windows Runners _(amended by ADR-0072)_ | ACCEPTED |
 | 0059 | Client Smoothness by Construction and Machine-Enforced Code Quality | ACCEPTED |
 | 0060 | Wire and Durable Contract Completion for Gameplay, World and Systems _(amended by ADR-0062)_ | ACCEPTED |
 | 0061 | World Lifecycle and Content Reconciliation _(amended by ADR-0062)_ | ACCEPTED |
 | 0062 | World and Systems Regression Fixes | ACCEPTED |
 | 0063 | Economy Contract Reconciliation | ACCEPTED |
 | 0064 | Session Handshake, Wire Scalar Types and Result Contract | ACCEPTED |
-| 0065 | Data Schema Completion, Erasure and Retention | ACCEPTED |
-| 0066 | Measurable Client Gates, Forced-Cap Worst Case, Drain and Operations Stack | ACCEPTED |
+| 0065 | Data Schema Completion, Erasure and Retention _(amended by ADR-0070)_ | ACCEPTED |
+| 0066 | Measurable Client Gates, Forced-Cap Worst Case, Drain and Operations Stack _(amended by ADR-0070)_ | ACCEPTED |
 | 0067 | _Number not used; never assign_ | — |
-| 0068 | Implementation Packet Readiness Corrections | ACCEPTED |
+| 0068 | Implementation Packet Readiness Corrections _(amended by ADR-0072)_ | ACCEPTED |
+| 0069 | Session Continuity, Auth Hardening and Wire Corrections | ACCEPTED |
+| 0070 | Durable Restart Safety, Relic Expiry, Erasure Ledger and Entity Class Budgets | ACCEPTED |
+| 0071 | Client Presentation Contract Reconciliation | ACCEPTED |
+| 0072 | Executable Merge Pipeline for AI Agents | ACCEPTED |

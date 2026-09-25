@@ -1,6 +1,8 @@
 # ADR-0058: Public Repository on GitHub-Hosted Linux and Windows Runners
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0072)**: `policy-review` is an App check run posted by `.devin/scripts/policy_review.ps1` (App permissions `checks:write`, `metadata:read`); the merge-guard App also has Variables and Issues write; the fork guard runs only on `pull_request` / `pull_request_target` events.
+
 ## Context
 ADR-0050 and ADR-0057 required a self-hosted cloud Windows VM (with a hardware GPU from IMP-095) and allowed the WARP software rasterizer before that. The owner does not want to operate a VM. Owner decision (2026-09-25): the repository is public, CI uses only GitHub-hosted standard runners (free for public repositories), every PR runs a Linux job and a Windows job concurrently, and no GPU runner exists.
 

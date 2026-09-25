@@ -622,7 +622,7 @@ Static validation rejects:
 - SIDE EXP/common/material reward not matching the deterministic owning-act row,
 - SIDE bound preview differing from `economy_catalog.md` `10 * owning_tier`,
 - direct skill/potential reward (bonus books are items, not direct points, so they are allowed),
-- Daily board with >2 same primary objective family,
+- Daily board with >2 same primary objective family, except the single 3rd template placed by the slot-6 uncapped fallback of § Board Generation,
 - Daily target outside character access,
 - quest-local object referenced by another unrelated quest,
 - duplicate completion idempotency key,

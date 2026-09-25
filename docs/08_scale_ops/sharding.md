@@ -26,8 +26,8 @@ Public-boss generation semantics remain logical across channels where owning bos
 ```text
 CHANNEL_IDLE_STOP = 600 s
 start   on the first placement into a stopped channel (player-initiated or forced). Automatic placement
-        prefers running channels (world_rules.md order) and starts the lowest-index stopped channel only
-        when no running channel can take the player; map/channel selection lists all 30 channels
+        prefers running channels below 18 (../02_world/world_rules.md, normal and Forced Placement order,
+        ADR-0070) and starts the lowest-index stopped channel only when none is below 18; map/channel selection lists all 30 channels
         (a stopped channel shows 0 players)
 startup load active world_consequence rows (../04_architecture/realtime_loop.md § Restart), receive the
         current Spirit Surge activation and any OPEN PUBLIC boss generation from Ephemeral Global
@@ -37,7 +37,7 @@ stop    player_count = 0 continuously for CHANNEL_IDLE_STOP and no transfer into
         projectiles, boss copies; a discarded PUBLIC copy is terminal for its generation, ../02_world/bosses.md)
 restart after a process restart every normal channel is stopped until its first placement
 ```
-Durable per-channel rows (`world_consequence_relics`, `region_di_tich_markers`) outlive a stopped partition and expire by time in PostgreSQL. `MAX_PARTITIONS_PER_PROCESS >= 720 + peak instances` (`capacity.md`) guarantees that starting a normal channel is never refused; instance creation beyond the measured cap is refused with `SERVER_OVERLOADED`.
+Durable per-channel rows (`world_consequence_relics`, `region_di_tich_markers`) outlive a stopped partition; their expiry is performed by the world-owned relic expiry sweep (`../06_data/data_model.md` § world_consequence_relics, ADR-0070), and every read treats a row as active only while `expires_at > now()`. `MAX_PARTITIONS_PER_PROCESS >= 720 + peak instances` (`capacity.md`) guarantees that starting a normal channel is never refused; instance creation beyond the measured cap is refused with `SERVER_OVERLOADED`.
 
 ## Instance Placement
 Dungeon/finale/PvP/Guild-War instances receive one in-process simulation owner for their runtime lifetime.

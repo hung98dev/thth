@@ -27,7 +27,7 @@ Version-policy decision: `../11_decisions/0010-exact-technology-version-pinning.
 | Addressables | `com.unity.addressables 2.11.2` | Canonical asset loading, bundle/catalog management, local/remote presentation delivery. |
 | Localization | `com.unity.localization 1.5.12` | Canonical string/asset localization; `vi-VN` (default) and `en-US` required launch locales. |
 | UI | `com.unity.ugui` editor-bound core package from `6000.6.1f1` (includes TextMeshPro) | Canvas UI per `../04_architecture/client_experience_contract.md`; resolved version locked by `packages-lock.json`; no UI Toolkit runtime UI and no separate `com.unity.textmeshpro` line (ADR-0059). |
-| Protocol Buffers C# runtime | `Google.Protobuf 3.36.2` | Generated network/data messages only; this does not enable gRPC. |
+| Protocol Buffers C# runtime | `Google.Protobuf 3.36.2` | Generated network/data messages only; this does not enable gRPC. Source: NuGet package `https://api.nuget.org/v3-flatcontainer/google.protobuf/3.36.2/google.protobuf.3.36.2.nupkg` (SHA-256 `1182590db175f9057707857a1df48b217226d0732716cd353fa4aa4683d38dcb`); IMP-000 verifies the hash and commits `lib/netstandard2.0/Google.Protobuf.dll` to `client/Assets/Plugins/Google.Protobuf/` (ADR-0072). |
 
 Unity project lock requirements:
 ```text
@@ -125,7 +125,9 @@ Do not:
 |---|---|---|
 | GitHub Actions `actions/checkout` | `v4.2.2` (`11bd71901bbe5b1630ceea73d27597364c9af683`) | Pin tag and commit SHA. Floating `@v4` forbidden. |
 | GitHub Actions `actions/setup-go` | `v5.3.0` (`f111f3307d8850f501ac008e886eec1fd1932a34`) | Pin tag and commit SHA; exact Go `1.27.1`. |
-| GitHub Actions `actions/upload-artifact` | `v4.6.2` (`ea165f8d65b6e75b540449e92b4886f43607fa02`) | Upload verify-report.json. Floating `@v4` forbidden. |
+| GitHub Actions `actions/upload-artifact` | `v4.6.2` (`ea165f8d65b6e75b540449e92b4886f43607fa02`) | Upload `verify-report.json`, `evidence`, `visual-review` and `unity-materialized-<os>` artifacts. Floating `@v4` forbidden. |
+| GitHub Actions `actions/download-artifact` | `v4.3.0` (`d3f86a106a0bac45b974a628896c90dbdf5c8093`) | `evidence manifest` job downloads both OS verify reports of the same run (ADR-0072). Floating `@v4` forbidden. |
+| Git LFS | `3.8.0` | Every CI checkout uses `actions/checkout` with `lfs: true`; CI installs `git-lfs-linux-amd64-v3.8.0.tar.gz` (SHA-256 `e455e00f15d9b95661b8d53498ffb0c3367962cf1ec73c31ab7369516cd6ab8d`) / `git-lfs-windows-amd64-v3.8.0.zip` (SHA-256 `b62e7b8ceddee635f691233d77de8eaa4b213e9209e0173811d8cfa77f7882c1`) from `https://github.com/git-lfs/git-lfs/releases/download/v3.8.0/` before checkout; local agent machines use the same version (`../10_implementation/repository_layout.md` § Git Attributes). |
 | Server runtime packaging | static binary + systemd unit | No container base image in production (`../08_scale_ops/deployment.md`). |
 | TLS root CA bundle | Mozilla via curl.se `cacert-2026-08-13.pem`, SHA-256 `f66dff1bdf8f96060b8177976f8b7d9254bc89bc4db933d769f7384d28480bc9` | Committed at `deploy/prod/cacert.pem`; verify hash in Q1; refresh only by updating this row. |
 | GitHub Actions `actions/create-github-app-token` | `v3.2.0` (`bcd2ba49218906704ab6c1aa796996da409d3eb1`) | Merge-guard App token for post-merge revert PRs (ADR-0057, ADR-0058). |
@@ -133,7 +135,7 @@ Do not:
 | Git for Windows | `2.55.0.windows.5` | Local Windows agent machines only: Git + Git Bash for `.devin` hooks (not a CI verify/codegen wrapper). |
 | `jq` | `1.8.2` | JSON in local hooks and CI scripts. CI installs `jq-linux-amd64` (SHA-256 `b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f`) / `jq-windows-amd64.exe` (SHA-256 `a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627`) from `https://github.com/jqlang/jq/releases/download/jq-1.8.2/`; the preinstalled `jq` is never used. |
 | Google Cloud SDK `gcloud` | `586.0.0` | `gcloud firebase test android run --type game-loop` in the scheduled `device-perf` workflow. |
-| PostgreSQL test server (Windows) | `postgresql-18.6-1-windows-x64-binaries.zip` (https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip) | Windows CI job and local Windows: official EDB binaries; SHA-256 recorded by IMP-000 in `server/internal/stackpin/`; `verify.ps1` unpacks into ignored `tools/`, starts on a random port, exports `THINHTHAN_TEST_PG_DSN` unless it is already set. |
+| PostgreSQL test server (Windows) | `postgresql-18.6-1-windows-x64-binaries.zip` (https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip) | Windows CI job and local Windows: official EDB binaries, SHA-256 `fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c` (343,808,005 bytes, verified 2026-09-25; asserted by `server/internal/stackpin/`); `verify.ps1` unpacks into ignored `tools/`, starts on a random port, exports `THINHTHAN_TEST_PG_DSN` unless it is already set. |
 | GitHub-hosted runner images | `ubuntu-24.04`, `windows-2022` | Only runners allowed (ADR-0058). `*-latest`, self-hosted, GPU and larger runners are forbidden. `windows-2022` matches the ltsc2022 GameCI Windows images. |
 | PowerShell | `7.6.6` (`pwsh`) | Runs `scripts/verify.ps1` / `scripts/codegen.ps1` on Linux and Windows; workflow steps use `shell: pwsh`. Windows PowerShell 5.1 is not a supported host. CI installs `powershell-7.6.6-linux-x64.tar.gz` (SHA-256 `ddbc4a2d113bbd46d283cfedcbcd117a70caefd7673f41f2b4e0000badf103bc`) / `PowerShell-7.6.6-win-x64.zip` (SHA-256 `02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860`) from `https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/` in a `bash`/`cmd` bootstrap step before any `shell: pwsh` step and prepends it to `PATH`; the preinstalled `pwsh` is never used. |
 | GitHub Actions `actions/cache` | `v6.1.0` (`55cc8345863c7cc4c66a329aec7e433d2d1c52a9`) | Unity `client/Library` cache per OS, keyed on `packages-lock.json` + `ProjectVersion.txt`. |
@@ -143,10 +145,18 @@ Do not:
 | Unity CI image (Android build) | `unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab` | Linux job; IL2CPP Android build. |
 | Unity CI image (Windows tests) | `unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534` | Windows job. |
 | Unity CI image (Windows player build) | `unityci/editor:windows-6000.6.1f1-windows-il2cpp-3.2.2@sha256:5bd80a61ac442b81745f653dd39395f6e93167ebc51c4b494bdd42c2b656195b` | Windows job; IL2CPP Windows player build. |
-| PostgreSQL test container (Linux CI) | `postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722` | Service container of `Q0-Q6 verify (Linux)`; exports `THINHTHAN_TEST_PG_DSN`. Tests only; production stays container-free. |
+| PostgreSQL test container (Linux CI) | `postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722` | Service container of `Q0-Q6 verify (Linux)`; exports `THINHTHAN_TEST_PG_DSN`. Local Linux agent machines run the same digest via `docker run` when Docker exists, otherwise Q5 is `DEFERRED(local-missing)` under `verify.ps1 -LocalDeferMissing` (ADR-0072). Tests only; production stays container-free. |
 | Staticcheck | `2026.2.1` (module `honnef.co/go/tools v0.8.1`, released 2026-08-21, supports Go 1.27) | Q4 `CODE-003`: installed by `go install honnef.co/go/tools/cmd/staticcheck@v0.8.1` (checksum-database verified) into an ignored tool dir; never added to `server/go.mod`. Default check set, no `staticcheck.conf` (`../10_implementation/engineering_conventions.md` §1.1). |
+| Go race detector | Go `1.27.1` `-race` | Runs only in `Q0-Q6 verify (Linux)` (cgo + the runner's system C compiler); the Windows job runs the same Go tests without `-race`; no C toolchain is installed on Windows (ADR-0072). |
+| GitHub merge queue | not used | Unavailable for user-owned repositories; merges are serialized by the coordinator's merge slot (`../10_implementation/agent_execution_protocol.md` §5a). |
 
-CI runs only on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners; each job installs the pinned Go, `pwsh`, `gh`, `jq` and `gcloud` and runs Unity in the digest-pinned GameCI images above (ADR-0058; Owner Setup in `../10_implementation/audit_gates.md`). Every Action is pinned by commit SHA and every container image by digest. Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. C# style and the client API fence are checked by the Go verifier; no .NET SDK, Roslyn analyzer or C# formatter is pinned or installed (ADR-0059). `scripts/verify.ps1` must not call `python`.
+CI runs only on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners; each job installs the pinned Go, `pwsh`, `gh`, `jq`, Git LFS and `gcloud` and runs Unity in the digest-pinned GameCI images above (ADR-0058; Owner Setup in `../10_implementation/audit_gates.md`). Every Action is pinned by commit SHA and every container image by digest. Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. C# style and the client API fence are checked by the Go verifier; no .NET SDK, Roslyn analyzer or C# formatter is pinned or installed (ADR-0059). `scripts/verify.ps1` must not call `python`.
+
+## Content production tools (ADR-0072)
+
+| Component | Canonical version | Rule |
+|---|---|---|
+| Art/audio generation tool | owner-provided | Required only by final-art tasks (`IMP-071`, `IMP-072`, `IMP-073`, `IMP-074`, `IMP-075`, `IMP-104`, `IMP-105`). The owner records tool name, exact version/model, access method and commercial terms here and in Owner Setup (`../10_implementation/audit_gates.md`). Until then those tasks are not ready; the first claim attempt opens a scoped `OPS-xxx` that blocks only them. Other tasks use the placeholder regime of `../07_content/presentation_asset_manifest.md` §4 until the art-final milestone (M10). |
 
 # Production Operations (ADR-0066)
 
@@ -164,6 +174,17 @@ Hosts and operations tooling for the one-world production deployment (`../08_sca
 | node_exporter | `1.12.1` | `node_exporter-1.12.1.linux-amd64.tar.gz` `b51d8a76aa2a9156a55d501aca6276fae09e262259a5e4e831d2c2222f084e63` | Every host. |
 | postgres_exporter | `0.20.1` | `postgres_exporter-0.20.1.linux-amd64.tar.gz` `89d4f7e7920cad48fdc3133f789556ef5253c330a9f5fdace3bdb6344c0a8b5a` | PostgreSQL host. |
 
+Download sources (ADR-0070; the deploy step downloads exactly these URLs and verifies the SHA-256 above before unpacking):
+```text
+otelcol-contrib    https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.161.0/otelcol-contrib_0.161.0_linux_amd64.tar.gz
+prometheus         https://github.com/prometheus/prometheus/releases/download/v3.14.0/prometheus-3.14.0.linux-amd64.tar.gz
+alertmanager       https://github.com/prometheus/alertmanager/releases/download/v0.34.1/alertmanager-0.34.1.linux-amd64.tar.gz
+grafana            https://dl.grafana.com/oss/release/grafana-13.2.2.linux-amd64.tar.gz
+node_exporter      https://github.com/prometheus/node_exporter/releases/download/v1.12.1/node_exporter-1.12.1.linux-amd64.tar.gz
+postgres_exporter  https://github.com/prometheus-community/postgres_exporter/releases/download/v0.20.1/postgres_exporter-0.20.1.linux-amd64.tar.gz
+pgbackrest, postgresql-18   PGDG apt repository https://apt.postgresql.org/pub/repos/apt noble-pgdg (exact package versions above)
+```
+
 These binaries are operations infrastructure, not part of the `thinhthan-server` artifact; the server binary imports none of them. Their configuration files live in `deploy/prod/` and are checked by the IMP-048 release tests.
 
 # Pinned Content System Constants
@@ -173,6 +194,7 @@ These constants are fixed at project initialization and must never change after 
 | Constant | Value | Rule |
 |---|---|---|
 | `CONTENT_GRANT_NAMESPACE_UUID` | `f7a3d2b1-4e8c-4a2f-9b3e-6d1c5f8e7a2b` | UUID v5 namespace for all deterministic content-grant idempotency keys (seasonal cosmetics, Atlas reward tiers, Guild Stone completions, and any future one-time content delivery). Generated once with `crypto/rand`. **Immutable** — changing this value breaks every previously issued grant key. Do not rotate, substitute, or regenerate. See `../06_data/ids.md` "Deterministic Content-Grant Idempotency Keys". |
+| `SERVER_JOB_NAMESPACE_UUID` | `64d34c40-8657-462b-887f-5970db9eaa5f` | UUID v5 namespace for server-initiated job `operation_id`s (`../06_data/ids.md` § Operation IDs, ADR-0070). Generated once with `crypto/rand`. **Immutable** — never rotate. |
 
 # Verified Stable Choices
 As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta. CI tooling rows added by ADR-0058 were verified on `2026-09-25`; `gh`/`jq`/`pwsh` release-asset SHA-256 values were read from the GitHub release API on `2026-09-25` (ADR-0068). Staticcheck `2026.2.1` (ADR-0059) was verified against the GitHub release and the Go module proxy on `2026-09-25`. Production Operations rows (ADR-0066) were verified on `2026-09-25` against each project's latest non-prerelease GitHub release, its published SHA-256 file, the Go module proxy (OTel modules) and the PGDG `noble-pgdg` package index.
@@ -240,4 +262,5 @@ no floating versions
 no agent-selected dependency substitutions
 version change is an explicit reviewed repository change
 CONTENT_GRANT_NAMESPACE_UUID = f7a3d2b1-4e8c-4a2f-9b3e-6d1c5f8e7a2b (pinned immutable; never rotate)
+SERVER_JOB_NAMESPACE_UUID    = 64d34c40-8657-462b-887f-5970db9eaa5f (pinned immutable; never rotate)
 ```

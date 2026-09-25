@@ -21,7 +21,7 @@ audit / security events  audit_events in PostgreSQL (../06_data/data_model.md), 
 dashboards               Grafana on the ops host, the seven § Required Dashboards provisioned from deploy/prod/grafana/
 alerts                   Prometheus rules (deploy/prod/prometheus/rules/) -> Alertmanager
 ```
-Alertmanager receivers: `ops-critical` (every § Alerts critical example; page the operator), `ops-warning` (warnings; daily digest) and `security-queue` (every § Alerts security alert; page the operator and keep the alert history for 3 years). Receiver endpoints (email/webhook) are deploy-environment configuration injected at runtime, never committed. A telemetry pipeline outage never blocks the server: the SDK drops on a full export queue and counts the drops.
+Alertmanager receivers: `ops-critical` (every § Alerts critical example; page the operator), `ops-warning` (warnings; daily digest) and `security-queue` (every § Alerts security alert; page the operator). Alert history for 3 years is kept by the world process, not Alertmanager: the Alertmanager webhook for `security-queue` posts to the server private admin listener (`ADMIN_BIND_ADDR`), which inserts one `audit_events` row per firing/resolved notification (`actor_kind = SYSTEM`, Category H, 3-year retention; ADR-0070). Receiver endpoints (email/webhook) are deploy-environment configuration injected at runtime, never committed. A telemetry pipeline outage never blocks the server: the SDK drops on a full export queue and counts the drops.
 
 ## Correlation Context
 Where applicable include:
@@ -103,7 +103,7 @@ Launch dashboards:
 Metric class covering simulation and world-system health:
 
 - **AOI entity shedding rate**: count of clients per channel that have hit `MAX_ENTITIES_IN_AOI_PER_CLIENT = 40` and are receiving a reduced entity set; shed entities are invisible to those clients. Alert condition: any client in a contested channel sustaining the cap for >10s is a warning; the shed count per channel tick is a standing metric. This indicates the density-increase has saturated the AOI budget.
-- **WorldConsequence load delay**: time taken to load the WorldConsequence aggregate before a partition accepts its first player. Warn when this exceeds 500ms; partition-start rejection due to `WORLD_CONSEQUENCE_LOAD_TIMEOUT = 5 s` or an unreadable/invalid aggregate (`../06_data/data_model.md` § Boss Aftermath Relic) is a critical alert; zero rows is valid and never alerts.
+- **WorldConsequence load delay**: time taken to load the WorldConsequence aggregate before a partition accepts its first player. Warn when this exceeds 500ms; partition-start rejection due to `WORLD_CONSEQUENCE_LOAD_TIMEOUT = 5 s`, an unreadable table or a quarantined row (`../06_data/data_model.md` § Boss Aftermath Relic) is the critical alert `world_consequence_load_failed` for that partition only; zero rows is valid and never alerts.
 - **Spirit Surge 3-region coordination failure**: count of UTC hours where fewer than 3 regions activated (coordinator failure, region eligibility exhaustion, or deterministic assignment fault). Any non-zero count in a production hour is a warning; two consecutive hours is critical.
 - **Anti-RMT rolling-window query rate/latency**: query rate and p95/p99 latency for the anti-RMT rolling-window aggregation query. Warn when p95 exceeds 50ms or query rate exceeds a configured threshold indicating it is becoming a database hotspot; alert when p99 exceeds 200ms or a single query causes lock waits.
 
@@ -116,7 +116,9 @@ Critical examples:
 - dual-ownership invariant violation,
 - reward/economy reconciliation mismatch,
 - backup/PITR failure,
-- WorldConsequence aggregate unreadable, invalid or over `WORLD_CONSEQUENCE_LOAD_TIMEOUT` at partition start (zero rows is valid),
+- `world_consequence_load_failed`: WorldConsequence rows of a partition unreadable, quarantined (unknown content ID) or over `WORLD_CONSEQUENCE_LOAD_TIMEOUT` at partition start (zero rows is valid; only that partition stays closed),
+- `shutdown_flush_timeout` (durable outbox journal written) and `durable_outbox_corrupt` (startup stopped; `deployment.md` § Durable Outbox Journal),
+- `erasure_ledger_backlog`: a `pending_erasure_ledger` row older than 24 h (`../06_data/data_model.md` § Account Erasure),
 - Spirit Surge coordination failure for 2+ consecutive hours,
 - error budget burn rate > 10x over 1 hour for any SLO below,
 - `DURABLE_BACKPRESSURE` active on any partition > 60s.
@@ -137,7 +139,8 @@ Warning examples:
 - any dropped/late `C2S_MOVEMENT_EDGE` (ID 108),
 - client AOI cap sustained >10s in contested channel,
 - WorldConsequence partition-start load >500ms,
-- anti-RMT rolling-window query p95 >50ms.
+- anti-RMT rolling-window query p95 >50ms,
+- `di_tich_sweep_failed`: relic expiry sweep run failed (retried every 60 s; reads stay correct, ADR-0070).
 
 ## SLOs
 Measured monthly, excluding announced maintenance restarts (ADR-0052):

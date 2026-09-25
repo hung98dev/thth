@@ -73,7 +73,7 @@ Connection sequence (ADR-0064):
 3. client opens `wss`,
 4. client sends `C2S_HELLO` (message_id 1) carrying the gameplay ticket, or the resume credential from its last `S2C_HELLO_OK` when reconnecting (`reconnect.md`); the HELLO envelope has `session_epoch = 0` and `client_seq = 1`,
 5. server validates credential, protocol version, client build/content compatibility, and session replacement rules,
-6. server sends `S2C_HELLO_OK` (message_id 2) with `session_epoch`, a fresh resume credential and connection parameters, then `S2C_CHARACTER_LIST` (14) unless the resume re-attached the character,
+6. server sends `S2C_HELLO_OK` (message_id 2) with `session_epoch`, a fresh resume credential and connection parameters, then `S2C_CHARACTER_LIST` (14) unless a live character of the account was re-attached (resume or superseding ticket HELLO, ADR-0069),
 7. character creation (12) or attach (6) follows,
 8. realtime messages become legal only after attach succeeds.
 
@@ -107,11 +107,27 @@ server_seq != 0 or S2C-only message_id from C   close: PROTOCOL_VIOLATION
 session_epoch != current                        S2C_ERROR SESSION_EPOCH_STALE (RECONNECT), close_after = true
 message_id not registered in messages.md        S2C_ERROR MESSAGE_UNKNOWN, not dispatched, no close
 client_seq not increasing                       S2C_ERROR STALE_INPUT, not dispatched, no close
-message not legal in current phase              S2C_ERROR MESSAGE_NOT_ALLOWED_IN_STATE, no close
+realtime input in DEAD / TRANSFER / PENDING     silently dropped, no reply, not counted (§ Phase Legality)
+message not legal in current phase              S2C_ERROR MESSAGE_NOT_ALLOWED_IN_STATE, no close (§ Phase Legality)
 payload fails protobuf parse / schema limits    S2C_ERROR PROTOCOL_MALFORMED, no close
 per-message rate limit exceeded                 RATE_LIMITED (rate_limits.md), no close
 ```
 Non-closing protocol rejections share one budget: more than 20 in any 10 s window closes the connection with `PROTOCOL_VIOLATION` (`../07_security/rate_limits.md` § Protocol Reject Budget). Domain rejections after dispatch use the typed result of the request (`messages.md`), never this table.
+
+## Phase Legality (ADR-0069)
+Server-side connection phase decides which C2S messages are dispatched. `realtime input` = 100, 101, 102, 108, 200, 201, 202.
+```text
+phase               entered by                                          dispatched C2S                     otherwise
+PRE_HELLO           socket open                                         1                                  close PROTOCOL_VIOLATION
+CHARACTER_SELECT    HELLO_OK without resumed character; 11              4, 6, 12                           MESSAGE_NOT_ALLOWED_IN_STATE
+IN_WORLD            7 + baseline (300) received                         every registered C2S except 1, 12  MESSAGE_NOT_ALLOWED_IN_STATE
+DEAD                S2C_DEATH (206) until S2C_RESPAWN (207)             IN_WORLD set minus realtime input  realtime input: silent drop
+TRANSFER            S2C_TRANSFER_PREPARE (105) until the new baseline   4, 106, 306, 600 (chat)            realtime input: silent drop;
+                                                                                                           others MESSAGE_NOT_ALLOWED_IN_STATE
+PLACEMENT_PENDING   S2C_PLACEMENT_PENDING (15) until 7 / 207 / 105      4, 600 (chat; only when a          realtime input: silent drop;
+                                                                        character is attached)            others MESSAGE_NOT_ALLOWED_IN_STATE
+```
+`C2S_CHARACTER_ATTACH` (6) in IN_WORLD is answered `CHARACTER_ALREADY_ACTIVE`; `C2S_CHARACTER_DETACH` (10) outside IN_WORLD/DEAD is `MESSAGE_NOT_ALLOWED_IN_STATE`. Silently dropped frames still advance `client_seq` and still count toward the per-message rate limits. Domain state (e.g. `in_combat`) is checked after dispatch by the typed result, never here.
 
 ## Heartbeat
 Application heartbeat exists even though WebSocket/TCP has transport keepalive.

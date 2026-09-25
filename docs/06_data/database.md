@@ -54,7 +54,7 @@ Aggregate-type priority (canonical; lock lower number first; ADR-0053, ADR-0060,
 ```text
 1  accounts, account_password_credentials, account_identities, auth_session_families,
    auth_refresh_credentials, auth_revocations, account_login_history
-2  characters
+2  characters, character_chivalry
 3  character_currencies
 4  character_inventories
 5  item_instances / item_locations
@@ -78,7 +78,7 @@ Aggregate-type priority (canonical; lock lower number first; ADR-0053, ADR-0060,
 20 economy daily rollups
 ```
 Direct trade has no session row; its settlement locks the two characters' rows in priorities 2..5 (UUID order), then inserts priority 14 and 20 rows.
-Within one priority, tables are locked in the order listed on that line; exceptions: priority 18 locks `region_di_tich_markers` before `world_consequence_relics` (`data_model.md` § Boss Aftermath Relic), and `public_boss_schedules` is only written in single-row transactions. The account-erasure transaction (`data_model.md` § Account Erasure) locks the account (1) first, then its characters (2) in UUID order, then follows the table order above with FK checks deferred to commit.
+Within one priority, tables are locked in the order listed on that line; exceptions: priority 18 locks `region_di_tich_markers` before `world_consequence_relics` (`data_model.md` § Boss Aftermath Relic), and `public_boss_schedules` is only written in single-row transactions. The account-erasure transaction (`data_model.md` § Account Erasure step 2) acquires its whole lock set in this priority order before any mutation (account, characters in UUID order, then each listed priority; guilds in `guild_id` order), with FK checks deferred to commit; `pending_erasure_ledger` is insert-only and has no priority. The relic expiry sweep (ADR-0070) uses the priority-18 marker-first order.
 `operations` rows are inserted last in the same transaction.
 
 An owning feature may define a stricter deterministic order.

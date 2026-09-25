@@ -90,16 +90,25 @@ The realtime loop may continue unrelated simulation while a durable operation is
 ## Entity Capacity Model
 Canonical constants:
 ```text
-MAX_ENTITIES_PER_CHANNEL        = 80
-  PLAYER_SLOTS_RESERVED         = 22  (FORCED_PLACEMENT_HARD_CAP, ../02_world/world_rules.md)
-  MAX_NON_PLAYER_ENTITIES       = 58  (80 - 22: monsters, bosses, event spawns, projectiles, transients)
-  worst case = 22 players + 42 monsters (NORMAL/ELITE density) + 16 projectiles/transients (ADR-0066)
+MAX_ENTITIES_PER_CHANNEL        = 100  (ADR-0070; was 80)
+  PLAYER_SLOTS_RESERVED         = 22   (FORCED_PLACEMENT_HARD_CAP, ../02_world/world_rules.md)
+  MAX_NON_PLAYER_ENTITIES       = 78   (100 - 22), split into class budgets:
+    SPAWN_GROUP_SLOTS           = 42   persistent NORMAL/ELITE/NIGHT_RARE spawn-group monsters (map_spawn_catalog density)
+    EVENT_SLOTS                 = 12   Spirit Surge: 2 temporary groups x 4 + one chain wave (max 4 alive)
+    BOSS_SLOTS                  = 8    one PUBLIC boss copy + at most 7 boss-created adds/fragments/summons
+    TRANSIENT_SLOTS             = 16   projectiles, ground zones, other transients
+  worst case = 22 players + 42 + 12 + 8 + 16 = 100 (Spirit Surge and a PUBLIC boss in the same channel)
 MAX_ENTITIES_IN_AOI_PER_CLIENT  = 40
 ```
 
 These constants are release gates. Before the 10k CCU gate, measure tick CPU consumption per entity class under worst-case channel load and confirm `MAX_ENTITIES_PER_CHANNEL` entities complete a 50ms tick within the p95 warning threshold.
 
-Player placement is bounded only by the channel player caps and is never refused by the entity cap. A channel rejects a non-player spawn that would exceed `MAX_NON_PLAYER_ENTITIES` rather than silently degrading tick budget; a rejected projectile/transient is not created (the owning action still resolves its hit test), and a rejected spawn-group monster retries at its next respawn time.
+Admission priority (ADR-0070): player placement is bounded only by the channel player caps and is never refused by the entity cap. Each non-player class may use only its own budget, so a full transient budget never blocks a boss or event monster and vice versa. A spawn that would exceed its class budget is rejected rather than silently degrading tick budget:
+- transient: not created (the owning action still resolves its hit test); transients are always the first thing dropped;
+- spawn-group monster: retries at its next respawn time;
+- event monster (Surge group or chain wave): the group/wave spawns the missing members as slots free, never beyond its authored count; a chain wave counts as complete only when all its authored members were spawned and defeated;
+- boss add: not created; the mechanic resolves without it (`../07_content/boss_catalog.md` § Boss Add Rules caps adds at 7 alive per boss);
+- PUBLIC boss copy: always fits (`BOSS_SLOTS` is reserved; at most one copy per channel per generation, `../02_world/bosses.md`).
 
 `MAX_ENTITIES_IN_AOI_PER_CLIENT` bounds the per-client replication payload; entities beyond it are culled from AOI snapshots by relevance (distance and threat priority) before packet build.
 
@@ -156,7 +165,7 @@ After failure:
 - reconnect restores from authoritative durable/checkpoint state,
 - no client-submitted snapshot reconstructs truth.
 
-World Simulation partition start must load active `world_consequence` rows for the partition's map/channel before accepting players. Relic buff state derived from those rows is restored from PostgreSQL, not reconstructed from memory. Players are not accepted into the partition until this recovery read completes.
+World Simulation partition start must load active `world_consequence` rows for the partition's own map/channel before accepting players (a bad row quarantines only that partition; `../06_data/data_model.md` § world_consequence_relics). Relic buff state derived from those rows is restored from PostgreSQL, not reconstructed from memory. Players are not accepted into the partition until this recovery read completes. After a shutdown whose durable flush timed out, the durable outbox journal is replayed before any partition starts (`../08_scale_ops/deployment.md` § Durable Outbox Journal, ADR-0070).
 
 ## Determinism Requirements
 Tests control content revision, RNG seed/stream, input sequence, and fixed tick count.
@@ -172,7 +181,7 @@ Do not depend on Go map iteration order, goroutine completion order, OS wall-clo
 - PostgreSQL is not in the per-entity per-tick path,
 - catch-up work is bounded,
 - authoritative gameplay phases are never skipped to hide overload,
-- MAX_ENTITIES_PER_CHANNEL = 80 (release gate; must be benchmarked before 10k CCU gate) with 22 player slots reserved and at most 58 non-player entities,
+- MAX_ENTITIES_PER_CHANNEL = 100 (release gate; must be benchmarked before 10k CCU gate) = 22 reserved player slots + class budgets 42 spawn-group / 12 event / 8 boss / 16 transient (ADR-0070),
 - MAX_ENTITIES_IN_AOI_PER_CLIENT = 40,
 - AI decision rates: PASSIVE = 2 Hz, NAMED_MECHANIC = 5 Hz, BOSS_PHASE = 10 Hz,
 - movement/projectile/hit/status resolution always 20 Hz regardless of AI class,

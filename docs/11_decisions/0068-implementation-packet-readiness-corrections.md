@@ -1,6 +1,8 @@
 # ADR-0068: Implementation Packet Readiness Corrections
 status: ACCEPTED
 
+> **AMENDMENT NOTICE (ADR-0072)**: item 1 two-phase list includes `IMP-083`, and a `-done` PR may carry fixes inside the packet's `owned_paths`; item 5 GUIDs are editor-generated (CI materialization) except the path-derived ProjectSettings baseline references.
+
 ## Context
 The round-2 AI-readiness review of `../10_implementation/task_queue.md` found packets that could never finish: two-phase tasks cited a "post-merge `main` run" of `verify.yml` that no workflow produces; gate skipping was tied to Bootstrap Mode while several gate owners finish after `IMP-068`; geometry export was owned by a task without scenes; travel, currency and PUBLIC boss scheduling were implemented by packets outside the owning dependency chain; Unity ProjectSettings and assembly references were frozen at `IMP-000`; and Q6 evidence identity had no test owner.
 

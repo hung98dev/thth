@@ -69,9 +69,21 @@ SIGTERM or SIGINT starts the sequence once (a second signal is ignored; only the
 2. `t0 .. t0 + DRAIN_LEAD`: running instances may finish; nothing new is created.
 3. `t0 + DRAIN_LEAD`: every partition finishes its current tick, runs `EMIT_DURABLE_COMMANDS` and stops ticking; unfinished transfers cancel to the source checkpoint; open instances close without completion (only committed rewards stand, `../02_world/dungeons.md`); every attached character's checkpoint is enqueued.
 4. Flush: Durable Domain drains its queue until empty or `SHUTDOWN_FLUSH_MAX`; WSS connections close with `SERVER_DRAINING`; listeners stop; the pgx pool closes.
-5. Exit 0 with `durable_queue_depth = 0` logged; if the flush deadline passes, log critical `shutdown_flush_timeout` with the remaining depth and exit 1 (uncommitted operations are retried by clients with the same `operation_id`; committed ones are safe).
+5. Exit 0 with `durable_queue_depth = 0` logged. If the flush deadline passes, every command still queued or in flight (unacknowledged commit) is written to the **durable outbox journal** (below), log critical `shutdown_flush_timeout` with the remaining depth, and exit 1. Nothing relies on clients retrying: most queued commands are server-originated (kill settlements, checkpoints, `WriteWorldConsequence`, chest settlement).
 
-Unplanned termination (crash, kill) skips the sequence; restart recovery (`../04_architecture/realtime_loop.md` § Restart) applies.
+### Durable Outbox Journal (ADR-0070)
+```text
+DURABLE_OUTBOX_DIR   = /var/lib/thinhthan/outbox   (systemd StateDirectory, same host, not PostgreSQL)
+file                 = <boot_id>.journal, written then fsync'd, then renamed to <boot_id>.ready
+record               = uint32 length | DurableCommandRecord (protobuf) | uint32 CRC32C of the record bytes
+DurableCommandRecord = operation_family, owner_id (16 B), operation_id (16 B), command_type, payload bytes, enqueued_at_ms
+write budget         = the 120 s TimeoutStopSec margin
+```
+- The journal is written without PostgreSQL, so a database outage (the usual flush-timeout cause) cannot lose the queue.
+- Startup order (before § Health Gates report ready and before any partition accepts players): (1) replay every `*.ready` file in `boot_id` order, records in file order, each through its normal durable command handler; every command is idempotent on `(operation_family, owner_id, operation_id)` (`../06_data/data_model.md` § operations), so a command that did commit before shutdown reconstructs its outcome instead of writing twice; (2) delete a file only after all its records committed; (3) then run PUBLIC boss schedule load, chest-eligibility settlement and WorldConsequence partition loads.
+- A record with a bad CRC or unknown `command_type` stops startup (exit 1, alert `durable_outbox_corrupt`); the operator restores from backup/PITR (`backup_recovery.md`). A missing or partially written `.journal` (never renamed) means the write did not finish: the process was killed, so the crash rule below applies.
+
+Unplanned termination (crash, kill) skips the sequence and the journal; restart recovery (`../04_architecture/realtime_loop.md` § Restart) applies; uncommitted commands are lost as bounded by `../06_data/save_rules.md` ("crash before commit").
 
 ## Content Activation
 Static content revision activation is separate from binary deployment and follows atomic validation in `../06_data/config.md`.

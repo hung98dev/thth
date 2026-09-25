@@ -39,7 +39,13 @@ PATCHING_UPDATE -> AUTH_TITLE
 AUTH_TITLE -> CHARACTER_SELECT (đăng nhập thành công) | LOGIN_QUEUED (SERVER_OVERLOADED có queue_position)
 LOGIN_QUEUED -> CHARACTER_SELECT (được nhận) | AUTH_TITLE (Hủy, hoặc mất chỗ sau 60 s không attach)
 CHARACTER_SELECT -> TRANSFERRING_MAP (attach) -> IN_WORLD
+CHARACTER_SELECT -> AUTH_TITLE (đăng xuất)
 IN_WORLD -> TRANSFERRING_MAP (chuyển map/instance) | DISCONNECTED (mất kết nối) | AUTH_TITLE (SESSION_REPLACED, đăng xuất)
+IN_WORLD -> CHARACTER_SELECT (Đổi nhân vật: C2S_CHARACTER_DETACH (10) -> S2C_CHARACTER_DETACH_OK (11); bị từ chối thì ở lại IN_WORLD)
+TRANSFERRING_MAP.PLACEMENT_PENDING: tiểu trạng thái khi nhận S2C_PLACEMENT_PENDING (15) cho FIRST_LOGIN | RECONNECT | INSTANCE_RETURN;
+  hiển thị "Đang chờ chỗ trong khu vực", không có timeout phía client, chờ server tự đặt chỗ (retry_after_ms chỉ để hiển thị);
+  ngân sách 30s/120s (§5) chỉ bắt đầu khi rời tiểu trạng thái này (nhận S2C_TRANSFER_PREPARE)
+IN_WORLD (nhân vật DEAD) + S2C_PLACEMENT_PENDING reason RESPAWN: ở lại IN_WORLD, hiện lớp phủ chờ hồi sinh, không timeout
 DISCONNECTED -> IN_WORLD (resume) | TRANSFERRING_MAP (resume vào map khác) | AUTH_TITLE (hết lượt thử hoặc SERVER_DRAINING sau hạn)
 bất kỳ -> AUTH_TITLE khi CLIENT_UPDATE_REQUIRED / PROTOCOL_UNSUPPORTED (kèm hướng dẫn cập nhật)
 ```
@@ -88,8 +94,14 @@ Sử dụng Unity Input System (`com.unity.inputsystem 1.20.0`):
 | **Đánh Thường** | `J` hoặc Chuột Trái | Nút `X` | Chạm nút Đánh Thường | `C2S_BASIC_ATTACK` (201) |
 | **Kỹ năng Active 1..5** | `K`, `L`, `U`, `I`, `O` | `Y`, `B`, `RB`, `RT`, `LB` | Chạm nút Active 1..5 | `C2S_SKILL_USE` (200) |
 | **Tương tác NPC / Nhặt** | `F` | Nút `LT` | Nút Tương tác ngữ cảnh | `C2S_INTERACT` (103) |
-| **Đổi Mục tiêu** | `Tab` | `R3` (Nhấn cần phải) | Chạm trực tiếp vào quái | Xử lý client targeting |
+| **Đi qua Portal** | `F` (cùng phím ngữ cảnh) khi portal là đối tượng gần nhất | Nút `LT` | Nút Tương tác ngữ cảnh (hiện biểu tượng cổng) | `C2S_PORTAL_USE` (104) |
+| **Đổi Mục tiêu** | `Tab` (mục tiêu kế tiếp), `Esc` (bỏ chọn) | `R3` (Nhấn cần phải) | Chạm trực tiếp vào quái; chạm nền trống để bỏ chọn | `C2S_TARGET_INTENT` (202; `target_entity_id = 0` = bỏ chọn) |
 | **Mở Chat** | `Enter` | Nút `Back` / `View` | Chạm vào Chat Dock | N/A (Mở UI nội bộ) |
+
+Quy tắc gửi input:
+- Ngữ cảnh `F`/`LT`/nút ngữ cảnh: chọn đối tượng tương tác gần nhất trong tầm theo khoảng cách tới điểm neo nhân vật; portal thắng khi hòa. Đối tượng là portal → 104, còn lại → 103; không phím nào khác gửi 104.
+- Hướng di chuyển giữ (`C2S_INPUT_STATE`, 100): gửi trong pha Input khi `input_flags` đổi, tối đa một lần mỗi `50 ms` (20/s); khi còn giữ ít nhất một cờ thì gửi lại tối thiểu mỗi `250 ms`. Cạnh nhấn/nhả/đổi hướng luôn gửi ngay bằng 108, không bị gộp. Không bao giờ vượt giới hạn `../07_security/rate_limits.md`.
+- `Tab` duyệt hostile trong AOI theo khoảng cách tăng dần (hòa → `entity_id` nhỏ hơn); mọi đổi mục tiêu đi qua 202, client chỉ hiển thị mục tiêu server đã chấp nhận.
 
 ## 4. Vùng An toàn & Ma trận Thiết bị (Safe Area & Device Matrix)
 
@@ -115,7 +127,7 @@ Sử dụng Unity Input System (`com.unity.inputsystem 1.20.0`):
    - Khóa toàn bộ input di chuyển và chiến đấu của người chơi.
    - Hiển thị màn hình mờ với tranh dân gian đặc trưng của vùng đất sắp đến.
    - Thanh tiến trình hiển thị tiến độ tải Addressables.
-   - Nếu quá ngân sách `30s` (hoặc `120s` với phó bản), tự động hủy và hiển thị thông báo `Chuyển vùng thất bại, đang quay lại điểm an toàn`.
+   - Nếu quá ngân sách `30s` (hoặc `120s` với phó bản), tính từ `S2C_TRANSFER_PREPARE`, tự động hủy và hiển thị thông báo `Chuyển vùng thất bại, đang quay lại điểm an toàn`. Thời gian ở tiểu trạng thái `PLACEMENT_PENDING` không tính vào ngân sách này.
 2. **Mất kết nối mạng (`DISCONNECTED`):**
    - Hiển thị popup modal giữa màn hình: `Mất kết nối tới máy chủ. Đang thử kết nối lại... (Lần 1/5)`.
    - Nút `Thử lại ngay` và nút `Thoát ra màn hình chính`.

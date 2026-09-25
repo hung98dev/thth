@@ -91,7 +91,7 @@ Benchmark the single world process on production-like hardware using:
 
 Partition placement inside the process uses measured safe capacity, not theoretical goroutine counts. There is no autoscaling of worlds (ADR-0052).
 
-`MAX_PARTITIONS_PER_PROCESS` is a **benchmark-derived release gate**: the maximum number of World Simulation partitions that may be co-hosted in one Go process while satisfying the p95 tick SLO under sustained load. It must be measured before the 10k CCU gate on production-like hardware and recorded in deployment configuration. Normal-map channel partitions start lazily and stop when empty (`sharding.md` § Channel Partition Lifecycle), so the number of running normal partitions varies; the gate uses the bound where every channel of every normal map runs: `MAX_PARTITIONS_PER_PROCESS >= 720 (24 maps × 30 channels) + peak concurrent instances` measured in `../09_testing/load.md` scenario 3. All of them run in the single world process (ADR-0052). `WORLD_CCU_CAP` is set from the measured result; logins above it wait in the login queue.
+`MAX_PARTITIONS_PER_PROCESS` is a **benchmark-derived release gate**: the maximum number of World Simulation partitions that may be co-hosted in one Go process while satisfying the p95 tick SLO under sustained load. It must be measured before the 10k CCU gate on production-like hardware and recorded in deployment configuration. Normal-map channel partitions start lazily and stop when empty (`sharding.md` § Channel Partition Lifecycle), so the number of running normal partitions varies; the gate uses the bound where every channel of every normal map runs: `MAX_PARTITIONS_PER_PROCESS >= 720 (24 maps × 30 channels) + peak concurrent instances` measured in `../09_testing/load.md` scenario 19 (every channel partition forced to run; ADR-0070). All of them run in the single world process (ADR-0052). `WORLD_CCU_CAP` is set from the measured result; logins above it wait in the login queue.
 
 **CI enforcement:** The 10k load scenario fails if deployment configuration does not carry a numeric `MAX_PARTITIONS_PER_PROCESS` value together with a `measured_at` timestamp on production-like hardware. An absent or placeholder value is a test-blocking defect, not a warning. No interim ceiling is assumed; admission control must refuse to exceed an unset value rather than substituting infinity.
 
@@ -99,7 +99,7 @@ Partition placement inside the process uses measured safe capacity, not theoreti
 
 Release tests include:
 - 18-player full channel (admission cap) with peak combat,
-- **42 AI_CLASS_NAMED_MECHANIC monsters plus 22 players in sustained combat in one channel; p95 tick runtime must remain under 35ms** (canonical entity capacity benchmark validating MAX_ENTITIES_PER_CHANNEL = 80 and the current spawn density at the forced-placement cap; ADR-0066),
+- **42 AI_CLASS_NAMED_MECHANIC monsters plus 22 players in sustained combat in one channel; p95 tick runtime must remain under 35ms** (canonical AI-budget benchmark at the current spawn density and the forced-placement cap; ADR-0066); the full `MAX_ENTITIES_PER_CHANNEL = 100` class-budget worst case is `../09_testing/load.md` scenario 18 (ADR-0070),
 - multi-channel map fill toward 540 players,
 - public boss with maximum effective participants,
 - Spirit Surge on populated map with all 3 concurrent regions active,
@@ -139,7 +139,7 @@ A candidate is 10k-ready only when a production-like soak at >=10,000 CCU-equiva
 ## Invariants
 - 10k CCU is a measured release gate.
 - Channel admission cap = 18; map admission cap = 540 (30 x 18); forced-placement cap = 22; per-channel worst cases use 22 players.
-- MAX_ENTITIES_PER_CHANNEL = 80 (release gate; benchmarked before 10k CCU gate).
+- MAX_ENTITIES_PER_CHANNEL = 100 = 22 players + 42 spawn-group + 12 event + 8 boss + 16 transient slots (release gate; benchmarked before 10k CCU gate; ADR-0070).
 - MAX_PARTITIONS_PER_PROCESS is benchmark-derived (release gate; must be measured and recorded before 10k CCU gate).
 - No DB connection per player.
 - No capacity optimization may weaken server authority.

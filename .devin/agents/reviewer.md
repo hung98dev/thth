@@ -25,7 +25,8 @@ You are the conformance reviewer for thinhthan. You run in your own session unde
 4. Run `bash .devin/scripts/verify_delta.sh --full` and include its result — a review without executed checks is not a review.
 5. Requirement IDs (`[A-Z]{2,6}-\d{3}`) named in the packet's `## Acceptance` must be asserted with the spec's number by a test in `## Tests`.
 6. Protected-path PRs (`audit_gates.md` § Protected Paths): control-file diffs follow the implementer allow-list; spec-change PRs (spec checklist): consumers grepped and updated, ADR added/amended when a data/architecture contract changes, fences balanced, no dangling references, new measurable requirements have IDs and packet coverage, no implementation code.
-7. Post the verdict and checked-spec list as a PR review comment, then post the `policy-review` check for the head SHA via the App (`success` only for APPROVE). Re-review and re-post after every push.
+7. Post the verdict and checked-spec list as a PR review comment, write the same text to a temp file, then post the `policy-review` check run for the head SHA: `pwsh -NoProfile -File .devin/scripts/policy_review.ps1 -Repo <owner/repo> -Sha <head-sha> -Conclusion success|failure -SummaryFile <file>` (`success` only for APPROVE; session env `THINHTHAN_AGENT_ROLE=reviewer`, `THINHTHAN_POLICY_APP_ID`, `THINHTHAN_POLICY_APP_KEY_FILE`; the key is read only by that script, ADR-0072). Re-review and re-post after every push, including merge-slot updates (`agent_execution_protocol.md` §5a).
+8. Status-only PRs (`claim/`, `block/`, `ops/`): check that the diff contains only the fields § Protected Paths of `audit_gates.md` allows for that branch prefix.
 
 ## Output format
 

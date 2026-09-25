@@ -52,7 +52,8 @@ Exact percentages are test-scenario config and are recorded with results.
 15. **map fill**: 540 players across the 30 channels of one map, then a 541st entry attempt; pass = entry rejected with `MAP_CAPACITY_FULL`, no channel exceeds 18,
 16. **settlement burst**: 1,000 auction purchases and 1,000 Reward Claims within 60 s; pass = no duplicate/lost settlement, p95 commit < 150 ms,
 17. **partition capacity measurement**: raise co-hosted partitions until p95 tick >= 35 ms; record `MAX_PARTITIONS_PER_PROCESS` with `measured_at` (`../08_scale_ops/capacity.md`),
-18. **entity cap with transients**: hotspot channel with 22 players and 58 non-player entities (42 monsters + 16 projectiles/transients) = exactly 80 (ADR-0039, ADR-0066); pass = p95 tick < 35 ms, the next non-player spawn rejected, and a forced player placement into a channel below 22 players still admitted.
+18. **entity cap with all class budgets**: one channel with 22 players, 42 spawn-group monsters (named-mechanic class), an active Spirit Surge (8 group + 4 chain-wave monsters), one PUBLIC boss copy with 7 adds and 16 transients = exactly 100 (`../04_architecture/realtime_loop.md` § Entity Capacity Model, ADR-0070); pass = p95 tick < 35 ms, the next spawn of each non-player class rejected by its own class budget while the other classes still spawn, and a forced player placement into a channel below 22 players still admitted,
+19. **all partitions running**: every one of the 720 normal-map channel partitions (24 maps x 30 channels) is forced to start (one bot placed per channel, `../08_scale_ops/sharding.md` § Channel Partition Lifecycle) plus the peak instance count; pass = every partition p95 tick < 35 ms for 30 minutes and the run records the partition count against `MAX_PARTITIONS_PER_PROCESS` (`../08_scale_ops/capacity.md`).
 
 ## Pass Thresholds
 At supported peak:

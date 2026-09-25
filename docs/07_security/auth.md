@@ -29,8 +29,10 @@ Control plane only (never gameplay). Bodies are JSON (UTF-8); UUIDs are canonica
 ```text
 endpoint                                   auth     request body                                      response
 POST /api/v1/auth/login/{provider}         none     provider_token, device_id, client_build, platform  TokenResponse
-     provider = apple | google | steam              (apple: identity token JWT; google: OIDC ID token;
-                                                     steam: auth session ticket, hex)
+     provider = apple | google | steam              (apple: identity token JWT + nonce (the raw nonce whose
+                                                     SHA-256 the client put in the Apple request); google: OIDC
+                                                     ID token; steam: GetAuthTicketForWebApi ticket, hex, created
+                                                     with identity "thinhthan-login")
 POST /api/v1/auth/password/register        none     username, password, email, device_id,             TokenResponse
                                                      client_build, platform
 POST /api/v1/auth/password/login           none     username, password, device_id, client_build,       TokenResponse
@@ -50,6 +52,7 @@ POST /api/v1/gameplay/ticket               Bearer   client_build, platform, prot
                                                                                                        client_build_min,
                                                                                                        content_revision
 POST /api/v1/account/delete                Bearer   ../07_security/data_protection.md § Erasure        data_protection.md
+POST /api/v1/account/delete/cancel         Bearer   -                                                  204
 POST /api/v1/iap/verify, /iap/steam/init   Bearer   validation.md § IAP Receipt Verification           validation.md
 ```
 `TokenResponse` = `account_id, access_token, access_expires_at, refresh_token, refresh_expires_at, is_new_account`. `providers` = list of `{provider_id, linked_at}`.
@@ -57,8 +60,9 @@ POST /api/v1/iap/verify, /iap/steam/init   Bearer   validation.md § IAP Receipt
 Rules:
 - Federated login with an unknown `provider_id + provider_subject` creates a new account (federated sign-up); a known one logs into its account.
 - `link` fails `PROVIDER_ALREADY_LINKED` when the subject belongs to another account; `unlink` fails `LAST_LOGIN_METHOD` when it would leave no usable login method; both fail `CREDENTIAL_CHANGE_LOCKED` while `accounts.credential_guard_until > now` unless `current_password` is supplied (`anti_cheat.md` § Account takeover).
-- `refresh` rotates per § Refresh Rotation; reuse of a rotated token returns `AUTH_INVALID` and revokes the family.
-- `gameplay/ticket` returns `CLIENT_UPDATE_REQUIRED`, `CONTENT_INCOMPATIBLE`, `SERVER_DRAINING`, `ACCOUNT_BANNED`, `ACCOUNT_SUSPENDED`, or `SERVER_OVERLOADED` with `queue_position` and `retry_after_ms` (login queue, `session.md`); a pending-deletion account still gets a ticket (attach then returns `ACCOUNT_PENDING_DELETION`).
+- `refresh` rotates per § Refresh Rotation; a lost-response retry is served by the grace rule there; any other reuse of a rotated token returns `AUTH_INVALID` and revokes the family.
+- `gameplay/ticket` returns `CLIENT_UPDATE_REQUIRED`, `CONTENT_INCOMPATIBLE`, `SERVER_DRAINING`, `ACCOUNT_BANNED`, `ACCOUNT_SUSPENDED`, or `SERVER_OVERLOADED` with `queue_position` and `retry_after_ms` (login queue, `session.md`; skipped when a character of the account is live or inside reconnect grace); a pending-deletion account still gets a ticket (attach then returns `ACCOUNT_PENDING_DELETION`).
+- `account/delete/cancel` returns the account from `PENDING_DELETION` to `ACTIVE` and clears `deletion_scheduled_at`; 204 also when the account is not pending (idempotent); 409 `INVALID_STATE` once erasure has started. Login (any provider or password) never cancels a pending deletion by itself; the client shows only "cancel deletion" / "log out" while `pending_deletion = true` (`data_protection.md` § Erasure). Rate limit `account.delete_cancel` (`rate_limits.md`).
 - Errors: HTTP 400 validation (`USERNAME_INVALID`, `EMAIL_INVALID`, `PASSWORD_INVALID`), 401 `AUTH_INVALID` / `AUTH_EXPIRED`, 403 `ACCOUNT_BANNED` / `ACCOUNT_SUSPENDED` / `CREDENTIAL_CHANGE_LOCKED`, 409 `USERNAME_TAKEN` / `EMAIL_TAKEN` / `PROVIDER_ALREADY_LINKED` / `LAST_LOGIN_METHOD`, 426 `CLIENT_UPDATE_REQUIRED` / `CONTENT_INCOMPATIBLE`, 429 `RATE_LIMITED`, 503 `SERVER_OVERLOADED` / `SERVER_DRAINING` / `TEMPORARY_DEPENDENCY_FAILURE`. Body: `error_code, retryability, retry_after_ms, queue_position, safe_message_key` (`../05_network/errors.md`).
 - Character create/list/select are WSS messages 12..14 and 6 (`../05_network/messages.md`); the resume credential is presented only in `C2S_HELLO`.
 
@@ -70,8 +74,8 @@ Launch defaults:
 ```text
 access credential TTL     = 15 minutes
 gameplay ticket TTL       = 60 seconds, single-purpose
-resume credential TTL     = 10 minutes
-refresh credential TTL    = 30 days maximum, rotating
+resume credential TTL     = 10 minutes from issue; re-issued every 300 s by S2C_RESUME_CREDENTIAL (16) while the session is live
+refresh credential TTL    = 30 days sliding from last refresh, rotating; family absolute cap 90 days from login
 ```
 
 TTL values may be shortened by security config, but widening them requires security review.
@@ -90,7 +94,13 @@ On successful refresh:
 - detect reuse of an already-rotated credential,
 - revoke the affected session family on suspicious reuse.
 
-Retry safety must distinguish a lost response from true token replay.
+Retry safety must distinguish a lost response from true token replay (ADR-0069):
+```text
+grace         a refresh presenting generation N-1 is accepted once when generation N was issued <= 60 s ago, N has never
+              been presented, and device_id matches the family; the server marks N rotated, issues N+1, and returns it
+reuse         any other presentation of a rotated generation = AUTH_INVALID and revokes the whole family
+absolute cap  a family never refreshes past 90 days after its initial login; then AUTH_EXPIRED and a new login
+```
 
 ## Login Providers
 The account model supports verified external/OIDC/platform identities through explicit provider records.

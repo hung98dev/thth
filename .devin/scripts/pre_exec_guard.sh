@@ -110,7 +110,15 @@ match '(^|[[:space:]])(cat|rm|mv|cp|chmod|echo|printf|>>?)[^|;&]*\.git/(hooks|ob
   && deny "do not manipulate .git internals directly"
 
 # --- secrets ------------------------------------------------------------------
-if match '(^|[^a-z0-9._-])(\.env(\.[a-z0-9_-]+)?|id_(rsa|ed25519)|[a-z0-9._-]+\.(pem|key|pfx|p12))([^a-z0-9._-]|$)'; then
+# Single exemption (ADR-0072): the reviewer role may run exactly the policy-review
+# script, which alone reads the App key named by THINHTHAN_POLICY_APP_KEY_FILE.
+is_policy_review_invocation() {
+  [ "${THINHTHAN_AGENT_ROLE:-}" = "reviewer" ] || return 1
+  local re='^[[:space:]]*(thinhthan_policy_app_(id|key_file)=[^[:space:];&|<>`$]+[[:space:]]+){0,2}(pwsh|pwsh\.exe)[[:space:]]+-noprofile[[:space:]]+-file[[:space:]]+(\./)?\.devin/scripts/policy_review\.ps1([[:space:]]+[^;&|<>`$]*)?$'
+  [[ "$lc" =~ $re ]]
+}
+if ! is_policy_review_invocation \
+   && match '(^|[^a-z0-9._-])(\.env(\.[a-z0-9_-]+)?|id_(rsa|ed25519)|[a-z0-9._-]+\.(pem|key|pfx|p12))([^a-z0-9._-]|$)'; then
   match '\.env\.(example|sample|template)' \
     || deny "do not read, write, print, or commit secret material from shell commands"
 fi

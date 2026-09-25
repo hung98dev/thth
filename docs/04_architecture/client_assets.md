@@ -58,16 +58,21 @@ Do not require a remote asset download merely to display a fatal compatibility o
 # Grouping
 Use coarse groups that align with actual lifetime/update boundaries rather than one bundle per asset.
 
-Canonical logical grouping:
+Canonical groups (final names; download/RAM budgets and residency are canonical in `../07_content/presentation_asset_manifest.md` §1; ADR-0071):
 ```text
-bootstrap.local
-shared.local
-region.<region_id>
-dungeon.<dungeon_id>
-pvp.shared
-cosmetic.shared / cosmetic.<pack_or_scope> when justified
-audio.shared / regional audio only when bundle-size profiling justifies it
+bootstrap.local        built into the player: boot/login/update/error UI, Vietnamese SDF fonts, splash
+shared.local           built into the player: HUD/menu UI art, 5 class actor sheets + animation, every class skill VFX, core SFX
+icons.shared           item, equipment, skill, status and cosmetic icons (atlased)
+beast.shared           Linh Thú actor sheets + beast VFX
+cosmetic.shared        cosmetic appearance / frame / title / guild art; bundle mode Pack Separately
+region.<zone_key>      one per zone.<zone_key> of ../07_content/encounter_catalog.md (6): map scenes, tiles, props,
+                       parallax, NPCs, monsters, PUBLIC bosses and field VFX of that region
+dungeon.<dungeon_key>  one per dungeon.<dungeon_key>: scene, instanced boss, dungeon-only props/VFX;
+                       the finale instance (instance.finale.than_trung) uses dungeon.finale
+pvp.shared             arena and Guild War scenes, props, VFX
+audio.bgm.<zone_key>   streamed BGM of that region (6); audio.bgm.shared for BGM reused across regions
 ```
+An asset belongs to exactly one group. An asset used by more than one region/dungeon moves to `shared.local` or the matching `*.shared` group; duplicate bundle copies fail validation.
 
 Rules:
 - shared dependencies are extracted deliberately to avoid duplicate bundle copies,
@@ -79,13 +84,27 @@ Rules:
 Do not derive gameplay access from group membership.
 
 # Stable Asset Keys
-Asset keys use ASCII lowercase deterministic names, for example:
+Asset keys are ASCII lowercase, dot-separated, and derived deterministically (canonical rule; ADR-0071):
 ```text
-asset.map.lang_da.bo_ruong.scene
-asset.monster.lang_da.ma_xo.prefab
-asset.skill.kim.kiem_quang.vfx
-asset.ui.inventory.icon
+catalog-backed   asset.<catalog_id>.<facet>
+                 catalog_id = the canonical content ID verbatim, including its kind segment
+                              (monster., boss., map., dungeon., instance., skill., beast., item., cosmetic., npc., zone., ...);
+                              PvP / Guild War spaces use their space_id from ../04_architecture/physics_geometry_contract.md §6.1
+non-catalog      asset.<kind>.<name>.<facet>
+                 kind ∈ { ui, sfx, bgm, font, prop, tile, parallax, vfx }, name = [a-z0-9_]+ segments joined by '.'
+facet            ∈ { prefab, sprite, anim, scene, vfx, icon, portrait, bgm, clip, font }
+no variant segment: a variant is its own catalog ID or its own facet
 ```
+Examples:
+```text
+asset.monster.lang_da.hon_gao.prefab     asset.boss.thuong_luong.prefab
+asset.map.lang_da.bo_ruong.scene         asset.map.lang_da.bo_ruong.bgm
+asset.dungeon.xom_chim.scene             asset.skill.kim.basic.kiem_thuc.vfx
+asset.skill.kim.basic.kiem_thuc.icon     asset.beast.tho.trau_dong.prefab
+asset.cosmetic.title.thien_ha_de_nhat.icon
+asset.ui.hud.skill_bar.prefab            asset.sfx.just_guard_success.clip    asset.font.body_vi.font
+```
+A catalog ID that reuses a shared asset still has its own key: the key addresses a `PresentationAlias` asset whose `target_key` names the shared key; resolution follows exactly one alias hop and an alias to an alias fails validation.
 
 They are presentation IDs only.
 
@@ -227,7 +246,8 @@ Remote content origins are allowlisted by environment configuration.
 
 # Build / CI Validation
 Client-content build fails on:
-- duplicate Addressable key,
+- duplicate Addressable key, or a key that does not follow § Stable Asset Keys,
+- an asset outside the canonical groups of § Grouping, or present in two groups,
 - missing required asset reference,
 - missing required map/monster/skill/cosmetic presentation mapping for the selected release scope,
 - dependency cycle/build failure,
@@ -254,6 +274,7 @@ Required:
 # Invariants
 ```text
 Addressables 2.11.2
+canonical groups and the asset-key derivation rule are defined here (ADR-0071)
 asset catalog != gameplay content authority
 base install can boot/auth/show errors
 remote publish precedes server requirement

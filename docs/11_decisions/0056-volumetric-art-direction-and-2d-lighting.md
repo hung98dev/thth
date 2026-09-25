@@ -13,3 +13,6 @@ The only art rule was "stylized 2D chibi". AI-generated sprites and backgrounds 
 ## Consequences
 - `presentation_asset_manifest.md`, `../04_architecture/client.md` and `../02_world/world_rules.md` (day/night presentation) are updated.
 - IMP-101 owns the rendering setup (`client/Assets/Settings/Rendering/`, `client/Assets/Scripts/Core/Rendering/`); IMP-070 implements the gate; IMP-071..075, IMP-104, IMP-105 must pass it; IMP-076 re-runs it.
+
+## Amendment — Light budget per quality preset (ADR-0071)
+The active point Light2D budget is set only by the quality preset (`LOW` 4, `MEDIUM` 8, `HIGH` 16; `../04_architecture/client_performance.md` § Platforms and Device Tiers), not by platform. The "8 on mobile, 16 on desktop" wording above is superseded.

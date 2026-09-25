@@ -31,6 +31,7 @@ BACKOFF
 `RETRY_SAME_OPERATION` means reuse the same stable operation ID.
 
 ## Canonical Codes
+Every error code is listed in a fenced block of this section; the `ErrorCode` enum is numbered from these blocks only, row-major, in document order (`protobuf_conventions.md` § 6, ADR-0069). A new code is appended to the last block.
 Connection/protocol:
 ```text
 PROTOCOL_MALFORMED

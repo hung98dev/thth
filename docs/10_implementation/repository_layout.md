@@ -31,7 +31,7 @@ thinhthan/
 ├── .github/
 │   ├── pull_request_template.md                   # IMP-000
 │   └── workflows/
-│       ├── verify.yml                              # IMP-000, finalized by IMP-068 (trusted pull_request_target)
+│       ├── verify.yml                              # IMP-000 (on: pull_request); IMP-068 two-step cutover to pull_request_target
 │       ├── post_merge_guard.yml                    # IMP-068
 │       └── device_perf.yml                         # IMP-096 (scheduled Firebase Test Lab game-loop runs)
 ├── client/                                         # Unity 6000.6.1f1 project
@@ -156,7 +156,7 @@ All 13 `.asmdef` files are authored by IMP-000 with exactly these references (na
 
 ## ProjectSettings Baseline
 
-IMP-000 pre-declares every `client/ProjectSettings/` entry a later packet needs (ADR-0068). A referenced asset's GUID is the first 32 lowercase hex characters of SHA-256 over its repository-relative path (UTF-8, `/` separators); the owning packet creates the asset with that GUID in its `.meta`. Only `QualitySettings.asset` (IMP-095) is edited later.
+IMP-000 commits the `client/ProjectSettings/*.asset` files produced by the editor's first materialization in CI (`agent_execution_protocol.md` §4b, ADR-0072), then pre-declares every entry a later packet needs (ADR-0068). Only the assets referenced below use a path-derived GUID: the first 32 lowercase hex characters of SHA-256 over the asset's repository-relative path (UTF-8, `/` separators); the owning packet creates the asset with that GUID in its `.meta`. Every other GUID is editor-generated and committed as materialized. Only `QualitySettings.asset` (IMP-095) is edited later.
 
 ```text
 EditorBuildSettings.asset  m_configObjects com.unity.addressableassets     -> client/Assets/AddressableAssetsData/AddressableAssetSettings.asset (IMP-063)
@@ -189,7 +189,7 @@ Only `scripts/codegen.ps1` may regenerate them.
 
 ## Git Attributes
 
-Binary art assets use LFS when IMP-000 creates `.gitattributes`. Unity YAML stays text and uses UnityYAMLMerge:
+Binary art assets use LFS (Git LFS `3.8.0`, every CI checkout `lfs: true`) when IMP-000 creates `.gitattributes`. Unity YAML stays text and uses UnityYAMLMerge:
 
 ```gitattributes
 *.png filter=lfs diff=lfs merge=lfs -text
@@ -219,6 +219,7 @@ Do not put `*.prefab`, `*.asset`, `*.meta`, or `*.unity` in LFS.
 - Shared registries: `client/Assets/AddressableAssetsData/` is owned by IMP-063; a packet that depends on IMP-063 may append groups/entries only for keys it owns (append-only, key-owner checked by the IMP-063 validator). Localization string tables are per feature: the packet owning `client/Assets/Scripts/{Systems|UI}/<Feature>/` implicitly owns `client/Assets/Localization/Tables/<Feature>/`; `Tables/Core/` belongs to IMP-064.
 - Provenance: `client/Assets/Art/Provenance/asset_source_register.json` is created empty by IMP-070 and merged by IMP-076 from `fragments/<name>.json`, each fragment owned by exactly one art packet.
 - Evidence directories are implied by `evidence_location` only; no packet lists `docs/10_implementation/evidence/` in `owned_paths`.
+- Unity `.meta` files are implied by ownership (ADR-0072): a packet owning `client/**` path P also owns `P.meta`, and the `.meta` of every folder it is the first to create; they are editor-materialized in CI (artifact `unity-materialized-<os>`) and committed byte-for-byte, never hand-written, except the path-derived GUIDs of § ProjectSettings Baseline.
 - Only IMP-005 writes `server/migrations/`.
 - Path ownership changes require updating this file and the owning task packet in the same change; Q0 checks parity.
 
