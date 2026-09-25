@@ -258,6 +258,7 @@ jobs:
         run: |
           echo %BRANCH_NAME%| findstr /b /c:"revert/" /c:"ops/" >nul && (echo exempt branch & exit /b 0)
           if /I "${{ vars.AUTO_MERGE_FROZEN }}"=="true" (echo repository merge freeze active >&2 & exit /b 1)
+          exit /b 0
 
       - name: Install pwsh + CLI tools (pinned)
         shell: powershell
