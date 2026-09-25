@@ -144,10 +144,9 @@ jobs:
         run: |
           set -uo pipefail
           docker run --rm -e UNITY_LICENSE "${{ env.UNITY_LINUX_IMAGE }}" bash -c '
-            printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf
-            echo "ulf bytes: $(wc -c < /opt/unity/Editor/Data/Resources/Unity_lic.ulf)"
-            head -c 20 /opt/unity/Editor/Data/Resources/Unity_lic.ulf; echo
-            ls /opt/unity/Editor/Data/Resources/ | head -30
+            mkdir -p /root/.local/share/unity3d/Unity &&
+            printf "%s" "$UNITY_LICENSE" | tr -d "\\r" > /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
+            echo "ulf bytes: $(wc -c < /root/.local/share/unity3d/Unity/Unity_lic.ulf)"
           '
           for i in 1 2 3 4 5; do
             lf=/github/workspace/unity-materialize.log; [ "$i" -eq 1 ] && lf=-
@@ -159,13 +158,8 @@ jobs:
               -e LOG_FILE="$lf" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf
-                if [ -n "$UNITY_SERIAL" ]; then
-                  echo "activating via UNITY_SERIAL"
-                  unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile "$LOG_FILE" || exit 198
-                elif [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
-                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile "$LOG_FILE" || true
-                fi
+                mkdir -p /root/.local/share/unity3d/Unity &&
+                printf "%s" "$UNITY_LICENSE" | tr -d "\\r" > /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
                 unity-editor -projectPath /github/workspace/client -quit -logFile "$LOG_FILE"
               ' \
               && exit 0
@@ -206,12 +200,8 @@ jobs:
               -e MODE="$mode" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                printf "%s" "$UNITY_LICENSE" > /opt/unity/Editor/Data/Resources/Unity_lic.ulf
-                if [ -n "$UNITY_SERIAL" ]; then
-                  unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - || exit 198
-                elif [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
-                  unity-editor -batchmode -nographics -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - || true
-                fi
+                mkdir -p /root/.local/share/unity3d/Unity &&
+                printf "%s" "$UNITY_LICENSE" | tr -d "\\r" > /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
                 unity-editor -projectPath /github/workspace/client \
                   -runTests -testPlatform "$MODE" \
                   -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
@@ -410,7 +400,7 @@ jobs:
               -w C:\repo `
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              powershell -Command "Set-Content -Path 'C:\Program Files\Unity\Editor\Data\Resources\Unity_lic.ulf' -Value `$env:UNITY_LICENSE; if (`$env:UNITY_SERIAL) { & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -serial `$env:UNITY_SERIAL -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile -; if (`$LASTEXITCODE -ne 0) { exit 198 } } elseif (`$env:UNITY_EMAIL -and `$env:UNITY_PASSWORD) { & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile - }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
+              powershell -Command "New-Item -ItemType Directory -Force -Path 'C:\ProgramData\Unity' | Out-Null; Set-Content -Path 'C:\ProgramData\Unity\Unity_lic.ulf' -Value `$env:UNITY_LICENSE; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
             if ($LASTEXITCODE -eq 0) { $ok = $true; break }
             if ($LASTEXITCODE -eq 198) { Write-Host 'unity licence activation failed (deterministic) - not retrying'; exit 1 }
             Write-Host "unity materialization attempt $i failed; retrying after 60s"
