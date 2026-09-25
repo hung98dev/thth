@@ -143,11 +143,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           set -uo pipefail
-          docker run --rm -e UNITY_LICENSE "${{ env.UNITY_LINUX_IMAGE }}" bash -c '
-            mkdir -p /root/.local/share/unity3d/Unity &&
-            printf "%s" "$UNITY_LICENSE" | tr -d "\\r" > /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
-            echo "ulf bytes: $(wc -c < /root/.local/share/unity3d/Unity/Unity_lic.ulf)"
-          '
+          docker run --rm "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
             lf=/github/workspace/unity-materialize.log; [ "$i" -eq 1 ] && lf=-
             docker run --rm \
@@ -158,8 +154,7 @@ jobs:
               -e LOG_FILE="$lf" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                mkdir -p /root/.local/share/unity3d/Unity &&
-                printf "%s" "$UNITY_LICENSE" | tr -d "\\r" > /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
+                rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
                 timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile "$LOG_FILE" &&
                 unity-editor -projectPath /github/workspace/client -quit -logFile "$LOG_FILE"
               ' \
@@ -201,8 +196,7 @@ jobs:
               -e MODE="$mode" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                mkdir -p /root/.local/share/unity3d/Unity &&
-                printf "%s" "$UNITY_LICENSE" | tr -d "\\r" > /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
+                rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
                 timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - &&
                 unity-editor -projectPath /github/workspace/client \
                   -runTests -testPlatform "$MODE" \
@@ -402,7 +396,7 @@ jobs:
               -w C:\repo `
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              powershell -Command "New-Item -ItemType Directory -Force -Path 'C:\ProgramData\Unity' | Out-Null; Set-Content -Path 'C:\ProgramData\Unity\Unity_lic.ulf' -Value `$env:UNITY_LICENSE; `$p = Start-Process -FilePath 'C:\Program Files\Unity\Editor\Unity.exe' -ArgumentList @('-batchmode','-nographics','-serial',`$env:UNITY_SERIAL,'-username',`$env:UNITY_EMAIL,'-password',`$env:UNITY_PASSWORD,'-quit','-logFile','-') -NoNewWindow -PassThru; if (-not `$p.WaitForExit(300000)) { Stop-Process -Id `$p.Id -Force; exit 124 }; if (`$p.ExitCode -ne 0) { exit `$p.ExitCode }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
+              powershell -Command "Remove-Item -Force -ErrorAction SilentlyContinue 'C:\ProgramData\Unity\Unity_lic.ulf'; `$p = Start-Process -FilePath 'C:\Program Files\Unity\Editor\Unity.exe' -ArgumentList @('-batchmode','-nographics','-serial',`$env:UNITY_SERIAL,'-username',`$env:UNITY_EMAIL,'-password',`$env:UNITY_PASSWORD,'-quit','-logFile','-') -NoNewWindow -PassThru; if (-not `$p.WaitForExit(300000)) { Stop-Process -Id `$p.Id -Force; exit 124 }; if (`$p.ExitCode -ne 0) { exit `$p.ExitCode }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
             if ($LASTEXITCODE -eq 0) { $ok = $true; break }
             if ($LASTEXITCODE -eq 198 -or $LASTEXITCODE -eq 124) { Write-Host "unity licence activation failed deterministically (rc=$LASTEXITCODE) - not retrying"; exit 1 }
             Write-Host "unity materialization attempt $i failed; retrying after 60s"
