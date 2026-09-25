@@ -18,10 +18,11 @@ runners            GitHub-hosted standard runners only: ubuntu-24.04 and windows
                    no GPU); nothing to install: CI provisions Go, pwsh, gh, jq, Git LFS, GameCI Unity images,
                    PostgreSQL and gcloud from the pins in ../00_context/technology_versions.md; no local Unity editor
                    is required (CI materializes Unity files, agent_execution_protocol.md §4b)
-android devices    Google Cloud project on the free Firebase Spark plan with Test Lab enabled; one ANDROID_MIN-class and
-                   one ANDROID_REC-class physical device model recorded here. Android performance = Unity game-loop
-                   tests via `gcloud firebase test android run --type game-loop` in the scheduled `device-perf`
-                   workflow (../04_architecture/client_performance.md § Measurement and Gates)
+android devices    Google Cloud project on the free Firebase Spark plan with Test Lab enabled. Recorded physical
+                   device models: ANDROID_MIN-class = `bonito` (Pixel 3a XL) @ Android 10; ANDROID_REC-class = `redfin`
+                   (Pixel 5) @ Android 12. Android performance = Unity game-loop tests via
+                   `gcloud firebase test android run --type game-loop` in the scheduled `device-perf` workflow
+                   (../04_architecture/client_performance.md § Measurement and Gates)
 ruleset on main    PR required; required checks `Q0-Q6 verify (Linux)` and `Q0-Q6 verify (Windows)` (workflow verify.yml
                    from main) and the check run `policy-review` (source = App thinhthan-policy-reviewer); branches must
                    be up to date (no merge queue: unavailable for user-owned repos; merges are serialized by the merge
