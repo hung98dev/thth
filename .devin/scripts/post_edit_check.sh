@@ -46,8 +46,8 @@ case "$p" in
     note PostToolUse "TASK PACKET: status DONE requires docs/10_implementation/evidence/IMP-XXX/manifest.json with ci_run_id (ADR-0045). Verify fail = not DONE." ;;
 
   client/**/*.cs)
-    hot="$(grep -nE 'FindObjectOfType|GameObject\.Find|Camera\.main|using System\.Linq' "$p" 2>/dev/null | head -3 || true)"
-    [ -n "$hot" ] && note PostToolUse "UNITY HOT-PATH CHECK in $p: $hot — scene lookups/LINQ are forbidden inside per-frame code; cache references or move off Update."
+    hot="$(grep -nE 'FindObjectOfType|FindObjectsOfType|FindFirstObjectByType|FindAnyObjectByType|GameObject\.Find|Camera\.main|using System\.Linq|StartCoroutine|IEnumerator|async void|SendMessage|BroadcastMessage|InvokeRepeating|Resources\.Load|Debug\.Log|new Material\(|\.material\b|GC\.Collect|void (Update|FixedUpdate|LateUpdate|OnGUI)\(' "$p" 2>/dev/null | head -3 || true)"
+    [ -n "$hot" ] && note PostToolUse "CLIENT API FENCE in $p: $hot — forbidden in first-party runtime code (engineering_conventions.md §2.5; Q4 fails). Use FrameLoop/IFrameSystem, FrameBudget, Pool<T>, Log, injected services."
     ;;
 esac
 

@@ -154,17 +154,18 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../00_context/technology_versions.md`, `../00_context/constraints.md`, `../00_context/glossary.md`, `../00_context/non_goals.md`, `../00_context/vision.md`, `../04_architecture/system_overview.md`, `../04_architecture/backend.md`, `repository_layout.md`, `architecture_conformance.md`, `../09_testing/test_and_release_evidence.md`, `audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`]
-adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0040-world-consequence-durable-aggregate.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
+specs: [`../00_context/technology_versions.md`, `../00_context/constraints.md`, `../00_context/glossary.md`, `../00_context/non_goals.md`, `../00_context/vision.md`, `../04_architecture/system_overview.md`, `../04_architecture/backend.md`, `repository_layout.md`, `architecture_conformance.md`, `../09_testing/test_and_release_evidence.md`, `audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`, `../04_architecture/client_performance.md`, `../08_scale_ops/capacity.md`]
+adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0040-world-consequence-durable-aggregate.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: []
-owned_paths: [`.editorconfig`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `.github/workflows/verify.yml`, `scripts/verify.ps1`, `server/go.mod`, `server/go.sum`, `server/cmd/verify/`, `server/internal/conformance/gates/`, `server/internal/stackpin/`, `client/Packages/`, `client/ProjectSettings/`, `client/Assets/Plugins/Google.Protobuf/`, `client/Assets/Scripts/Core/ThinhThan.Core.asmdef`, `client/Assets/Scripts/Net/ThinhThan.Net.asmdef`, `client/Assets/Scripts/Systems/ThinhThan.Systems.asmdef`, `client/Assets/Scripts/UI/ThinhThan.UI.asmdef`, `client/Assets/Scripts/App/ThinhThan.App.asmdef`, `client/Assets/Tests/EditMode/ThinhThan.Tests.EditMode.asmdef`, `client/Assets/Tests/PlayMode/ThinhThan.Tests.PlayMode.asmdef`, `client/Assets/Tests/EditMode/AssemblyGraph/`]
+owned_paths: [`.editorconfig`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `.github/workflows/verify.yml`, `scripts/verify.ps1`, `server/go.mod`, `server/go.sum`, `server/cmd/verify/`, `server/internal/conformance/gates/`, `server/internal/stackpin/`, `client/Packages/`, `client/ProjectSettings/`, `client/Assets/Plugins/Google.Protobuf/`, `client/Assets/Scripts/Core/ThinhThan.Core.asmdef`, `client/Assets/Scripts/Net/ThinhThan.Net.asmdef`, `client/Assets/Scripts/Systems/ThinhThan.Systems.asmdef`, `client/Assets/Scripts/UI/ThinhThan.UI.asmdef`, `client/Assets/Scripts/App/ThinhThan.App.asmdef`, `client/Assets/Tests/EditMode/ThinhThan.Tests.EditMode.asmdef`, `client/Assets/Tests/PlayMode/ThinhThan.Tests.PlayMode.asmdef`, `client/Assets/Tests/EditMode/AssemblyGraph/`, `client/Assets/csc.rsp`, `server/internal/conformance/style/`]
 forbidden_paths: [`server/cmd/server/`]
 contract_inputs: [version matrix, docs-only baseline, repository layout]
 contract_outputs: [native lockfiles, pinned project skeleton, Q0/Q1 verifier entrypoint]
-consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md]
+consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/engineering_conventions.md, docs/10_implementation/architecture_conformance.md]
 
 ## Change
 Materialize the canonical versions from `../00_context/technology_versions.md` and the physical source tree from `repository_layout.md` into the native project lock points before dependent IMP tasks start.
+Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.editorconfig`/`.gitattributes`, the verifier's C# style check and Go `gofmt`/`go vet`/`staticcheck` wiring, and the client player-settings baseline of `../04_architecture/client_performance.md` § Smoothness by Construction item 3.
 
 ## Acceptance
 - materialized bootstrap paths strictly conform to `repository_layout.md`; `proto/`, migrations, generated outputs, and feature paths remain absent until their owning task,
@@ -178,12 +179,19 @@ Materialize the canonical versions from `../00_context/technology_versions.md` a
 - PostgreSQL 18.6: the Linux job uses the digest-pinned `postgres:18.6` service container, the Windows job the EDB binaries; both export `THINHTHAN_TEST_PG_DSN`; migrations and apply/down/apply remain owned by IMP-005/Q5,
 - unlisted/floating/prerelease core dependency fails CI,
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
+- CODE-001: `client/Assets/csc.rsp` is exactly `-warnaserror+` and `-nullable:enable`; every assembly under `client/Assets/` compiles with 0 warnings in both jobs,
+- CODE-002: `.editorconfig` and `.gitattributes` carry the `engineering_conventions.md` §2.7 keys (`* text=auto eol=lf`); the C# style check in `server/internal/conformance/style/` enforces every §2.7 rule and each rule has a failing mutation fixture,
+- CODE-003: Q4 runs `gofmt -l`, `go vet ./...` and staticcheck `2026.2.1` (`go install honnef.co/go/tools/cmd/staticcheck@v0.8.1`, never in `server/go.mod`); any finding or `//lint:file-ignore` fails,
+- Q3 runs the non-race allocation-budget pass and the report-only `-benchtime=200x` benchmarks for the packages listed in `../08_scale_ops/capacity.md` § Hot-Path Allocation Budgets once they exist,
+- player settings: incremental GC on, Android Optimized Frame Pacing on, Physics2D `simulationMode = Script` (asserted by IMP-095 `PERF-019`).
 
 ## Tests
-- `server/internal/stackpin/versions_test.go`: exact toolchain/dependency/action pins, image digests, runner labels (`ubuntu-24.04`, `windows-2022`; no `-latest`/self-hosted) and forbidden floating/unlisted dependencies.
+- `server/internal/stackpin/versions_test.go`: exact toolchain/dependency/action pins (incl. staticcheck `v0.8.1`), image digests, runner labels (`ubuntu-24.04`, `windows-2022`; no `-latest`/self-hosted) and forbidden floating/unlisted dependencies.
 - `server/internal/conformance/gates/workflow_test.go`: TestLinuxAndWindowsJobsRequired, TestForkGuardIsFirstStep, TestNoJobLevelIfOnRequiredJobs, TestSecretsOnlyAfterForkGuard.
 - `server/internal/conformance/gates/gates_test.go`: initial Q0/Q1 wrapper-to-verifier wiring, bootstrap SKIP rules and fail-closed mutation fixtures.
 - `client/Assets/Tests/EditMode/AssemblyGraph/AssemblyGraphTests.cs`: TestAsmdefReferencesAcyclic, TestProtocolReferencesNoProjectAssembly.
+- `server/internal/conformance/style/style_test.go`: TestBraceLines (CODE-002), TestIndentAndWhitespace (CODE-002), TestLineEndingsBomFinalNewline (CODE-002), TestPrivateFieldNaming (CODE-002), TestOneTypePerFileAndNamespace (CODE-002), TestEditorconfigGitattributesKeys (CODE-002), TestGoFmtVetStaticcheckWired (CODE-003), TestLintFileIgnoreRejected (CODE-003), TestAllocPassAndBenchReportWired.
+- `client/Assets/Tests/EditMode/AssemblyGraph/CompilerSettingsTests.cs`: TestCscRspWarnAsErrorNullable (CODE-001), TestZeroCompilerWarnings (CODE-001).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -337,7 +345,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../05_network/protocol.md`, `../05_network/messages.md`, `../05_network/errors.md`, `../05_network/protobuf_conventions.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `repository_layout.md`]
-adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`]
+adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-000]
 owned_paths: [`proto/thinhthan/v1/`, `proto/testdata/golden/`, `scripts/codegen.ps1`, `server/internal/protocol/v1/`, `server/internal/testing/protocol/`, `client/Assets/Scripts/Protocol/`, `client/Assets/Tests/EditMode/ProtocolParity/`]
 forbidden_paths: [`server/cmd/server/`]
@@ -350,15 +358,17 @@ consumers_checked: [AGENTS.md, docs/05_network/messages.md, docs/05_network/prot
 - Author the codegen script scripts/codegen.ps1 using pinned protoc 36.2 and protoc-gen-go v1.36.12.
 - Target `server/internal/protocol/v1/` and `client/Assets/Scripts/Protocol/` with zero manual edits; never generate a duplicate flat Go package.
 - Add codegen drift detection to verification harness.
+- Prepend the deterministic generated-C# header `#nullable disable` + protobuf `#pragma warning disable` set (`engineering_conventions.md` §2.7) inside `scripts/codegen.ps1`.
 
 ## Acceptance
 - Every message ID registered in `../05_network/messages.md` compiles deterministically across Go and C# targets,
 - Regenerating protobuf output creates zero uncommitted git drift,
 - Wire schema tests confirm one-to-one mapping between envelope and payloads.
+- CODE-004: every generated C# file begins with the `#nullable disable` + pragma header, compiles under `csc.rsp` with 0 warnings and stays byte-identical on regeneration.
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
 
 ## Tests
-- `server/internal/testing/protocol/registry_test.go`: TestMessageRegistryMapping, TestBinaryEncodingParity, TestCodegenDriftCheck.
+- `server/internal/testing/protocol/registry_test.go`: TestMessageRegistryMapping, TestBinaryEncodingParity, TestCodegenDriftCheck, TestGeneratedCSharpHeader (CODE-004).
 - `client/Assets/Tests/EditMode/ProtocolParity/ProtocolParityTests.cs`: generated registry coverage and shared binary golden decode/encode parity.
 
 generated_artifacts: [`server/internal/protocol/v1/*.pb.go`, `client/Assets/Scripts/Protocol/*.cs`]
@@ -410,7 +420,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client_assets.md`, `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`, `repository_layout.md`, `../04_architecture/client_performance.md`]
-adrs: [`0014-unity-addressables-asset-delivery.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+adrs: [`0014-unity-addressables-asset-delivery.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-000]
 owned_paths: [`client/Assets/AddressableAssetsData/`, `client/Assets/Scripts/Core/Assets/`, `client/Assets/Tests/EditMode/AddressablesValidation/`]
 forbidden_paths: [`server/`]
@@ -426,7 +436,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 ## Acceptance
 - Addressables groups build deterministically with pinned bundle settings,
 - Missing or unmapped asset keys fail validation before candidate build,
-- gameplay sprites validate 2x texture size, `100 PPU`, Bottom Center pivot, canonical cell/silhouette, compression class and Transform scale `(1,1,1)` (ADR-0055),
+- gameplay sprites validate 2x texture size, `100 PPU`, Bottom Center pivot, canonical cell/silhouette, compression class, Transform scale `(1,1,1)` (ADR-0055) and mesh type `Tight` for sprites >= 256 px with transparent margins (ADR-0059),
 - every playable scene key resolves without requiring a monolithic map bitmap,
 - Content catalog asset references resolve 100% against declared Addressables keys.
 
@@ -446,7 +456,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client.md`, `../04_architecture/client_assets.md`, `../04_architecture/client_performance.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`]
-adrs: [`0035-spawn-density-increase.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+adrs: [`0035-spawn-density-increase.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-000]
 owned_paths: [`client/Assets/Settings/Rendering/`, `client/Assets/Scripts/Core/Rendering/`, `client/Assets/Tests/EditMode/RenderingSetup/`]
 forbidden_paths: [`server/`, `proto/`]
@@ -462,9 +472,10 @@ Configure the URP 2D Renderer per ADR-0056: Sprite-Lit materials, per-map Global
 - Global Light2D interpolates day/night per map,
 - active point Light2D count never exceeds the preset budget (`LOW` 4, `MEDIUM` 8, `HIGH` 16),
 - every actor profile has a contact shadow; UI imports at 200 PPU.
+- the 2D renderer uses transparency sort axis `(0,1,0)` and SRP Batcher on; Sprite-Lit materials are SRP-Batcher compatible (gated by IMP-095 `PERF-021`).
 
 ## Tests
-- `client/Assets/Tests/EditMode/RenderingSetup/RenderingSetupTests.cs`: TestRendererAsset, TestSpriteLitMaterials, TestDayNightInterpolation, TestPresetLightBudget, TestContactShadowPerActorProfile, TestUiImport200Ppu.
+- `client/Assets/Tests/EditMode/RenderingSetup/RenderingSetupTests.cs`: TestRendererAsset, TestSpriteLitMaterials, TestDayNightInterpolation, TestPresetLightBudget, TestContactShadowPerActorProfile, TestUiImport200Ppu, TestSortAxisAndSrpBatcher.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -512,26 +523,31 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`architecture_conformance.md`, `repository_layout.md`, `audit_gates.md`, `task_queue.md`, `../templates/task.md`, `README.md`, `dependency_graph.md`, `spec_traceability.md`, `wave_execution_prompts.md`, `../README.md`, `../templates/adr.md`, `../templates/spec.md`]
-adrs: [`0044-launch-topology-single-binary-role-modes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`]
+specs: [`architecture_conformance.md`, `repository_layout.md`, `audit_gates.md`, `task_queue.md`, `../templates/task.md`, `README.md`, `dependency_graph.md`, `spec_traceability.md`, `wave_execution_prompts.md`, `../README.md`, `../templates/adr.md`, `../templates/spec.md`, `engineering_conventions.md`, `../04_architecture/client_performance.md`]
+adrs: [`0044-launch-topology-single-binary-role-modes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-000, IMP-061]
 owned_paths: [`server/internal/conformance/taskgraph/`, `server/internal/conformance/architecture/`]
 forbidden_paths: [`server/cmd/server/`, `server/internal/sim/`]
-contract_inputs: [task packets, repository layout, spec Requirement IDs tables, Go import graph]
-contract_outputs: [Q0 task-graph verdicts, Q4 architecture verdicts]
-consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/spec_traceability.md]
+contract_inputs: [task packets, repository layout, spec Requirement IDs tables, Go import graph, first-party runtime C# sources]
+contract_outputs: [Q0 task-graph verdicts, Q4 architecture verdicts, client API fence verdicts, client_api_allowlist.txt]
+consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/spec_traceability.md, docs/10_implementation/engineering_conventions.md, docs/04_architecture/client_performance.md]
 
 ## Change
 Implement Q0 task-graph checks (DAG, links, states, transitions, claim fields, owned/forbidden overlap ordered by `depends_on`, test paths inside owned paths, requirement-ID coverage, control-file diff rules) and Q4 fences (import direction, one production main, generated-code boundary, forbidden dependencies/schema) from `architecture_conformance.md`.
+Add the Q4 client API fence (token-based C# scan of `ThinhThan.Core/Net/Systems/UI/App`, `engineering_conventions.md` §2.5) with the protected allowlist `server/internal/conformance/architecture/client_api_allowlist.txt` (initial entry: `FrameLoop` Unity callbacks) and the canonical-implementation check of §2.6 (`architecture_conformance.md` §4 rules 13–14).
 
 ## Acceptance
 - every rule has a failing mutation fixture,
 - each requirement ID `[A-Z]{2,6}-\d{3}` in a spec "Requirement IDs" table appears in one packet's `## Acceptance` and the same packet's `## Tests`,
 - import fences equal `architecture_conformance.md`; a forbidden import fails Q4.
+- CODE-005: every forbidden API of `engineering_conventions.md` §2.5 in a first-party runtime assembly fails Q4 unless an exact `path:symbol  reason` allowlist entry exists; an entry without a reason fails; `Editor/`, tests and generated `Protocol/` are excluded,
+- PERF-020: `Update/FixedUpdate/LateUpdate/OnGUI` outside `FrameLoop` fail Q4,
+- CODE-006: a second implementation matching a §2.6 concern pattern outside its owner path fails Q4.
 
 ## Tests
 - `server/internal/conformance/taskgraph/taskgraph_test.go`: TestDagAcyclic, TestDanglingRefs, TestOwnedForbiddenOverlap, TestTestPathsOwned, TestRequirementIdCoverage, TestControlFileDiffRules.
 - `server/internal/conformance/architecture/architecture_test.go`: TestImportDirection, TestOneProductionMain, TestForbiddenDependencies, TestGeneratedBoundary.
+- `server/internal/conformance/architecture/client_fence_test.go`: TestClientApiFence (CODE-005), TestAllowlistEntriesNeedReason (CODE-005), TestFenceExcludesEditorTestsGenerated (CODE-005), TestFrameLoopOnlyUnityCallbacks (PERF-020), TestCanonicalImplementationsUnique (CODE-006).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -687,8 +703,8 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../05_network/protocol.md`, `../05_network/versioning.md`, `../05_network/errors.md`, `../07_security/rate_limits.md`, `../04_architecture/service_boundaries.md`, `../00_context/technology_versions.md`]
-adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0044-launch-topology-single-binary-role-modes.md`, `0051-first-party-username-password-login.md`, `0053-durable-contract-reconciliation.md`, `0054-wire-message-completion.md`]
+specs: [`../05_network/protocol.md`, `../05_network/versioning.md`, `../05_network/errors.md`, `../07_security/rate_limits.md`, `../04_architecture/service_boundaries.md`, `../00_context/technology_versions.md`, `../08_scale_ops/capacity.md`, `engineering_conventions.md`]
+adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0044-launch-topology-single-binary-role-modes.md`, `0051-first-party-username-password-login.md`, `0053-durable-contract-reconciliation.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-061, IMP-068, IMP-098]
 owned_paths: [`server/internal/edge/listener/`, `server/internal/edge/heartbeat/`]
 forbidden_paths: [`server/migrations/`, `client/`, `server/internal/sim/`, `server/internal/durable/`]
@@ -704,10 +720,12 @@ Implement the HTTPS/WSS listener (`github.com/coder/websocket` at the pinned ver
 - RTT sample = server receive time of `C2S_HEARTBEAT` - `echo_server_ms` (when non-zero), published per session,
 - oversize, unknown or incompatible-version frames are rejected with the `errors.md` code,
 - the listener never mutates gameplay state; drain stops accepting before shutdown.
+- HOT-003: envelope encode + frame write into a pooled buffer = 0 allocs/op; `BenchmarkEnvelopeEncode` reports ns/op only.
 
 ## Tests
 - `server/internal/edge/listener/listener_test.go`: TestVersionHandshake, TestFrameSizeLimit, TestUnknownMessageRejected, TestDrainClosesAccept.
 - `server/internal/edge/heartbeat/heartbeat_test.go`: TestHeartbeatTimeout15s, TestRttSampleFromEcho.
+- `server/internal/edge/listener/alloc_test.go`: TestAllocs_EnvelopeEncodeFrameWrite (HOT-003), BenchmarkEnvelopeEncode.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -753,8 +771,8 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../04_architecture/realtime_loop.md`, `../04_architecture/concurrency.md`, `../04_architecture/authority.md`, `../05_network/synchronization.md`, `../08_scale_ops/capacity.md`]
-adrs: [`0007-single-owner-fixed-step-simulation.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0040-world-consequence-durable-aggregate.md`, `0052-single-launch-world.md`, `0053-durable-contract-reconciliation.md`]
+specs: [`../04_architecture/realtime_loop.md`, `../04_architecture/concurrency.md`, `../04_architecture/authority.md`, `../05_network/synchronization.md`, `../08_scale_ops/capacity.md`, `engineering_conventions.md`]
+adrs: [`0007-single-owner-fixed-step-simulation.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0040-world-consequence-durable-aggregate.md`, `0052-single-launch-world.md`, `0053-durable-contract-reconciliation.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-002, IMP-061, IMP-068, IMP-098]
 owned_paths: [`server/internal/sim/runtime/`, `server/internal/sim/aoi/`, `server/internal/sim/replication/`]
 forbidden_paths: [`server/migrations/`, `client/`, `server/internal/durable/`, `server/internal/edge/`]
@@ -770,11 +788,15 @@ Implement the single-owner 20 Hz map-instance actor (input queue, ordered tick p
 - one goroutine owns each map instance; inputs apply in (tick, receive order),
 - AOI enter/leave and snapshot/delta sequences are identical for a seeded replay,
 - sim imports no pgx/SQL or `edge` package (Q4).
+- HOT-001: one steady tick incl. AOI interest update on the `../08_scale_ops/capacity.md` steady-state fixture = 0 allocs/op,
+- HOT-002: snapshot/delta build into caller-reused buffers = 0 allocs/op; `BenchmarkSteadyTick`/`BenchmarkDeltaBuild` report ns/op only.
 
 ## Tests
 - `server/internal/sim/runtime/runtime_test.go`: TestFixedStepTickOrder, TestSingleOwnerMailbox, TestTickOverrunAccounting, TestSeededReplayDeterminism.
 - `server/internal/sim/aoi/aoi_test.go`: TestAoiEnterLeave, TestInterestSetBoundaries.
 - `server/internal/sim/replication/replication_test.go`: TestSnapshotDeltaSequence, TestDeliveryClassRouting.
+- `server/internal/sim/runtime/alloc_test.go`: TestAllocs_SteadyTick (HOT-001), BenchmarkSteadyTick.
+- `server/internal/sim/replication/alloc_test.go`: TestAllocs_DeltaBuild (HOT-002), BenchmarkDeltaBuild.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1125,20 +1147,22 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../05_network/protocol.md`, `../05_network/errors.md`, `../05_network/reconnect.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `../07_security/auth.md`, `../07_security/session.md`, `../04_architecture/client_performance.md`]
-adrs: [`0008-client-network-transport-protocol.md`, `0030-one-account-one-live-session.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0053-durable-contract-reconciliation.md`, `0054-wire-message-completion.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+specs: [`../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../05_network/protocol.md`, `../05_network/errors.md`, `../05_network/reconnect.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `../07_security/auth.md`, `../07_security/session.md`, `../04_architecture/client_performance.md`, `engineering_conventions.md`]
+adrs: [`0008-client-network-transport-protocol.md`, `0030-one-account-one-live-session.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0053-durable-contract-reconciliation.md`, `0054-wire-message-completion.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-061, IMP-100]
-owned_paths: [`client/Assets/Scripts/Net/`, `client/Assets/Scripts/Core/Session/`, `client/Assets/Scripts/Systems/Character/`, `client/Assets/Scripts/UI/Character/`, `client/Assets/Tests/PlayMode/Harness/`, `client/Assets/Tests/PlayMode/SessionTransport/`, `client/Assets/Tests/PlayMode/CharacterLifecycleClient/`]
+owned_paths: [`client/Assets/Scripts/Net/`, `client/Assets/Scripts/Core/Session/`, `client/Assets/Scripts/Systems/Character/`, `client/Assets/Scripts/UI/Character/`, `client/Assets/Tests/PlayMode/Harness/`, `client/Assets/Tests/PlayMode/SessionTransport/`, `client/Assets/Tests/PlayMode/CharacterLifecycleClient/`, `client/Assets/Scripts/Core/Runtime/`, `client/Assets/Scripts/Systems/Replication/`, `client/Assets/Tests/EditMode/FrameRuntime/`, `client/Assets/Tests/PlayMode/NetReceive/`]
 forbidden_paths: [`server/internal/`, `server/migrations/`, `server/cmd/compiler/`, `server/cmd/migrate/`, `server/cmd/server/`]
 contract_inputs: [HTTPS/WSS endpoints, generated messages, credentials, session/reconnect baseline]
-contract_outputs: [Unity transport, session/character-select FSM, baseline/delta/reconnect handling]
-consumers_checked: [docs/04_architecture/client_experience_contract.md, docs/04_architecture/physics_geometry_contract.md, docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md]
+contract_outputs: [Unity transport, session/character-select FSM, baseline/delta/reconnect handling, FrameLoop/FrameTime/FrameBudget/Pool/Log runtime, index-based replicated entity views]
+consumers_checked: [docs/04_architecture/client_experience_contract.md, docs/04_architecture/physics_geometry_contract.md, docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/engineering_conventions.md, docs/10_implementation/architecture_conformance.md]
 
 ## Change
 - Implement Unity network transport layer over WSS using Google.Protobuf generated messages.
 - Implement client session state machine: DISCONNECTED, CONNECTING, AUTHENTICATING, IN_WORLD, TRANSFERRING, RECONNECTING.
 - Implement heartbeats, sequence validation, transfer freeze/presentation ready handshake, and SESSION_REPLACED handling.
 - Provide the shared PlayMode harness (`client/Assets/Tests/PlayMode/Harness/`): fake server and network emulator (latency, jitter, loss) used by later PlayMode tests.
+- Implement the frame runtime in `client/Assets/Scripts/Core/Runtime/` per `../04_architecture/client_performance.md` § Smoothness by Construction items 1, 2, 4, 9 and `engineering_conventions.md` §2.6: `FrameLoop` (only Unity frame callbacks), `IFrameSystem`, `FrameTime`, `FrameBudget`, `Pool<T>`, `Log`, `PresentationRandom`.
+- Implement index-based replicated entity views (`client/Assets/Scripts/Systems/Replication/`) driven by the Interpolation phase, and the network receive path on `System.Net.WebSockets.ClientWebSocket` (background receive/decode task, pooled buffers, bounded queue drained in `NetReceive`).
 
 ## Acceptance
 - Client successfully establishes WSS connection and completes authentication handshake,
@@ -1147,10 +1171,15 @@ consumers_checked: [docs/04_architecture/client_experience_contract.md, docs/04_
 - bootstrap configures the `1280x720` logical reference surface without treating it as a map size.
 - remote interpolation/extrapolation/correction parameters equal `client_performance.md` § Network Smoothness,
 - two-phase gate task (`agent_execution_protocol.md` §5a): the implementation PR merges with status `IN_PROGRESS`; a follow-up status PR sets `DONE` with evidence from the post-merge `main` run.
+- PERF-014: one `FrameLoop` runs `Input -> NetReceive -> Prediction -> Interpolation -> Presentation -> UI -> Camera` every frame; `FrameTime.delta` is clamped to 100 ms; systems register only outside `Tick`; entity views are index-based with cached components,
+- PERF-015: `FrameBudget` runs queued work up to 2 ms per gameplay frame and 12 ms per loading-screen frame and carries the remainder to the next frame (injected clock),
+- PERF-024: decoding the hotspot stream fixture (60 entities, 10 Hz) allocates <= 64 KB per stream second; framing/receive buffers allocate 0 bytes; main-thread apply allocates 0 bytes; the receive queue is bounded.
 
 ## Tests
 - `client/Assets/Tests/PlayMode/SessionTransport/SessionTransportTests.cs`: TestConnectAuthFlow, TestReconnectResume, TestSessionReplacedHandling.
 - `client/Assets/Tests/PlayMode/CharacterLifecycleClient/CharacterLifecycleClientTests.cs`: creation/select/attach/detach/session-replaced UI states.
+- `client/Assets/Tests/EditMode/FrameRuntime/FrameRuntimeTests.cs`: TestPhaseOrderFixed (PERF-014), TestFrameTimeClamp100ms (PERF-014), TestRegistrationOutsideTickOnly (PERF-014), TestEntityViewsIndexBased (PERF-014), TestFrameBudgetGameplay2ms (PERF-015), TestFrameBudgetLoading12ms (PERF-015), TestPoolPrewarmReuse, TestLogDevConditional.
+- `client/Assets/Tests/PlayMode/NetReceive/NetReceiveTests.cs`: TestDecodeAllocationBudget (PERF-024), TestPooledFramingZeroAlloc (PERF-024), TestMainThreadApplyZeroAlloc (PERF-024), TestBoundedReceiveQueue.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1385,13 +1414,13 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../01_gameplay/movement.md`, `../05_network/messages.md`, `../05_network/synchronization.md`, `../04_architecture/client_performance.md`]
-adrs: [`0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+specs: [`../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../01_gameplay/movement.md`, `../05_network/messages.md`, `../05_network/synchronization.md`, `../04_architecture/client_performance.md`, `engineering_conventions.md`]
+adrs: [`0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`]
 depends_on: [IMP-013, IMP-065]
-owned_paths: [`client/Assets/Scripts/UI/CoreHud/`, `client/Assets/Scripts/UI/StateMachine/`, `client/Assets/Scripts/Core/Input/`, `client/Assets/Tests/PlayMode/InputHudStateMachine/`]
+owned_paths: [`client/Assets/Scripts/UI/CoreHud/`, `client/Assets/Scripts/UI/StateMachine/`, `client/Assets/Scripts/Core/Input/`, `client/Assets/Tests/PlayMode/InputHudStateMachine/`, `client/Assets/Scripts/Systems/Camera/`, `client/Assets/Tests/PlayMode/CameraFollow/`]
 forbidden_paths: [`server/`]
 contract_inputs: [keyboard/gamepad/touch actions and authoritative replication/combat events]
-contract_outputs: [wire intents, core UI FSM, HUD projection, accessibility-safe controls]
+contract_outputs: [wire intents, core UI FSM, HUD projection, accessibility-safe controls, camera service]
 consumers_checked: [docs/04_architecture/client_experience_contract.md, docs/04_architecture/physics_geometry_contract.md, client/ProjectSettings/ProjectSettings.asset, docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md]
 
 ## Change
@@ -1399,15 +1428,20 @@ consumers_checked: [docs/04_architecture/client_experience_contract.md, docs/04_
 - Wire C2S_MOVEMENT_EDGE (108) discrete intent message dispatch.
 - Implement core HUD state machine displaying HP, MP, action skill cooldowns, hotbar, and active buffs.
 - Map the stop action to wire `RELEASE` per `../04_architecture/client_experience_contract.md`; do not add a `STOP` enum.
+- Implement the camera service (`client/Assets/Scripts/Systems/Camera/`, Camera phase) and the HUD UI discipline of `../04_architecture/client_performance.md` § Smoothness by Construction items 2 and 8.
 
 ## Acceptance
 - Input actions dispatch discrete edge messages matching server timing guardrails,
 - HUD reflects authoritative server combat events and status updates without desync,
 - HUD/camera layout passes `1280x720`, 16:9, 21:9 and safe-area fixtures without changing world-space scale,
 - Action state prevents duplicate trigger events during startup/recovery windows.
+- PERF-022: HUD widgets apply dirty state at most once per frame in the UI phase; static and dynamic elements use separate nested Canvases; HP/MP/cooldown value updates allocate 0 bytes (`TMP_Text.SetText`); non-interactive graphics have `raycastTarget = false`,
+- PERF-023: the camera follows the predicted local player with critically damped smoothing (0.12 s), never overshoots, moves once per frame, clamps to map bounds and snaps on transfer/hard reconciliation.
 
 ## Tests
 - `client/Assets/Tests/PlayMode/InputHudStateMachine/InputHudStateMachineTests.cs`: TestInputEdgeDispatch, TestCooldownDisplaySync, TestBuffDisplayUpdate.
+- `client/Assets/Tests/PlayMode/InputHudStateMachine/HudDisciplineTests.cs`: TestHudRebuildOncePerFrame (PERF-022), TestStaticDynamicCanvasSplit (PERF-022), TestHudValueUpdateZeroAlloc (PERF-022), TestNonInteractiveRaycastOff (PERF-022).
+- `client/Assets/Tests/PlayMode/CameraFollow/CameraFollowTests.cs`: TestCriticallyDampedNoOvershoot (PERF-023), TestSingleMovePerFrame (PERF-023), TestMapBoundsClamp (PERF-023), TestSnapOnTransferAndHardReconcile (PERF-023).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1424,22 +1458,24 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client_performance.md`, `../04_architecture/client.md`, `../07_content/presentation_asset_manifest.md`, `../09_testing/load.md`, `engineering_conventions.md`, `audit_gates.md`]
-adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
+adrs: [`0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-063, IMP-065, IMP-066, IMP-101]
-owned_paths: [`client/Assets/Scripts/Core/Performance/`, `client/ProjectSettings/QualitySettings.asset`, `client/Assets/Scenes/Perf/`, `client/Assets/Tests/PlayMode/Performance/`, `client/Assets/Tests/EditMode/PerformanceBudgets/`]
+owned_paths: [`client/Assets/Scripts/Core/Performance/`, `client/ProjectSettings/QualitySettings.asset`, `client/Assets/Scenes/Perf/`, `client/Assets/Tests/PlayMode/Performance/`, `client/Assets/Tests/EditMode/PerformanceBudgets/`, `client/Assets/Settings/Performance/`]
 forbidden_paths: [`server/`]
 contract_inputs: [client_performance.md targets, Addressables catalog, IMP-065 network emulator]
-contract_outputs: [quality presets, battery saver, hotspot scene, every-PR client-performance gate]
-consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/spec_traceability.md]
+contract_outputs: [quality presets, battery saver, hotspot scene, every-PR client-performance gate, adaptive quality governor, overdraw/pass gate, shader warm-up collection]
+consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/spec_traceability.md, docs/10_implementation/engineering_conventions.md]
 
 ## Change
 - Implement the 5-second first-launch benchmark that selects `LOW`/`MEDIUM`/`HIGH`; presets change only render scale, point Light2D budget, particle budget, parallax `L3` and bloom. Implement the battery-saver 30 FPS cap.
 - Build the hotspot scene `client/Assets/Scenes/Perf/` (18 players + 42 `AI_CLASS_NAMED_MECHANIC` monsters + skill VFX, `../09_testing/load.md` scenario 11) from Addressables keys, so production art is measured as it lands.
 - Run PlayMode performance tests (category `Performance`) with `FrameTimingManager`/`ProfilerRecorder` on the GitHub-hosted Linux CI job (no GPU, ADR-0058): CPU timing with `-batchmode -nographics`, draw/memory measurements under xvfb + Mesa llvmpipe; network-smoothness tests use the IMP-065 emulator. These form the every-PR client-performance gate once this task is `DONE`; GPU frame time is never measured in CI.
+- Implement `../04_architecture/client_performance.md` § Smoothness by Construction items 3, 5 (shader warm-up), 7 in `client/Assets/Scripts/Core/Performance/`: frame-rate control, the `ShaderVariantCollection`/`GraphicsStateCollection` warm-up asset (`client/Assets/Settings/Performance/`), the adaptive quality governor with injected timing source.
+- Add the overdraw measurement (test-only additive `OverdrawCount` material in `client/Assets/Settings/Performance/`), full-screen pass counting, FrameBudget and first-use-hitch measurements; timing gates run 3 repetitions in one job and gate on the median (§ Measurement and Gates).
 
 ## Acceptance
 - PERF-001: the benchmark selects a preset; switching presets changes presentation only (colliders, hitboxes and telegraphs identical),
-- PERF-002: desktop CPU budget in the hotspot scene for 5 min on the Linux job (`-nographics`): main-thread CPU time excluding GPU/present waits p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms,
+- PERF-002: desktop CPU budget in the hotspot scene on the Linux job (`-nographics`), 3 repetitions x 100 s after 10 s warm-up, median: main-thread CPU time excluding GPU/present waits p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms,
 - PERF-004: 0 bytes managed GC allocation per frame in steady gameplay in the hotspot scene,
 - PERF-005 (desktop): resident memory <= 2.5 GB,
 - PERF-006: batches <= 150 and SetPass calls <= 60 on `LOW`; texture memory within `presentation_asset_manifest.md` §1; active point Light2D and particle counts <= preset budget,
@@ -1448,13 +1484,23 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - PERF-011: full-quality conditions (RTT <= 150 ms, jitter <= 30 ms, loss <= 2%) give <= 1 correction > 0.5 m per minute; degraded conditions (<= 300 ms, <= 60 ms, <= 5%) show the network indicator with no desync,
 - PERF-013: battery saver caps FPS at 30 on every tier,
 - performance tests run only in the Linux job and never read GPU frame time; the gate never reports a skipped pass once this task is `DONE`.
+- PERF-015: FrameBudget work in the hotspot scene <= 2 ms in every gameplay frame (median of 3),
+- PERF-016: overdraw at LOW, 1280x720: average <= 2.5 fragments per pixel and 99th-percentile pixel <= 8; full-screen passes LOW <= 1, MEDIUM <= 2, HIGH <= 4,
+- PERF-017: the governor steps render scale -0.05 (floor 0.6) then particle budget -25% (floor 50%) when p95 > 110% of target over 120 frames, steps up after 10 s below 75%, waits >= 3 s between steps, never exceeds the preset and changes presentation only,
+- PERF-018: shader variants are warmed on the loading screen; the first use of every skill VFX and UI screen present in the Addressables catalog produces no frame > 50 ms CPU,
+- PERF-019: desktop `vSyncCount = 1`; Android `vSyncCount = 0` with `targetFrameRate` = tier target and Optimized Frame Pacing; incremental GC with a 1 ms slice; Physics2D `simulationMode = Script`,
+- PERF-021: every gameplay material is SRP-Batcher compatible; the 2D renderer uses transparency sort axis `(0,1,0)`; sprites >= 256 px with transparent margins use `Tight` meshes; actor Animators use `CullCompletely`; no runtime material instance exists after a hotspot run.
 
 ## Tests
 - `client/Assets/Tests/PlayMode/Performance/QualityPresetTests.cs`: TestBenchmarkSelectsPreset (PERF-001), TestPresetsPresentationOnly (PERF-001), TestBatterySaverCaps30 (PERF-013).
-- `client/Assets/Tests/PlayMode/Performance/HotspotFrameTests.cs`: TestDesktopCpuBudget (PERF-002), TestZeroGcPerFrame (PERF-004), TestDesktopResidentMemory (PERF-005), TestBatchesSetPassLightsParticles (PERF-006), TestPerformanceCategoryLinuxOnlyNoGpuTiming.
+- `client/Assets/Tests/PlayMode/Performance/HotspotFrameTests.cs`: TestDesktopCpuBudget (PERF-002), TestZeroGcPerFrame (PERF-004), TestDesktopResidentMemory (PERF-005), TestBatchesSetPassLightsParticles (PERF-006), TestFrameBudgetWithin2ms (PERF-015), TestOverdrawAndFullScreenPasses (PERF-016), TestTimingGatesMedianOfThree, TestPerformanceCategoryLinuxOnlyNoGpuTiming.
 - `client/Assets/Tests/PlayMode/Performance/InputLatencyTests.cs`: TestFirstVisualResponseOneFrame (PERF-009), TestConfirmedResultWithinRttPlus50 (PERF-009).
 - `client/Assets/Tests/PlayMode/Performance/NetworkSmoothnessTests.cs`: TestInterpolationExtrapolationCorrection (PERF-010), TestFullQualityAndDegradedConditions (PERF-011).
 - `client/Assets/Tests/EditMode/PerformanceBudgets/TextureBudgetTests.cs`: TestTextureMemoryBudgets (PERF-006).
+- `client/Assets/Tests/EditMode/PerformanceBudgets/QualityGovernorTests.cs`: TestStepDownOnP95Over110 (PERF-017), TestStepUpAfter10sBelow75 (PERF-017), TestHysteresis3s (PERF-017), TestFloorsAndPresetCeiling (PERF-017), TestGovernorPresentationOnly (PERF-017).
+- `client/Assets/Tests/PlayMode/Performance/FirstUseHitchTests.cs`: TestShaderWarmupOnLoading (PERF-018), TestFirstUseSkillVfxAndUiScreens (PERF-018).
+- `client/Assets/Tests/EditMode/PerformanceBudgets/FramePacingSettingsTests.cs`: TestDesktopVsync (PERF-019), TestAndroidTargetFrameRateAndOptimizedPacing (PERF-019), TestIncrementalGcSlice (PERF-019), TestPhysics2DScriptMode (PERF-019).
+- `client/Assets/Tests/EditMode/PerformanceBudgets/PresentationDisciplineTests.cs`: TestSrpBatcherCompatibleMaterials (PERF-021), TestTransparencySortAxis (PERF-021), TestTightMeshForLargeSprites (PERF-021), TestAnimatorCulling (PERF-021), TestNoRuntimeMaterialInstances (PERF-021).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1469,7 +1515,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client_experience_contract.md`, `../04_architecture/client.md`, `../04_architecture/client_performance.md`, `../04_architecture/client_localization.md`, `../07_security/auth.md`, `../07_security/session.md`]
-adrs: [`0015-unity-localization.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+adrs: [`0015-unity-localization.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-064, IMP-065, IMP-066, IMP-095]
 owned_paths: [`client/Assets/Scripts/UI/Screens/`, `client/Assets/Tests/PlayMode/Screens/`]
 forbidden_paths: [`server/`]
@@ -1484,10 +1530,11 @@ Implement login/register (password and federated), login-queue position with `re
 - PERF-008: every wait > 0.5 s shows progress; no frozen frame > 100 ms while loading (async Addressables, incremental instantiation),
 - `AUTH_INVALID` is shown generically; `SERVER_OVERLOADED` shows the queue and retries after `retry_after_ms`,
 - settings persist preset and battery saver through IMP-095; every string is a localization key in vi-VN and en-US.
+- PERF-015: loading screens switch `FrameBudget` to 12 ms mode and `Application.backgroundLoadingPriority` to High, run `GC.Collect` once before closing, and restore 2 ms / Low for gameplay.
 
 ## Tests
 - `client/Assets/Tests/PlayMode/Screens/ScreensTests.cs`: TestLoginRegisterFlow, TestLoginQueueDisplay, TestSettingsPresetAndBatterySaver, TestCreditsKeyResolves.
-- `client/Assets/Tests/PlayMode/Screens/LoadingProgressTests.cs`: TestProgressShownAfterHalfSecond (PERF-008), TestNoFrozenFrameOver100ms (PERF-008).
+- `client/Assets/Tests/PlayMode/Screens/LoadingProgressTests.cs`: TestProgressShownAfterHalfSecond (PERF-008), TestNoFrozenFrameOver100ms (PERF-008), TestLoadingPriorityAndBudgetMode (PERF-015).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -1539,8 +1586,8 @@ branch: ""
 claimed_at: ""
 blocked_by: ""
 
-specs: [`../02_world/README.md`, `../02_world/maps_zones.md`, `../02_world/world_rules.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/world_route_catalog.md`]
-adrs: [`0020-map-channel-capacity-contract.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`]
+specs: [`../02_world/README.md`, `../02_world/maps_zones.md`, `../02_world/world_rules.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/world_route_catalog.md`, `../04_architecture/client_performance.md`]
+adrs: [`0020-map-channel-capacity-contract.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-013, IMP-066, IMP-100]
 owned_paths: [`server/internal/sim/world/`, `server/internal/durable/world/`, `client/Assets/Scripts/Systems/World/`, `client/Assets/Tests/PlayMode/WorldTransferPresentation/`]
 forbidden_paths: [`server/migrations/`, `client/Assets/Scripts/UI/`]
@@ -1556,10 +1603,11 @@ Implement normal-world map instances, entry spawns, portals, checkpoints, transf
 - all 24 maps load exact, mutually distinct width-height spans and distinct topology profiles; camera scrolls inside map bounds instead of treating `1280x720` as map size,
 - every release-scope destination resolves a compatible Addressables dependency set,
 - missing/download-failed presentation assets cannot cause client-selected transfer fallback or authoritative state mutation.
+- PERF-018: map load pre-sizes that map's pools (actors, projectiles, VFX, floating text, UI rows) from content counts through `Pool<T>` and loads the map's Addressables group before the loading screen closes.
 
 ## Tests
 - `server/internal/sim/world/world_test.go`: TestMapInstanceLifecycle, TestTwentyFourMapBoundsAndDistinctTopologies, TestCheckpointTransferHandshake, TestTransferTimeoutFallback, TestPortalTransition.
-- `client/Assets/Tests/PlayMode/WorldTransferPresentation/WorldTransferPresentationTests.cs`: preload/ready/failure/recovery and channel-switch UI.
+- `client/Assets/Tests/PlayMode/WorldTransferPresentation/WorldTransferPresentationTests.cs`: preload/ready/failure/recovery and channel-switch UI; TestMapLoadPrewarmsPoolsAndGroup (PERF-018).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -3495,7 +3543,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client.md`, `../04_architecture/client_assets.md`, `../04_architecture/client_localization.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../07_content/world_route_catalog.md`, `../07_content/dungeon_catalog.md`, `../03_systems/pvp.md`, `../03_systems/guild_war.md`, `../05_network/versioning.md`, `../08_scale_ops/deployment.md`, `../00_context/technology_versions.md`, `../04_architecture/client_performance.md`]
-adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`]
+adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`]
 depends_on: [IMP-020, IMP-024, IMP-025, IMP-028, IMP-041, IMP-042, IMP-076, IMP-084, IMP-085, IMP-086, IMP-087, IMP-088, IMP-089, IMP-090, IMP-093, IMP-099, IMP-103]
 owned_paths: [`client/BuildProfiles/`, `client/Assets/Scenes/Bootstrap/`, `client/Assets/Scripts/App/`, `client/Assets/Tests/PlayMode/AppComposition/`, `scripts/verify_client_build.ps1`]
 forbidden_paths: [`server/`]
@@ -3513,15 +3561,16 @@ consumers_checked: [docs/02_world/maps_zones.md, docs/02_world/dungeons.md, docs
 - Clean player build succeeds with IL2CPP scripting backend without stripping errors,
 - default Windows player opens resizable windowed at `1280x720`; native/fullscreen options preserve the canonical camera scale,
 - build contains 24 distinct world scenes, five dungeon scenes, finale and three competitive scenes with matching Addressable keys and geometry exports,
+- the composition root creates exactly one `FrameLoop` and every service by constructor injection; static mutable state exists only in `ThinhThan.App`,
 - the production bootstrap scene reaches login, character selection, world HUD, and every feature UI supplied by its dependencies,
 - Release package includes Addressables catalogs, localization tables, protobuf assemblies and accessible third-party asset credits generated by IMP-076; no placeholder or unapproved-source file ships,
 - Build checksums and binary artifacts are recorded in release manifest.
-- PERF-007 (desktop): PlayMode tests in category `Performance` on the Linux job (llvmpipe, ADR-0058), cold start to login <= 6 s, login to in-world <= 8 s, same-region transfer <= 3 s, new-region transfer <= 6 s, reconnect resume <= 5 s,
+- PERF-007 (desktop): PlayMode tests in category `Performance` on the Linux job (llvmpipe, ADR-0058), median of 3 repetitions, cold start to login <= 6 s, login to in-world <= 8 s, same-region transfer <= 3 s, new-region transfer <= 6 s, reconnect resume <= 5 s,
 - no build output or cache is committed; `git status` is clean after the build.
 
 ## Tests
 - `scripts/verify_client_build.ps1`: clean IL2CPP Windows (Windows job) and Android (Linux job) smoke builds and package verification (ADR-0058).
-- `client/Assets/Tests/PlayMode/AppComposition/AppCompositionTests.cs`: production bootstrap, reference viewport/camera, 33 playable-scene registrations, and feature-registration coverage.
+- `client/Assets/Tests/PlayMode/AppComposition/AppCompositionTests.cs`: production bootstrap, reference viewport/camera, 33 playable-scene registrations, feature-registration coverage, and TestSingleFrameLoopComposition.
 - `client/Assets/Tests/PlayMode/AppComposition/LoadTimeTests.cs`: TestColdStartDesktop, TestLoginToWorld, TestMapTransferTimes, TestReconnectResumeTime (PERF-007).
 
 generated_artifacts: []

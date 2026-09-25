@@ -3,7 +3,7 @@ status: LOCKED
 
 ## Scope
 
-Owner Setup, bootstrap mode, integration barriers and protected paths (ADR-0045, ADR-0050, ADR-0057, ADR-0058). Foundation tasks build the verifier and its fixtures; tasks that depend on `IMP-068` start only after `IMP-068` is `DONE`.
+Owner Setup, bootstrap mode, integration barriers and protected paths (ADR-0045, ADR-0050, ADR-0057, ADR-0058, ADR-0059). Foundation tasks build the verifier and its fixtures; tasks that depend on `IMP-068` start only after `IMP-068` is `DONE`.
 
 Passing local `go test` is not Gate D and is not task evidence.
 
@@ -40,7 +40,7 @@ agent tokens       fine-grained, contents + pull requests write only; no adminis
 
 - `IMP-000` is the first pull request; no other PR merges before it.
 - Both required jobs (`Q0-Q6 verify (Linux)`, `Q0-Q6 verify (Windows)`) run the verifier from the PR head; the gate ratchet is treated as empty.
-- A Q gate becomes required when its owner task is `DONE` on `main`: Q0/Q1/Q3-Go/Q4/Q6 after `IMP-000`; Q2 after `IMP-061`; Q5 after `IMP-005`, `IMP-003`, `IMP-004`; Unity EditMode after `IMP-000`; Unity PlayMode after `IMP-065`; client performance after its owning task. Before that the gate reports `SKIP(bootstrap)`, which is not a failure.
+- A Q gate becomes required when its owner task is `DONE` on `main`: Q0/Q1/Q3-Go/Q4/Q6 after `IMP-000` (including C# style, `csc.rsp`, `gofmt`/`go vet`/`staticcheck`); Q2 after `IMP-061` (including the generated C# header); the Q4 client API fence and canonical-implementation checks after `IMP-083`; each Go allocation budget after its owning packet; Q5 after `IMP-005`, `IMP-003`, `IMP-004`; Unity EditMode after `IMP-000`; Unity PlayMode after `IMP-065`; client performance after its owning task. Before that the gate reports `SKIP(bootstrap)`, which is not a failure.
 - A task may run before `IMP-068` iff `IMP-068` is not in its transitive `depends_on`.
 - Two-phase gate tasks (`IMP-000`, `IMP-061`, `IMP-003`, `IMP-004`, `IMP-005`, `IMP-065`, `IMP-068`): the implementation PR merges with the task `IN_PROGRESS`; a follow-up status PR sets `DONE` citing the post-merge `main` run.
 
@@ -62,7 +62,7 @@ Open contract conflict means Gate A fails closed. An implementation task may not
 Met only when:
 
 - Q0 validates the task DAG, paths, states, transitions, claim fields and evidence rules;
-- requirement coverage: every requirement ID (pattern `[A-Z]{2,6}-\d{3}`, listed in a spec's "Requirement IDs" table) in `docs/00_context`..`docs/09_testing` is named in at least one packet's `## Acceptance` and the same packet's `## Tests`;
+- requirement coverage: every requirement ID (pattern `[A-Z]{2,6}-\d{3}`, listed in a spec's "Requirement IDs" table) in `docs/00_context`..`docs/09_testing` and in `engineering_conventions.md` is named in at least one packet's `## Acceptance` and the same packet's `## Tests`;
 - every `depends_on` target exists and the graph is acyclic;
 - `owned_paths` does not intersect `forbidden_paths`; overlapping ownership is ordered by `depends_on`;
 - a task is `IN_PROGRESS` or `DONE` only if every dependency is `DONE`;
@@ -75,9 +75,9 @@ Met only when:
 Every required Q gate executes; `SKIP(bootstrap)` is allowed only under Bootstrap Mode. Otherwise a tool missing in either CI job is an `OPS-xxx` failure, never a silent skip.
 
 - Q1 toolchain/dependency/action pins;
-- Q2 protobuf Go/C# regenerated into a temp directory and byte-compared;
-- Q3 Go unit + `-race` for `sim|edge|durable|global` + Unity EditMode; Unity PlayMode after `IMP-065`; client performance tests (category `Performance`, Linux job, llvmpipe, no GPU timing; `../04_architecture/client_performance.md`) after their owning task (Android device runs are the scheduled `device-perf` workflow, not Q3);
-- Q4 architecture/import/ownership fences;
+- Q2 protobuf Go/C# regenerated into a temp directory and byte-compared, including the generated C# header (`CODE-004`);
+- Q3 Go unit + `-race` for `sim|edge|durable|global`, a non-race pass with the exact allocation budgets (`../08_scale_ops/capacity.md` § Hot-Path Allocation Budgets) and report-only `-benchtime=200x` benchmarks + Unity compile with `csc.rsp` (0 warnings, `CODE-001`) + Unity EditMode; Unity PlayMode after `IMP-065`; client performance tests (category `Performance`, Linux job, llvmpipe, no GPU timing; `../04_architecture/client_performance.md`) after their owning task (Android device runs are the scheduled `device-perf` workflow, not Q3);
+- Q4 architecture/import/ownership fences plus code quality (`engineering_conventions.md` § Requirement IDs): C# style and `.editorconfig`/`.gitattributes` (`CODE-002`), `gofmt`/`go vet`/`staticcheck` (`CODE-003`), client API fence incl. the FrameLoop fence (`CODE-005`, `PERF-020`) and canonical implementations (`CODE-006`);
 - Q5 migrations apply/down/apply on PostgreSQL 18.6 (Linux: `postgres:18.6` service container; Windows: EDB binaries started by `verify.ps1`; DSN in `THINHTHAN_TEST_PG_DSN`) and full content compile/activation;
 - Q6 clean tree and evidence identity (ADR-0057);
 - mutation fixtures prove every barrier fails closed.
@@ -104,6 +104,7 @@ PRs touching these need the protected-path checklist in the reviewer's `policy-r
 ```text
 .github/  scripts/  .devin/**
 server/cmd/verify/  server/internal/conformance/  server/internal/stackpin/  server/internal/conformance/architecture/
+.editorconfig  .gitattributes  client/Assets/csc.rsp
 AGENTS.md  README.md
 docs/** outside docs/10_implementation/        (specs, ADRs, templates — spec-owner only)
 docs/10_implementation/*.md                    (control files)
@@ -118,8 +119,8 @@ Implementer PRs may change control content only as follows: their own packet `st
 | Q0 Task/spec integrity | IMP-000, IMP-068 | DAG, links, states, transitions, claim fields, control-file diff rules, requirement-ID coverage, evidence schema |
 | Q1 Version reproducibility | IMP-000 | exact native pins; no floating/unlisted dependency |
 | Q2 Code generation drift | IMP-061 | pinned protoc generators; byte-identical Go/C# output |
-| Q3 Test suites | subsystem task, IMP-068 | Go/race, Unity EditMode/PlayMode, client performance, deterministic fixtures |
-| Q4 Architecture conformance | IMP-068 | import fences, one production main, generated boundaries, schema prohibitions |
+| Q3 Test suites | subsystem task, IMP-068 | Go/race, Go allocation budgets, Unity compile (warnings as errors), EditMode/PlayMode, client performance, deterministic fixtures |
+| Q4 Architecture conformance | IMP-000, IMP-083, IMP-068 | import fences, one production main, generated boundaries, schema prohibitions, C# style, Go vet/staticcheck, client API fence, canonical implementations |
 | Q5 Data/content integrity | IMP-003, IMP-004, IMP-005, IMP-068 | migration rehearsal, schema drift, content compile/activation |
 | Q6 Evidence/cleanliness | IMP-068 | clean generated state, evidence identity per ADR-0057 |
 
@@ -138,4 +139,5 @@ policy-review = App status on every PR, re-posted per push
 gate ratchet only tightens without an ADR already on main
 red main => automatic revert, except reverts/infra => freeze + OPS
 CI = GitHub-hosted Linux + Windows jobs on every PR; no self-hosted or GPU runner; Q0-Q6 fail-closed
+code quality is machine-checked (warnings as errors, style, vet, staticcheck, API fence); a prose-only rule is not a gate
 ```

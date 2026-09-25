@@ -13,6 +13,8 @@ Evidence, verification commands and release acceptance for thinhthan. Every `DON
 | Protobuf codegen | `pwsh -NoProfile -File scripts/codegen.ps1` | Go + C# output with zero drift |
 | Content compile | `go -C server run ./cmd/compiler` | all content catalogs compile |
 | Backend tests | `go -C server test ./...` (+ `-race` for `sim|edge|durable|global`) | unit and architecture tests |
+| Go static checks | `gofmt -l server`, `go -C server vet ./...`, `staticcheck ./...` (pinned `v0.8.1`, run in `server/`) | Q4 `CODE-003`; empty output (ADR-0059) |
+| Go allocation budgets / benchmarks | `go -C server test -run TestAllocs_ ./...` (non-race build); `go -C server test -run "^$" -bench . -benchmem -benchtime=200x -count=1 <hot packages>` | allocs/op exact (`../08_scale_ops/capacity.md` § Hot-Path Allocation Budgets); ns/op report-only in `verify-report.json` |
 | Unity EditMode | local: `"$UNITY_EDITOR_PATH" -batchmode -projectPath client -runTests -testPlatform EditMode -testResults <tmp>/editmode.xml -logFile <tmp>/editmode.log`; CI: `game-ci/unity-test-runner` (`testMode: editmode`) into `-UnityResultsDir` | always required |
 | Unity PlayMode | same with `-testPlatform PlayMode` / `testMode: playmode`; category `Performance` runs only on the Linux job | required after `IMP-065` is DONE |
 | Android performance | `gcloud firebase test android run --type game-loop` on the Owner Setup device models | scheduled `device-perf` workflow on `main` (not a PR check); `DEFERRED(quota)` on exhausted quota (`../04_architecture/client_performance.md`) |

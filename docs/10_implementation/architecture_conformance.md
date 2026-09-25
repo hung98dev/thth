@@ -73,6 +73,7 @@ Mọi package trong `server/internal/` phải tuân thủ nghiêm ngặt ma tr�
 6. **Một runtime cho mỗi subsystem:** tick loop/AOI/replication chỉ ở `server/internal/sim/runtime|aoi|replication/` (IMP-079); collision chỉ ở `server/internal/sim/spatial/collision/` (IMP-078); Global single writer chỉ ở `server/internal/global/runtime/` (IMP-080); WSS listener/heartbeat chỉ ở `server/internal/edge/listener|heartbeat/` (IMP-081); hàng đợi lệnh durable chỉ ở `server/internal/durable/queue/` (IMP-082); thứ tự khóa aggregate chỉ qua `server/internal/durable/lockorder/` (IMP-097); logging/metrics/correlation chỉ qua `server/internal/observability/core/` (IMP-098).
 7. **Một owner migration:** chỉ IMP-005 tạo file trong `server/migrations/` (baseline `000001`).
 8. **Just Guard và latency model** chỉ ở `server/internal/sim/combat/` (IMP-014); RTT sample đến từ `edge/heartbeat` qua interface định kiểu.
+9. **Client frame runtime:** `FrameLoop`, `FrameTime`, `FrameBudget`, `Pool<T>`, `Log`, `PresentationRandom` chỉ ở `client/Assets/Scripts/Core/Runtime/` (IMP-065); camera service chỉ ở `client/Assets/Scripts/Systems/Camera/` (IMP-066); quality governor chỉ ở `client/Assets/Scripts/Core/Performance/` (IMP-095). Full list: `engineering_conventions.md` §2.6 (ADR-0059).
 
 ## 4. Tự động hóa Kiểm tra Kiến trúc (Executable Architecture Gates)
 
@@ -88,6 +89,9 @@ IMP-000 materialize verifier (`server/internal/conformance/gates/`); IMP-083 s�
 9. **asmdef:** không cycle; IMP-000 sở hữu các asmdef `ThinhThan.Core/Net/Systems/UI/App/Tests.EditMode/Tests.PlayMode`; `ThinhThan.App` là composition root (IMP-067) và không assembly nào tham chiếu nó; `ThinhThan.Protocol` không tham chiếu assembly nào của dự án.
 10. **Observability:** `server/internal/observability/` được mọi runtime package import, nhưng không import `sim`, `edge`, `durable`, `global`.
 11. **Test placement:** Go test nằm trong chính package được test; Unity test nằm trong `client/Assets/Tests/{EditMode|PlayMode}/<Feature>/` thuộc owned_paths của packet (`repository_layout.md` § Ownership Rules).
+12. **Code quality (IMP-000, `server/internal/conformance/style/`):** C# style, `.editorconfig`/`.gitattributes` keys, `csc.rsp`, `gofmt -l`, `go vet`, pinned `staticcheck` (`engineering_conventions.md` §1.1, §2.7; `CODE-001..003`).
+13. **Client API fence (IMP-083):** token-based scan of the first-party runtime C# assemblies against `engineering_conventions.md` §2.5, including the FrameLoop-only Unity callbacks rule (`CODE-005`, `PERF-020`). Exceptions exist only in `server/internal/conformance/architecture/client_api_allowlist.txt` as `path:symbol  reason`, and an entry without a reason fails.
+14. **Canonical implementations (IMP-083):** a type matching a concern pattern of `engineering_conventions.md` §2.6 (e.g. `*Pool`, `*FrameLoop*`, `*Scheduler`, `*Logger`, `UnityEngine.Pool.*`, `System.Random`) outside its owner path fails (`CODE-006`).
 
 Các gate này là Q4 trong `audit_gates.md`. Mutation fixtures phải chứng minh từng rule fail closed; việc chỉ mô tả rule bằng Markdown không đạt Gate C.
 ## Invariants
@@ -99,4 +103,5 @@ sim layer không bao giờ trực tiếp kết nối SQL
 1 combat engine, 1 item primitive, 1 currency primitive, 1 reward primitive
 1 sim runtime, 1 Global writer, 1 durable queue, 1 lock-order helper, 1 migration owner (IMP-005)
 architecture test tự động hóa kiểm tra AST import fences
+client: one FrameLoop / FrameBudget / Pool<T> / Log; forbidden Unity APIs fail Q4
 ```

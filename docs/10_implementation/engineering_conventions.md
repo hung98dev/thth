@@ -12,6 +12,7 @@ Mục tiêu: Đảm bảo mọi AI agent khi sinh code đều tuân thủ cùng 
 ### 1.1 Toolchain & Formatting
 - **Go Toolchain:** `1.27.1` (pin tại `docs/00_context/technology_versions.md`).
 - **Formatting:** `gofmt` tiêu chuẩn với tabs cho thụt lề; cấm dùng linter tự ý reformat khác chuẩn `gofmt`.
+- **Static checks (`CODE-003`, Q4):** `gofmt -l` prints nothing; `go vet ./...` is clean; `staticcheck ./...` (pinned `honnef.co/go/tools v0.8.1`, default check set, no `staticcheck.conf`) is clean. A `//lint:ignore <check> <reason>` needs a non-empty reason and reviewer approval; `//lint:file-ignore` is forbidden.
 - **Package Layout:** Nằm trong `server/internal/<domain>/`. Tên package ngắn gọn, chữ thường, không gạch dưới, không camelCase.
 
 ### 1.2 Structured Logging
@@ -49,6 +50,11 @@ Mục tiêu: Đảm bảo mọi AI agent khi sinh code đều tuân thủ cùng 
   - Planned repository path is `server/migrations/` with `000001_baseline_schema.up.sql` / `000001_baseline_schema.down.sql`; `IMP-005` owns materializing it.
   - Không sửa file migration cũ đã merge; mọi sửa đổi schema phải là migration mới tăng dần.
 
+### 1.7 Hot-Path Allocation & Benchmarks
+- Allocation budgets are canonical in `../08_scale_ops/capacity.md` § Hot-Path Allocation Budgets and are enforced by `TestAllocs_<Name>` tests using `testing.AllocsPerRun` (build tag `!race`, run in the non-race Q3 pass). The budget number is exact.
+- Every budgeted path also has `Benchmark<Name>`. Q3 runs `go test -run '^$' -bench . -benchmem -benchtime=200x -count=1` for the packages listed there and records ns/op, B/op and allocs/op in `verify-report.json`. ns/op is informational only and never gated on hosted runners.
+- Steady-state hot paths reuse buffers owned by the caller (`MarshalAppend(buf[:0], m)`, slices reset with `[:0]`, per-actor scratch structs). They never use `fmt`, `reflect`, maps built per tick, closures capturing per-tick state, or `interface{}` boxing.
+
 ## 2. C# / Unity Client Conventions
 
 ### 2.1 Language & Style
@@ -58,22 +64,80 @@ Mục tiêu: Đảm bảo mọi AI agent khi sinh code đều tuân thủ cùng 
 ### 2.2 Assembly Definitions (.asmdef)
 Mọi code C# phải nằm dưới các assembly definition được cô lập rõ ràng:
 - `ThinhThan.Protocol.asmdef`: Chỉ chứa code sinh tự động từ protobuf; không tham chiếu tới bất kỳ Unity assembly nào khác.
-- `ThinhThan.Core.asmdef`: Chứa math, UUID utilities, text normalization, pure domain models.
-- `ThinhThan.Net.asmdef`: WSS client, session state machine, serialization handling.
+- `ThinhThan.Core.asmdef`: Chứa math, UUID utilities, text normalization, pure domain models, and the frame runtime (`Core/Runtime/`: `FrameLoop`, `FrameTime`, `FrameBudget`, `Pool<T>`, `Log`, `PresentationRandom`).
+- `ThinhThan.Net.asmdef`: WSS client (`System.Net.WebSockets.ClientWebSocket`, background receive task), session state machine, serialization handling.
 - `ThinhThan.Systems.asmdef`: Gameplay presentation, movement interpolation, combat controllers.
 - `ThinhThan.UI.asmdef`: HUD, menu screens, input overlays.
+- `ThinhThan.App.asmdef`: composition root (IMP-067); creates `FrameLoop` and every service; no assembly references it.
 - `ThinhThan.Tests.EditMode.asmdef` và `ThinhThan.Tests.PlayMode.asmdef`: Thư mục test riêng.
 Cấm circular dependencies giữa các asmdef.
 
-### 2.3 Memory & Allocation Hygiene
-- Realtime loop (`Update`, `FixedUpdate`): Cấm cấp phát bộ nhớ rác (`GC.Alloc = 0`) trên hot path.
-- Dùng object pooling cho projectile, floating text, visual effects.
-- Tránh LINQ trong các hàm chạy theo frame.
+### 2.3 Frame Model & Memory Hygiene
+- Runtime architecture (FrameLoop phases, `FrameTime`, `FrameBudget`, pre-warm, governor, UI, network receive path) is canonical in `../04_architecture/client_performance.md` § Smoothness by Construction. This section only lists the coding rules.
+- Frame code (every `IFrameSystem.Tick`, network apply, UI phase) allocates 0 bytes: no LINQ, boxing, string concatenation/interpolation, closures capturing locals, `params` arrays, `foreach` over interfaces, or collection growth. Collections are pre-sized at load.
+- Transient visuals (projectiles, floating text, VFX, UI rows, actor views) come from `Pool<T>` and are pre-sized at map load.
+- Component references are cached at creation; `GetComponent` never runs per frame.
 
 ### 2.4 Input & UI State Machine
 - Sử dụng Unity Input System (`com.unity.inputsystem 1.20.0`).
 - Gửi cạnh di chuyển qua `C2S_MOVEMENT_EDGE` (ID 108, `DISCRETE_INTENT`) với wire enum `PRESS | RELEASE | FLIP`; không phát minh `STOP`. `client_mono_ms` chỉ advisory và server clamp bù trễ tối đa 80 ms theo `../05_network/messages.md`.
 - UI điều khiển qua finite state machine, không gọi trực tiếp network socket từ view UI.
+
+### 2.5 Client API Fence (`CODE-005`, `PERF-020`, Q4)
+Applies to first-party runtime assemblies `ThinhThan.Core/Net/Systems/UI/App`, excluding `Editor/` folders, tests and generated `Protocol/`. Exceptions are exact `path:symbol` entries in `server/internal/conformance/architecture/client_api_allowlist.txt` (IMP-083, protected), each with a reason.
+
+```text
+forbidden                                              use instead
+Update / FixedUpdate / LateUpdate / OnGUI              IFrameSystem.Tick via FrameLoop (FrameLoop itself allowlisted)
+GameObject.Find*, FindObjectOfType, FindObjectsOfType,
+  FindFirstObjectByType, FindAnyObjectByType           constructor/composition injection, cached references
+SendMessage, BroadcastMessage, Invoke, InvokeRepeating direct calls, C# events, FrameBudget tasks
+StartCoroutine, IEnumerator coroutines                 FrameBudget tasks or Unity Awaitable
+async void                                             async Awaitable / async Task (Net only) with owner + cancellation
+Task, Task.Run, Thread, ThreadPool outside ThinhThan.Net   Awaitable; Net background receive task only
+Resources.Load*, *.WaitForCompletion() outside loading screens   Addressables async + FrameBudget
+Camera.main outside the camera service                 injected camera service
+System.Linq                                            explicit loops over pre-sized collections
+Debug.Log*                                             Log facade (Core/Runtime)
+.material getter, new Material(                        sharedMaterial, SpriteRenderer.color
+GC.Collect outside loading screens                     incremental GC
+UnityEngine.Random, System.Random                      Core PresentationRandom (seeded, presentation only)
+UnityEvent fields in first-party types                 C# events with paired subscribe/unsubscribe
+static mutable fields outside ThinhThan.App            instances owned by the composition root
+```
+
+### 2.6 Canonical Implementations (`CODE-006`, Q4)
+Each concern has one implementation. A second type whose name or base type matches the concern's pattern outside the owner path fails Q4. Otherwise the reviewer checks it.
+
+```text
+concern             client owner (C#)                              server owner (Go)
+frame driver        Core/Runtime FrameLoop, FrameTime              sim/runtime tick (IMP-079)
+work scheduling     Core/Runtime FrameBudget                       -
+pooling             Core/Runtime Pool<T> (no UnityEngine.Pool)     caller-owned buffers (§1.7)
+logging             Core/Runtime Log (Log.Dev* [Conditional("THINHTHAN_DEV")];
+                    Warn/Error always compiled, rate-limited)      observability/core (IMP-098)
+time                FrameTime / injected IClock                    injected clock (§1.3)
+randomness          Core/Runtime PresentationRandom (presentation)  core/rng (§1.3)
+events              C# events / typed message bus in Core/Runtime  typed ports (architecture_conformance.md §3)
+errors/results      Result<T, ErrorCode> (Core); wire codes errors.md   sentinel errors (§1.5)
+services            constructor injection from ThinhThan.App       constructor injection from app (IMP-069)
+```
+
+### 2.7 Compiler, Style & Line Endings (`CODE-001`, `CODE-002`, `CODE-004`)
+- `client/Assets/csc.rsp` contains exactly `-warnaserror+` and `-nullable:enable`. It applies to every assembly under `Assets/`, tests included. Nullable annotations are mandatory; `!` (null-forgiving) needs an adjacent comment that names the invariant.
+- Generated C# (`client/Assets/Scripts/Protocol/`) starts with `#nullable disable` and `#pragma warning disable` for the protobuf-generated warning set; `scripts/codegen.ps1` prepends the header deterministically (Q2 byte-identical).
+- Root `.editorconfig` is canonical for formatting:
+  - C#: 4 spaces, Allman, `_camelCase` private instance fields, PascalCase types/methods/properties/constants, camelCase locals/parameters, block-scoped namespaces (C# 9).
+  - Go: tabs. Proto: 2 spaces.
+  - All files: UTF-8 without BOM, LF, final newline, no trailing whitespace.
+- Root `.gitattributes`: `* text=auto eol=lf` (including `*.ps1`, `*.sh`, Unity YAML `*.unity *.prefab *.asset *.meta *.mat *.anim *.controller`); binary media per `repository_layout.md` LFS rules.
+- The Go verifier (`server/internal/conformance/style/`) checks the C# style deterministically without a .NET SDK or Roslyn. It checks every first-party `.cs` file:
+  - a line ending in `{` contains only `{`, and a line starting with `}` contains only `}` optionally followed by `;`, `,` or `)`;
+  - indentation is a multiple of 4 spaces, with no tabs;
+  - there is no trailing whitespace; the file uses LF, has no BOM and ends with a final newline;
+  - private instance fields are named `_camelCase`;
+  - there is one top-level type per file, and the file name equals the type name;
+  - the namespace equals `ThinhThan.<Assembly>` plus the folder path below the assembly root.
 
 ## 3. Protocol Buffers Wire Conventions
 
@@ -109,6 +173,18 @@ merge      squash via auto-merge after the §5a sequence
   - Xóa bỏ hoàn toàn code cũ, không để lại alias, shim, deprecated stub hay commented code.
   - Đảm bảo git status hoàn toàn sạch sau khi chạy codegen và test verify.
 
+## Requirement IDs
+Covered by Q0 requirement coverage like spec tables (`audit_gates.md` Gate B).
+
+| ID | Requirement | Gate |
+|---|---|---|
+| `CODE-001` | `client/Assets/csc.rsp` = `-warnaserror+ -nullable:enable`; every first-party assembly compiles with 0 warnings (§2.7) | every PR (Q3 Unity compile, Q4) |
+| `CODE-002` | `.editorconfig` + `.gitattributes` present with the §2.7 keys; C# style check passes on every first-party `.cs` (§2.7) | every PR (Q4) |
+| `CODE-003` | `gofmt -l` empty, `go vet ./...` and pinned `staticcheck ./...` clean; no `//lint:file-ignore` (§1.1) | every PR (Q4) |
+| `CODE-004` | generated C# begins with the `#nullable disable` + pragma header, byte-deterministic (§2.7) | every PR (Q2) |
+| `CODE-005` | client API fence with justified allowlist entries only (§2.5) | every PR (Q4) |
+| `CODE-006` | one canonical implementation per concern; duplicates detected by name/base-type patterns (§2.6) | every PR (Q4) |
+
 ## Invariants
 
 ```text
@@ -117,4 +193,7 @@ slog cho Go logging; pgx/v5 raw SQL cho database
 math/rand/v2 cho gameplay RNG; crypto/rand cho security/UUID
 proto/ là wire SoT; không sửa tay generated code
 zero commented-out code, zero fake stubs, zero unapproved packages
+C# warnings are errors; nullable enabled; LF everywhere; style checked by the verifier
+gofmt + go vet + staticcheck clean; hot-path allocs/op are exact gates, ns/op is report-only
+one FrameLoop, one FrameBudget, one Pool<T>, one Log facade on the client
 ```

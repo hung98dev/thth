@@ -2,7 +2,7 @@
 status: LOCKED
 
 ## Scope
-Canonical player-facing performance and smoothness targets for the Unity client: device tiers, frame pacing, memory/GC, load times, input responsiveness, network smoothness, mobile thermal/battery, and how each is measured. Server-side targets stay in `../08_scale_ops/capacity.md`. Measurement uses Unity built-ins only (`FrameTimingManager`, `ProfilerRecorder`); no new package.
+Canonical player-facing performance and smoothness targets for the Unity client: device tiers, frame pacing, memory/GC, load times, input responsiveness, network smoothness, mobile thermal/battery, the runtime architecture that enforces them by construction, and how each is measured. Server-side targets stay in `../08_scale_ops/capacity.md`. Measurement uses Unity built-ins only (`FrameTimingManager`, `ProfilerRecorder`); no new package.
 
 ## Platforms and Device Tiers
 Launch platforms: Windows desktop and Android. iOS is not a launch target (CI builds only Windows and Android players, ADR-0058).
@@ -24,17 +24,18 @@ DESKTOP_MIN    60 FPS   <= 16.7 ms    <= 25 ms      0 per 5 min in combat   (des
 ANDROID_REC    60 FPS   <= 16.7 ms    <= 25 ms      <= 1 per 5 min
 ANDROID_MIN    30 FPS   <= 33.3 ms    <= 45 ms      <= 1 per 5 min
 ```
-Desktop CPU budget (`PERF-002`, CI-gated): hotspot scene for 5 minutes with `-batchmode -nographics` on the Linux CI job, main-thread CPU time per frame (`PlayerLoop` excluding GPU/present waits, `ProfilerRecorder`) p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms. Desktop GPU frame pacing is an accepted gap: hosted CI has no GPU (ADR-0058); it is mitigated by the `PERF-006` draw budgets and the `PERF-003` Android GPU device runs.
+Desktop CPU budget (`PERF-002`, CI-gated): hotspot scene with `-batchmode -nographics` on the Linux CI job, 3 repetitions of 100 s each after a 10 s warm-up (§ Measurement and Gates), main-thread CPU time per frame (`PlayerLoop` excluding GPU/present waits, `ProfilerRecorder`) p95 <= 8 ms, p99 <= 12 ms, no frame > 33 ms. Desktop GPU frame pacing is an accepted gap: hosted CI has no GPU (ADR-0058); it is mitigated by the `PERF-006` draw budgets, the `PERF-016` overdraw/pass budgets, the `PERF-017` adaptive governor and the `PERF-003` Android GPU device runs (ADR-0059).
 
-Frame budget on `ANDROID_MIN` (33.3 ms): scripts <= 10 ms, rendering <= 12 ms, remainder for OS/GPU. Batches <= 150 on mobile (SpriteAtlas per region/actor group, no per-frame material instancing). VSync on desktop; `Application.targetFrameRate` = tier target on Android.
+Frame budget on `ANDROID_MIN` (33.3 ms): scripts <= 10 ms, rendering <= 12 ms, remainder for OS/GPU. Batches <= 150 on mobile (SpriteAtlas per region/actor group, no per-frame material instancing). Frame-rate control: § Smoothness by Construction item 3.
 
 ## Memory and GC
 ```text
-managed GC allocation per frame in steady gameplay (movement, combat, UI HUD) = 0 bytes
+managed GC allocation per frame in steady gameplay (movement, combat, UI HUD) = 0 bytes (main-thread frame code)
+network receive/decode (background task)                                     <= PERF-024 budget
 allocations allowed only at load, scene transfer, and opening/closing full-screen UI
 total resident memory: ANDROID_MIN <= 1.3 GB, DESKTOP_MIN <= 2.5 GB
 ```
-Pooling rules: `../10_implementation/engineering_conventions.md` §2.3. Addressables group budgets: `../07_content/presentation_asset_manifest.md` §1.
+Incremental GC is on with a 1 ms time slice (`GarbageCollector.incrementalTimeSliceNanoseconds = 1_000_000`); `GC.Collect` runs only on loading screens. Pooling rules: `../10_implementation/engineering_conventions.md` §2.3. Addressables group budgets: `../07_content/presentation_asset_manifest.md` §1.
 
 ## Load and Transfer Times
 ```text
@@ -71,6 +72,65 @@ ANDROID_MIN-class device, 30 FPS cap                  average CPU utilisation <=
 ```
 A battery-saver toggle caps FPS at 30 on any tier.
 
+## Smoothness by Construction
+Canonical runtime architecture that keeps frames smooth without GPU timing in CI (ADR-0059). Coding rules and the Q4 fence: `../10_implementation/engineering_conventions.md` §2.3–§2.7.
+
+1. **Frame driver** (`PERF-014`, `PERF-020`): one `FrameLoop` MonoBehaviour (`ThinhThan.Core`, `Core/Runtime/`) is the only first-party type with Unity frame callbacks. The `ThinhThan.App` composition root (or the PlayMode harness) creates it once. Every rendered frame it runs the registered systems in fixed phase order:
+   ```text
+   Input -> NetReceive -> Prediction -> Interpolation -> Presentation -> UI -> Camera
+   ```
+   - Presentation covers animation, VFX and audio triggers; Camera runs from `LateUpdate`.
+   - Systems implement `IFrameSystem.Tick(in FrameTime)`; registration happens only at composition or map load, never mid-frame.
+   - Replicated entity views live in contiguous index-based arrays (struct state + cached component references) updated by one system per concern. There is no per-entity `MonoBehaviour` logic and no per-frame `GetComponent`.
+2. **Timing** (`PERF-014`, `PERF-023`):
+   - `FrameTime` is computed once per frame: `delta` = `Time.unscaledDeltaTime` clamped to 100 ms; `now` = `Time.realtimeSinceStartupAsDouble`, which is also the timeline for snapshot interpolation.
+   - Remote interpolation and local correction use § Network Smoothness.
+   - The camera follows the predicted local player with critically damped smoothing (time constant 0.12 s, no overshoot). It moves once per frame in the Camera phase, is clamped to map bounds, and snaps on transfer or hard reconciliation.
+   - There is no pixel-perfect camera (ADR-0055).
+3. **Frame-rate control** (`PERF-019`):
+   - Desktop: `QualitySettings.vSyncCount = 1`, `targetFrameRate` unset.
+   - Android: `vSyncCount = 0`, `Application.targetFrameRate` = tier target, Player Setting *Optimized Frame Pacing* enabled.
+   - Battery saver caps every tier at 30 (`PERF-013`).
+   - Player settings: incremental GC on; Physics2D `simulationMode = Script`. The client has no authoritative physics; prediction uses the shared geometry port (`../04_architecture/physics_geometry_contract.md`).
+4. **Main-thread budget** (`PERF-015`): all non-urgent main-thread work goes through the `FrameBudget` scheduler (`Core/Runtime/`). This covers instantiation, pool pre-warm, list/UI population, Addressables completion handling and content decode.
+   ```text
+   gameplay frame      <= 2 ms of FrameBudget work
+   loading-screen frame <= 12 ms
+   synchronous loads   (Resources.Load, WaitForCompletion) forbidden outside loading screens
+   Application.backgroundLoadingPriority = Low in gameplay, High on loading screens
+   ```
+5. **No first-use hitch** (`PERF-018`): map load pre-sizes that map's pools (actors, projectiles, VFX, floating text, UI rows) from content counts. On the loading screen it warms shader variants (`ShaderVariantCollection.WarmUp`, plus `GraphicsStateCollection` warm-up where the graphics API supports it) and loads the map's Addressables group before the screen closes.
+6. **Rendering discipline** (`PERF-021`):
+   - Materials and shaders are SRP-Batcher compatible.
+   - One SpriteAtlas per region/actor group.
+   - No runtime material instances: no `.material` getter and no `new Material` in gameplay; per-renderer tint goes through `SpriteRenderer.color`.
+   - Y-sorting uses the 2D renderer's custom transparency sort axis `(0, 1, 0)` and never per-frame script sorting.
+   - Sprites whose longer side is >= 256 px and that have transparent margins use mesh type `Tight`.
+   - Animators use `CullCompletely` and SpriteSkin skips off-screen bones.
+   - Physics2D queries use preallocated buffers.
+7. **Adaptive quality governor** (`PERF-017`): `Core/Performance/` reads GPU frame time from `FrameTimingManager`, falling back to CPU frame time where GPU timing is unsupported. Every value is presentation-only; the governor never exceeds the selected preset and never changes geometry or telegraph readability.
+   ```text
+   window        120 frames (p95); window resets after every step
+   step down     p95 > 110% of tier frame target: render scale -0.05 (floor 0.6), then particle budget -25% (floor 50% of preset)
+   step up       p95 < 75% of target continuously for 10 s: reverse order, one step
+   hysteresis    >= 3 s between steps
+   ```
+   The time source is injected, so the governor is tested deterministically.
+8. **UI** (`PERF-022`, uGUI Canvas + TextMeshPro per `client_experience_contract.md`):
+   - Widgets set dirty flags; the UI phase applies them at most once per frame.
+   - Static and dynamic elements sit on separate nested Canvases, so a HUD value change never rebuilds static layout.
+   - Numbers use `TMP_Text.SetText(format, value)`, which does not allocate.
+   - Non-interactive graphics have `raycastTarget = false`; there are no layout groups or `ContentSizeFitter` on dynamic HUD elements.
+   - Long lists are virtualized over pooled rows populated through `FrameBudget`.
+9. **Network receive path** (`PERF-024`):
+   - One background task per session receives through `System.Net.WebSockets.ClientWebSocket` into pooled buffers and decodes each envelope, reusing message instances where the runtime allows.
+   - Decoded messages go to a bounded queue; `NetReceive` applies them on the main thread with 0 allocation.
+   - Unity APIs are never called off the main thread.
+   ```text
+   decode allocation      <= 64 KB per second of the recorded hotspot stream (60 entities, 10 Hz), exact for the fixture
+   framing / buffers      0 bytes (pooled)
+   ```
+
 ## Measurement and Gates
 - Desktop (every PR, Linux job, GitHub-hosted, no GPU; ADR-0058): PlayMode tests in category `Performance` run the hotspot scene with `FrameTimingManager`/`ProfilerRecorder`. CPU timing (`PERF-002`) runs with `-nographics`; draw/memory/load measurements render under xvfb with Mesa llvmpipe. GPU frame time is never measured or gated in CI, so a missing GPU is neither a failure nor an `OPS` blocker.
 - Every PR, device-independent budgets (Linux job, always required once the owning task is DONE):
@@ -78,7 +138,12 @@ A battery-saver toggle caps FPS at 30 on any tier.
   managed GC allocation per frame in the hotspot scene       = 0 bytes
   batches <= 150, SetPass calls <= 60 (LOW preset)          texture memory within presentation_asset_manifest.md §1 budgets
   active point Light2D and particle counts <= preset budget  desktop CPU budget (PERF-002)
+  overdraw (LOW, 1280x720) average <= 2.5, p99 pixel <= 8     full-screen passes: LOW <= 1, MEDIUM <= 2, HIGH <= 4
+  FrameBudget work <= 2 ms per gameplay frame                 first use of every skill VFX / UI screen: no frame > 50 ms CPU
   ```
+- Overdraw (`PERF-016`) is measured on the Linux job: the hotspot scene renders at the 1280x720 reference with every sprite, tilemap and particle renderer temporarily switched to a test-only additive `OverdrawCount` material into an `RFloat` target, so each fragment of the mesh area (including transparent margins) adds 1. The metric is the per-pixel count read back from that target. Full-screen passes are all post-processing passes, blits and renderer-feature passes per camera per frame.
+- Timing gates (`PERF-002`, `PERF-007` desktop, `PERF-015`, `PERF-018`) run 3 repetitions inside one job and gate on the median value (a threshold on single frames holds in at least 2 of 3 repetitions). Job reruns never turn a red timing gate green (`../10_implementation/agent_execution_protocol.md` §5b). Allocation, counter, pass and overdraw gates are exact on a single run.
+- Structural rules that need no measurement (FrameLoop fence `PERF-020`, API fence) are Q4 checks (`../10_implementation/audit_gates.md`).
 - Android device runs: an IL2CPP Android build of the hotspot scene runs as a Unity game-loop test on Firebase Test Lab physical devices (one `ANDROID_MIN`-class and one `ANDROID_REC`-class model, recorded in Owner Setup) from the scheduled `device-perf` workflow on `ubuntu-24.04`; CI downloads the frame timings and gates them. No device is attached to the runner. Cadence stays inside the free quota: at most one scheduled run per day on `main` when client code/assets changed since the last device run, plus the mandatory launch-candidate run. A run blocked by exhausted quota is reported `DEFERRED(quota)` and retried the next day; it never fails or blocks ordinary PRs. The launch-candidate gate requires a passing device run on the release commit and waits (it never skips) until quota allows.
 - Network smoothness tests use the client network emulator (latency, jitter, loss) against a local server in PlayMode.
 - The 30-minute sustained runs execute on Firebase Test Lab during the launch-candidate gate.
@@ -102,6 +167,17 @@ Every ID below must be named in at least one task packet's acceptance and covere
 | `PERF-011` | full-quality and degraded network conditions under emulated latency/jitter/loss | every PR |
 | `PERF-012` | 30-minute sustained proxies on ANDROID_REC / ANDROID_MIN (Mobile Sustained Performance) | launch candidate |
 | `PERF-013` | battery-saver toggle caps FPS at 30 | every PR |
+| `PERF-014` | one `FrameLoop`, fixed phase order, `FrameTime` clamp 100 ms, index-based entity views (Smoothness by Construction 1–2) | every PR |
+| `PERF-015` | `FrameBudget` <= 2 ms per gameplay frame, <= 12 ms on loading screens; no synchronous load outside loading screens; loading priority Low/High (item 4) | every PR |
+| `PERF-016` | overdraw average <= 2.5 and p99 <= 8 at LOW; full-screen passes <= preset budget (Measurement) | every PR (Linux job) |
+| `PERF-017` | adaptive governor step down/up, hysteresis, floors, preset ceiling (item 7) | every PR |
+| `PERF-018` | map-load pool pre-size, shader warm-up and group preload; first use of every skill VFX and UI screen has no frame > 50 ms CPU (item 5) | every PR |
+| `PERF-019` | frame-rate control and player settings: vSync/targetFrameRate per platform, Optimized Frame Pacing, incremental GC 1 ms slice, Physics2D Script mode (item 3, Memory and GC) | every PR |
+| `PERF-020` | no `Update/FixedUpdate/LateUpdate/OnGUI` in first-party runtime code outside `FrameLoop` and the allowlist (item 1) | every PR (Q4) |
+| `PERF-021` | rendering discipline: SRP-Batcher compatible materials, transparency sort axis, Tight mesh rule, animator culling, no runtime material instances (item 6) | every PR |
+| `PERF-022` | UI: dirty flags applied once per frame, static/dynamic Canvas split, 0-alloc HUD value updates, raycast targets off on non-interactive graphics (item 8) | every PR |
+| `PERF-023` | camera: critically damped follow 0.12 s without overshoot, one move per frame, map-bounds clamp, snap on transfer/hard reconciliation (item 2) | every PR |
+| `PERF-024` | network decode <= 64 KB/s on the hotspot stream fixture, 0-byte framing/buffers, main-thread apply 0 bytes (item 9) | every PR |
 
 ## Invariants
 ```text
@@ -109,4 +185,7 @@ presentation quality presets never change gameplay geometry, hitboxes or telegra
 zero managed allocation per frame in steady gameplay
 every wait > 0.5 s shows progress
 client frame rate never changes server simulation (20 Hz)
+one FrameLoop drives every first-party frame callback; phase order is fixed
+non-urgent main-thread work is time-sliced by FrameBudget
+GPU cost is bounded by overdraw/pass/batch/light budgets and the adaptive governor, not by CI GPU timing
 ```

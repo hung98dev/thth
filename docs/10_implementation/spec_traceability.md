@@ -68,7 +68,7 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `04_architecture/client_assets.md` | IMP-063, IMP-067, IMP-070, IMP-075, IMP-076, IMP-088, IMP-101 |
 | `04_architecture/client_experience_contract.md` | IMP-063, IMP-065, IMP-066, IMP-067, IMP-099, IMP-103 |
 | `04_architecture/client_localization.md` | IMP-064, IMP-067, IMP-073, IMP-099 |
-| `04_architecture/client_performance.md` | IMP-048, IMP-063, IMP-065, IMP-066, IMP-067, IMP-088, IMP-095, IMP-096, IMP-099, IMP-101 |
+| `04_architecture/client_performance.md` | IMP-000, IMP-018, IMP-048, IMP-063, IMP-065, IMP-066, IMP-067, IMP-083, IMP-088, IMP-095, IMP-096, IMP-099, IMP-101 |
 | `04_architecture/concurrency.md` | IMP-002, IMP-079, IMP-080, IMP-082 |
 | `04_architecture/physics_geometry_contract.md` | IMP-004, IMP-013, IMP-015, IMP-018, IMP-019, IMP-022, IMP-023, IMP-024, IMP-040, IMP-041, IMP-042, IMP-062, IMP-063, IMP-067, IMP-070, IMP-071, IMP-072, IMP-078, IMP-104, IMP-105 |
 | `04_architecture/realtime_loop.md` | IMP-013, IMP-014, IMP-055, IMP-062, IMP-069, IMP-078, IMP-079 |
@@ -125,7 +125,7 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `07_security/validation.md` | IMP-045, IMP-077, IMP-091 |
 | `08_scale_ops/backup_recovery.md` | IMP-047, IMP-103 |
 | `08_scale_ops/caching.md` | IMP-043 |
-| `08_scale_ops/capacity.md` | IMP-046, IMP-055, IMP-079, IMP-082 |
+| `08_scale_ops/capacity.md` | IMP-000, IMP-046, IMP-055, IMP-079, IMP-081, IMP-082 |
 | `08_scale_ops/deployment.md` | IMP-047, IMP-048, IMP-067, IMP-068, IMP-069 |
 | `08_scale_ops/observability.md` | IMP-043, IMP-077, IMP-098 |
 | `08_scale_ops/sharding.md` | IMP-048 |
@@ -141,7 +141,7 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `10_implementation/audit_gates.md` | IMP-000, IMP-048, IMP-068, IMP-083, IMP-095, IMP-096 |
 | `10_implementation/definition_of_done.md` | IMP-048, IMP-076 |
 | `10_implementation/dependency_graph.md` | IMP-083 |
-| `10_implementation/engineering_conventions.md` | IMP-000, IMP-095 |
+| `10_implementation/engineering_conventions.md` | IMP-000, IMP-065, IMP-066, IMP-079, IMP-081, IMP-083, IMP-095 |
 | `10_implementation/known_blockers.md` | IMP-068 |
 | `10_implementation/milestones.md` | IMP-048 |
 | `10_implementation/repository_layout.md` | IMP-000, IMP-061, IMP-063, IMP-070, IMP-083 |
@@ -211,10 +211,11 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `0052-single-launch-world.md` | IMP-000, IMP-006, IMP-045, IMP-046, IMP-047, IMP-048, IMP-055, IMP-065, IMP-067, IMP-068, IMP-069, IMP-079, IMP-080, IMP-082, IMP-083, IMP-095, IMP-099 |
 | `0053-durable-contract-reconciliation.md` | IMP-002, IMP-005, IMP-009, IMP-022, IMP-037, IMP-038, IMP-045, IMP-052, IMP-053, IMP-054, IMP-065, IMP-069, IMP-074, IMP-079, IMP-080, IMP-081, IMP-082, IMP-085, IMP-091, IMP-097, IMP-102 |
 | `0054-wire-message-completion.md` | IMP-006, IMP-014, IMP-016, IMP-039, IMP-045, IMP-049, IMP-061, IMP-065, IMP-081, IMP-084, IMP-092 |
-| `0055-2x-texture-authoring-and-cutout-quality-gate.md` | IMP-004, IMP-013, IMP-015, IMP-018, IMP-019, IMP-022, IMP-023, IMP-024, IMP-040, IMP-041, IMP-042, IMP-048, IMP-062, IMP-063, IMP-067, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-078, IMP-088, IMP-095, IMP-101, IMP-104, IMP-105 |
+| `0055-2x-texture-authoring-and-cutout-quality-gate.md` | IMP-004, IMP-013, IMP-015, IMP-018, IMP-019, IMP-022, IMP-023, IMP-024, IMP-040, IMP-041, IMP-042, IMP-048, IMP-062, IMP-063, IMP-066, IMP-067, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-078, IMP-088, IMP-095, IMP-101, IMP-104, IMP-105 |
 | `0056-volumetric-art-direction-and-2d-lighting.md` | IMP-018, IMP-025, IMP-055, IMP-058, IMP-059, IMP-063, IMP-065, IMP-066, IMP-067, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-087, IMP-088, IMP-095, IMP-099, IMP-101, IMP-104, IMP-105 |
 | `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md` | IMP-000, IMP-048, IMP-068, IMP-076, IMP-083, IMP-095, IMP-096 |
 | `0058-public-repo-github-hosted-linux-and-windows-runners.md` | IMP-000, IMP-005, IMP-048, IMP-067, IMP-068, IMP-070, IMP-095, IMP-096 |
+| `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md` | IMP-000, IMP-018, IMP-061, IMP-063, IMP-065, IMP-066, IMP-067, IMP-079, IMP-081, IMP-083, IMP-095, IMP-099, IMP-101 |
 
 ## Requirement ID → Task
 
@@ -233,6 +234,26 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `PERF-011` | `04_architecture/client_performance.md` | IMP-095 |
 | `PERF-012` | `04_architecture/client_performance.md` | IMP-048, IMP-096 |
 | `PERF-013` | `04_architecture/client_performance.md` | IMP-095 |
+| `PERF-014` | `04_architecture/client_performance.md` | IMP-065 |
+| `PERF-015` | `04_architecture/client_performance.md` | IMP-065, IMP-095, IMP-099 |
+| `PERF-016` | `04_architecture/client_performance.md` | IMP-095 |
+| `PERF-017` | `04_architecture/client_performance.md` | IMP-095 |
+| `PERF-018` | `04_architecture/client_performance.md` | IMP-018, IMP-095 |
+| `PERF-019` | `04_architecture/client_performance.md` | IMP-095 |
+| `PERF-020` | `04_architecture/client_performance.md` | IMP-083 |
+| `PERF-021` | `04_architecture/client_performance.md` | IMP-095 |
+| `PERF-022` | `04_architecture/client_performance.md` | IMP-066 |
+| `PERF-023` | `04_architecture/client_performance.md` | IMP-066 |
+| `PERF-024` | `04_architecture/client_performance.md` | IMP-065 |
+| `CODE-001` | `10_implementation/engineering_conventions.md` | IMP-000 |
+| `CODE-002` | `10_implementation/engineering_conventions.md` | IMP-000 |
+| `CODE-003` | `10_implementation/engineering_conventions.md` | IMP-000 |
+| `CODE-004` | `10_implementation/engineering_conventions.md` | IMP-061 |
+| `CODE-005` | `10_implementation/engineering_conventions.md` | IMP-083 |
+| `CODE-006` | `10_implementation/engineering_conventions.md` | IMP-083 |
+| `HOT-001` | `08_scale_ops/capacity.md` | IMP-079 |
+| `HOT-002` | `08_scale_ops/capacity.md` | IMP-079 |
+| `HOT-003` | `08_scale_ops/capacity.md` | IMP-081 |
 
 ## Coverage Gate
 Q0 must fail when:

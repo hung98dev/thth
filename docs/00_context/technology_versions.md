@@ -26,6 +26,7 @@ Version-policy decision: `../11_decisions/0010-exact-technology-version-pinning.
 | PSD Importer | `com.unity.2d.psdimporter 15.0.0` | Approved layered PSB/PSD authoring importer. |
 | Addressables | `com.unity.addressables 2.11.2` | Canonical asset loading, bundle/catalog management, local/remote presentation delivery. |
 | Localization | `com.unity.localization 1.5.12` | Canonical string/asset localization; `vi-VN` (default) and `en-US` required launch locales. |
+| UI | `com.unity.ugui` editor-bound core package from `6000.6.1f1` (includes TextMeshPro) | Canvas UI per `../04_architecture/client_experience_contract.md`; resolved version locked by `packages-lock.json`; no UI Toolkit runtime UI and no separate `com.unity.textmeshpro` line (ADR-0059). |
 | Protocol Buffers C# runtime | `Google.Protobuf 3.36.2` | Generated network/data messages only; this does not enable gRPC. |
 
 Unity project lock requirements:
@@ -142,8 +143,9 @@ Do not:
 | Unity CI image (Windows tests) | `unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534` | Windows job. |
 | Unity CI image (Windows player build) | `unityci/editor:windows-6000.6.1f1-windows-il2cpp-3.2.2@sha256:5bd80a61ac442b81745f653dd39395f6e93167ebc51c4b494bdd42c2b656195b` | Windows job; IL2CPP Windows player build. |
 | PostgreSQL test container (Linux CI) | `postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722` | Service container of `Q0-Q6 verify (Linux)`; exports `THINHTHAN_TEST_PG_DSN`. Tests only; production stays container-free. |
+| Staticcheck | `2026.2.1` (module `honnef.co/go/tools v0.8.1`, released 2026-08-21, supports Go 1.27) | Q4 `CODE-003`: installed by `go install honnef.co/go/tools/cmd/staticcheck@v0.8.1` (checksum-database verified) into an ignored tool dir; never added to `server/go.mod`. Default check set, no `staticcheck.conf` (`../10_implementation/engineering_conventions.md` §1.1). |
 
-CI runs only on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners; each job installs the pinned Go, `pwsh`, `gh`, `jq` and `gcloud` and runs Unity in the digest-pinned GameCI images above (ADR-0058; Owner Setup in `../10_implementation/audit_gates.md`). Every Action is pinned by commit SHA and every container image by digest. Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. `scripts/verify.ps1` must not call `python`.
+CI runs only on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners; each job installs the pinned Go, `pwsh`, `gh`, `jq` and `gcloud` and runs Unity in the digest-pinned GameCI images above (ADR-0058; Owner Setup in `../10_implementation/audit_gates.md`). Every Action is pinned by commit SHA and every container image by digest. Do not add unlisted tools (e.g. Python, unapproved linters) to CI workflows without recording ownership and pins in this matrix. C# style and the client API fence are checked by the Go verifier; no .NET SDK, Roslyn analyzer or C# formatter is pinned or installed (ADR-0059). `scripts/verify.ps1` must not call `python`.
 # Pinned Content System Constants
 
 These constants are fixed at project initialization and must never change after any content using them has been shipped. Changing a namespace UUID retroactively invalidates every idempotency key previously derived from it.
@@ -153,7 +155,7 @@ These constants are fixed at project initialization and must never change after 
 | `CONTENT_GRANT_NAMESPACE_UUID` | `f7a3d2b1-4e8c-4a2f-9b3e-6d1c5f8e7a2b` | UUID v5 namespace for all deterministic content-grant idempotency keys (seasonal cosmetics, Atlas reward tiers, Guild Stone completions, and any future one-time content delivery). Generated once with `crypto/rand`. **Immutable** — changing this value breaks every previously issued grant key. Do not rotate, substitute, or regenerate. See `../06_data/ids.md` "Deterministic Content-Grant Idempotency Keys". |
 
 # Verified Stable Choices
-As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta. CI tooling rows added by ADR-0058 were verified on `2026-09-25`.
+As of `2026-09-20`, the matrix pins the Unity editor installed on the implementation machine: Unity `6000.6.1f1`. Go `1.27.1` remains the current stable 1.27 patch; PostgreSQL `18.6` is stable while PostgreSQL 19 remains beta. CI tooling rows added by ADR-0058 were verified on `2026-09-25`. Staticcheck `2026.2.1` (ADR-0059) was verified against the GitHub release and the Go module proxy on `2026-09-25`.
 
 # Version Verification
 When refreshing this matrix, verify candidate versions against the technology vendor's official release channel or canonical package registry. Record a new `verified_at` date. Do not infer "best" from version number alone: production selects the newest compatible **stable/LTS** release after compatibility review, not preview/beta/RC merely because it is newer.

@@ -106,7 +106,7 @@ Input/UI
 Do not make scene objects the canonical copy of persistent character/account state.
 
 ## Performance
-Player-facing performance targets (device tiers, frame pacing, GC, load times, input responsiveness, network smoothness, mobile sustained performance) and their gates are canonical in `client_performance.md`.
+Player-facing performance targets (device tiers, frame pacing, GC, load times, input responsiveness, network smoothness, mobile sustained performance), their gates, and the runtime architecture that enforces them (single `FrameLoop`, `FrameBudget`, pre-warm, adaptive quality governor, network receive path; ADR-0059) are canonical in `client_performance.md` § Smoothness by Construction.
 
 ## PC / Mobile
 Gameplay rules are shared. Platform-specific differences are limited to input, UI layout, device integration, graphics/performance settings, and platform services.

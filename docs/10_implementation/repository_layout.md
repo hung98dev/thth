@@ -63,7 +63,7 @@ server/
 ├── migrations/            # IMP-005 only; baseline 000001, immutable numbered pairs
 └── internal/
     ├── app/               # IMP-069 production composition/lifecycle
-    ├── conformance/       # gates IMP-000, taskgraph+architecture IMP-083, ratchet+trusted IMP-068, deviceperf IMP-096
+    ├── conformance/       # gates+style IMP-000, taskgraph+architecture IMP-083, ratchet+trusted IMP-068, deviceperf IMP-096
     ├── stackpin/          # IMP-000
     ├── config/            # IMP-003/004; equipment IMP-026; validation/{balance,beast,drop} IMP-049/050/051
     ├── core/id/  core/rng/  # IMP-001, IMP-002
@@ -106,6 +106,7 @@ client/
 │   ├── Localization/                  # Settings/ + Tables/Core/ IMP-064; Tables/<Feature>/ per feature packet
 │   ├── Notices/                       # IMP-076
 │   ├── Plugins/Google.Protobuf/       # IMP-000 exact 3.36.2 runtime
+│   ├── csc.rsp                        # IMP-000 -warnaserror+ -nullable:enable (ADR-0059)
 │   ├── Scenes/
 │   │   ├── Bootstrap/                 # IMP-067
 │   │   ├── Review/                    # IMP-070 Visual Review scenes
@@ -113,14 +114,15 @@ client/
 │   │   ├── World/                     # IMP-072, 24 normal-world scenes
 │   │   └── Dungeons/  Finale/  Competitive/   # IMP-105
 │   ├── Settings/Rendering/            # IMP-101
+│   ├── Settings/Performance/          # IMP-095 shader warm-up collection, OverdrawCount test material
 │   ├── Scripts/
 │   │   ├── App/                       # IMP-067 composition root (asmdef IMP-000)
 │   │   ├── Core/                      # asmdef IMP-000; Assets IMP-063 (Editor/AssetProduction IMP-070/076), Localization IMP-064,
-│   │   │                              # Rendering IMP-101, Geometry IMP-062, Session IMP-065, Input IMP-066,
+│   │   │                              # Rendering IMP-101, Geometry IMP-062, Session + Runtime IMP-065, Input IMP-066,
 │   │   │                              # Performance IMP-095, PerformanceDevice IMP-096
 │   │   ├── Net/                       # IMP-065 (asmdef IMP-000)
 │   │   ├── Protocol/                  # IMP-061 generated C#; never hand-edit
-│   │   ├── Systems/<Feature>/         # feature packets (asmdef IMP-000)
+│   │   ├── Systems/<Feature>/         # feature packets (asmdef IMP-000); Replication IMP-065, Camera IMP-066
 │   │   └── UI/<Feature>/              # feature packets (asmdef IMP-000)
 │   └── Tests/
 │       ├── EditMode/<Feature>/        # one folder per packet (asmdef IMP-000)
@@ -259,6 +261,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Scripts/Core/Performance/` | IMP-095 |
 | `client/Assets/Scripts/Core/PerformanceDevice/` | IMP-096 |
 | `client/Assets/Scripts/Core/Rendering/` | IMP-101 |
+| `client/Assets/Scripts/Core/Runtime/` | IMP-065 |
 | `client/Assets/Scripts/Core/Session/` | IMP-065 |
 | `client/Assets/Scripts/Core/ThinhThan.Core.asmdef` | IMP-000 |
 | `client/Assets/Scripts/Net/` | IMP-065 |
@@ -269,6 +272,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Scripts/Systems/Beasts/` | IMP-057 |
 | `client/Assets/Scripts/Systems/Bosses/` | IMP-022 |
 | `client/Assets/Scripts/Systems/Bosses/Relics/` | IMP-091 |
+| `client/Assets/Scripts/Systems/Camera/` | IMP-066 |
 | `client/Assets/Scripts/Systems/Character/` | IMP-065 |
 | `client/Assets/Scripts/Systems/Classes/` | IMP-017 |
 | `client/Assets/Scripts/Systems/Combat/` | IMP-014 |
@@ -297,6 +301,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Scripts/Systems/Pvp/Duel/` | IMP-040 |
 | `client/Assets/Scripts/Systems/Pvp/Sparring/` | IMP-087 |
 | `client/Assets/Scripts/Systems/Quests/` | IMP-021 |
+| `client/Assets/Scripts/Systems/Replication/` | IMP-065 |
 | `client/Assets/Scripts/Systems/Rewards/` | IMP-010 |
 | `client/Assets/Scripts/Systems/Seasons/` | IMP-052 |
 | `client/Assets/Scripts/Systems/Skills/` | IMP-015 |
@@ -351,6 +356,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Scripts/UI/ThinhThan.UI.asmdef` | IMP-000 |
 | `client/Assets/Scripts/UI/Trade/` | IMP-029 |
 | `client/Assets/Scripts/UI/WorldEvents/` | IMP-025 |
+| `client/Assets/Settings/Performance/` | IMP-095 |
 | `client/Assets/Settings/Rendering/` | IMP-101 |
 | `client/Assets/Tests/EditMode/AddressablesValidation/` | IMP-063 |
 | `client/Assets/Tests/EditMode/AssemblyGraph/` | IMP-000 |
@@ -361,6 +367,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Tests/EditMode/CreatureArtCoverage/` | IMP-104 |
 | `client/Assets/Tests/EditMode/CutoutQualityGate/` | IMP-070 |
 | `client/Assets/Tests/EditMode/FormationUi/` | IMP-033 |
+| `client/Assets/Tests/EditMode/FrameRuntime/` | IMP-065 |
 | `client/Assets/Tests/EditMode/GeometryExporter/` | IMP-062 |
 | `client/Assets/Tests/EditMode/InstanceArtCoverage/` | IMP-105 |
 | `client/Assets/Tests/EditMode/InterfaceArtCoverage/` | IMP-073 |
@@ -384,6 +391,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Tests/PlayMode/BooksUi/` | IMP-090 |
 | `client/Assets/Tests/PlayMode/BossPresentation/` | IMP-022 |
 | `client/Assets/Tests/PlayMode/BountyUi/` | IMP-089 |
+| `client/Assets/Tests/PlayMode/CameraFollow/` | IMP-066 |
 | `client/Assets/Tests/PlayMode/CharacterLifecycleClient/` | IMP-065 |
 | `client/Assets/Tests/PlayMode/ChivalryUi/` | IMP-086 |
 | `client/Assets/Tests/PlayMode/CombatPresentation/` | IMP-014 |
@@ -408,6 +416,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Tests/PlayMode/InventoryPanel/` | IMP-009 |
 | `client/Assets/Tests/PlayMode/MonsterPresentation/` | IMP-019 |
 | `client/Assets/Tests/PlayMode/MovementPrediction/` | IMP-013 |
+| `client/Assets/Tests/PlayMode/NetReceive/` | IMP-065 |
 | `client/Assets/Tests/PlayMode/PartyUi/` | IMP-035 |
 | `client/Assets/Tests/PlayMode/Performance/` | IMP-095 |
 | `client/Assets/Tests/PlayMode/PvpBuildUi/` | IMP-039 |
@@ -428,6 +437,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Tests/PlayMode/ThinhThan.Tests.PlayMode.asmdef` | IMP-000 |
 | `client/Assets/Tests/PlayMode/TradeUi/` | IMP-029 |
 | `client/Assets/Tests/PlayMode/WorldTransferPresentation/` | IMP-018 |
+| `client/Assets/csc.rsp` | IMP-000 |
 | `client/BuildProfiles/` | IMP-067 |
 | `client/Packages/` | IMP-000 |
 | `client/ProjectSettings/` | IMP-000 |
@@ -458,6 +468,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `server/internal/conformance/deviceperf/` | IMP-096 |
 | `server/internal/conformance/gates/` | IMP-000 |
 | `server/internal/conformance/ratchet/` | IMP-068 |
+| `server/internal/conformance/style/` | IMP-000 |
 | `server/internal/conformance/taskgraph/` | IMP-083 |
 | `server/internal/conformance/trusted/` | IMP-068 |
 | `server/internal/core/id/` | IMP-001 |

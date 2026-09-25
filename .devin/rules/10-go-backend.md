@@ -13,7 +13,7 @@ Canonical: `docs/10_implementation/engineering_conventions.md` §1, `architectur
 
 ## Format & packages
 
-- `gofmt` clean (tabs). Package names: short, lowercase, domain-named (`sim`, `durable`, `edge`, `global`, `core/id`, `core/rng`). No `utils`, `helpers`, `common`, `misc` packages.
+- `gofmt` clean (tabs); `go vet ./...` and `staticcheck` 2026.2.1 clean (Q4, `CODE-003`; `//lint:ignore` needs a reason, `//lint:file-ignore` is forbidden). Package names: short, lowercase, domain-named (`sim`, `durable`, `edge`, `global`, `core/id`, `core/rng`). No `utils`, `helpers`, `common`, `misc` packages.
 - One module `thinhthan` rooted at `server/go.mod`. One production main: `cmd/server`. Only `cmd/compiler`, `cmd/migrate`, `cmd/verify` tools allowed besides it.
 - No import cycles. Interfaces small and defined at the consumer; do not create an interface just to have one.
 - Import fences (enforced by Q4/architecture tests — do not violate):
@@ -42,6 +42,7 @@ Canonical: `docs/10_implementation/engineering_conventions.md` §1, `architectur
 
 - Treat every client field as untrusted intent. Authenticate, authorize ownership, validate size/range/state, and enforce applicable rate limits before mutation; never trust client prices, hits, rewards, coordinates, revisions, paths, or RNG outcomes.
 - No unbounded tick scans, goroutine fan-out, lock hold, query loops, or network buffers. Hot-path optimization requires a benchmark/profile or a documented spec bound; avoid premature optimization elsewhere.
+- Steady sim tick, delta build and envelope encode are 0 allocs/op, gated by `TestAllocs_*` (`!race`, `testing.AllocsPerRun`; `capacity.md` § Hot-Path Allocation Budgets). A new per-tick system adds its own `TestAllocs_<System>Tick`. Reuse caller-owned buffers; no `fmt`/`reflect`/per-tick maps/closures in steady state (`engineering_conventions.md` §1.7). ns/op is report-only.
 
 ## SQL / persistence (pgx/v5, `durable/` only)
 

@@ -59,6 +59,7 @@ A change touching files in more than two numbered directories must list the comp
 | Asset size, cutout, volume and review gates | `07_content/presentation_asset_manifest.md` (ADR-0055, ADR-0056) |
 | CI, bootstrap, evidence, merge and review policy | `10_implementation/audit_gates.md`, `10_implementation/agent_execution_protocol.md` (ADR-0050, ADR-0057, ADR-0058) |
 | Client performance and smoothness | `04_architecture/client_performance.md` |
+| Client smoothness by construction (FrameLoop, FrameBudget, governor) / code-quality gates | `04_architecture/client_performance.md` § Smoothness by Construction, `10_implementation/engineering_conventions.md` §1.1, §1.7, §2.3–§2.7 (ADR-0059) |
 | Roles (spec-owner, coordinator, implementers, reviewer) | `10_implementation/README.md` |
 
 ## Implementation execution
@@ -100,6 +101,10 @@ latest / floating / prerelease versions
 Bash verify/codegen wrappers (ADR-0050); self-hosted / GPU / larger runners, owner-managed VM, `*-latest` runner image (ADR-0058)
 fork PRs; job-level `if` that skips a required check; secrets before the fork guard (ADR-0058)
 git rebase / force-push / direct push to main / self-review (ADR-0050)
+client runtime: Update/FixedUpdate/LateUpdate/OnGUI outside FrameLoop, coroutines, LINQ, Find*/SendMessage,
+  Resources.Load, async void, Debug.Log outside Log, runtime material instances (ADR-0059; full list engineering_conventions.md §2.5)
+second pool / scheduler / logger / frame driver implementation (engineering_conventions.md §2.6)
+C# compiler warnings; //lint:file-ignore; unpinned linters or .NET SDK/Roslyn tooling in CI (ADR-0059)
 ```
 
 Invariants:
@@ -113,6 +118,9 @@ C# 9.0 Allman; Go tabs; proto indent 2
 Go toolchain = 1.27.1
 textures authored at 2x, imported at 100 PPU (UI 200) (ADR-0055)
 public repo; CI = GitHub-hosted ubuntu-24.04 + windows-2022 only, no GPU (ADR-0058)
+client: one FrameLoop (Input -> NetReceive -> Prediction -> Interpolation -> Presentation -> UI -> Camera); FrameBudget <= 2 ms/frame (ADR-0059)
+csc.rsp -warnaserror+ -nullable:enable; LF line endings; gofmt + go vet + staticcheck 2026.2.1 clean
+hot-path allocations are exact gates; timing on hosted CI = median of 3; ns/op report-only
 ```
 
 Done:

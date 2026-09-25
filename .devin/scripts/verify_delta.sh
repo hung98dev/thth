@@ -256,6 +256,11 @@ if in_scope GO || { [ "$FULL" -eq 1 ] && [ "$canonical_functional_pass" -eq 0 ] 
 
       if [ "$FULL" -eq 1 ]; then
         (cd server && go vet ./...) && pass "go vet ./..." || fail "go vet ./..."
+        if has_cmd staticcheck; then
+          (cd server && staticcheck ./...) && pass "staticcheck ./..." || fail "staticcheck ./..."
+        else
+          warn "staticcheck not installed locally (CI Q4 is authoritative; go install honnef.co/go/tools/cmd/staticcheck@v0.8.1)"
+        fi
         (cd server && run_limited 300 go test -count=1 ./...) && pass "go test ./..." || fail "go test ./..."
         (cd server && go build ./...) && pass "go build ./..." || fail "go build ./..."
       fi

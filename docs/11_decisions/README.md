@@ -70,3 +70,4 @@ Use `docs/templates/adr.md`.
 | 0056 | Volumetric Art Direction and URP 2D Lighting | ACCEPTED |
 | 0057 | Bootstrap, Trusted CI, Evidence Identity and Merge Mechanics _(amended by ADR-0058)_ | ACCEPTED |
 | 0058 | Public Repository on GitHub-Hosted Linux and Windows Runners | ACCEPTED |
+| 0059 | Client Smoothness by Construction and Machine-Enforced Code Quality | ACCEPTED |

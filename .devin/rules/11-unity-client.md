@@ -12,11 +12,12 @@ globs:
 
 # Unity Client Rules
 
-Canonical: `engineering_conventions.md` §2, `04_architecture/client.md`. Unity `6000.6.1f1`, C# 9.0, .NET Standard 2.1, IL2CPP release builds.
+Canonical: `engineering_conventions.md` §2, `04_architecture/client.md`, `04_architecture/client_performance.md` § Smoothness by Construction (ADR-0059). Unity `6000.6.1f1`, C# 9.0, .NET Standard 2.1, IL2CPP release builds.
 
 ## Style
 
 - Allman braces, 4 spaces. PascalCase types/methods, camelCase locals/params, `_camelCase` private fields. C# 9.0 language level — do not use newer syntax.
+- `csc.rsp` makes every warning an error and enables nullable; one top-level type per file, namespace = assembly + folder. The verifier's style check (Q4) enforces this — see `engineering_conventions.md` §2.7.
 
 ## Assemblies (acyclic)
 
@@ -26,6 +27,7 @@ ThinhThan.Core       math, IDs, text, pure domain models
 ThinhThan.Net        WSS session, transport, serialization
 ThinhThan.Systems    gameplay presentation, interpolation, controllers
 ThinhThan.UI         HUD, menus, input overlays
+ThinhThan.App        composition root (creates FrameLoop + services); nothing references it
 ThinhThan.Tests.*    EditMode / PlayMode
 ```
 
@@ -43,11 +45,14 @@ Input/UI -> gameplay intent -> network session -> replicated state -> presentati
 
 MonoBehaviours bridge Unity lifecycle and bind scene objects — no God Objects, no SQL-shaped or persistence-mutating constructs, no direct socket calls from UI. Business logic lives in plain C# classes where reasonable. Pair event subscriptions and resource handles with lifecycle cleanup; no fire-and-forget async work without cancellation/ownership.
 
-## Hot path (Update/FixedUpdate/network dispatch)
+## Frame model and hot path (ADR-0059)
 
-- `GC.Alloc = 0` per frame: no LINQ, boxing, string concat, or collection churn.
-- Cache component references; never `GameObject.Find`/`FindObjectOfType`/`Camera.main` per frame.
-- Pool projectiles, floating text, VFX. No Instantiate/Destroy spam.
+- Only `FrameLoop` has Unity frame callbacks. Your code is an `IFrameSystem` ticked in its phase: `Input -> NetReceive -> Prediction -> Interpolation -> Presentation -> UI -> Camera`. Read time from `FrameTime`.
+- Frame code allocates 0 bytes: no LINQ, boxing, string concat/interpolation, capturing lambdas, `params`, or collection growth. Entity views are index-based arrays with cached components.
+- Non-urgent work (instantiate, list/UI population, Addressables completion, decode) goes through `FrameBudget` (≤ 2 ms per gameplay frame). Transient visuals come from `Pool<T>`, which is pre-sized at map load.
+- Forbidden APIs and their replacements: `engineering_conventions.md` §2.5 (Q4 fence). One implementation per concern: §2.6 — never write a second pool, scheduler, logger or frame driver.
+- UI: set dirty flags that are applied once in the UI phase; use separate static and dynamic Canvases; use `TMP_Text.SetText` for numbers; set `raycastTarget = false` on non-interactive graphics.
+- Rendering: use `sharedMaterial` and `SpriteRenderer.color`, never `.material` or `new Material`; materials must be SRP-Batcher compatible; never sort in script.
 
 ## Serialization & assets
 

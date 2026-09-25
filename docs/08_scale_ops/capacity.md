@@ -108,6 +108,17 @@ Release tests include:
 - daily/weekly boundary jobs.
 
 
+## Hot-Path Allocation Budgets
+Exact allocs/op gates (`testing.AllocsPerRun`, 1,000 runs, build tag `!race`) on the steady-state fixture, which models one hotspot channel: 60 replicated actors (18 player slots and 42 monster slots) receiving intents every tick. Measurement starts after a 200-tick warm-up, and no spawn, despawn or AOI membership change happens in the measured window. IMP-079 creates the fixture. Every later per-tick sim system (movement, combat, effects, AI) adds its own `TestAllocs_<System>Tick` with a budget of 0 on this fixture; the reviewer checklist enforces this. Test and benchmark rules: `../10_implementation/engineering_conventions.md` §1.7 (ADR-0059).
+
+```text
+path                                                       allocs/op   package (owner)
+one sim tick incl. ordered phases and AOI interest update  0           server/internal/sim/runtime, sim/aoi (IMP-079)
+snapshot/delta build into the caller's reused buffers      0           server/internal/sim/replication (IMP-079)
+envelope encode + frame write into a pooled buffer         0           server/internal/edge/listener (IMP-081)
+```
+Q3 runs `Benchmark*` in these packages with `-benchtime=200x` and reports ns/op, B/op and allocs/op; ns/op is never gated on hosted runners. Tick latency stays gated by § Realtime SLOs on the load suite.
+
 ## 10k Release Gate
 A candidate is 10k-ready only when a production-like soak at >=10,000 CCU-equivalent:
 - satisfies tick/durable SLOs,
@@ -117,6 +128,13 @@ A candidate is 10k-ready only when a production-like soak at >=10,000 CCU-equiva
 - preserves reward/economy idempotency,
 - completes without authority duplication.
 
+## Requirement IDs
+| ID | Requirement (section) | Gate |
+|---|---|---|
+| `HOT-001` | steady sim tick incl. AOI update = 0 allocs/op (Hot-Path Allocation Budgets) | every PR (Q3) |
+| `HOT-002` | snapshot/delta build = 0 allocs/op (Hot-Path Allocation Budgets) | every PR (Q3) |
+| `HOT-003` | envelope encode + frame write = 0 allocs/op (Hot-Path Allocation Budgets) | every PR (Q3) |
+
 ## Invariants
 - 10k CCU is a measured release gate.
 - Channel hard cap = 18; map hard cap = 540 (30 x 18).
@@ -125,4 +143,5 @@ A candidate is 10k-ready only when a production-like soak at >=10,000 CCU-equiva
 - No DB connection per player.
 - No capacity optimization may weaken server authority.
 - Headroom is planned, not consumed as normal operating target.
+- Steady-state server hot paths allocate 0 per op; allocation budgets are exact, timing on hosted CI is report-only.
 
