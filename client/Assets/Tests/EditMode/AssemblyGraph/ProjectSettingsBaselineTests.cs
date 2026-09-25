@@ -89,7 +89,7 @@ namespace ThinhThan.Tests.EditMode.AssemblyGraph
             var player = AssetText("ProjectSettings.asset");
             Assert.IsTrue(player.Contains("gcIncremental: 1"), "incremental GC must be enabled");
             var lower = player.ToLowerInvariant();
-            Assert.IsTrue(lower.Contains("optimizedframepacing: 1"),
+            Assert.IsTrue(lower.Contains("androiduseswappy: 1"),
                 "Android Optimized Frame Pacing must be enabled");
             var physics = AssetText("Physics2DSettings.asset");
             Assert.IsTrue(physics.Contains("m_SimulationMode: 2"),
