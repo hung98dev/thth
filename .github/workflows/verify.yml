@@ -166,11 +166,10 @@ jobs:
             fi
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
             tail -c 50000 unity-materialize.log 2>/dev/null || true
-            if [ -d "${{ github.workspace }}/client/Library/PackageCache" ]; then
-              find "${{ github.workspace }}/client/Library/PackageCache" -name '*.asmdef' -type f \
-                -execdir sh -c 'printf -- "-nullable:disable\n-warnaserror-\n" > csc.rsp' \;
-              echo "injected $(find "${{ github.workspace }}/client/Library/PackageCache" -name csc.rsp | wc -l) suppressing csc.rsp files"
-            fi
+            docker run --rm \
+              -v "${{ github.workspace }}:/github/workspace" \
+              "${{ env.UNITY_LINUX_IMAGE }}" \
+              bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
             [ "$i" -lt 5 ] && sleep 60
           done
           echo "unity materialization failed after 5 attempts (licence/infra)" >&2
@@ -218,11 +217,10 @@ jobs:
                 exit 1
               fi
               echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
-              if [ -d "${{ github.workspace }}/client/Library/PackageCache" ]; then
-                find "${{ github.workspace }}/client/Library/PackageCache" -name '*.asmdef' -type f \
-                  -execdir sh -c 'printf -- "-nullable:disable\n-warnaserror-\n" > csc.rsp' \;
-                echo "injected $(find "${{ github.workspace }}/client/Library/PackageCache" -name csc.rsp | wc -l) suppressing csc.rsp files"
-              fi
+              docker run --rm \
+                -v "${{ github.workspace }}:/github/workspace" \
+                "${{ env.UNITY_LINUX_IMAGE }}" \
+                bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
               sleep 20
             done
             if [ -z "$ok" ]; then
@@ -438,15 +436,10 @@ jobs:
             if ($LASTEXITCODE -eq 0) { $ok = $true; break }
             if ($LASTEXITCODE -eq 198 -or $LASTEXITCODE -eq 124) { Write-Host "unity licence activation failed deterministically (rc=$LASTEXITCODE) - not retrying"; exit 1 }
             Write-Host "unity materialization attempt $i failed; retrying after 60s"
-            $pkg = "${{ github.workspace }}\client\Library\PackageCache"
-            if (Test-Path $pkg) {
-              $n = 0
-              Get-ChildItem -Recurse $pkg -Filter *.asmdef | ForEach-Object {
-                Set-Content -Path (Join-Path $_.DirectoryName 'csc.rsp') -Value "-nullable:disable`n-warnaserror-"
-                $n++
-              }
-              Write-Host "injected $n suppressing csc.rsp files"
-            }
+            docker run --rm `
+              -v "${{ github.workspace }}:C:\repo" `
+              "${{ env.UNITY_WINDOWS_IMAGE }}" `
+              powershell -Command "Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') }"
             if ($i -lt 5) { Start-Sleep -Seconds 60 }
           }
           if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
