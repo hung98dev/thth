@@ -145,28 +145,27 @@ jobs:
           set -uo pipefail
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5 6 7 8; do
-            lf=/github/workspace/unity-materialize.log; [ "$i" -eq 1 ] && lf=-
             docker run --rm --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
               -w /github/workspace \
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
               -e MONO_GC_PARAMS=nursery-size=64m \
-              -e LOG_FILE="$lf" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
                 rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
-                timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile "$LOG_FILE" &&
-                unity-editor -batchmode -nographics -projectPath /github/workspace/client -quit -logFile "$LOG_FILE"
-              ' \
-              && exit 0
-            rc=$?
+                timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - &&
+                unity-editor -batchmode -nographics -projectPath /github/workspace/client -quit -logFile -
+              ' 2>&1 | tee unity-materialize.log
+            rc=${PIPESTATUS[0]}
+            if [ "$rc" -eq 0 ] && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
+              exit 0
+            fi
             if [ "$rc" -eq 198 ] || [ "$rc" -eq 124 ]; then
               echo "unity licence activation failed deterministically (rc=$rc) - not retrying. Fix UNITY_SERIAL/licence secrets." >&2
               exit 1
             fi
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
-            tail -c 50000 unity-materialize.log 2>/dev/null || true
             sudo dmesg 2>/dev/null | tail -10 || true
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
@@ -176,6 +175,15 @@ jobs:
           done
           echo "unity materialization failed after 8 attempts (licence/infra)" >&2
           exit 1
+
+      - name: Inject package nullable suppressions
+        if: success()
+        shell: bash
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/github/workspace" \
+            "${{ env.UNITY_LINUX_IMAGE }}" \
+            bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
 
       - name: Dump unity-materialize.log on failure
         if: failure()
@@ -431,23 +439,33 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           $ok = $false
-          foreach ($i in 1..5) {
-            docker run --rm `
+          foreach ($i in 1..8) {
+            $out = docker run --rm `
               -v "${{ github.workspace }}:C:\repo" `
               -w C:\repo `
               -e UNITY_LICENSE -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              powershell -Command "Remove-Item -Force -ErrorAction SilentlyContinue 'C:\ProgramData\Unity\Unity_lic.ulf'; `$p = Start-Process -FilePath 'C:\Program Files\Unity\Editor\Unity.exe' -ArgumentList @('-batchmode','-nographics','-serial',`$env:UNITY_SERIAL,'-username',`$env:UNITY_EMAIL,'-password',`$env:UNITY_PASSWORD,'-quit','-logFile','-') -NoNewWindow -PassThru; if (-not `$p.WaitForExit(300000)) { Stop-Process -Id `$p.Id -Force; exit 124 }; if (`$p.ExitCode -ne 0) { exit `$p.ExitCode }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -projectPath C:\repo\client -quit -logFile -"
-            if ($LASTEXITCODE -eq 0) { $ok = $true; break }
-            if ($LASTEXITCODE -eq 198 -or $LASTEXITCODE -eq 124) { Write-Host "unity licence activation failed deterministically (rc=$LASTEXITCODE) - not retrying"; exit 1 }
-            Write-Host "unity materialization attempt $i failed; retrying after 60s"
+              powershell -Command "Remove-Item -Force -ErrorAction SilentlyContinue 'C:\ProgramData\Unity\Unity_lic.ulf'; `$p = Start-Process -FilePath 'C:\Program Files\Unity\Editor\Unity.exe' -ArgumentList @('-batchmode','-nographics','-serial',`$env:UNITY_SERIAL,'-username',`$env:UNITY_EMAIL,'-password',`$env:UNITY_PASSWORD,'-quit','-logFile','-') -NoNewWindow -PassThru; if (-not `$p.WaitForExit(300000)) { Stop-Process -Id `$p.Id -Force; exit 124 }; if (`$p.ExitCode -ne 0) { exit `$p.ExitCode }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -projectPath C:\repo\client -quit -logFile -" 2>&1 | Tee-Object -FilePath unity-materialize.log
+            $rc = $LASTEXITCODE
+            if ($rc -eq 0 -and -not ($out -match 'Scripts have compiler errors')) { $ok = $true; break }
+            if ($rc -eq 198 -or $rc -eq 124) { Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
+            Write-Host "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
             docker run --rm `
               -v "${{ github.workspace }}:C:\repo" `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
               powershell -Command "Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') }"
-            if ($i -lt 5) { Start-Sleep -Seconds 60 }
+            if ($i -lt 8) { Start-Sleep -Seconds 60 }
           }
-          if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
+          if (-not $ok) { Write-Error 'unity materialization failed after 8 attempts (licence/infra)'; exit 1 }
+
+      - name: Inject package nullable suppressions
+        if: success()
+        shell: pwsh
+        run: |
+          docker run --rm `
+            -v "${{ github.workspace }}:C:\repo" `
+            "${{ env.UNITY_WINDOWS_IMAGE }}" `
+            powershell -Command "Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') }"
 
       - name: Unity EditMode+PlayMode tests
         timeout-minutes: 30
