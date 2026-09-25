@@ -129,6 +129,10 @@ jobs:
             echo "THINHTHAN_TEST_PG_DSN=postgres://postgres:postgres@localhost:5432/thinhthan_test?sslmode=disable"
           } >> "$GITHUB_ENV"
 
+      - name: Pull Unity image (pinned)
+        shell: bash
+        run: docker pull "${{ env.UNITY_LINUX_IMAGE }}"
+
       - name: Unity materialization (licence retry <=5)
         shell: bash
         env:
@@ -317,8 +321,11 @@ jobs:
           $z = "$env:RUNNER_TEMP\edb.zip"
           curl.exe -fsSL 'https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip' -o $z
           if ((Get-FileHash $z -Algorithm SHA256).Hash.ToLower() -ne 'fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c') { throw 'edb sha256 mismatch' }
-          Expand-Archive $z -DestinationPath "$env:RUNNER_TEMP\edb" -Force
+          tar.exe -xf $z -C "$env:RUNNER_TEMP"
+          Rename-Item "$env:RUNNER_TEMP\pgsql" "$env:RUNNER_TEMP\edb" -ErrorAction SilentlyContinue
+          if (-not (Test-Path "$env:RUNNER_TEMP\edb")) { New-Item -ItemType Directory -Path "$env:RUNNER_TEMP\edb" | Out-Null; tar.exe -xf $z -C "$env:RUNNER_TEMP\edb" }
           $bin = "$env:RUNNER_TEMP\edb\pgsql\bin"
+          if (-not (Test-Path "$bin\initdb.exe")) { $bin = "$env:RUNNER_TEMP\edb\bin" }
           & "$bin\initdb.exe" -D "$env:RUNNER_TEMP\pgdata" -U postgres -A trust -E UTF8 --locale=C | Out-Null
           $l = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
           $l.Start(); $port = $l.LocalEndpoint.Port; $l.Stop()
@@ -335,6 +342,10 @@ jobs:
             "THINHTHAN_RUN_ID=${{ github.run_id }}",
             "THINHTHAN_RUN_ATTEMPT=${{ github.run_attempt }}"
           ) -join "`n" >> $env:GITHUB_ENV
+
+      - name: Pull Unity image (pinned)
+        shell: pwsh
+        run: docker pull "${{ env.UNITY_WINDOWS_IMAGE }}"
 
       - name: Unity materialization (licence retry <=5)
         shell: pwsh
