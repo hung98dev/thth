@@ -29,3 +29,10 @@ server/verify
 Thumbs.db
 *.user
 *.suo
+
+# Unity per-user layout state (never committed)
+client/UserSettings/
+client/[Ll]ibrary/
+client/[Tt]emp/
+client/[Ll]ogs/
+client/obj/
