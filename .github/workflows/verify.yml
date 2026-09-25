@@ -133,7 +133,7 @@ jobs:
         shell: bash
         run: docker pull "${{ env.UNITY_LINUX_IMAGE }}"
 
-      - name: Unity materialization (licence retry <=5)
+      - name: Unity materialization (licence retry <=8)
         timeout-minutes: 30
         shell: bash
         env:
@@ -144,7 +144,7 @@ jobs:
         run: |
           set -uo pipefail
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
-          for i in 1 2 3 4 5; do
+          for i in 1 2 3 4 5 6 7 8; do
             lf=/github/workspace/unity-materialize.log; [ "$i" -eq 1 ] && lf=-
             docker run --rm --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
@@ -170,9 +170,9 @@ jobs:
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
-            [ "$i" -lt 5 ] && sleep 60
+            [ "$i" -lt 8 ] && sleep 60
           done
-          echo "unity materialization failed after 5 attempts (licence/infra)" >&2
+          echo "unity materialization failed after 8 attempts (licence/infra)" >&2
           exit 1
 
       - name: Dump unity-materialize.log on failure
@@ -193,7 +193,7 @@ jobs:
           mkdir -p artifacts/unity-tests
           for mode in EditMode PlayMode; do
             ok=
-            for i in 1 2 3; do
+            for i in 1 2 3 4 5; do
               if docker run --rm --shm-size=2g \
                 -v "${{ github.workspace }}:/github/workspace" \
                 -w /github/workspace \
@@ -225,7 +225,7 @@ jobs:
               sleep 20
             done
             if [ -z "$ok" ]; then
-              echo "unity $mode tests failed after 3 attempts" >&2
+              echo "unity $mode tests failed after 5 attempts" >&2
               exit 1
             fi
           done
