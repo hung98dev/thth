@@ -163,10 +163,11 @@ jobs:
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
                 "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
-              ' 2>&1 | tee unity-materialize.log \
-              && ! grep -q 'Scripts have compiler errors' unity-materialize.log \
-              && exit 0
+              ' 2>&1 | tee unity-materialize.log
             rc=${PIPESTATUS[0]}
+            if grep -q 'Exiting batchmode successfully' unity-materialize.log && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
+              exit 0
+            fi
             dead=$(docker ps -ql 2>/dev/null)
             docker inspect "$dead" --format 'container-state: OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' 2>/dev/null || true
             docker rm -f "$dead" >/dev/null 2>&1 || true
@@ -230,25 +231,34 @@ jobs:
                 exit 1
               fi
               rc=$arc
-              if [ "$arc" -eq 0 ] && docker run --shm-size=2g \
-                -v "${{ github.workspace }}:/github/workspace" \
-                -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
-                -v /etc/machine-id:/etc/machine-id:ro \
-                -w /github/workspace \
-                -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
-                -e LIBGL_ALWAYS_SOFTWARE=1 \
-                -e MONO_GC_PARAMS=nursery-size=64m \
-                -e MODE="$mode" \
-                "${{ env.UNITY_LINUX_IMAGE }}" \
-                bash -c '
-                  "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
-                    -runTests -testPlatform "$MODE" \
-                    -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
-                    -logFile -
-                '; then
+              rm -f "artifacts/unity-tests/$MODE-results.xml" unity-tests.log
+              if [ "$arc" -eq 0 ]; then
+                if docker run --shm-size=2g \
+                  -v "${{ github.workspace }}:/github/workspace" \
+                  -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                  -v /etc/machine-id:/etc/machine-id:ro \
+                  -w /github/workspace \
+                  -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+                  -e LIBGL_ALWAYS_SOFTWARE=1 \
+                  -e MONO_GC_PARAMS=nursery-size=64m \
+                  -e MODE="$mode" \
+                  "${{ env.UNITY_LINUX_IMAGE }}" \
+                  bash -c '
+                    "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
+                      -runTests -testPlatform "$MODE" \
+                      -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
+                      -logFile -
+                  ' 2>&1 | tee unity-tests.log; then
+                  rc=0
+                else
+                  rc=${PIPESTATUS[0]}
+                fi
+              fi
+              if [ -f "artifacts/unity-tests/$MODE-results.xml" ] \
+                && grep -q 'Exiting batchmode successfully' unity-tests.log \
+                && grep -q 'result="Passed"' "artifacts/unity-tests/$MODE-results.xml" \
+                && ! grep -q 'Scripts have compiler errors' unity-tests.log; then
                 ok=1; break
-              else
-                rc=$?
               fi
               dead=$(docker ps -ql 2>/dev/null)
               docker inspect "$dead" --format 'container-state: OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' 2>/dev/null || true
