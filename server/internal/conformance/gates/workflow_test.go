@@ -128,15 +128,24 @@ func TestLinuxUnityRunsHeadless(t *testing.T) {
 	found := false
 	for i := range j.Steps {
 		run := j.Steps[i].Run
-		if strings.Contains(run, "unity-editor") && strings.Contains(run, "-projectPath") {
+		if !strings.Contains(run, "-projectPath") {
+			continue
+		}
+		// unity-editor wraps Unity under xvfb (virtual display) - headless.
+		// A direct editor binary invocation must pass -nographics instead.
+		if strings.Contains(run, "unity-editor") {
 			found = true
+			continue
+		}
+		if strings.Contains(run, "/opt/unity/Editor/Unity") {
 			if !strings.Contains(run, "-nographics") {
-				t.Fatalf("linux unity step %q must run headless (-nographics)", j.Steps[i].Name)
+				t.Fatalf("linux unity step %q invokes the editor without -nographics", j.Steps[i].Name)
 			}
+			found = true
 		}
 	}
 	if !found {
-		t.Fatal(`linux job: no "unity-editor" -projectPath step`)
+		t.Fatal(`linux job: no headless unity-editor/-nographics -projectPath step`)
 	}
 }
 

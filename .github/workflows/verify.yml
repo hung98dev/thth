@@ -199,9 +199,9 @@ jobs:
             curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
             ip route get 1.1.1.1 2>/dev/null | head -1 || true
             if [ -n "$img_strace" ]; then
-              INVOKE="strace -f -tt -o /tmp/strace-out/m-$i.log -e trace=%signal,mprotect,prctl,io_uring_setup /opt/unity/Editor/Unity -batchmode -nographics -projectPath /github/workspace/client \$EXTRA -quit -logFile -"
+              INVOKE="strace -f -tt -o /tmp/strace-out/m-$i.log -e trace=%signal,mprotect,prctl,io_uring_setup unity-editor -projectPath /github/workspace/client \$EXTRA -quit -logFile -"
             else
-              INVOKE="unity-editor -nographics -projectPath /github/workspace/client \$EXTRA -quit -logFile -"
+              INVOKE="unity-editor -projectPath /github/workspace/client \$EXTRA -quit -logFile -"
             fi
             cid=$(docker run -d -i $NET --shm-size=4g --cap-add SYS_PTRACE --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
@@ -310,7 +310,7 @@ jobs:
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
-                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
+                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
               if [ -n "$lcid" ]; then arc=$(docker wait "$lcid"); else arc=199; fi
               if [ "$arc" -eq 198 ]; then
                 echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
@@ -335,7 +335,7 @@ jobs:
                   -e MODE="$mode" \
                   "${{ env.UNITY_LINUX_IMAGE }}" \
                   bash -c '
-                    unity-editor -nographics -projectPath /github/workspace/client \
+                    unity-editor -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile -
