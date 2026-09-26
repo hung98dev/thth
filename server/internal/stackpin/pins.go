@@ -182,7 +182,7 @@ var UnityPackages = map[string]string{
 	"com.unity.test-framework.performance":   "6.6.0",
 	"com.unity.memoryprofiler":               "1.1.12",
 	"com.unity.performance.profile-analyzer": "1.4.0",
-	"com.unity.ugui":                         "2.0.0",
+	"com.unity.ugui":                         "2.6.0",
 }
 
 // UnityOptionalPackages may appear in manifest.json at their pinned version

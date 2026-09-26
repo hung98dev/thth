@@ -120,23 +120,20 @@ func TestCliToolsFromPinnedReleaseAssets(t *testing.T) {
 	}
 }
 
-func TestLinuxUnityUnderXvfbLlvmpipe(t *testing.T) {
+func TestLinuxUnityRunsHeadless(t *testing.T) {
 	wf := verifyWf(t)
 	j := jobNamed(t, wf, "verify-linux")
-	var unityStep *WorkflowStep
+	found := false
 	for i := range j.Steps {
-		if strings.Contains(j.Steps[i].Run, "unity") || strings.Contains(j.Steps[i].Name, "Unity") {
-			if strings.Contains(j.Steps[i].Run, "xvfb-run") {
-				unityStep = &j.Steps[i]
-				break
+		if strings.Contains(j.Steps[i].Run, "unity-editor -batchmode") {
+			found = true
+			if !strings.Contains(j.Steps[i].Run, "-nographics") {
+				t.Fatalf("linux unity step %q must run headless (-nographics)", j.Steps[i].Name)
 			}
 		}
 	}
-	if unityStep == nil {
-		t.Fatal("linux job: no unity step under xvfb-run")
-	}
-	if !strings.Contains(unityStep.Run, "LIBGL_ALWAYS_SOFTWARE=1") {
-		t.Fatal("linux unity step lacks LIBGL_ALWAYS_SOFTWARE=1 (llvmpipe)")
+	if !found {
+		t.Fatal("linux job: no unity-editor -batchmode step")
 	}
 }
 
