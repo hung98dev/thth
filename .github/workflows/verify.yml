@@ -161,6 +161,8 @@ jobs:
           if ! command -v bpftrace >/dev/null 2>&1; then
             sudo apt-get install -y -qq bpftrace >/dev/null 2>&1 || true
           fi
+          command -v strace >/dev/null 2>&1 || sudo apt-get install -y -qq strace >/dev/null 2>&1 || true
+          mkdir -p "$RUNNER_TEMP/unity-cfg"
           if command -v bpftrace >/dev/null 2>&1; then
             (sudo bpftrace -e 'kprobe:cgroup_kill { printf("cgroup_kill writer comm=%s pid=%d\n", comm, pid); }' > "$RUNNER_TEMP/cgroup-kill.log" 2>&1 & echo $! > "$RUNNER_TEMP/bpftrace.pid") || true
           fi
@@ -192,6 +194,7 @@ jobs:
             cid=$(docker run -d -i $NET --shm-size=4g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+              -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -208,6 +211,8 @@ jobs:
               ') || cid=
             df -h / "$RUNNER_TEMP" | tail -2 || true
             docker system df 2>/dev/null | tail -3 || true
+            cpid=$(docker inspect -f '{{.State.Pid}}' "$cid" 2>/dev/null) || cpid=
+            [ -n "$cpid" ] && [ "$cpid" != "0" ] && (sudo timeout 120 strace -fp "$cpid" -e trace=kill,tkill,tgkill,rt_sigaction,pidfd_send_signal,exit_group -tt -o "$RUNNER_TEMP/ustrace-$i.txt" >/dev/null 2>&1 &) || true
             if [ -n "$cid" ]; then
               docker logs -f "$cid" > "$RUNNER_TEMP/unity-materialize.log" 2>&1 || true
               rc=$(docker wait "$cid")
@@ -230,6 +235,9 @@ jobs:
             sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
             sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
             free -m
+            tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
+            find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+            grep -n 'kill(\|SIGKILL\|exit_group' "$RUNNER_TEMP/ustrace-$i.txt" 2>/dev/null | tail -30 || true
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
@@ -281,6 +289,7 @@ jobs:
               curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
               lcid=$(docker run -d -i --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
@@ -299,6 +308,7 @@ jobs:
                 cid=$(docker run -d -i $TNET --shm-size=4g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                  -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -314,6 +324,8 @@ jobs:
                   ') || cid=
                 df -h / "$RUNNER_TEMP" | tail -2 || true
                 docker system df 2>/dev/null | tail -3 || true
+                cpid=$(docker inspect -f '{{.State.Pid}}' "$cid" 2>/dev/null) || cpid=
+                [ -n "$cpid" ] && [ "$cpid" != "0" ] && (sudo timeout 120 strace -fp "$cpid" -e trace=kill,tkill,tgkill,rt_sigaction,pidfd_send_signal,exit_group -tt -o "$RUNNER_TEMP/ustrace-$mode-$i.txt" >/dev/null 2>&1 &) || true
                 if [ -n "$cid" ]; then
                   docker logs -f "$cid" > "$RUNNER_TEMP/unity-tests.log" 2>&1 || true
                   rc=$(docker wait "$cid")
@@ -334,6 +346,9 @@ jobs:
               sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
               sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
               free -m
+              tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
+              find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+              grep -n 'kill(\|SIGKILL\|exit_group' "$RUNNER_TEMP/ustrace-$mode-$i.txt" 2>/dev/null | tail -30 || true
               echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
               docker run --rm \
                 -v "${{ github.workspace }}:/github/workspace" \
