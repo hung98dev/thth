@@ -147,7 +147,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
-            docker run --shm-size=2g \
+            if docker run --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
@@ -163,8 +163,11 @@ jobs:
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
                 "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
-              ' 2>&1 | tee unity-materialize.log
-            rc=${PIPESTATUS[0]}
+              ' 2>&1 | tee unity-materialize.log; then
+              rc=0
+            else
+              rc=${PIPESTATUS[0]}
+            fi
             if grep -q 'Exiting batchmode successfully' unity-materialize.log && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
               exit 0
             fi
