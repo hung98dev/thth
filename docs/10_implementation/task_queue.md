@@ -24,7 +24,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 
 | ID | Title | Status | Dependencies | Specs |
 |---|---|---|---|---|
-| `IMP-000` | M0 Bootstrap Gate & Toolchain Harness | `BLOCKED` | none | `../00_context/technology_versions.md`, `../00_context/constraints.md` |
+| `IMP-000` | M0 Bootstrap Gate & Toolchain Harness | `NOT_STARTED` | none | `../00_context/technology_versions.md`, `../00_context/constraints.md` |
 | `IMP-001` | Stable IDs / Revisions | `NOT_STARTED` | IMP-000 | `../06_data/ids.md`, `../06_data/config.md` |
 | `IMP-002` | Deterministic RNG Interface | `NOT_STARTED` | IMP-001 | `../04_architecture/concurrency.md`, `../06_data/config.md` |
 | `IMP-003` | Content Compiler | `NOT_STARTED` | IMP-001, IMP-002 | `../01_gameplay/skills.md`, `../06_data/config.md` |
@@ -149,16 +149,16 @@ IMP-056 -> IMP-077 -> IMP-103 -> IMP-067 -> IMP-069 -> IMP-044 -> IMP-045 -> IMP
 
 ## `IMP-000` — M0 Bootstrap Gate & Toolchain Harness
 id: IMP-000
-status: BLOCKED
+status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "BLK-001"
+blocked_by: ""
 
 specs: [`../00_context/technology_versions.md`, `../00_context/constraints.md`, `../00_context/glossary.md`, `../00_context/non_goals.md`, `../00_context/vision.md`, `../04_architecture/system_overview.md`, `../04_architecture/backend.md`, `repository_layout.md`, `architecture_conformance.md`, `../09_testing/test_and_release_evidence.md`, `audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`, `../04_architecture/client_performance.md`, `../08_scale_ops/capacity.md`]
 adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0040-world-consequence-durable-aggregate.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
 depends_on: []
-owned_paths: [`.editorconfig`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `.github/workflows/verify.yml`, `scripts/verify.ps1`, `server/go.mod`, `server/go.sum`, `server/cmd/verify/`, `server/internal/conformance/gates/`, `server/internal/stackpin/`, `client/Packages/`, `client/ProjectSettings/`, `client/Assets/Plugins/Google.Protobuf/`, `client/Assets/Scripts/Core/ThinhThan.Core.asmdef`, `client/Assets/Scripts/Net/ThinhThan.Net.asmdef`, `client/Assets/Scripts/Systems/ThinhThan.Systems.asmdef`, `client/Assets/Scripts/UI/ThinhThan.UI.asmdef`, `client/Assets/Scripts/App/ThinhThan.App.asmdef`, `client/Assets/Tests/EditMode/ThinhThan.Tests.EditMode.asmdef`, `client/Assets/Tests/PlayMode/ThinhThan.Tests.PlayMode.asmdef`, `client/Assets/Scripts/Protocol/ThinhThan.Protocol.asmdef`, `client/Assets/Scripts/Core/Assets/ThinhThan.Core.Assets.asmdef`, `client/Assets/Scripts/Core/Assets/Editor/ThinhThan.Core.Assets.Editor.asmdef`, `client/Assets/Scripts/Core/Localization/ThinhThan.Core.Localization.asmdef`, `client/Assets/Scripts/Core/Localization/Editor/ThinhThan.Core.Localization.Editor.asmdef`, `client/Assets/Scripts/Core/Geometry/Editor/ThinhThan.Core.Geometry.Editor.asmdef`, `client/Assets/Tests/EditMode/AssemblyGraph/`, `client/Assets/csc.rsp`, `server/internal/conformance/style/`]
+owned_paths: [`.editorconfig`, `.gitignore`, `.gitattributes`, `.github/pull_request_template.md`, `.github/workflows/verify.yml`, `scripts/verify.ps1`, `server/go.mod`, `server/go.sum`, `server/cmd/verify/`, `server/internal/conformance/gates/`, `server/internal/stackpin/`, `client/Packages/`, `client/ProjectSettings/`, `client/Assets/Plugins/Google.Protobuf/`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/DefaultVolumeProfile.asset.meta`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset.meta`, `client/Assets/Scripts/Core/ThinhThan.Core.asmdef`, `client/Assets/Scripts/Net/ThinhThan.Net.asmdef`, `client/Assets/Scripts/Systems/ThinhThan.Systems.asmdef`, `client/Assets/Scripts/UI/ThinhThan.UI.asmdef`, `client/Assets/Scripts/App/ThinhThan.App.asmdef`, `client/Assets/Tests/EditMode/ThinhThan.Tests.EditMode.asmdef`, `client/Assets/Tests/PlayMode/ThinhThan.Tests.PlayMode.asmdef`, `client/Assets/Scripts/Protocol/ThinhThan.Protocol.asmdef`, `client/Assets/Scripts/Core/Assets/ThinhThan.Core.Assets.asmdef`, `client/Assets/Scripts/Core/Assets/Editor/ThinhThan.Core.Assets.Editor.asmdef`, `client/Assets/Scripts/Core/Localization/ThinhThan.Core.Localization.asmdef`, `client/Assets/Scripts/Core/Localization/Editor/ThinhThan.Core.Localization.Editor.asmdef`, `client/Assets/Scripts/Core/Geometry/Editor/ThinhThan.Core.Geometry.Editor.asmdef`, `client/Assets/Tests/EditMode/AssemblyGraph/`, `client/Assets/csc.rsp`, `server/internal/conformance/style/`]
 forbidden_paths: [`server/cmd/server/`]
 contract_inputs: [version matrix, docs-only baseline, repository layout]
 contract_outputs: [native lockfiles, pinned project skeleton, Q0/Q1 verifier entrypoint]
@@ -207,8 +207,9 @@ Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.
 - `server/internal/conformance/gates/workflow_test.go` (ADR-0072): TestPullRequestTriggerBeforeCutover, TestForkGuardOnlyOnPullRequestEvents, TestForkGuardSkippedOnPush, TestFreezeFailsExceptRevertAndOps, TestUnityMaterializeRunsWhenUnityGatesSkip, TestMaterializedArtifactPerOsFailsJob, TestLicenceActivationRetriedFiveTimes, TestCheckoutLfsAndPinnedGitLfs, TestRaceOnLinuxJobOnly, TestEvidenceJobUsesPinnedDownloadArtifact.
 - `server/internal/conformance/gates/gates_test.go` (ADR-0072): TestBlockAndOpsPrFastPath, TestDoneWithoutManifestAllowedOnHead, TestMergedHeadRequiresManifest, TestTwoPhaseListIncludesImp083, TestLocalDeferMissingNeverInCi.
 - `server/internal/stackpin/versions_test.go` (ADR-0072): TestGoogleProtobufNupkgSha256, TestEdbZipSha256, TestDownloadArtifactAndGitLfsPins.
+- `server/internal/conformance/gates/gates_test.go` (BLK-001): TestImp000OwnedPathsCoverMaterializedAssets — IMP-000 `owned_paths` cover `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset` and their `.meta`.
 
-generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
+generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
 evidence_location: "docs/10_implementation/evidence/IMP-000/"
 
