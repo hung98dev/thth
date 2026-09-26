@@ -305,7 +305,7 @@ func TestWallTimeFieldsRecorded(t *testing.T) {
 			t.Errorf("%s must write to RUNNER_TEMP (outside the workspace, Q6)", helper)
 		}
 	}
-	for _, entry := range []string{"go-toolchain", "unity-editor-image", "unity-library"} {
+	for _, entry := range []string{"go-build", "unity-editor-image", "unity-library"} {
 		if !strings.Contains(text, entry) {
 			t.Errorf("verify.yml emits no %q telemetry entry", entry)
 		}
@@ -331,7 +331,7 @@ func TestWallTimeFieldsRecorded(t *testing.T) {
 	if err := os.WriteFile(report, []byte(base), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	telData := "{\"step\":\"go-toolchain\",\"result\":\"hit\",\"wall_seconds\":3.5}\n" +
+	telData := "{\"step\":\"go-build\",\"result\":\"hit\",\"wall_seconds\":3.5}\n" +
 		"{\"step\":\"unity-editor-image\",\"result\":\"miss\",\"wall_seconds\":240}\n"
 	if err := os.WriteFile(tel, []byte(telData), 0o644); err != nil {
 		t.Fatal(err)
