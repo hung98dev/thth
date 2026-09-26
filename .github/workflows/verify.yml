@@ -145,6 +145,22 @@ jobs:
           sudo auditctl -a always,exit -F arch=b64 -S kill -S tkill -S tgkill -S pidfd_send_signal -k unitykill 2>/dev/null || echo 'auditctl rules not installed'
           sudo auditctl -l 2>/dev/null || true
           (docker events --since "$(date +%s)" --filter 'event=die' --filter 'event=kill' --filter 'event=oom' --format '{{json .}}' > "$RUNNER_TEMP/docker-events.log" 2>&1 & echo $! > "$RUNNER_TEMP/docker-events.pid") || true
+          sudo bash -c '
+            mount -t tracefs nodev /sys/kernel/tracing 2>/dev/null || true
+            T=/sys/kernel/tracing; [ -d "$T/events" ] || T=/sys/kernel/debug/tracing
+            if [ -d "$T/events/signal/signal_generate" ]; then
+              : > "$T/trace" 2>/dev/null || true
+              echo "sig==9" > "$T/events/signal/signal_generate/filter" 2>/dev/null || true
+              echo 1 > "$T/events/signal/signal_generate/enable" 2>/dev/null || true
+              echo "$T" > /tmp/tracefs-dir
+            fi
+          ' || true
+          if ! command -v bpftrace >/dev/null 2>&1; then
+            sudo apt-get install -y -qq bpftrace >/dev/null 2>&1 || true
+          fi
+          if command -v bpftrace >/dev/null 2>&1; then
+            (sudo bpftrace -e 'kprobe:cgroup_kill { printf("cgroup_kill writer comm=%s pid=%d\n", comm, pid); }' > "$RUNNER_TEMP/cgroup-kill.log" 2>&1 & echo $! > "$RUNNER_TEMP/bpftrace.pid") || true
+          fi
 
       - name: Unity materialization (licence retry <=5)
         timeout-minutes: 30
@@ -319,6 +335,13 @@ jobs:
           echo '=== docker daemon events ==='
           cat "$RUNNER_TEMP/docker-events.log" 2>/dev/null | tail -40 || true
           kill "$(cat "$RUNNER_TEMP/docker-events.pid" 2>/dev/null)" 2>/dev/null || true
+          echo '=== signal_generate SIGKILL trace (sender comm/pid in prefix) ==='
+          T=$(cat /tmp/tracefs-dir 2>/dev/null || echo /sys/kernel/tracing)
+          sudo cat "$T/trace" 2>/dev/null | grep 'signal_generate' | tail -80 || true
+          sudo bash -c "echo 0 > '$T/events/signal/signal_generate/enable'; echo 0 > '$T/events/signal/signal_generate/filter'" 2>/dev/null || true
+          echo '=== cgroup_kill writers (bpftrace) ==='
+          cat "$RUNNER_TEMP/cgroup-kill.log" 2>/dev/null | tail -30 || true
+          sudo pkill -f 'bpftrace -e' 2>/dev/null || true
           sudo auditctl -D -k unitykill 2>/dev/null || true
 
       - name: Unity materialized drift check
