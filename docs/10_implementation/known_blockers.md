@@ -25,6 +25,8 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
+None. IDs start at `BLK-001` and `OPS-001`.
+
 ### `BLK-002` — `Q6.evidence.api` ancestor check is unsatisfiable for merged evidence manifests under squash-merge
 opened_by: implementer/IMP-001   opened_at: 2026-09-26T17:10Z
 evidence: `Q6.evidence.api.IMP-000` FAIL on PR https://github.com/hung98dev/thth/pull/7, run https://github.com/hung98dev/thth/actions/runs/36257174545 job 108446051513 — `run head_sha 9213525474603ecd2f42cb9e596681010884e59f is not an ancestor of HEAD: exit status 128 (fatal: Not a valid commit name ...)`. That head_sha is `refs/pull/4/head` (IMP-000's done-PR head, squash-merged as 51dae43 then branch-deleted): it is never an ancestor of `main` and is not fetched into a PR checkout (`actions/checkout` `fetch-depth: 0` covers `refs/heads/*` only). The check passes only for a manifest whose evidence run head is the current PR's own head (an ancestor of the pull_request test-merge commit), so every non-status-only PR fails it once a DONE manifest exists on `main`.
