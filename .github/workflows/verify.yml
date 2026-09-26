@@ -450,14 +450,24 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
+          $steps = "$env:RUNNER_TEMP\unity-steps"
+          New-Item -ItemType Directory -Force -Path $steps | Out-Null
+          @'
+          Remove-Item -Force -ErrorAction SilentlyContinue 'C:\ProgramData\Unity\Unity_lic.ulf'
+          & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -serial $env:UNITY_SERIAL -username $env:UNITY_EMAIL -password $env:UNITY_PASSWORD -quit -logFile -
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -projectPath C:\repo\client -quit -logFile -
+          exit $LASTEXITCODE
+          '@ | Set-Content "$steps\materialize.ps1"
           $ok = $false
           foreach ($i in 1..5) {
             $out = docker run --rm `
               -v "${{ github.workspace }}:C:\repo" `
+              -v "${env:RUNNER_TEMP}\unity-steps:C:\steps" `
               -w C:\repo `
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              powershell -Command "Remove-Item -Force -ErrorAction SilentlyContinue 'C:\ProgramData\Unity\Unity_lic.ulf'; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -serial `$env:UNITY_SERIAL -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile -; if (`$LASTEXITCODE -ne 0) { exit `$LASTEXITCODE }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -projectPath C:\repo\client -quit -logFile -; exit `$LASTEXITCODE" 2>&1 | Tee-Object -FilePath unity-materialize.log
+              powershell -NoProfile -File C:\steps\materialize.ps1 2>&1 | Tee-Object -FilePath unity-materialize.log
             $rc = $LASTEXITCODE
             if ($rc -eq 0 -and $out -and -not ($out -match 'Scripts have compiler errors') -and (Test-Path "${{ github.workspace }}\client\Library\PackageCache")) { $ok = $true; break }
             if ($rc -eq 198) { Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
