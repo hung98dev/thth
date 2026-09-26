@@ -156,11 +156,10 @@ jobs:
                 rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
                 timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - &&
                 unity-editor -batchmode -nographics -projectPath /github/workspace/client -quit -logFile -
-              ' 2>&1 | tee unity-materialize.log
+              ' 2>&1 | tee unity-materialize.log \
+              && ! grep -q 'Scripts have compiler errors' unity-materialize.log \
+              && exit 0
             rc=${PIPESTATUS[0]}
-            if [ "$rc" -eq 0 ] && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
-              exit 0
-            fi
             if [ "$rc" -eq 198 ]; then
               echo "unity licence activation failed deterministically (rc=$rc) - not retrying. Fix UNITY_SERIAL/licence secrets." >&2
               exit 1
@@ -170,7 +169,7 @@ jobs:
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
-              bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
+              bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
             [ "$i" -lt 5 ] && sleep 60
           done
           echo "unity materialization failed after 5 attempts (licence/infra)" >&2
@@ -233,7 +232,7 @@ jobs:
               docker run --rm \
                 -v "${{ github.workspace }}:/github/workspace" \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
-                bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
+                bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
               sleep 20
             done
             if [ -z "$ok" ]; then
