@@ -150,9 +150,9 @@ jobs:
             T=/sys/kernel/tracing; [ -d "$T/events" ] || T=/sys/kernel/debug/tracing
             if [ -d "$T/events/signal/signal_generate" ]; then
               : > "$T/trace" 2>/dev/null || true
-              echo "sig==9" > "$T/events/signal/signal_generate/filter" 2>/dev/null || true
+              : > "$T/events/signal/signal_generate/filter" 2>/dev/null || true
               echo 1 > "$T/events/signal/signal_generate/enable" 2>/dev/null || true
-              [ -d "$T/events/signal/signal_deliver" ] && echo "sig==9" > "$T/events/signal/signal_deliver/filter" 2>/dev/null || true
+              [ -d "$T/events/signal/signal_deliver" ] && : > "$T/events/signal/signal_deliver/filter" 2>/dev/null || true
               [ -d "$T/events/signal/signal_deliver" ] && echo 1 > "$T/events/signal/signal_deliver/enable" 2>/dev/null || true
               [ -d "$T/events/sched/sched_process_exit" ] && echo 1 > "$T/events/sched/sched_process_exit/enable" 2>/dev/null || true
               echo "$T" > /tmp/tracefs-dir
@@ -189,7 +189,7 @@ jobs:
             getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
             curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
             ip route get 1.1.1.1 2>/dev/null | head -1 || true
-            cid=$(docker run -d -i $NET --shm-size=2g --security-opt apparmor=unconfined \
+            cid=$(docker run -d -i $NET --shm-size=4g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
@@ -296,7 +296,7 @@ jobs:
                 ulf="$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf"
                 TNET="--network=none"
                 [ -s "$ulf" ] || TNET=""
-                cid=$(docker run -d -i $TNET --shm-size=2g --security-opt apparmor=unconfined \
+                cid=$(docker run -d -i $TNET --shm-size=4g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
