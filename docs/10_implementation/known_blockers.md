@@ -25,7 +25,15 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
-None. IDs start at `BLK-001` and `OPS-001`.
+### `BLK-001` — URP materialization outputs not covered by IMP-000 owned_paths
+opened_by: implementer/IMP-000   opened_at: 2026-09-26T00:04Z
+evidence: `Q0.control.diff` FAIL on PR https://github.com/hung98dev/thth/pull/1, run https://github.com/hung98dev/thth/actions/runs/36199168601 job 108281973511 — `file client/Assets/DefaultVolumeProfile.asset outside IMP-000 owned_paths; file client/Assets/UniversalRenderPipelineGlobalSettings.asset outside IMP-000 owned_paths` (+ `.meta` companions)
+owning spec / system: `docs/10_implementation/task_queue.md` (IMP-000 `owned_paths`, `generated_artifacts`), `docs/10_implementation/repository_layout.md` (Path Ownership Index)
+options:
+  1. add the 4 paths (`client/Assets/DefaultVolumeProfile.asset`, `.meta`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta`) to IMP-000 `owned_paths` (+ layout index) — the editor materializes them during IMP-000's own CI and §4b requires committing them byte-for-byte, so IMP-000 is their de-facto owner;
+  2. exempt editor-materialized files from `Q0.control.diff` — weakens the gate's ownership coverage;
+  3. assign the 2 URP assets to a later packet (e.g. IMP-101 URP setup) — that packet cannot commit them until it runs, but IMP-000's CI must commit them now to close the materialization loop.
+blocks: IMP-000
 
 ## Resolved Blockers
 

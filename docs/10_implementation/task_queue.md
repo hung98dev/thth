@@ -24,7 +24,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 
 | ID | Title | Status | Dependencies | Specs |
 |---|---|---|---|---|
-| `IMP-000` | M0 Bootstrap Gate & Toolchain Harness | `NOT_STARTED` | none | `../00_context/technology_versions.md`, `../00_context/constraints.md` |
+| `IMP-000` | M0 Bootstrap Gate & Toolchain Harness | `BLOCKED` | none | `../00_context/technology_versions.md`, `../00_context/constraints.md` |
 | `IMP-001` | Stable IDs / Revisions | `NOT_STARTED` | IMP-000 | `../06_data/ids.md`, `../06_data/config.md` |
 | `IMP-002` | Deterministic RNG Interface | `NOT_STARTED` | IMP-001 | `../04_architecture/concurrency.md`, `../06_data/config.md` |
 | `IMP-003` | Content Compiler | `NOT_STARTED` | IMP-001, IMP-002 | `../01_gameplay/skills.md`, `../06_data/config.md` |
@@ -149,11 +149,11 @@ IMP-056 -> IMP-077 -> IMP-103 -> IMP-067 -> IMP-069 -> IMP-044 -> IMP-045 -> IMP
 
 ## `IMP-000` — M0 Bootstrap Gate & Toolchain Harness
 id: IMP-000
-status: NOT_STARTED
+status: BLOCKED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: ""
+blocked_by: "BLK-001"
 
 specs: [`../00_context/technology_versions.md`, `../00_context/constraints.md`, `../00_context/glossary.md`, `../00_context/non_goals.md`, `../00_context/vision.md`, `../04_architecture/system_overview.md`, `../04_architecture/backend.md`, `repository_layout.md`, `architecture_conformance.md`, `../09_testing/test_and_release_evidence.md`, `audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`, `../04_architecture/client_performance.md`, `../08_scale_ops/capacity.md`]
 adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0040-world-consequence-durable-aggregate.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
