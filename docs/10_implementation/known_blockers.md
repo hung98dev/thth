@@ -25,7 +25,15 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
-None. IDs start at `BLK-001` and `OPS-001`.
+### `BLK-002` — `Q6.evidence.api` ancestor check is unsatisfiable for merged evidence manifests under squash-merge
+opened_by: implementer/IMP-001   opened_at: 2026-09-26T17:10Z
+evidence: `Q6.evidence.api.IMP-000` FAIL on PR https://github.com/hung98dev/thth/pull/7, run https://github.com/hung98dev/thth/actions/runs/36257174545 job 108446051513 — `run head_sha 9213525474603ecd2f42cb9e596681010884e59f is not an ancestor of HEAD: exit status 128 (fatal: Not a valid commit name ...)`. That head_sha is `refs/pull/4/head` (IMP-000's done-PR head, squash-merged as 51dae43 then branch-deleted): it is never an ancestor of `main` and is not fetched into a PR checkout (`actions/checkout` `fetch-depth: 0` covers `refs/heads/*` only). The check passes only for a manifest whose evidence run head is the current PR's own head (an ancestor of the pull_request test-merge commit), so every non-status-only PR fails it once a DONE manifest exists on `main`.
+owning spec / system: `server/internal/conformance/gates/evidence.go` `CheckRunIdentity` (merge-base `--is-ancestor` clause) implementing ADR-0068 (`docs/10_implementation/audit_gates.md`); conflicts with `agent_execution_protocol.md` §5a (squash + `--delete-branch` makes the recorded head_sha unreachable).
+options:
+  1. restrict the run-identity check to manifests added/changed in the current diff (keep `Q0.evidence.manifests` schema validation for all manifests) — matches the ADR-0068 intent "evidence belongs to this PR's own verify.yml run history" and is satisfiable on later PRs;
+  2. fetch `refs/pull/*/head` in `verify.yml` so recorded head SHAs resolve — insufficient alone: squash-merged heads are still never ancestors of `main`, so `--is-ancestor` keeps failing;
+  3. record the post-merge squash commit instead of the run head_sha — impossible: §5a step 7 writes the manifest pre-merge from the PR-head run.
+blocks: IMP-001; transitively every later code PR while a DONE manifest on `main` references a squash-merged run head_sha
 
 ## Resolved Blockers
 

@@ -25,7 +25,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | ID | Title | Status | Dependencies | Specs |
 |---|---|---|---|---|
 | `IMP-000` | M0 Bootstrap Gate & Toolchain Harness | `DONE` | none | `../00_context/technology_versions.md`, `../00_context/constraints.md` |
-| `IMP-001` | Stable IDs / Revisions | `IN_PROGRESS` | IMP-000 | `../06_data/ids.md`, `../06_data/config.md` |
+| `IMP-001` | Stable IDs / Revisions | `BLOCKED` | IMP-000 | `../06_data/ids.md`, `../06_data/config.md` |
 | `IMP-002` | Deterministic RNG Interface | `NOT_STARTED` | IMP-001 | `../04_architecture/concurrency.md`, `../06_data/config.md` |
 | `IMP-003` | Content Compiler | `NOT_STARTED` | IMP-001, IMP-002 | `../01_gameplay/skills.md`, `../06_data/config.md` |
 | `IMP-004` | Integration / Balance Activation Gate | `NOT_STARTED` | IMP-003 | `../01_gameplay/skills.md`, `../07_content/class_skill_catalog.md` |
@@ -215,11 +215,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-000/"
 
 ## `IMP-001` — Stable IDs / Revisions
 id: IMP-001
-status: IN_PROGRESS
+status: BLOCKED
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-001-stable-ids"
 claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: ""
+blocked_by: "BLK-002"
 
 specs: [`../06_data/ids.md`, `../06_data/config.md`, `../00_context/technology_versions.md`]
 adrs: [`0001-content-revision-contract.md`, `0043-spirit-beast-instance-identity.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0065-data-schema-completion-and-erasure-retention.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
