@@ -23,6 +23,11 @@ env:
   STATICCHECK_VERSION: 'v0.8.1'
   UNITY_LINUX_IMAGE: 'unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d'
   UNITY_WINDOWS_IMAGE: 'unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534'
+  # Tag forms of the pinned images: docker save/load drops repo@digest refs
+  # (RepoTags is what the tar round-trips), so containers run by <repo>:<tag>
+  # while pull/pin stays digest-exact (IMP-106).
+  UNITY_LINUX_IMAGE_TAG: 'unityci/editor:ubuntu-6000.6.1f1-base-3.2.2'
+  UNITY_WINDOWS_IMAGE_TAG: 'unityci/editor:windows-6000.6.1f1-base-3.2.2'
   # Cache-key pins: digest of each unityci image and the EDB zip sha256 — kept
   # equal to the image/env pins they mirror by conformance/caching tests.
   UNITY_LINUX_IMAGE_DIGEST: 'sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d'
@@ -142,7 +147,7 @@ jobs:
           GOBIN="$T/gobin" go install "honnef.co/go/tools/cmd/staticcheck@${{ env.STATICCHECK_VERSION }}"
           echo "$T/gobin" >> "$GITHUB_PATH"
           hit=miss; [ "${CACHE_HIT_GO:-}" = "true" ] && hit=hit || true
-          cache_telemetry_emit go-toolchain "$hit" "$((SECONDS-start))"
+          cache_telemetry_emit go-build "$hit" "$((SECONDS-start))"
 
       - name: Cache Unity editor image (pinned)
         id: cache-unity-image
@@ -155,28 +160,29 @@ jobs:
         shell: bash
         env:
           UNITY_IMAGE: ${{ env.UNITY_LINUX_IMAGE }}
+          UNITY_IMAGE_TAG: ${{ env.UNITY_LINUX_IMAGE_TAG }}
           CACHE_HIT_IMAGE: ${{ steps.cache-unity-image.outputs.cache-hit }}
         run: |
           set -euo pipefail
           source .devin/scripts/cache_telemetry.sh
           tar="$RUNNER_TEMP/image-cache/unity-editor-linux.tar"
-          tag="${UNITY_IMAGE%@*}"
           hit=miss; if [ "${CACHE_HIT_IMAGE:-}" = "true" ]; then hit=hit; fi
           start=$SECONDS
-          if [ "$hit" = "hit" ] && docker load -i "$tar" >/dev/null 2>&1 && docker image inspect "$tag" >/dev/null 2>&1; then
+          if [ "$hit" = "hit" ] && docker load -i "$tar" >/dev/null 2>&1 && docker image inspect "$UNITY_IMAGE_TAG" >/dev/null 2>&1; then
             echo "unity image restored from actions/cache (docker load)"
           else
             [ "$hit" = "hit" ] && echo "cached image tar missing/unloadable - docker pull fallback"
             docker pull "$UNITY_IMAGE"
+            docker tag "$(docker image inspect -f '{{.Id}}' "$UNITY_IMAGE")" "$UNITY_IMAGE_TAG"
             mkdir -p "$(dirname "$tar")"
-            if docker save "$UNITY_IMAGE" -o "$tar.part"; then
+            if docker save "$UNITY_IMAGE_TAG" -o "$tar.part"; then
               mv "$tar.part" "$tar"
             else
               rm -f "$tar.part"
               echo "docker save failed - image stays pulled, cache write skipped"
             fi
           fi
-          docker image inspect "$tag" >/dev/null
+          docker image inspect "$UNITY_IMAGE_TAG" >/dev/null
           cache_telemetry_emit unity-editor-image "$hit" "$((SECONDS-start))"
 
       - name: Cache Unity client/Library (pinned)
@@ -256,9 +262,9 @@ jobs:
           systemctl is-active systemd-oomd 2>/dev/null || true
           busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p "$RUNNER_TEMP/unity-lic"
-          docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
+          docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE_TAG }}" unity-editor -version
           for i in 1 2 3 4; do
-            docker run --rm --shm-size=4g "${{ env.UNITY_LINUX_IMAGE }}" bash -c '/opt/unity/Editor/Unity -batchmode -nographics -version -logFile -' >/dev/null 2>&1
+            docker run --rm --shm-size=4g "${{ env.UNITY_LINUX_IMAGE_TAG }}" bash -c '/opt/unity/Editor/Unity -batchmode -nographics -version -logFile -' >/dev/null 2>&1
             echo "direct-version probe $i rc=$?"
           done
           for i in 1 2 3 4 5; do
@@ -281,7 +287,7 @@ jobs:
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
               -e MONO_GC_PARAMS=nursery-size=64m \
-              "${{ env.UNITY_LINUX_IMAGE }}" \
+              "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
               bash -c '
                 EXTRA=""
                 if [ ! -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then
@@ -320,7 +326,7 @@ jobs:
             find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
-              "${{ env.UNITY_LINUX_IMAGE }}" \
+              "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
               bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
             [ "$i" -lt 5 ] && sleep 60
           done
@@ -334,7 +340,7 @@ jobs:
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/github/workspace" \
-            "${{ env.UNITY_LINUX_IMAGE }}" \
+            "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
             bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
 
       - name: Dump unity-materialize.log on failure
@@ -376,7 +382,7 @@ jobs:
                 -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
-                "${{ env.UNITY_LINUX_IMAGE }}" \
+                "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
                 bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
               if [ -n "$lcid" ]; then arc=$(docker wait "$lcid"); else arc=199; fi
               if [ "$arc" -eq 198 ]; then
@@ -400,7 +406,7 @@ jobs:
                   -e LIBGL_ALWAYS_SOFTWARE=1 \
                   -e MONO_GC_PARAMS=nursery-size=64m \
                   -e MODE="$mode" \
-                  "${{ env.UNITY_LINUX_IMAGE }}" \
+                  "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
                   bash -c '
                     unity-editor -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
@@ -434,7 +440,7 @@ jobs:
               echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
               docker run --rm \
                 -v "${{ github.workspace }}:/github/workspace" \
-                "${{ env.UNITY_LINUX_IMAGE }}" \
+                "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
                 bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
               sleep 20
             done
@@ -638,7 +644,7 @@ jobs:
           go install "honnef.co/go/tools/cmd/staticcheck@${{ env.STATICCHECK_VERSION }}"
           "$T\protoc\bin" >> $env:GITHUB_PATH
           "$T\gobin" >> $env:GITHUB_PATH
-          Write-CacheTelemetry -Step 'go-toolchain' -Result $(if ($env:CACHE_HIT_GO -eq 'true') { 'hit' } else { 'miss' }) -WallSeconds $sw.Elapsed.TotalSeconds
+          Write-CacheTelemetry -Step 'go-build' -Result $(if ($env:CACHE_HIT_GO -eq 'true') { 'hit' } else { 'miss' }) -WallSeconds $sw.Elapsed.TotalSeconds
 
       - name: Cache PostgreSQL EDB binaries (pinned)
         id: cache-edb
@@ -724,6 +730,7 @@ jobs:
         shell: pwsh
         env:
           UNITY_IMAGE: ${{ env.UNITY_WINDOWS_IMAGE }}
+          UNITY_IMAGE_TAG: ${{ env.UNITY_WINDOWS_IMAGE_TAG }}
           CACHE_HIT_IMAGE: ${{ steps.cache-unity-image.outputs.cache-hit }}
         run: |
           $ErrorActionPreference = 'Stop'
@@ -739,12 +746,13 @@ jobs:
           if (-not $loaded) {
             docker pull $env:UNITY_IMAGE
             if ($LASTEXITCODE -ne 0) { throw "docker pull failed rc=$LASTEXITCODE" }
+            docker tag (docker image inspect -f '{{.Id}}' $env:UNITY_IMAGE) $env:UNITY_IMAGE_TAG
             New-Item -ItemType Directory -Force -Path (Split-Path $tar) | Out-Null
-            docker save $env:UNITY_IMAGE -o "$tar.part"
+            docker save $env:UNITY_IMAGE_TAG -o "$tar.part"
             if ($LASTEXITCODE -eq 0) { Move-Item "$tar.part" $tar -Force }
             else { Remove-Item "$tar.part" -Force -ErrorAction SilentlyContinue; Write-Host 'docker save failed - cache write skipped' }
           }
-          docker image inspect ($env:UNITY_IMAGE -split '@')[0] | Out-Null
+          docker image inspect $env:UNITY_IMAGE_TAG | Out-Null
           if ($LASTEXITCODE -ne 0) { throw 'unity image absent after load/pull' }
           Write-CacheTelemetry -Step 'unity-editor-image' -Result $(if ($loaded) { 'hit' } else { 'miss' }) -WallSeconds $sw.Elapsed.TotalSeconds
 
@@ -771,7 +779,7 @@ jobs:
           $sw = [System.Diagnostics.Stopwatch]::StartNew()
           $libHit = if ($env:CACHE_HIT_LIBRARY -eq 'true') { 'hit' } else { 'miss' }
           New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\unity-lic" | Out-Null
-          $unityExe = (docker run --rm "${{ env.UNITY_WINDOWS_IMAGE }}" powershell -NoProfile -Command "(Get-Item 'C:\UnityEditor\*\Editor\Unity.exe' -ErrorAction SilentlyContinue | Select-Object -First 1).FullName" | Out-String).Trim()
+          $unityExe = (docker run --rm "${{ env.UNITY_WINDOWS_IMAGE_TAG }}" powershell -NoProfile -Command "(Get-Item 'C:\UnityEditor\*\Editor\Unity.exe' -ErrorAction SilentlyContinue | Select-Object -First 1).FullName" | Out-String).Trim()
           if (-not $unityExe) { Write-Error 'Unity.exe not found under C:\UnityEditor in the pinned image'; exit 1 }
           Write-Host "unity editor: $unityExe"
           "UNITY_EDITOR_PATH=$unityExe" >> $env:GITHUB_ENV
@@ -789,7 +797,7 @@ jobs:
               -v "${env:RUNNER_TEMP}:C:\tmp" `
               -v "${env:RUNNER_TEMP}\unity-lic:C:\ProgramData\Unity" `
               -w C:\repo `
-              "${{ env.UNITY_WINDOWS_IMAGE }}" `
+              "${{ env.UNITY_WINDOWS_IMAGE_TAG }}" `
               $unityExe $uargs
             $rc = $LASTEXITCODE
             $log = ''
@@ -803,7 +811,7 @@ jobs:
             Write-Host "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
             docker run --rm `
               -v "${{ github.workspace }}:C:\repo" `
-              "${{ env.UNITY_WINDOWS_IMAGE }}" `
+              "${{ env.UNITY_WINDOWS_IMAGE_TAG }}" `
               powershell -Command "if (Test-Path 'C:\repo\client\Library\PackageCache') { Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') } } else { Write-Host 'PackageCache not yet materialized' }"
             if ($i -lt 5) { Start-Sleep -Seconds 60 }
           }
@@ -816,7 +824,7 @@ jobs:
         run: |
           docker run --rm `
             -v "${{ github.workspace }}:C:\repo" `
-            "${{ env.UNITY_WINDOWS_IMAGE }}" `
+            "${{ env.UNITY_WINDOWS_IMAGE_TAG }}" `
             powershell -Command "if (Test-Path 'C:\repo\client\Library\PackageCache') { Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') } } else { Write-Error 'PackageCache missing - materialization produced nothing'; exit 1 }"
 
       - name: Unity EditMode+PlayMode tests
@@ -830,7 +838,7 @@ jobs:
         with:
           projectPath: client
           unityVersion: '6000.6.1f1'
-          customImage: ${{ env.UNITY_WINDOWS_IMAGE }}
+          customImage: ${{ env.UNITY_WINDOWS_IMAGE_TAG }}
           testMode: all
           artifactsPath: artifacts/unity-tests
           githubToken: ${{ secrets.GITHUB_TOKEN }}

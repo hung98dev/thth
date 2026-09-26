@@ -102,19 +102,36 @@ func TestCacheActionPinnedSha(t *testing.T) {
 // image pins they mirror.
 func TestCacheKeysCoverPinInputs(t *testing.T) {
 	text := workflowText(t)
-	// Digest env vars must equal the @sha256: suffix of the image env pins.
+	// Digest env vars must equal the @sha256: suffix of the image env pins,
+	// and *_IMAGE_TAG must equal the image's repo:tag prefix — docker run
+	// resolves tag refs after docker load, digest refs are not round-tripped.
 	for _, pair := range [][2]string{
 		{"UNITY_LINUX_IMAGE", "UNITY_LINUX_IMAGE_DIGEST"},
 		{"UNITY_WINDOWS_IMAGE", "UNITY_WINDOWS_IMAGE_DIGEST"},
 	} {
-		imgRe := regexp.MustCompile(pair[0] + `:\s*'[^'@]+@sha256:([0-9a-f]{64})'`)
+		imgRe := regexp.MustCompile(pair[0] + `:\s*'([^'@]+)@sha256:([0-9a-f]{64})'`)
 		digRe := regexp.MustCompile(pair[1] + `:\s*'(sha256:[0-9a-f]{64}|[0-9a-f]{64})'`)
+		tagRe := regexp.MustCompile(pair[0] + `_TAG:\s*'([^']+)'`)
 		im, dm := imgRe.FindStringSubmatch(text), digRe.FindStringSubmatch(text)
-		if im == nil || dm == nil {
-			t.Fatalf("verify.yml env must define %s and %s", pair[0], pair[1])
+		tm := tagRe.FindStringSubmatch(text)
+		if im == nil || dm == nil || tm == nil {
+			t.Fatalf("verify.yml env must define %s, %s and %s_TAG", pair[0], pair[1], pair[0])
 		}
-		if strings.TrimPrefix(dm[1], "sha256:") != im[1] {
-			t.Errorf("%s digest %q != %s image digest %q", pair[1], dm[1], pair[0], im[1])
+		if strings.TrimPrefix(dm[1], "sha256:") != im[2] {
+			t.Errorf("%s digest %q != %s image digest %q", pair[1], dm[1], pair[0], im[2])
+		}
+		if tm[1] != im[1] {
+			t.Errorf("%s_TAG %q != %s repo:tag %q", pair[0], tm[1], pair[0], im[1])
+		}
+	}
+	// Containers must run the tag ref (docker load restores RepoTags, not
+	// RepoDigests); the digest ref may only feed the pull path via the
+	// `UNITY_IMAGE:` step-env mapping in the load/pull steps.
+	for _, line := range strings.Split(text, "\n") {
+		for _, img := range []string{"UNITY_LINUX_IMAGE", "UNITY_WINDOWS_IMAGE"} {
+			if strings.Contains(line, "${{ env."+img+" }}") && !strings.Contains(line, "UNITY_IMAGE: ${{") {
+				t.Errorf("digest image ref outside pull mapping — use %s_TAG (docker load drops digest refs): %s", img, strings.TrimSpace(line))
+			}
 		}
 	}
 
