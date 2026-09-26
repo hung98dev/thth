@@ -183,7 +183,13 @@ jobs:
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
             find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
-            cid=$(docker run -d -i --shm-size=2g --security-opt apparmor=unconfined \
+            ulf="$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf"
+            NET=""
+            [ -s "$ulf" ] && NET="--network=none"
+            getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
+            curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
+            ip route get 1.1.1.1 2>/dev/null | head -1 || true
+            cid=$(docker run -d -i $NET --shm-size=2g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
@@ -268,6 +274,11 @@ jobs:
               free -m
               arc=0
               find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
+              ulf="$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf"
+              NET=""
+              [ -s "$ulf" ] || NET=""
+              getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
+              curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
               lcid=$(docker run -d -i --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -v /etc/machine-id:/etc/machine-id:ro \
@@ -282,7 +293,10 @@ jobs:
               rc=$arc
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
-                cid=$(docker run -d -i --shm-size=2g --security-opt apparmor=unconfined \
+                ulf="$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf"
+                TNET="--network=none"
+                [ -s "$ulf" ] || TNET=""
+                cid=$(docker run -d -i $TNET --shm-size=2g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
