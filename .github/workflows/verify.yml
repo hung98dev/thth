@@ -242,7 +242,6 @@ jobs:
                 "${{ env.UNITY_LINUX_IMAGE }}" \
                 bash -c '
                   "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
-                    -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" \
                     -runTests -testPlatform "$MODE" \
                     -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                     -logFile -
