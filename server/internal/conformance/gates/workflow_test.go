@@ -127,15 +127,16 @@ func TestLinuxUnityRunsHeadless(t *testing.T) {
 	j := jobNamed(t, wf, "verify-linux")
 	found := false
 	for i := range j.Steps {
-		if strings.Contains(j.Steps[i].Run, `"/opt/unity/Editor/Unity" -batchmode`) {
+		run := j.Steps[i].Run
+		if strings.Contains(run, "unity-editor") && strings.Contains(run, "-projectPath") {
 			found = true
-			if !strings.Contains(j.Steps[i].Run, "-nographics") {
+			if !strings.Contains(run, "-nographics") {
 				t.Fatalf("linux unity step %q must run headless (-nographics)", j.Steps[i].Name)
 			}
 		}
 	}
 	if !found {
-		t.Fatal(`linux job: no "/opt/unity/Editor/Unity" -batchmode step`)
+		t.Fatal(`linux job: no "unity-editor" -projectPath step`)
 	}
 }
 
