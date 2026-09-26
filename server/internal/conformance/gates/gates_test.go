@@ -339,3 +339,62 @@ fixture CODE-001
 fixture CODE-001
 `
 }
+
+// TestBootstrapAbsentPathsOwnerAware (BLK-002): a listed bootstrap root may
+// exist once an owning packet is IN_PROGRESS or DONE, and a file under the
+// two generated-protocol dirs may exist once a packet covering it has
+// started; unowned paths never unblock.
+func TestBootstrapAbsentPathsOwnerAware(t *testing.T) {
+	started := []TaskPacket{{ID: "IMP-900", Status: "IN_PROGRESS", OwnedPaths: []string{"client/Assets/Scenes/Bootstrap/"}}}
+	if bootstrapOwnerStarted(started, "client/Assets/Scenes") != true {
+		t.Fatal("started packet owning a path under the root must unblock it")
+	}
+	for _, st := range []string{"NOT_STARTED", "BLOCKED"} {
+		pk := []TaskPacket{{ID: "IMP-900", Status: st, OwnedPaths: []string{"client/Assets/Scenes/Bootstrap/"}}}
+		if bootstrapOwnerStarted(pk, "client/Assets/Scenes") {
+			t.Fatalf("owner in %s must keep the root forbidden", st)
+		}
+	}
+	unowned := []TaskPacket{{ID: "IMP-900", Status: "DONE", OwnedPaths: []string{"server/other/"}}}
+	if bootstrapOwnerStarted(unowned, "client/Assets/Prefabs") {
+		t.Fatal("unowned root must never unblock")
+	}
+	// A file covered by a dir-owning started packet unblocks; a sibling-file
+	// owner (IMP-000's .asmdef) does not cover neighbours.
+	fileOwner := []TaskPacket{{ID: "IMP-900", Status: "DONE", OwnedPaths: []string{"client/Assets/Scripts/Protocol/"}}}
+	if !bootstrapOwnerStarted(fileOwner, "client/Assets/Scripts/Protocol/x.pb.cs") {
+		t.Fatal("started dir owner must cover files inside it")
+	}
+	asmdefOwner := []TaskPacket{{ID: "IMP-900", Status: "DONE", OwnedPaths: []string{"client/Assets/Scripts/Protocol/ThinhThan.Protocol.asmdef"}}}
+	if bootstrapOwnerStarted(asmdefOwner, "client/Assets/Scripts/Protocol/x.pb.cs") {
+		t.Fatal("sibling-file ownership must not cover other files in the dir")
+	}
+	// Live-tree conformance: every listed root/file that exists now is owned
+	// by a started packet — else the Q0 check itself must be failing.
+	root := repoRoot(t)
+	packets, _, err := ParseTaskQueue(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if c := checkBootstrapAbsence(root, packets); c.Status == StatusFail {
+		t.Errorf("Q0.bootstrap.absent_paths FAIL on current tree: %s", c.Detail)
+	}
+}
+
+// TestBlocksLineCaseInsensitive (BLK-002): open-blocker gating must parse the
+// repo's lowercase `blocks:` lines, not only capital-B `Blocks:`.
+func TestBlocksLineCaseInsensitive(t *testing.T) {
+	dir := t.TempDir()
+	kb := filepath.Join(dir, "known_blockers.md")
+	body := "## Open Blockers\n\n### BLK-900\n- blocks: IMP-061, IMP-063\n\n## Resolved Blockers\n\n### BLK-001\n- blocks: IMP-000\n"
+	if err := os.WriteFile(kb, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	got := openBlockedTasks(kb)
+	if len(got["BLK-900"]) != 2 {
+		t.Fatalf("lowercase blocks: line not parsed: %v", got)
+	}
+	if _, ok := got["BLK-001"]; ok {
+		t.Fatal("resolved blocker must not be counted")
+	}
+}
