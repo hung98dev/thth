@@ -163,7 +163,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5 6 7 8; do
-            if docker run --shm-size=2g \
+            if docker run --shm-size=2g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
@@ -255,7 +255,7 @@ jobs:
               rc=$arc
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
-                if docker run --shm-size=2g \
+                if docker run --shm-size=2g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
@@ -308,9 +308,14 @@ jobs:
           sudo ausearch -k unitykill -ts recent > "$RUNNER_TEMP/audit-kills.txt" 2>/dev/null || true
           grep -E 'pidfd_send_signal|a2=9\b' "$RUNNER_TEMP/audit-kills.txt" | head -60 || true
           sudo grep -i 'unitykill\|SIGKILL' /var/log/audit/audit.log 2>/dev/null | tail -40 || true
+          echo '=== avc/seccomp/anom_abend audit records ==='
+          sudo ausearch -m avc,user_avc,seccomp,anom_abend -ts recent 2>/dev/null | tail -40 || true
+          echo '=== memcg memory.events (docker cgroups) ==='
+          sudo find /sys/fs/cgroup -name 'memory.events' -path '*docker*' -exec sh -c 'echo "{}:"; cat {}' \; 2>/dev/null || true
           echo '=== journald oomd/memory-kill records ==='
           sudo journalctl -k -b --no-pager 2>/dev/null | grep -icE 'oom' || true
           sudo journalctl -b --no-pager 2>/dev/null | grep -iE 'oomd|killed.*memory|signal.*unity' | tail -20 || true
+          sudo journalctl -k -b --no-pager 2>/dev/null | grep -iE 'apparmor|avc|seccomp|denied' | tail -20 || true
           echo '=== docker daemon events ==='
           cat "$RUNNER_TEMP/docker-events.log" 2>/dev/null | tail -40 || true
           kill "$(cat "$RUNNER_TEMP/docker-events.pid" 2>/dev/null)" 2>/dev/null || true
