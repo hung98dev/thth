@@ -179,6 +179,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5 6 7 8; do
+            find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
             if docker run --shm-size=2g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
@@ -257,6 +258,7 @@ jobs:
             for i in 1 2 3 4 5 6 7 8; do
               free -m
               arc=0
+              find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
               docker run --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -v /etc/machine-id:/etc/machine-id:ro \
