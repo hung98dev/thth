@@ -258,8 +258,7 @@ jobs:
                 fi
               fi
               if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
-                && grep -q 'Exiting batchmode successfully' unity-tests.log \
-                && grep -q 'result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
+                && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
                 && ! grep -q 'Scripts have compiler errors' unity-tests.log; then
                 ok=1; break
               fi
@@ -479,6 +478,9 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\unity-lic" | Out-Null
+          $unityExe = (docker run --rm "${{ env.UNITY_WINDOWS_IMAGE }}" powershell -NoProfile -Command "(Get-Item 'C:\UnityEditor\*\Editor\Unity.exe' -ErrorAction SilentlyContinue | Select-Object -First 1).FullName" | Out-String).Trim()
+          if (-not $unityExe) { Write-Error 'Unity.exe not found under C:\UnityEditor in the pinned image'; exit 1 }
+          Write-Host "unity editor: $unityExe"
           $ulf = "$env:RUNNER_TEMP\unity-lic\Unity_lic.ulf"
           $logPath = "$env:RUNNER_TEMP\unity-materialize.log"
           $ok = $false
@@ -494,7 +496,7 @@ jobs:
               -v "${env:RUNNER_TEMP}\unity-lic:C:\ProgramData\Unity" `
               -w C:\repo `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              "C:\Program Files\Unity\Editor\Unity.exe" $uargs
+              $unityExe $uargs
             $rc = $LASTEXITCODE
             $log = ''
             if (Test-Path $logPath) {
