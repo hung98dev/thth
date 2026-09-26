@@ -76,7 +76,7 @@ thêm regression test vào ## Tests của task liên quan, đóng BLK và trả 
 | Wave | Tasks | Notes |
 |---|---|---|
 | 0 | IMP-000 | two-phase: IMP-000; bootstrap-eligible: IMP-000 |
-| 1 | IMP-001, IMP-061, IMP-063, IMP-064, IMP-101 | two-phase: IMP-061; bootstrap-eligible: IMP-001, IMP-061, IMP-063, IMP-064, IMP-101 |
+| 1 | IMP-001, IMP-061, IMP-063, IMP-064, IMP-101, IMP-106 | two-phase: IMP-061; bootstrap-eligible: IMP-001, IMP-061, IMP-063, IMP-064, IMP-101, IMP-106 |
 | 2 | IMP-002, IMP-005, IMP-070, IMP-083 | two-phase: IMP-005, IMP-083; bootstrap-eligible: IMP-002, IMP-005, IMP-070, IMP-083 |
 | 3 | IMP-003, IMP-071, IMP-073, IMP-074, IMP-075, IMP-104 | two-phase: IMP-003; bootstrap-eligible: IMP-003, IMP-071, IMP-073, IMP-074, IMP-075, IMP-104 |
 | 4 | IMP-004 | two-phase: IMP-004; bootstrap-eligible: IMP-004 |
