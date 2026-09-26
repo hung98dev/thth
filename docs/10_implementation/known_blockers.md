@@ -25,6 +25,8 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
+None. IDs start at `BLK-001` and `OPS-001`.
+
 ### `BLK-002` — `Q0.bootstrap.absent_paths` forbids owned feature paths unconditionally
 opened_by: implementer/IMP-063   opened_at: 2026-09-26T17:16Z
 evidence: `server/internal/conformance/gates/q0.go` `checkBootstrapAbsence` stats `client/Assets/AddressableAssetsData` (plus `proto/`, `server/migrations`, `server/cmd/server`, `client/Assets/Scenes`, `client/Assets/Prefabs`, `client/Assets/Art`, `client/Assets/Localization`, `client/Assets/Settings`) with no owner/task gating, so the check fails on the owning task's own PR and on every PR after the path lands — local run reproduced: `Q0.bootstrap.absent_paths | FAIL | client/Assets/AddressableAssetsData must not exist before its owning task` on a tree containing only IMP-063's owned directory. Blast radius: 19 packets own children of the listed roots (IMP-005, IMP-006, IMP-061, IMP-062, IMP-063, IMP-064, IMP-067, IMP-069, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-095, IMP-101, IMP-104, IMP-105); `blocks:` names only IMP-063 because `checkOpenBlockerGating` would fail this PR over IMP-061 already `IN_PROGRESS`.
