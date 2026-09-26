@@ -87,7 +87,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-060` | Atlas Journal Runtime | `NOT_STARTED` | IMP-005, IMP-010, IMP-011, IMP-018 | `../03_systems/atlas.md`, `../07_content/atlas_catalog.md` |
 | `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `IN_PROGRESS` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
 | `IMP-062` | Unity Geometry Exporter & Map Geometry Parity | `NOT_STARTED` | IMP-078, IMP-079 | `../01_gameplay/movement.md`, `../04_architecture/realtime_loop.md` |
-| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `IN_PROGRESS` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
+| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `BLOCKED` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
 | `IMP-064` | Unity Bilingual Localization Pipeline (vi-VN / en-US) | `NOT_STARTED` | IMP-000 | `../04_architecture/client_localization.md`, `../06_data/text.md` |
 | `IMP-065` | Unity Client Bootstrap, Session State & Network Transport | `NOT_STARTED` | IMP-061, IMP-100 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
 | `IMP-066` | Unity Input Action Mapping & Core UI/HUD State Machine | `NOT_STARTED` | IMP-013, IMP-065 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
@@ -442,11 +442,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-062/"
 
 ## `IMP-063` — Addressables Asset Pipeline & Catalog Delivery
 id: IMP-063
-status: IN_PROGRESS
+status: BLOCKED
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-063-addressables"
 claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: ""
+blocked_by: "BLK-002"
 
 specs: [`../04_architecture/client_assets.md`, `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`, `repository_layout.md`, `../04_architecture/client_performance.md`]
 adrs: [`0014-unity-addressables-asset-delivery.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0071-client-presentation-contract-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
