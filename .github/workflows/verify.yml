@@ -143,10 +143,12 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           set -uo pipefail
+          mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
             docker run --rm --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
+              -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
@@ -201,22 +203,32 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           set -euo pipefail
-          mkdir -p artifacts/unity-tests
+          mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic"
           for mode in EditMode PlayMode; do
             ok=
             for i in 1 2 3 4 5; do
               free -m
-              if docker run --rm --shm-size=2g \
-                -v "${{ github.workspace }}:/github/workspace" \
-                -w /github/workspace \
+              arc=0
+              docker run --rm \
+                -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+                "${{ env.UNITY_LINUX_IMAGE }}" \
+                bash -c 'rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf && timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
+                || arc=$?
+              if [ "$arc" -eq 198 ]; then
+                echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
+                exit 1
+              fi
+              rc=$arc
+              if [ "$arc" -eq 0 ] && docker run --rm --shm-size=2g \
+                -v "${{ github.workspace }}:/github/workspace" \
+                -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                -w /github/workspace \
                 -e LIBGL_ALWAYS_SOFTWARE=1 \
                 -e MONO_GC_PARAMS=nursery-size=64m \
                 -e MODE="$mode" \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
                 bash -c '
-                  rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
-                  timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - &&
                   unity-editor -batchmode -nographics -projectPath /github/workspace/client \
                     -runTests -testPlatform "$MODE" \
                     -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
@@ -225,10 +237,6 @@ jobs:
                 ok=1; break
               else
                 rc=$?
-              fi
-              if [ "$rc" -eq 198 ]; then
-                echo "unity $mode tests failed deterministically (rc=$rc) - not retrying" >&2
-                exit 1
               fi
               sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
               sudo journalctl -k -n 20 --no-pager 2>/dev/null | tail -10 || true
@@ -449,9 +457,9 @@ jobs:
               -w C:\repo `
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL `
               "${{ env.UNITY_WINDOWS_IMAGE }}" `
-              powershell -Command "Remove-Item -Force -ErrorAction SilentlyContinue 'C:\ProgramData\Unity\Unity_lic.ulf'; `$p = Start-Process -FilePath 'C:\Program Files\Unity\Editor\Unity.exe' -ArgumentList @('-batchmode','-nographics','-serial',`$env:UNITY_SERIAL,'-username',`$env:UNITY_EMAIL,'-password',`$env:UNITY_PASSWORD,'-quit','-logFile','-') -NoNewWindow -PassThru; if (-not `$p.WaitForExit(300000)) { Stop-Process -Id `$p.Id -Force; exit 124 }; if (`$p.ExitCode -ne 0) { exit `$p.ExitCode }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -projectPath C:\repo\client -quit -logFile -" 2>&1 | Tee-Object -FilePath unity-materialize.log
+              powershell -Command "Remove-Item -Force -ErrorAction SilentlyContinue 'C:\ProgramData\Unity\Unity_lic.ulf'; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -serial `$env:UNITY_SERIAL -username `$env:UNITY_EMAIL -password `$env:UNITY_PASSWORD -quit -logFile -; if (`$LASTEXITCODE -ne 0) { exit `$LASTEXITCODE }; & 'C:\Program Files\Unity\Editor\Unity.exe' -batchmode -nographics -projectPath C:\repo\client -quit -logFile -; exit `$LASTEXITCODE" 2>&1 | Tee-Object -FilePath unity-materialize.log
             $rc = $LASTEXITCODE
-            if ($rc -eq 0 -and -not ($out -match 'Scripts have compiler errors')) { $ok = $true; break }
+            if ($rc -eq 0 -and $out -and -not ($out -match 'Scripts have compiler errors') -and (Test-Path "${{ github.workspace }}\client\Library\PackageCache")) { $ok = $true; break }
             if ($rc -eq 198) { Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
             Write-Host "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
             docker run --rm `
@@ -469,7 +477,7 @@ jobs:
           docker run --rm `
             -v "${{ github.workspace }}:C:\repo" `
             "${{ env.UNITY_WINDOWS_IMAGE }}" `
-            powershell -Command "Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') }"
+            powershell -Command "if (Test-Path 'C:\repo\client\Library\PackageCache') { Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') } } else { Write-Error 'PackageCache missing - materialization produced nothing'; exit 1 }"
 
       - name: Unity EditMode+PlayMode tests
         timeout-minutes: 30
