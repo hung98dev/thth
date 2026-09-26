@@ -85,7 +85,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-058` | Folk Fishing Runtime | `NOT_STARTED` | IMP-002, IMP-008, IMP-010, IMP-018 | `../02_world/world_rules.md`, `../07_content/economy_catalog.md` |
 | `IMP-059` | Hearth / Cooking / Bonfire Runtime | `NOT_STARTED` | IMP-003, IMP-007, IMP-008, IMP-018 | `../02_world/world_rules.md`, `../07_content/crafting_catalog.md` |
 | `IMP-060` | Atlas Journal Runtime | `NOT_STARTED` | IMP-005, IMP-010, IMP-011, IMP-018 | `../03_systems/atlas.md`, `../07_content/atlas_catalog.md` |
-| `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `IN_PROGRESS` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
+| `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `BLOCKED` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
 | `IMP-062` | Unity Geometry Exporter & Map Geometry Parity | `NOT_STARTED` | IMP-078, IMP-079 | `../01_gameplay/movement.md`, `../04_architecture/realtime_loop.md` |
 | `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `IN_PROGRESS` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
 | `IMP-064` | Unity Bilingual Localization Pipeline (vi-VN / en-US) | `NOT_STARTED` | IMP-000 | `../04_architecture/client_localization.md`, `../06_data/text.md` |
@@ -357,11 +357,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-004/"
 
 ## `IMP-061` — Protocol Buffers Schema & Multi-Language Codegen Harness
 id: IMP-061
-status: IN_PROGRESS
+status: BLOCKED
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-061-proto-codegen"
 claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: ""
+blocked_by: "BLK-002"
 
 specs: [`../05_network/protocol.md`, `../05_network/messages.md`, `../05_network/errors.md`, `../05_network/protobuf_conventions.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `repository_layout.md`]
 adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0060-wire-and-durable-contract-completion.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0063-economy-contract-reconciliation.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]

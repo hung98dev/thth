@@ -27,6 +27,16 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 None. IDs start at `BLK-001` and `OPS-001`.
 
+### `BLK-002` — Q0.bootstrap.absent_paths fails permanently once a listed path exists
+opened_by: implementer/IMP-061   opened_at: 2026-09-26T16:50Z
+evidence: `server/internal/conformance/gates/q0.go:574-607` (`checkBootstrapAbsence`, called unconditionally by `CheckQ0`) flags `proto/`, `server/migrations/`, `server/cmd/server/`, six `client/Assets/*` dirs, and any non-`.asmdef`/`.meta` file directly under `server/internal/protocol/` or `client/Assets/Scripts/Protocol/` — with no task-status awareness. Reproduced locally on main @ d5a4ebf: `mkdir -p proto/thinhthan/v1` then `go run ./server/cmd/verify` → `FAIL Q0.bootstrap.absent_paths — proto must not exist before its owning task`. The packet that owns a listed path (IMP-061 owns `proto/`) fails its own PR's Q0; once the path merges, every later PR fails the same check forever — contradicting the rule it cites: IMP-000 acceptance "proto/, migrations, generated outputs and feature paths remain absent **until their owning task**". Secondary defect in the same file: `checkOpenBlockerGating` matches only `Blocks:` (capital-B `blocksLineRe`) while the Entry Format above documents lowercase `blocks:`, so conforming entries (incl. BLK-001) evade open-blocker gating silently.
+owning spec / system: `docs/10_implementation/task_queue.md` (IMP-000 acceptance), `docs/10_implementation/audit_gates.md` § Q0, `server/internal/conformance/gates/q0.go`
+options:
+  1. make `checkBootstrapAbsence` status-aware — map each listed path to its owning packet via `owned_paths` and fail only while that packet is NOT_STARTED or BLOCKED; the owner can then materialize its paths and post-merge trees stay green;
+  2. evaluate absence against the PR's base ref plus the head's claimed packet — keeps a base-vs-head gate without a status lookup, but adds plumbing and still misfires once a legitimately merged path exists on main;
+  3. remove `checkBootstrapAbsence` and rely on `Q0.control.diff` owned-path scoping — simplest, but loses the pre-claim materialization guard for writes outside task branches.
+blocks: IMP-061
+
 ## Resolved Blockers
 
 ### `BLK-001` — URP materialization outputs not covered by IMP-000 owned_paths
