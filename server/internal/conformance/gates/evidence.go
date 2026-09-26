@@ -231,12 +231,13 @@ func CheckRunIdentity(root, repo, runID string, runAttempt int, token string) []
 		problems = append(problems, fmt.Sprintf("run_attempt %d != API %d", runAttempt, r.RunAttempt))
 	}
 	// The evidence run must be an ancestor of the current head (own run). A
-	// squash/rebase merge never makes the PR head sha an ancestor — fall back
-	// to the merged PR's merge_commit_sha, which is.
+	// squash/rebase merge never makes the run's head sha an ancestor — fall
+	// back to the merge_commit_sha of a merged PR containing that sha.
 	if r.HeadSHA != "" {
 		if out, err := gitDir(root, "merge-base", "--is-ancestor", r.HeadSHA, "HEAD"); err != nil {
-			if !landedViaMerge(root, mergedPRSHAs(repo, r.HeadSHA, token, client)) {
-				problems = append(problems, fmt.Sprintf("run head_sha %s is not an ancestor of HEAD: %v (%s)", r.HeadSHA, err, out))
+			cands := mergedPRSHAs(repo, r.HeadSHA, token, client)
+			if !landedViaMerge(root, cands) {
+				problems = append(problems, fmt.Sprintf("run head_sha %s is not an ancestor of HEAD and no merged-PR ancestor found (candidates=%d): %v (%s)", r.HeadSHA, len(cands), err, out))
 			}
 		}
 	}
@@ -247,14 +248,12 @@ func CheckRunIdentity(root, repo, runID string, runAttempt int, token string) []
 type prSHAs struct {
 	MergeCommitSHA string  `json:"merge_commit_sha"`
 	MergedAt       *string `json:"merged_at"`
-	Head           struct {
-		SHA string `json:"sha"`
-	} `json:"head"`
 }
 
-// mergedPRSHAs returns the merge_commit_sha of every merged PR whose head
-// commit is sha — /commits/{sha}/pulls also lists PRs where sha is only an
-// intermediate commit, which must not satisfy the fallback.
+// mergedPRSHAs returns the merge_commit_sha of every merged PR containing
+// sha. Runs often land on an intermediate PR head (a later evidence commit
+// bumps the head before merge), so containment — not head equality — is the
+// right test; the merge commit's ancestry still proves the content landed.
 func mergedPRSHAs(repo, sha, token string, client *http.Client) []string {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/commits/%s/pulls", repo, sha)
 	req, err := http.NewRequest("GET", url, nil)
@@ -278,7 +277,7 @@ func mergedPRSHAs(repo, sha, token string, client *http.Client) []string {
 	}
 	var shas []string
 	for _, pr := range prs {
-		if pr.MergedAt != nil && pr.Head.SHA == sha && pr.MergeCommitSHA != "" {
+		if pr.MergedAt != nil && pr.MergeCommitSHA != "" {
 			shas = append(shas, pr.MergeCommitSHA)
 		}
 	}
