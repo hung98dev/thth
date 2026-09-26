@@ -180,7 +180,7 @@ jobs:
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
             find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
-            if docker run --shm-size=2g --security-opt apparmor=unconfined \
+            cid=$(docker run -d --shm-size=2g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
@@ -196,11 +196,17 @@ jobs:
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
                 "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
-              ' 2>&1 | tee "$RUNNER_TEMP/unity-materialize.log"; then
-              rc=0
+              ') || cid=
+            df -h / "$RUNNER_TEMP" | tail -2 || true
+            docker system df 2>/dev/null | tail -3 || true
+            if [ -n "$cid" ]; then
+              docker logs -f "$cid" > "$RUNNER_TEMP/unity-materialize.log" 2>&1 || true
+              rc=$(docker wait "$cid")
+              docker rm -f "$cid" >/dev/null 2>&1 || true
             else
-              rc=${PIPESTATUS[0]}
+              rc=199
             fi
+            tail -200 "$RUNNER_TEMP/unity-materialize.log" 2>/dev/null || true
             if grep -q 'Exiting batchmode successfully' "$RUNNER_TEMP/unity-materialize.log" && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-materialize.log"; then
               exit 0
             fi
@@ -273,7 +279,7 @@ jobs:
               rc=$arc
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
-                if docker run --shm-size=2g --security-opt apparmor=unconfined \
+                cid=$(docker run -d --shm-size=2g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
@@ -288,11 +294,17 @@ jobs:
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile -
-                  ' 2>&1 | tee "$RUNNER_TEMP/unity-tests.log"; then
-                  rc=0
+                  ') || cid=
+                df -h / "$RUNNER_TEMP" | tail -2 || true
+                docker system df 2>/dev/null | tail -3 || true
+                if [ -n "$cid" ]; then
+                  docker logs -f "$cid" > "$RUNNER_TEMP/unity-tests.log" 2>&1 || true
+                  rc=$(docker wait "$cid")
+                  docker rm -f "$cid" >/dev/null 2>&1 || true
                 else
-                  rc=${PIPESTATUS[0]}
+                  rc=199
                 fi
+                tail -200 "$RUNNER_TEMP/unity-tests.log" 2>/dev/null || true
               fi
               if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
                 && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
