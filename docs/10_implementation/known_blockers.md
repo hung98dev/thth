@@ -37,6 +37,16 @@ options:
   3. remove `checkBootstrapAbsence` and rely on `Q0.control.diff` owned-path scoping — simplest, but loses the pre-claim materialization guard for writes outside task branches.
 blocks: IMP-061
 
+### `BLK-003` — server/go.mod lacks the pinned protobuf module; IMP-000 owns the lockfiles IMP-061 must extend
+opened_by: implementer/IMP-061   opened_at: 2026-09-26T17:20Z
+evidence: `server/go.mod` on main @ d5a4ebf declares `module thinhthan` + `go 1.27.1` and nothing else; IMP-061's generated `server/internal/protocol/v1/*.pb.go` imports `google.golang.org/protobuf/reflect/protoreflect` + `runtime/protoimpl`, so `go build ./...` / `go vet ./...` fail with "no required module provides package google.golang.org/protobuf/...". The module is already pinned (`server/internal/stackpin/pins.go` `GoModulePins["google.golang.org/protobuf"] = v1.36.12`, `docs/00_context/technology_versions.md`) and IMP-000's own acceptance required go.mod to "use the pinned Go/direct-module versions", yet the lockfile pair `server/go.mod` + `server/go.sum` is listed under IMP-000 `owned_paths` (`task_queue.md` path ownership index) — an implementer PR adding the `require` is rejected by `Q0.control.diff` ("file server/go.mod outside IMP-061 owned_paths", `server/internal/conformance/gates/diff.go`). Reproduced: `pwsh -NoProfile -File scripts/codegen.ps1` then `go -C server build ./...` on main @ d5a4ebf → module-resolution failure; adding `require google.golang.org/protobuf v1.36.12` (exact `GoModulePins` pin) makes `go build ./...` + `go vet ./...` pass.
+owning spec / system: `docs/10_implementation/task_queue.md` (IMP-000 owned_paths + acceptance), `docs/00_context/technology_versions.md`, `server/internal/stackpin/pins.go`, `server/internal/conformance/gates/diff.go`
+options:
+  1. spec/ PR adds `require google.golang.org/protobuf v1.36.12` to `server/go.mod` + the `go.sum` lines on `main` (IMP-000 follow-up under spec-owner scope) — smallest change; IMP-061 then needs no lockfile edit;
+  2. amend the ownership index so `server/go.mod`/`server/go.sum` are multi-owned (IMP-000 + whichever task first needs a pinned module) — covers every later task that adds a dependency (pgx, websocket, otel, …) instead of fixing IMP-061 alone;
+  3. move generated Go code behind a second module — violates the "one Go module `thinhthan`" invariant (`repository_layout.md`), do not use.
+blocks: IMP-061
+
 ## Resolved Blockers
 
 ### `BLK-001` — URP materialization outputs not covered by IMP-000 owned_paths
