@@ -15,7 +15,7 @@ using Google.Protobuf.Reflection;
 using NUnit.Framework;
 using ThinhThan.Protocol.V1;
 
-namespace ThinhThan.Tests.EditMode
+namespace ThinhThan.Tests.EditMode.ProtocolParity
 {
     public class ProtocolParityTests
     {
