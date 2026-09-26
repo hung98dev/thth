@@ -209,7 +209,7 @@ jobs:
                   rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
-                "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
+                unity-editor -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
               ') || cid=
             df -h / "$RUNNER_TEMP" | tail -2 || true
             docker system df 2>/dev/null | tail -3 || true
@@ -296,7 +296,7 @@ jobs:
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
-                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 "/opt/unity/Editor/Unity" -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
+                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
               if [ -n "$lcid" ]; then arc=$(docker wait "$lcid"); else arc=199; fi
               if [ "$arc" -eq 198 ]; then
                 echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
@@ -321,7 +321,7 @@ jobs:
                   -e MODE="$mode" \
                   "${{ env.UNITY_LINUX_IMAGE }}" \
                   bash -c '
-                    "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
+                    unity-editor -nographics -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile -
