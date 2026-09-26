@@ -157,9 +157,12 @@ jobs:
         run: |
           set -uo pipefail
           sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          sudo systemctl mask --runtime systemd-oomd.service 2>/dev/null || true
+          systemctl is-active systemd-oomd 2>/dev/null || true
+          busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
-          for i in 1 2 3 4 5; do
+          for i in 1 2 3 4 5 6 7 8; do
             if docker run --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
@@ -199,9 +202,9 @@ jobs:
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
-            [ "$i" -lt 5 ] && sleep 60
+            [ "$i" -lt 8 ] && sleep 60
           done
-          echo "unity materialization failed after 5 attempts (licence/infra)" >&2
+          echo "unity materialization failed after 8 attempts (licence/infra)" >&2
           exit 1
 
       - name: Inject package nullable suppressions
@@ -229,10 +232,13 @@ jobs:
         run: |
           set -euo pipefail
           sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          sudo systemctl mask --runtime systemd-oomd.service 2>/dev/null || true
+          systemctl is-active systemd-oomd 2>/dev/null || true
+          busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic"
           for mode in EditMode PlayMode; do
             ok=
-            for i in 1 2 3 4 5; do
+            for i in 1 2 3 4 5 6 7 8; do
               free -m
               arc=0
               docker run --rm \
@@ -289,7 +295,7 @@ jobs:
               sleep 20
             done
             if [ -z "$ok" ]; then
-              echo "unity $mode tests failed after 5 attempts" >&2
+              echo "unity $mode tests failed after 8 attempts" >&2
               exit 1
             fi
           done
@@ -299,8 +305,12 @@ jobs:
         shell: bash
         run: |
           echo '=== audit kill/tgkill events (sender pid/comm/exe) ==='
-          sudo ausearch -k unitykill -i 2>/dev/null | tail -40 || true
+          sudo ausearch -k unitykill -ts recent > "$RUNNER_TEMP/audit-kills.txt" 2>/dev/null || true
+          grep -E 'a2=(9|f)\b' "$RUNNER_TEMP/audit-kills.txt" | head -60 || true
           sudo grep -i 'unitykill\|SIGKILL' /var/log/audit/audit.log 2>/dev/null | tail -40 || true
+          echo '=== journald oomd/memory-kill records ==='
+          sudo journalctl -k -b --no-pager 2>/dev/null | grep -icE 'oom' || true
+          sudo journalctl -b --no-pager 2>/dev/null | grep -iE 'oomd|killed.*memory|signal.*unity' | tail -20 || true
           echo '=== docker daemon events ==='
           cat "$RUNNER_TEMP/docker-events.log" 2>/dev/null | tail -40 || true
           kill "$(cat "$RUNNER_TEMP/docker-events.pid" 2>/dev/null)" 2>/dev/null || true
