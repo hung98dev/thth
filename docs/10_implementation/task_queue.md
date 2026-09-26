@@ -170,7 +170,7 @@ Materialize the canonical versions from `../00_context/technology_versions.md` a
 Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.editorconfig`/`.gitattributes`, the verifier's C# style check and Go `gofmt`/`go vet`/`staticcheck` wiring, and the client player-settings baseline of `../04_architecture/client_performance.md` § Smoothness by Construction item 3.
 
 ## Acceptance
-- materialized bootstrap paths strictly conform to `repository_layout.md`; `proto/`, migrations, generated outputs, and feature paths remain absent until their owning task,
+- materialized bootstrap paths strictly conform to `repository_layout.md`; `proto/`, migrations, generated outputs, and feature paths remain absent while every packet owning a path at or under them is `NOT_STARTED` or `BLOCKED`; once an owning packet is `IN_PROGRESS` or `DONE` the path exists legitimately and `Q0.control.diff` scopes further writes (BLK-002),
 - Unity `client/ProjectSettings/ProjectVersion.txt` (6000.6.1f1) and `client/Packages/manifest.json` are hand-authored to the matrix (incl. Addressables `2.11.2`); `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset` and every `.meta` come from the editor's materialization and are committed byte-for-byte (`agent_execution_protocol.md` §4b, ADR-0072); the lock matches the matrix,
 - Go `server/go.mod` (module `thinhthan`, Go 1.27.1), `server/go.sum`, and CI use the pinned Go/direct-module versions,
 - `scripts/verify.ps1` is PowerShell 7 (`pwsh` 7.6.6), runs unchanged on Linux and Windows, calls `server/cmd/verify` and accepts `-UnityResultsDir` (CI) and `-LocalDeferMissing` (local only: a missing Unity editor, PostgreSQL, Windows-only binary or cgo C compiler becomes `DEFERRED(local-missing)` in `verify-report.json`; on Linux without `THINHTHAN_TEST_PG_DSN` it starts the pinned `postgres:18.6` digest with `docker run` when Docker exists); CI never passes `-LocalDeferMissing`; proto drift is owned by IMP-061,
@@ -209,6 +209,7 @@ Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.
 - `server/internal/conformance/gates/gates_test.go` (ADR-0072): TestBlockAndOpsPrFastPath, TestDoneWithoutManifestAllowedOnHead, TestMergedHeadRequiresManifest, TestTwoPhaseListIncludesImp083, TestLocalDeferMissingNeverInCi.
 - `server/internal/stackpin/versions_test.go` (ADR-0072): TestGoogleProtobufNupkgSha256, TestEdbZipSha256, TestDownloadArtifactAndGitLfsPins.
 - `server/internal/conformance/gates/gates_test.go` (BLK-001): TestImp000OwnedPathsCoverMaterializedAssets — IMP-000 `owned_paths` cover `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset` and their `.meta`.
+- `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware — bootstrap roots and generated-protocol files unblock once an owning packet is IN_PROGRESS/DONE and unowned paths never do; TestBlocksLineCaseInsensitive — open-blocker gating parses lowercase `blocks:` lines.
 
 generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -397,6 +398,7 @@ consumers_checked: [AGENTS.md, docs/05_network/messages.md, docs/05_network/prot
 - `client/Assets/Tests/EditMode/ProtocolParity/ProtocolParityTests.cs`: generated registry coverage and shared binary golden decode/encode parity.
 - `server/internal/testing/protocol/registry_test.go`: TestAdr0060MessagesRegistered, TestErrorEnumMatchesErrorsMd (ADR-0060), TestCodegenPreservesProtocolAsmdef, TestCodegenNeverWritesMeta (ADR-0072).
 - `server/internal/testing/protocol/wire_types_test.go`: TestNoOptionalRepeatedFields, TestErrorCodeFencedRowMajorOrder, TestOutcomeMessagesHaveNoOperationResult, TestAdr0069MessagesRegistered (ADR-0069).
+- `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
 
 generated_artifacts: [`server/internal/protocol/v1/*.pb.go`, `client/Assets/Scripts/Protocol/*.cs`]
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -474,6 +476,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 ## Tests
 - `client/Assets/Tests/EditMode/AddressablesValidation/AddressablesValidationTests.cs`: TestCatalogAssetKeyResolution, TestAddressableGroupBudgets, TestCanonicalSpriteImportProfiles, TestPlayableSceneKeyCoverage, TestSettingsAssetMatchesBaselineGuid.
 - `client/Assets/Tests/EditMode/AddressablesValidation/AssetKeyGroupTests.cs`: TestKeyDerivationRule, TestCanonicalGroupSetAndSingleMembership, TestPresentationAliasSingleHop, TestDeterministicGroupRamBudgets, TestResidentSteadyAndTransferPeak, TestMeshTypeRule, TestParallaxFarPpu50 (ADR-0071).
+- `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
