@@ -39,8 +39,40 @@ if ($env:GITHUB_ACTIONS -eq 'true' -and $LocalDeferMissing) {
     exit 2
 }
 
+# The evidence-manifest job runs on every PR branch, but only imp//block/ head
+# refs carry an IMP id — claim/, ops/, spec/ and other branches have no packet
+# to merge evidence into. Skipping is the correct outcome, not an error.
+if ($MergeReports -and $TaskID -notmatch 'IMP-\d+') {
+    Write-Host "verify.ps1: -TaskID '$TaskID' names no IMP-* task — nothing to merge; skipping"
+    exit 0
+}
+
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location $RepoRoot
+
+# IMP-106 / CI-003: append this verifier's own entry to the cache-telemetry
+# JSONL (hit = Go module/build cache hit, signalled by the workflow via
+# THINHTHAN_CACHE_HIT_GO), then fold all entries into the report's
+# cached_steps field via cachemerge. Best-effort: telemetry never fails
+# verification.
+function Merge-CacheTelemetry([string]$Report, [double]$WallSeconds) {
+    try {
+        . (Join-Path $RepoRoot '.devin/scripts/cache_telemetry.ps1')
+        $goHit = if ($env:THINHTHAN_CACHE_HIT_GO -eq 'true') { 'hit' } else { 'miss' }
+        Write-CacheTelemetry -Step 'verify' -Result $goHit -WallSeconds $WallSeconds
+        $telFile = $env:THINHTHAN_CACHE_TELEMETRY
+        if (-not $telFile -and $env:RUNNER_TEMP) {
+            $telFile = Join-Path $env:RUNNER_TEMP 'cache-telemetry.jsonl'
+        }
+        if (-not $telFile) { return }
+        & go -C (Join-Path $RepoRoot 'server') run ./internal/conformance/caching/cmd/cachemerge -report $Report -telemetry $telFile
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "verify.ps1: cachemerge rc=$LASTEXITCODE — report kept without cached_steps"
+        }
+    } catch {
+        Write-Host "verify.ps1: cache telemetry merge skipped: $_"
+    }
+}
 
 # ---------------------------------------------------------------------------
 # Optional local PostgreSQL: Linux without THINHTHAN_TEST_PG_DSN starts the
@@ -100,11 +132,16 @@ try {
     }
 
     Push-Location (Join-Path $RepoRoot 'server')
+    $verifySw = [System.Diagnostics.Stopwatch]::StartNew()
     try {
         & go @args
         $exit = $LASTEXITCODE
     } finally {
         Pop-Location
+        $verifySw.Stop()
+    }
+    if (-not $MergeReports -and $env:GITHUB_ACTIONS -eq 'true' -and $ReportOut) {
+        Merge-CacheTelemetry -Report $ReportOut -WallSeconds $verifySw.Elapsed.TotalSeconds
     }
     exit $exit
 } finally {
