@@ -562,9 +562,7 @@ func openBlockedTasks(path string) map[string][]string {
 			continue
 		}
 		if m := blocksLineRe.FindStringSubmatch(line); m != nil {
-			for _, ref := range taskIDRefRe.FindAllString(m[1], -1) {
-				out[curBLK] = append(out[curBLK], ref)
-			}
+			out[curBLK] = append(out[curBLK], taskIDRefRe.FindAllString(m[1], -1)...)
 		}
 	}
 	return out

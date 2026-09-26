@@ -106,25 +106,6 @@ func StatusOnlyPR(files []string) bool {
 	return true
 }
 
-// gateOwner maps each gate check to the task that owns its completion
-// (audit_gates.md § Gate Activation). A check is required iff its owner is
-// DONE on main or set to DONE in the PR head.
-var gateOwners = map[string]string{
-	"Q0":            "IMP-000",
-	"Q1":            "IMP-000",
-	"Q2":            "IMP-061",
-	"Q3.go":         "IMP-000",
-	"Q3.editmode":   "IMP-000",
-	"Q3.playmode":   "IMP-065",
-	"Q4":            "IMP-000",
-	"Q4.client_api": "IMP-083",
-	"Q4.canonical":  "IMP-083",
-	"Q5.migrations": "IMP-005",
-	"Q5.content":    "IMP-003",
-	"Q5.balance":    "IMP-004",
-	"Q6":            "IMP-000",
-}
-
 // GateRequired reports whether a gate owned by ownerTask must run given the
 // packet statuses on main (base) and on the PR head (ADR-0068).
 func GateRequired(ownerTask string, statusOnMain, statusOnHead string) bool {

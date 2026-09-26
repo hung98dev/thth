@@ -80,11 +80,54 @@ func CheckQ4(root string, e *Env) []Check {
 	return checks
 }
 
+// unityAssemblies returns the Unity package assembly names asmdefs may
+// reference, parsed from the References column of the Mandatory Assemblies
+// table in repository_layout.md (the spec is the source of truth).
+func unityAssemblies(root string) (map[string]bool, error) {
+	data, err := os.ReadFile(filepath.Join(root, "docs/10_implementation/repository_layout.md"))
+	if err != nil {
+		return nil, err
+	}
+	text := string(data)
+	idx := strings.Index(text, "## Mandatory Assemblies")
+	if idx < 0 {
+		return nil, fmt.Errorf("repository_layout.md missing Mandatory Assemblies section")
+	}
+	sec := text[idx:]
+	if end := strings.Index(sec[1:], "\n## "); end > 0 {
+		sec = sec[:end+1]
+	}
+	backtick := regexp.MustCompile("`([^`]+)`")
+	out := map[string]bool{}
+	for _, line := range strings.Split(sec, "\n") {
+		if !strings.HasPrefix(strings.TrimSpace(line), "|") {
+			continue
+		}
+		cells := strings.Split(line, "|")
+		if len(cells) < 3 {
+			continue
+		}
+		for _, m := range backtick.FindAllStringSubmatch(cells[len(cells)-2], -1) {
+			if !strings.HasPrefix(m[1], "ThinhThan.") {
+				out[m[1]] = true
+			}
+		}
+	}
+	if len(out) == 0 {
+		return nil, fmt.Errorf("repository_layout.md Mandatory Assemblies table parsed empty")
+	}
+	return out, nil
+}
+
 // checkAsmdefGraph parses every *.asmdef under client/, builds the
 // reference graph, asserts acyclic and every mandatory assembly declared.
 func checkAsmdefGraph(root string) []Check {
 	id := "Q4.asmdefs"
 	var problems []string
+	unityRefs, uerr := unityAssemblies(root)
+	if uerr != nil {
+		problems = append(problems, uerr.Error())
+	}
 	refs := map[string][]string{}
 	for name, dir := range asmdefDirs {
 		path := filepath.Join(root, filepath.FromSlash(dir), name+".asmdef")
@@ -115,12 +158,14 @@ func checkAsmdefGraph(root string) []Check {
 		color[n] = 1
 		stack = append(stack, n)
 		for _, d := range refs[n] {
-			if _, known := asmdefDirs[d]; !known {
-				problems = append(problems, fmt.Sprintf("%s references unknown assembly %s", n, d))
+			if _, local := asmdefDirs[d]; local {
+				if visit(d) {
+					return true
+				}
 				continue
 			}
-			if visit(d) {
-				return true
+			if !unityRefs[d] {
+				problems = append(problems, fmt.Sprintf("%s references unknown assembly %s (not in repository_layout.md Mandatory Assemblies)", n, d))
 			}
 		}
 		stack = stack[:len(stack)-1]
@@ -236,7 +281,7 @@ func checkRootConfigFiles(root string) []Check {
 		// Unity YAML files are never LFS.
 		for _, line := range strings.Split(string(ga), "\n") {
 			fields := strings.Fields(line)
-			if len(fields) < 2 || strings.HasPrefix(fields[0], "*.") == false {
+			if len(fields) < 2 || !strings.HasPrefix(fields[0], "*.") {
 				continue
 			}
 			pat := fields[0]

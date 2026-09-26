@@ -47,8 +47,3 @@ func goTool(root, goPath string, args ...string) (string, error) {
 	full := append([]string{goPath, "-C", filepath.Join(root, "server")}, args...)
 	return runCmd(root, 15*time.Minute, full...)
 }
-
-// relSlash normalizes a path to repo-relative slash form for reports.
-func relSlash(p string) string {
-	return filepath.ToSlash(p)
-}

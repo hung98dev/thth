@@ -134,6 +134,40 @@ jobs:
         shell: bash
         run: docker pull "${{ env.UNITY_LINUX_IMAGE }}"
 
+      - name: Arm kill-probe (SIGKILL sender diagnostic)
+        shell: bash
+        run: |
+          if ! command -v auditctl >/dev/null 2>&1; then
+            sudo apt-get update -qq >/dev/null 2>&1 || true
+            sudo apt-get install -y -qq auditd >/dev/null 2>&1 || true
+          fi
+          sudo auditctl -D 2>/dev/null || true
+          sudo auditctl -a always,exit -F arch=b64 -S kill -S tkill -S tgkill -S pidfd_send_signal -k unitykill 2>/dev/null || echo 'auditctl rules not installed'
+          sudo auditctl -l 2>/dev/null || true
+          (docker events --since "$(date +%s)" --filter 'event=die' --filter 'event=kill' --filter 'event=oom' --format '{{json .}}' > "$RUNNER_TEMP/docker-events.log" 2>&1 & echo $! > "$RUNNER_TEMP/docker-events.pid") || true
+          sudo bash -c '
+            mount -t tracefs nodev /sys/kernel/tracing 2>/dev/null || true
+            T=/sys/kernel/tracing; [ -d "$T/events" ] || T=/sys/kernel/debug/tracing
+            if [ -d "$T/events/signal/signal_generate" ]; then
+              : > "$T/trace" 2>/dev/null || true
+              : > "$T/events/signal/signal_generate/filter" 2>/dev/null || true
+              echo 1 > "$T/events/signal/signal_generate/enable" 2>/dev/null || true
+              [ -d "$T/events/signal/signal_deliver" ] && : > "$T/events/signal/signal_deliver/filter" 2>/dev/null || true
+              [ -d "$T/events/signal/signal_deliver" ] && echo 1 > "$T/events/signal/signal_deliver/enable" 2>/dev/null || true
+              [ -d "$T/events/sched/sched_process_exit" ] && echo 1 > "$T/events/sched/sched_process_exit/enable" 2>/dev/null || true
+              echo "$T" > /tmp/tracefs-dir
+            fi
+          ' || true
+          if ! command -v bpftrace >/dev/null 2>&1; then
+            sudo apt-get install -y -qq bpftrace >/dev/null 2>&1 || true
+          fi
+          command -v strace >/dev/null 2>&1 || sudo apt-get install -y -qq strace >/dev/null 2>&1 || true
+          sudo sysctl kernel.yama.ptrace_scope=0 2>/dev/null || true
+          mkdir -p "$RUNNER_TEMP/unity-cfg" "$RUNNER_TEMP/unity-cache" "$RUNNER_TEMP/strace-out"
+          if command -v bpftrace >/dev/null 2>&1; then
+            (sudo bpftrace -e 'kprobe:cgroup_kill { printf("cgroup_kill writer comm=%s pid=%d\n", comm, pid); }' > "$RUNNER_TEMP/cgroup-kill.log" 2>&1 & echo $! > "$RUNNER_TEMP/bpftrace.pid") || true
+          fi
+
       - name: Unity materialization (licence retry <=5)
         timeout-minutes: 30
         shell: bash
@@ -145,17 +179,42 @@ jobs:
         run: |
           set -uo pipefail
           sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          sudo systemctl mask --runtime systemd-oomd.service 2>/dev/null || true
+          systemctl is-active systemd-oomd 2>/dev/null || true
+          busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
+          img_strace=$(docker run --rm "${{ env.UNITY_LINUX_IMAGE }}" bash -c 'command -v strace || true')
+          echo "in-image strace: ${img_strace:-ABSENT}"
+          for i in 1 2 3 4; do
+            docker run --rm --shm-size=4g "${{ env.UNITY_LINUX_IMAGE }}" bash -c '/opt/unity/Editor/Unity -batchmode -nographics -version -logFile -' >/dev/null 2>&1
+            echo "direct-version probe $i rc=$?"
+          done
           for i in 1 2 3 4 5; do
-            if docker run --shm-size=2g \
+            find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
+            ulf="$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf"
+            NET=""
+            [ -s "$ulf" ] && NET="--network=none"
+            getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
+            curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
+            ip route get 1.1.1.1 2>/dev/null | head -1 || true
+            if [ -n "$img_strace" ]; then
+              INVOKE="strace -f -tt -o /tmp/strace-out/m-$i.log -e trace=%signal,mprotect,prctl,io_uring_setup unity-editor -projectPath /github/workspace/client \$EXTRA -quit -logFile -"
+            else
+              INVOKE="unity-editor -projectPath /github/workspace/client \$EXTRA -quit -logFile -"
+            fi
+            cid=$(docker run -d -i $NET --shm-size=4g --cap-add SYS_PTRACE --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+              -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+              -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
+              -v "$RUNNER_TEMP/strace-out:/tmp/strace-out" \
               -v /etc/machine-id:/etc/machine-id:ro \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
               -e MONO_GC_PARAMS=nursery-size=64m \
+              -e INVOKE="$INVOKE" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
                 EXTRA=""
@@ -163,13 +222,21 @@ jobs:
                   rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
-                "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
-              ' 2>&1 | tee unity-materialize.log; then
-              rc=0
+                eval "$INVOKE"
+              ') || cid=
+            df -h / "$RUNNER_TEMP" | tail -2 || true
+            docker system df 2>/dev/null | tail -3 || true
+            cpid=$(docker inspect -f '{{.State.Pid}}' "$cid" 2>/dev/null) || cpid=
+            [ -n "$cpid" ] && [ "$cpid" != "0" ] && (sudo timeout 120 strace -fp "$cpid" -e trace=kill,tkill,tgkill,rt_sigaction,pidfd_send_signal,exit_group -tt -o "$RUNNER_TEMP/ustrace-$i.txt" >/dev/null 2>&1 &) || true
+            if [ -n "$cid" ]; then
+              docker logs -f "$cid" > "$RUNNER_TEMP/unity-materialize.log" 2>&1 || true
+              rc=$(docker wait "$cid")
+              docker rm -f "$cid" >/dev/null 2>&1 || true
             else
-              rc=${PIPESTATUS[0]}
+              rc=199
             fi
-            if grep -q 'Exiting batchmode successfully' unity-materialize.log && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
+            tail -200 "$RUNNER_TEMP/unity-materialize.log" 2>/dev/null || true
+            if grep -q 'Exiting batchmode successfully' "$RUNNER_TEMP/unity-materialize.log" && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-materialize.log"; then
               exit 0
             fi
             dead=$(docker ps -ql 2>/dev/null)
@@ -183,6 +250,10 @@ jobs:
             sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
             sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
             free -m
+            tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
+            find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+            tail -60 "$RUNNER_TEMP/strace-out/m-$i.log" 2>/dev/null || true
+            grep -n 'killed by\|--- SIG\|+++ killed\|SIGKILL\|SIGSEGV\|SIGBUS\|SIGILL' "$RUNNER_TEMP"/strace-out/m-*.log 2>/dev/null | tail -40 || true
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
@@ -204,7 +275,7 @@ jobs:
       - name: Dump unity-materialize.log on failure
         if: failure()
         shell: bash
-        run: tail -c 200000 unity-materialize.log 2>/dev/null || echo 'no unity-materialize.log produced'
+        run: tail -c 200000 "$RUNNER_TEMP/unity-materialize.log" 2>/dev/null || echo 'no unity-materialize.log produced'
 
       - name: Unity EditMode+PlayMode tests
         timeout-minutes: 30
@@ -217,29 +288,45 @@ jobs:
         run: |
           set -euo pipefail
           sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          sudo systemctl mask --runtime systemd-oomd.service 2>/dev/null || true
+          systemctl is-active systemd-oomd 2>/dev/null || true
+          busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic"
           for mode in EditMode PlayMode; do
             ok=
             for i in 1 2 3 4 5; do
               free -m
               arc=0
-              docker run --rm \
+              find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
+              ulf="$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf"
+              NET=""
+              [ -s "$ulf" ] || NET=""
+              getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
+              curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
+              lcid=$(docker run -d -i --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+                -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
-                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 "/opt/unity/Editor/Unity" -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
-                || arc=$?
+                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
+              if [ -n "$lcid" ]; then arc=$(docker wait "$lcid"); else arc=199; fi
               if [ "$arc" -eq 198 ]; then
                 echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
                 exit 1
               fi
               rc=$arc
-              rm -f "artifacts/unity-tests/$mode-results.xml" unity-tests.log
+              rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
-                if docker run --shm-size=2g \
+                ulf="$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf"
+                TNET="--network=none"
+                [ -s "$ulf" ] || TNET=""
+                cid=$(docker run -d -i $TNET --shm-size=4g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                  -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+                  -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -248,19 +335,27 @@ jobs:
                   -e MODE="$mode" \
                   "${{ env.UNITY_LINUX_IMAGE }}" \
                   bash -c '
-                    "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
+                    unity-editor -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile -
-                  ' 2>&1 | tee unity-tests.log; then
-                  rc=0
+                  ') || cid=
+                df -h / "$RUNNER_TEMP" | tail -2 || true
+                docker system df 2>/dev/null | tail -3 || true
+                cpid=$(docker inspect -f '{{.State.Pid}}' "$cid" 2>/dev/null) || cpid=
+                [ -n "$cpid" ] && [ "$cpid" != "0" ] && (sudo timeout 120 strace -fp "$cpid" -e trace=kill,tkill,tgkill,rt_sigaction,pidfd_send_signal,exit_group -tt -o "$RUNNER_TEMP/ustrace-$mode-$i.txt" >/dev/null 2>&1 &) || true
+                if [ -n "$cid" ]; then
+                  docker logs -f "$cid" > "$RUNNER_TEMP/unity-tests.log" 2>&1 || true
+                  rc=$(docker wait "$cid")
+                  docker rm -f "$cid" >/dev/null 2>&1 || true
                 else
-                  rc=${PIPESTATUS[0]}
+                  rc=199
                 fi
+                tail -200 "$RUNNER_TEMP/unity-tests.log" 2>/dev/null || true
               fi
               if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
                 && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
-                && ! grep -q 'Scripts have compiler errors' unity-tests.log; then
+                && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-tests.log"; then
                 ok=1; break
               fi
               dead=$(docker ps -ql 2>/dev/null)
@@ -269,6 +364,9 @@ jobs:
               sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
               sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
               free -m
+              tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
+              find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+              grep -n 'kill(\|SIGKILL\|exit_group' "$RUNNER_TEMP/ustrace-$mode-$i.txt" 2>/dev/null | tail -30 || true
               echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
               docker run --rm \
                 -v "${{ github.workspace }}:/github/workspace" \
@@ -281,6 +379,37 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Dump kill-probe diagnostics
+        if: always()
+        shell: bash
+        run: |
+          echo '=== audit kill/tgkill events (sender pid/comm/exe) ==='
+          sudo ausearch -k unitykill -ts recent > "$RUNNER_TEMP/audit-kills.txt" 2>/dev/null || true
+          grep -E 'pidfd_send_signal|a2=9\b' "$RUNNER_TEMP/audit-kills.txt" | head -60 || true
+          sudo grep -i 'unitykill\|SIGKILL' /var/log/audit/audit.log 2>/dev/null | tail -40 || true
+          echo '=== avc/seccomp/anom_abend audit records ==='
+          sudo ausearch -m avc,user_avc,seccomp,anom_abend -ts recent 2>/dev/null | tail -40 || true
+          echo '=== memcg memory.events (docker cgroups) ==='
+          sudo find /sys/fs/cgroup -name 'memory.events' -path '*docker*' -exec sh -c 'echo "{}:"; cat {}' \; 2>/dev/null || true
+          echo '=== journald oomd/memory-kill records ==='
+          sudo journalctl -k -b --no-pager 2>/dev/null | grep -icE 'oom' || true
+          sudo journalctl -b --no-pager 2>/dev/null | grep -iE 'oomd|killed.*memory|signal.*unity' | tail -20 || true
+          sudo journalctl -k -b --no-pager 2>/dev/null | grep -iE 'apparmor|avc|seccomp|denied' | tail -20 || true
+          echo '=== docker daemon events ==='
+          cat "$RUNNER_TEMP/docker-events.log" 2>/dev/null | tail -40 || true
+          kill "$(cat "$RUNNER_TEMP/docker-events.pid" 2>/dev/null)" 2>/dev/null || true
+          echo '=== signal_generate SIGKILL trace (sender comm/pid in prefix) ==='
+          T=$(cat /tmp/tracefs-dir 2>/dev/null || echo /sys/kernel/tracing)
+          sudo cat "$T/trace" 2>/dev/null > "$RUNNER_TEMP/trace.txt" || true
+          grep -c . "$RUNNER_TEMP/trace.txt" 2>/dev/null || true
+          grep -nE 'sig=(4|6|7|8|11)[^0-9]|sig=9' "$RUNNER_TEMP/trace.txt" 2>/dev/null | tail -80 || true
+          grep -nE 'comm=Unity|Unity-[0-9]+' "$RUNNER_TEMP/trace.txt" 2>/dev/null | tail -30 || true
+          sudo bash -c "echo 0 > '$T/events/signal/signal_generate/enable'; echo 0 > '$T/events/signal/signal_generate/filter'; [ -d '$T/events/signal/signal_deliver' ] && echo 0 > '$T/events/signal/signal_deliver/enable'; [ -d '$T/events/sched/sched_process_exit' ] && echo 0 > '$T/events/sched/sched_process_exit/enable'" 2>/dev/null || true
+          echo '=== cgroup_kill writers (bpftrace) ==='
+          cat "$RUNNER_TEMP/cgroup-kill.log" 2>/dev/null | tail -30 || true
+          sudo pkill -f 'bpftrace -e' 2>/dev/null || true
+          sudo auditctl -D -k unitykill 2>/dev/null || true
 
       - name: Unity materialized drift check
         id: drift
@@ -310,6 +439,7 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UNITY_EDITOR_PATH: '/opt/unity/Editor/Unity'
         run: pwsh -NoProfile -File scripts/verify.ps1 -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
 
       - name: Upload verify report
@@ -482,6 +612,7 @@ jobs:
           $unityExe = (docker run --rm "${{ env.UNITY_WINDOWS_IMAGE }}" powershell -NoProfile -Command "(Get-Item 'C:\UnityEditor\*\Editor\Unity.exe' -ErrorAction SilentlyContinue | Select-Object -First 1).FullName" | Out-String).Trim()
           if (-not $unityExe) { Write-Error 'Unity.exe not found under C:\UnityEditor in the pinned image'; exit 1 }
           Write-Host "unity editor: $unityExe"
+          "UNITY_EDITOR_PATH=$unityExe" >> $env:GITHUB_ENV
           $ulf = "$env:RUNNER_TEMP\unity-lic\Unity_lic.ulf"
           $logPath = "$env:RUNNER_TEMP\unity-materialize.log"
           $ok = $false
