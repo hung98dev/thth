@@ -657,19 +657,20 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - Add pinned `actions/cache` steps to `verify.yml` and extend `scripts/verify.ps1` so a warm PR run is measurably faster than a cold run without weakening any gate (`engineering_conventions.md` §6):
   - Go module and build caches (`~/go/pkg/mod`, `~/.cache/go-build`; Windows `%LOCALAPPDATA%\go-build`) keyed on OS + Go pin + `server/go.sum` hash (`actions/setup-go` stays `cache: false`; explicit `actions/cache` is the mechanism);
   - `docker save`/`docker load` through `actions/cache` for the pinned `docker pull` images (both `unityci/editor` digests), keyed on the exact digest string — a hit skips the pull; the `services:` postgres image is pulled before job steps and cannot be cached, so it either stays or converts to a step-managed container when the measured saving justifies it;
-  - Unity `client/Library` materialization reuse only where it is byte-for-byte safe under §4b (keyed on `client/Packages/packages-lock.json` + `ProjectVersion.txt` + image digest); every file the materialization produces is still uploaded and committed;
-  - Windows PostgreSQL EDB binaries keyed on version + download SHA-256 — the hash is still asserted before use on a hit.
+  - Unity `client/Library/` build cache via `actions/cache` keyed on `client/Packages/manifest.json` + `client/ProjectSettings/` hash + the pinned editor image digest: `Library/` is gitignored build output, not §4b evidence, so it may be cached; the editor still opens the project and runs the full materialization + compile on every run, and every materialized file outside `Library/` is still uploaded via `unity-materialized-<os>` and committed byte-for-byte — a Library hit only skips regenerate work, never a check;
+  - Windows PostgreSQL EDB binaries keyed on version + download SHA-256 — the extracted directory may be cached; the hash is still asserted before use on a hit;
+  - licence paths are never cached: the Unity licence volume/directory and licence activation stay fresh per run (`audit_gates.md` § Unity materialization); no cache `key` or `restore-keys` may cover licence state.
 - Cache-key policy and restore rules documented in `.devin/scripts/` and enforced by the conformance tests below.
 
 ## Acceptance
 - every `actions/cache` step uses the pinned SHA from `technology_versions.md`; every `key` hashes all lockfile/pin/digest inputs, and `restore-keys` never substitute a different pinned version or OS (CI-001),
-- a cache hit never skips or weakens a Q gate, the fork guard, job preconditions, or the §4b materialization commit (CI-002),
+- a cache hit never skips or weakens a Q gate, the fork guard, job preconditions, the §4b materialization commit, or licence activation (licence state is never cached) (CI-002),
 - `verify-report.json` records `hit|miss` and `wall_seconds` per cached step, and the task PR reports lower total Linux+Windows wall-time on a warm-cache run than its own cold run (CI-003),
 - cold and warm runs produce identical `source_tree_hash`, zero codegen drift and identical evidence manifests; no new secrets, runners or services (CI-004, ADR-0058).
 
 ## Tests
 - `server/internal/conformance/caching/caching_test.go` (CI-001): TestCacheActionPinnedSha, TestCacheKeysCoverPinInputs, TestRestoreKeysNeverCrossPinOrOs.
-- `server/internal/conformance/caching/caching_test.go` (CI-002): TestNoGateSkippedOnCacheHit, TestMaterializeCommitStillRequiredOnHit.
+- `server/internal/conformance/caching/caching_test.go` (CI-002): TestNoGateSkippedOnCacheHit, TestMaterializeCommitStillRequiredOnHit, TestLicenceStateNeverCached.
 - `server/internal/conformance/caching/caching_test.go` (CI-003, CI-004): TestWallTimeFieldsRecorded, TestEvidenceIdentityIndependentOfCache.
 
 generated_artifacts: []

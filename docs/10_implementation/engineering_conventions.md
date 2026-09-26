@@ -178,7 +178,7 @@ merge      squash via auto-merge enabled by the merge-slot holder after the §5a
 
 - **Pin:** every `actions/cache` step uses the exact action SHA pinned in `../00_context/technology_versions.md`; no floating version tags.
 - **Keys:** a cache `key` hashes every input that changes output — lockfiles (`server/go.sum`, `client/Packages/packages-lock.json`), version pins (Go/Unity/protobuf/EDB SHA-256) and image digests. `restore-keys` may shorten the lookup but never substitute a different pinned version or OS.
-- **Gate integrity:** a cache hit never skips or weakens a Q gate, the fork guard, job preconditions or the §4b materialization-commit requirement; cold and warm runs produce identical `source_tree_hash`, codegen drift and evidence manifests.
+- **Gate integrity:** a cache hit never skips or weakens a Q gate, the fork guard, job preconditions, the §4b materialization-commit requirement or licence activation (licence state is never cached); cold and warm runs produce identical `source_tree_hash`, codegen drift and evidence manifests.
 - **Measurement:** `verify-report.json` records `hit|miss` and `wall_seconds` per cached step so the warm-run speedup is checkable (CI-003).
 
 ## Requirement IDs
@@ -193,7 +193,7 @@ Covered by Q0 requirement coverage like spec tables (`audit_gates.md` Gate B).
 | `CODE-005` | client API fence with justified allowlist entries only (§2.5) | every PR (Q4) |
 | `CODE-006` | one canonical implementation per concern; duplicates detected by name/base-type patterns (§2.6) | every PR (Q4) |
 | `CI-001` | every `actions/cache` step uses the pinned action SHA; its `key` hashes every lockfile/pin/digest input and `restore-keys` never substitute a different pinned version or OS (§6) | every PR (Q0) |
-| `CI-002` | a cache hit never skips or weakens a Q gate, the fork guard, job preconditions or the §4b materialization commit (§6) | every PR (Q0) |
+| `CI-002` | a cache hit never skips or weakens a Q gate, the fork guard, job preconditions, the §4b materialization commit or licence activation — licence state is never cached (§6) | every PR (Q0) |
 | `CI-003` | `verify-report.json` records `hit|miss` and `wall_seconds` per cached step (§6) | every PR (Q6) |
 | `CI-004` | cold and warm runs produce identical `source_tree_hash`, codegen drift and evidence manifests (§6) | every PR (Q6) |
 
