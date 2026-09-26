@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   actions: read
+  checks: write
 
 concurrency:
   group: verify-${{ github.workflow }}-${{ github.ref }}
