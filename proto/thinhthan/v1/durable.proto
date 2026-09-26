@@ -1,0 +1,569 @@
+// Durable operations family (message IDs 400..441): every request carries a
+// client-generated UUID operation_id; retry returns the committed result
+// (docs/05_network/messages.md § Durable Operations, ADR-0060).
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+
+// InventoryMutateOp — inventory mutation kind (03_systems/inventory.md).
+enum InventoryMutateOp {
+  INVENTORY_MUTATE_OP_UNSPECIFIED = 0;
+  INVENTORY_MUTATE_OP_MOVE = 1;
+  INVENTORY_MUTATE_OP_SPLIT = 2;
+  INVENTORY_MUTATE_OP_MERGE = 3;
+  INVENTORY_MUTATE_OP_SORT = 4;
+  INVENTORY_MUTATE_OP_DISCARD = 5;
+  INVENTORY_MUTATE_OP_USE = 6;
+}
+
+// LoadoutChangeKind — loadout mutation kind (402).
+enum LoadoutChangeKind {
+  LOADOUT_CHANGE_KIND_UNSPECIFIED = 0;
+  LOADOUT_CHANGE_KIND_EQUIP = 1;
+  LOADOUT_CHANGE_KIND_UNEQUIP = 2;
+  LOADOUT_CHANGE_KIND_SWITCH_ACTIVE = 3;
+  LOADOUT_CHANGE_KIND_SKILL_SET = 4;
+  LOADOUT_CHANGE_KIND_SOUL_CONTRACT = 5;
+}
+
+// SoulContractAction — SOUL_CONTRACT sub-action (soul_contracts.md § Mutation).
+enum SoulContractAction {
+  SOUL_CONTRACT_ACTION_UNSPECIFIED = 0;
+  SOUL_CONTRACT_ACTION_CREATE = 1;
+  SOUL_CONTRACT_ACTION_REMOVE = 2;
+  SOUL_CONTRACT_ACTION_MOVE = 3;
+  SOUL_CONTRACT_ACTION_REPLACE = 4;
+}
+
+// BeastEquipSlot — wire name of a beast equipment slot; mapping to the
+// canonical data-model slot IDs (vong_co | ao_giap | linh_chau) is fixed in
+// messages.md § Spirit Beast Message Contract.
+enum BeastEquipSlot {
+  BEAST_EQUIP_SLOT_UNSPECIFIED = 0;
+  BEAST_EQUIP_SLOT_COLLAR = 1;   // vong_co
+  BEAST_EQUIP_SLOT_BARDING = 2;  // ao_giap
+  BEAST_EQUIP_SLOT_ORB = 3;      // linh_chau
+}
+
+// CosmeticRedeemRoute — redemption route (03_systems/cosmetics.md).
+enum CosmeticRedeemRoute {
+  COSMETIC_REDEEM_ROUTE_UNSPECIFIED = 0;
+  COSMETIC_REDEEM_ROUTE_CURRENCY_SPECIAL = 1;
+  COSMETIC_REDEEM_ROUTE_CURRENCY_COMMON = 2;
+  COSMETIC_REDEEM_ROUTE_MATERIAL = 3;
+}
+
+// ItemBinding — effective binding class of an inventory slot (433).
+enum ItemBinding {
+  ITEM_BINDING_UNSPECIFIED = 0;
+  ITEM_BINDING_UNBOUND = 1;
+  ITEM_BINDING_ACCOUNT_BOUND = 2;
+  ITEM_BINDING_CHARACTER_BOUND = 3;
+}
+
+// EntitlementType — entitlement grant type (account_storage.md).
+enum EntitlementType {
+  ENTITLEMENT_TYPE_UNSPECIFIED = 0;
+  ENTITLEMENT_TYPE_ACCOUNT_SCOPED_ACCESS = 1;
+  ENTITLEMENT_TYPE_DIRECT_ACCOUNT_COSMETIC = 2;
+}
+
+// EntitlementGrantState — entitlement row grant state.
+enum EntitlementGrantState {
+  ENTITLEMENT_GRANT_STATE_UNSPECIFIED = 0;
+  ENTITLEMENT_GRANT_STATE_GRANTED = 1;
+  ENTITLEMENT_GRANT_STATE_REVOKED = 2;
+}
+
+// CosmeticScope — cosmetic ownership scope (cosmetics.md).
+enum CosmeticScope {
+  COSMETIC_SCOPE_UNSPECIFIED = 0;
+  COSMETIC_SCOPE_CHARACTER = 1;
+  COSMETIC_SCOPE_ACCOUNT = 2;
+}
+
+// C2S_INVENTORY_MUTATE (400). USE covers every usable item: potions (shared
+// cooldown groups), food buffs, item.book.potential / item.book.skill.
+// Beast food uses 416, never USE.
+message C2S_INVENTORY_MUTATE {
+  bytes operation_id = 1;             // UUID, 16 bytes
+  InventoryMutateOp op = 2;
+  bytes item_instance_id = 3;         // UUID; all ops but SORT
+  uint32 to_slot = 4;                 // MOVE/SPLIT/MERGE; MOVE onto occupied swaps
+  uint32 quantity = 5;                // SPLIT/DISCARD stack units (DISCARD 0 =
+                                      // whole stack); USE: 1
+}
+
+// InventorySlotView — one changed slot inside 401.
+message InventorySlotView {
+  uint32 slot = 1;
+  bytes item_instance_id = 2;   // UUID; empty = now empty
+  string item_id = 3;           // content ID
+  uint32 quantity = 4;
+}
+
+// UseEffect — USE result extras on 401.
+message UseEffect {
+  uint32 potential_points_granted = 1;
+  uint32 skill_points_granted = 2;
+  string cooldown_group = 3;            // content ID
+  uint64 cooldown_ends_at_tick = 4;
+}
+
+// S2C_INVENTORY_RESULT (401).
+message S2C_INVENTORY_RESULT {
+  OperationResult result = 1;  // ITEM_NOT_FOUND | ITEM_LOCKED | INVENTORY_FULL |
+                               // COOLDOWN_ACTIVE | INVALID_STATE |
+                               // STATE_CONFLICT
+  InventoryMutateOp op = 2;
+  uint64 inventory_revision = 3;
+  repeated InventorySlotView changed_slots = 4;
+  UseEffect use_effect = 5;             // USE only
+}
+
+// C2S_LOADOUT_CHANGE (402) — one kind per request; per-kind fields apply.
+message C2S_LOADOUT_CHANGE {
+  bytes operation_id = 1;                     // UUID, 16 bytes
+  LoadoutChangeKind kind = 2;
+  // EQUIP | UNEQUIP | SWITCH_ACTIVE
+  string loadout_id = 3;                      // loadout.primary | loadout.secondary_1
+                                              // | loadout.secondary_2
+  string slot_id = 4;                         // EQUIP/UNEQUIP (equipment.md § Slots)
+  bytes item_instance_id = 5;                 // EQUIP: piece in inventory; UUID
+  // SKILL_SET
+  string basic_skill_id = 6;                  // one learned BASIC_ATTACK
+  repeated string active_slots = 7;           // exactly 5 entries; learned ACTIVE
+                                              // skill_id or empty; no duplicates
+  // SOUL_CONTRACT
+  SoulContractAction action = 8;
+  bytes soul_instance_id = 9;                 // UUID
+  bytes target_item_instance_id = 10;         // CREATE/MOVE/REPLACE: equipment in
+                                              // a loadout; UUID
+}
+
+// LoadoutSlotView — one changed loadout slot inside 403.
+message LoadoutSlotView {
+  string loadout_id = 1;
+  string slot_id = 2;
+  bytes item_instance_id = 3;   // UUID; empty = slot now empty
+}
+
+// SkillLoadout — equipped skill set (403, 515).
+message SkillLoadout {
+  string basic_skill_id = 1;      // content ID
+  repeated string active_slots = 2;  // exactly 5 entries, empty allowed
+}
+
+// SoulContractView — soul contracted on an item (403, 437 uses expanded form).
+message SoulContractView {
+  bytes soul_instance_id = 1;        // UUID
+  bytes item_instance_id = 2;        // UUID; empty = Collection
+}
+
+// S2C_LOADOUT_RESULT (403).
+message S2C_LOADOUT_RESULT {
+  OperationResult result = 1;  // ITEM_NOT_FOUND | ITEM_LOCKED | SLOT_MISMATCH |
+                               // LEVEL_TOO_LOW | INVENTORY_FULL | IN_COMBAT |
+                               // SKILL_NOT_LEARNED | SKILL_LOADOUT_INVALID |
+                               // SOUL_CONTRACT_LIMIT_REACHED | STATE_CONFLICT
+  LoadoutChangeKind kind = 2;
+  uint64 loadout_revision = 3;
+  string active_loadout_id = 4;
+  repeated LoadoutSlotView changed_slots = 5;
+  SkillLoadout skill_loadout = 6;                    // SKILL_SET
+  repeated SoulContractView soul_contracts = 7;      // SOUL_CONTRACT and UNEQUIP
+}
+
+// C2S_CRAFT (404) — crafting NPC in range; cooking uses 103 COOK.
+message C2S_CRAFT {
+  bytes operation_id = 1;       // UUID, 16 bytes
+  string npc_id = 2;            // NPC with SERVICE(crafting)
+  string recipe_id = 3;         // content ID
+  uint32 batch_quantity = 4;    // 1..99
+}
+
+// S2C_CRAFT_RESULT (405).
+message S2C_CRAFT_RESULT {
+  OperationResult result = 1;  // INSUFFICIENT_ITEM | INSUFFICIENT_CURRENCY |
+                               // INVENTORY_FULL | LEVEL_TOO_LOW | OUT_OF_RANGE
+  string recipe_id = 2;
+  uint32 batch_quantity = 3;
+  repeated ItemQuantity consumed = 4;
+  repeated CurrencyDelta currency_delta = 5;
+  repeated ItemGrant granted = 6;
+}
+
+// C2S_ENHANCE (406).
+message C2S_ENHANCE {
+  bytes operation_id = 1;                    // UUID, 16 bytes
+  string npc_id = 2;                         // NPC with SERVICE(enhancement)
+  bytes item_instance_id = 3;                // UUID
+  uint32 target_level = 4;                   // current + 1
+  bytes lucky_charm_item_instance_id = 5;    // UUID; optional
+  bytes insurance_item_instance_id = 6;      // UUID; optional
+}
+
+// S2C_ENHANCE_RESULT (407).
+message S2C_ENHANCE_RESULT {
+  OperationResult result = 1;  // ITEM_NOT_FOUND | ITEM_LOCKED |
+                               // INSUFFICIENT_ITEM | INSUFFICIENT_CURRENCY |
+                               // CHARM_INELIGIBLE | STATE_CONFLICT |
+                               // OUT_OF_RANGE
+  bytes item_instance_id = 2;  // UUID
+  bool success = 3;
+  uint32 level_before = 4;
+  uint32 level_after = 5;
+  uint32 final_rate_bp = 6;      // effective rate, basis points
+  uint32 pity_fail_count = 7;
+  repeated ItemQuantity consumed = 8;
+  repeated CurrencyDelta currency_delta = 9;
+}
+
+// C2S_REWARD_CLAIM (408) — claim a pending Reward Claim (reward_claims.md).
+message C2S_REWARD_CLAIM {
+  bytes operation_id = 1;      // UUID, 16 bytes
+  bytes reward_claim_id = 2;   // UUID, 16 bytes
+}
+
+// S2C_REWARD_CLAIM_RESULT (409).
+message S2C_REWARD_CLAIM_RESULT {
+  OperationResult result = 1;  // INVENTORY_FULL | CURRENCY_CAP_EXCEEDED |
+                               // EXPIRED | NOT_OWNER | STATE_CONFLICT
+                               // (already CLAIMED returns the committed result)
+  bytes reward_claim_id = 2;   // UUID
+  repeated ItemGrant granted = 3;
+  repeated CurrencyDelta currency_delta = 4;
+}
+
+// C2S_BEAST_SET_ACTIVE (410) — activate a companion; empty beast_id
+// deactivates the current beast.
+message C2S_BEAST_SET_ACTIVE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string beast_id = 2;     // content ID; empty = deactivate
+}
+
+// S2C_BEAST_SET_ACTIVE_RESULT (411).
+message S2C_BEAST_SET_ACTIVE_RESULT {
+  OperationResult result = 1;  // BEAST_NOT_OWNED | IN_COMBAT
+  string active_beast_id = 2;  // content ID; empty = none active
+}
+
+// C2S_BEAST_EQUIP (412).
+message C2S_BEAST_EQUIP {
+  bytes operation_id = 1;       // UUID, 16 bytes
+  string beast_id = 2;          // content ID
+  BeastEquipSlot slot_id = 3;
+  bytes item_instance_id = 4;   // UUID; piece in character inventory
+}
+
+// S2C_BEAST_EQUIP_RESULT (413).
+message S2C_BEAST_EQUIP_RESULT {
+  OperationResult result = 1;  // BEAST_NOT_OWNED | ITEM_NOT_FOUND |
+                               // SLOT_MISMATCH | LEVEL_TOO_LOW
+  string beast_id = 2;
+  BeastEquipSlot slot_id = 3;
+  bytes equipped_item_instance_id = 4;     // UUID
+  bytes unequipped_item_instance_id = 5;   // UUID; optional
+}
+
+// C2S_BEAST_UNEQUIP (414).
+message C2S_BEAST_UNEQUIP {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string beast_id = 2;
+  BeastEquipSlot slot_id = 3;
+}
+
+// S2C_BEAST_UNEQUIP_RESULT (415).
+message S2C_BEAST_UNEQUIP_RESULT {
+  OperationResult result = 1;  // BEAST_NOT_OWNED | SLOT_EMPTY | INVENTORY_FULL
+  string beast_id = 2;
+  BeastEquipSlot slot_id = 3;
+  bytes unequipped_item_instance_id = 4;   // UUID
+}
+
+// C2S_BEAST_FEED (416) — beast food via dedicated message, never USE.
+message C2S_BEAST_FEED {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  string beast_id = 2;      // content ID
+  string food_item_id = 3;  // content ID (item_catalog.md bond values)
+  uint32 quantity = 4;      // default 1
+}
+
+// S2C_BEAST_FEED_RESULT (417).
+message S2C_BEAST_FEED_RESULT {
+  OperationResult result = 1;  // BEAST_NOT_OWNED | INSUFFICIENT_ITEM |
+                               // DAILY_FOOD_CAP_REACHED | MAX_BOND_REACHED
+  string beast_id = 2;
+  uint32 consumed_quantity = 3;
+  uint32 new_bond_points = 4;             // 0..100
+  uint32 daily_food_points_gained = 5;    // 0..20
+}
+
+// C2S_ENTITLEMENT_CLAIM (418) — grants to the attached character
+// (account_storage.md, monetization.md); reward_tier_id required for
+// ACCOUNT_SCOPED_ACCESS tiers, empty for DIRECT_ACCOUNT_COSMETIC.
+message C2S_ENTITLEMENT_CLAIM {
+  bytes operation_id = 1;     // UUID, 16 bytes
+  bytes entitlement_id = 2;   // UUID, 16 bytes
+  string reward_tier_id = 3;
+}
+
+// S2C_ENTITLEMENT_CLAIM_RESULT (419); followed by 435.
+message S2C_ENTITLEMENT_CLAIM_RESULT {
+  OperationResult result = 1;  // NOT_OWNER | ENTITLEMENT_REVOKED |
+                               // ALREADY_OWNED | CLAIM_WINDOW_CLOSED |
+                               // LEVEL_TOO_LOW | INVENTORY_FULL |
+                               // STATE_CONFLICT | IAP_RECEIPT_ACCOUNT_MISMATCH
+  bytes entitlement_id = 2;             // UUID
+  string reward_tier_id = 3;
+  repeated ItemGrant granted = 4;
+  repeated string cosmetics_granted = 5;  // cosmetic content IDs
+}
+
+// C2S_NPC_SHOP_BUY (420) — NPC shop purchase; prices/limits in
+// npc_shop_catalog.md.
+message C2S_NPC_SHOP_BUY {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string npc_id = 2;       // NPC with SHOP
+  string offer_id = 3;     // content ID
+  uint32 quantity = 4;     // >= 1
+}
+
+// S2C_NPC_SHOP_BUY_RESULT (421).
+message S2C_NPC_SHOP_BUY_RESULT {
+  OperationResult result = 1;  // errors.md domain list
+  repeated ItemQuantity granted = 2;
+}
+
+// C2S_COSMETIC_REDEEM (422).
+message C2S_COSMETIC_REDEEM {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string cosmetic_id = 2;  // content ID
+  CosmeticRedeemRoute route = 3;
+}
+
+// S2C_COSMETIC_REDEEM_RESULT (423).
+message S2C_COSMETIC_REDEEM_RESULT {
+  OperationResult result = 1;
+  string cosmetic_id = 2;
+}
+
+// C2S_COSMETIC_EQUIP (424) — empty cosmetic_id unequips the slot.
+message C2S_COSMETIC_EQUIP {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  CosmeticSlot slot = 2;
+  string cosmetic_id = 3;  // empty = unequip
+}
+
+// S2C_COSMETIC_EQUIP_RESULT (425).
+message S2C_COSMETIC_EQUIP_RESULT {
+  OperationResult result = 1;
+  CosmeticSlot slot = 2;
+  string cosmetic_id = 3;
+}
+
+// C2S_NPC_SHOP_SELL (426) — item sell-back at sell_back_price x quantity.
+message C2S_NPC_SHOP_SELL {
+  bytes operation_id = 1;       // UUID, 16 bytes
+  string npc_id = 2;            // NPC with SHOP
+  bytes item_instance_id = 3;   // UUID
+  uint32 quantity = 4;          // >= 1
+}
+
+// S2C_NPC_SHOP_SELL_RESULT (427).
+message S2C_NPC_SHOP_SELL_RESULT {
+  OperationResult result = 1;  // INVALID_STATE | ITEM_LOCKED |
+                               // CURRENCY_CAP_EXCEEDED | OUT_OF_RANGE
+  string item_id = 2;
+  uint32 quantity_sold = 3;
+  repeated CurrencyDelta currency_delta = 4;
+}
+
+// C2S_INVENTORY_EXPAND (428) — buys the next +10 step (inventory.md).
+message C2S_INVENTORY_EXPAND {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  uint32 expected_capacity = 2;   // current capacity; mismatch = STATE_CONFLICT
+}
+
+// S2C_INVENTORY_EXPAND_RESULT (429).
+message S2C_INVENTORY_EXPAND_RESULT {
+  OperationResult result = 1;    // INSUFFICIENT_CURRENCY | CAPACITY_FULL
+  uint32 capacity_after = 2;
+  repeated CurrencyDelta currency_delta = 3;
+}
+
+// C2S_BEAST_LEVEL_UP (430) — consumes Linh Dan + currency.common.
+message C2S_BEAST_LEVEL_UP {
+  bytes operation_id = 1;      // UUID, 16 bytes
+  string beast_id = 2;         // content ID
+  uint32 expected_level = 3;   // current level; mismatch = STATE_CONFLICT
+}
+
+// S2C_BEAST_LEVEL_UP_RESULT (431).
+message S2C_BEAST_LEVEL_UP_RESULT {
+  OperationResult result = 1;  // BEAST_NOT_OWNED | INSUFFICIENT_ITEM |
+                               // INSUFFICIENT_CURRENCY | LEVEL_TOO_LOW |
+                               // CAPACITY_FULL
+  string beast_id = 2;
+  uint32 level_after = 3;
+  repeated ItemQuantity consumed = 4;
+  repeated CurrencyDelta currency_delta = 5;
+}
+
+// WalletBalance — one currency row inside 432.
+message WalletBalance {
+  string currency_id = 1;  // content ID
+  int64 amount = 2;
+  int64 cap = 3;
+}
+
+// S2C_WALLET_STATE (432) — REPLACEABLE_STATE snapshot.
+message S2C_WALLET_STATE {
+  repeated WalletBalance balances = 1;
+  uint64 wallet_revision = 2;
+}
+
+// InventorySlot — one inventory slot inside 433.
+message InventorySlot {
+  uint32 slot = 1;
+  bytes item_instance_id = 2;      // UUID; empty = empty slot
+  string item_id = 3;
+  uint32 quantity = 4;
+  ItemBinding effective_binding = 5;
+  uint32 enhancement_level = 6;
+  uint32 locked_quantity = 7;      // units locked by an open trade; 0 = none
+}
+
+// LoadoutEntry — one loadout's slot assignment inside 433.
+message LoadoutEntry {
+  string slot_id = 1;
+  bytes item_instance_id = 2;  // UUID
+}
+
+// LoadoutView — one of the three character loadouts inside 433.
+message LoadoutView {
+  string loadout_id = 1;  // loadout.primary | loadout.secondary_1 | loadout.secondary_2
+  bool is_active = 2;
+  repeated LoadoutEntry slots = 3;
+}
+
+// S2C_INVENTORY_STATE (433) — REPLACEABLE_STATE snapshot.
+message S2C_INVENTORY_STATE {
+  uint32 capacity = 1;
+  uint64 inventory_revision = 2;
+  repeated InventorySlot slots = 3;
+  repeated LoadoutView loadouts = 4;  // exactly 3
+  uint64 loadout_revision = 5;
+}
+
+// S2C_REWARD_CLAIMS_STATE (434) — the 50 oldest PENDING claims
+// (created_at, reward_claim_id order); sent after attach only.
+message S2C_REWARD_CLAIMS_STATE {
+  uint64 claims_revision = 1;
+  uint32 total_count = 2;  // all PENDING claims
+  uint32 cap = 3;          // 100
+  repeated RewardClaimView claims = 4;
+}
+
+// EntitlementView — one entitlement row inside 435.
+message EntitlementView {
+  bytes entitlement_id = 1;                    // UUID, 16 bytes
+  string product_id = 2;
+  EntitlementType entitlement_type = 3;
+  EntitlementGrantState grant_state = 4;
+  uint32 season_number = 5;
+  int64 claim_deadline_at = 6;                 // Unix ms; 0 = none
+  repeated string claimable_tier_ids = 7;
+  repeated string claimed_tier_ids = 8;        // this character
+}
+
+// S2C_ENTITLEMENT_PANEL_STATE (435) — REPLACEABLE_STATE snapshot.
+message S2C_ENTITLEMENT_PANEL_STATE {
+  repeated EntitlementView entitlements = 1;
+}
+
+// BeastEquipmentEntry — one equipped beast item inside 436.
+message BeastEquipmentEntry {
+  BeastEquipSlot slot_id = 1;
+  bytes item_instance_id = 2;  // UUID
+}
+
+// BeastView — one owned beast inside 436.
+message BeastView {
+  string beast_id = 1;                    // content ID
+  uint32 level = 2;
+  uint32 bond_points = 3;                 // 0..100
+  uint32 daily_food_points_gained = 4;    // 0..20
+  bool is_active = 5;
+  repeated BeastEquipmentEntry equipment = 6;
+}
+
+// S2C_BEAST_STATE (436) — REPLACEABLE_STATE snapshot.
+message S2C_BEAST_STATE {
+  repeated BeastView beasts = 1;
+}
+
+// SoulView — one owned soul inside 437.
+message SoulView {
+  bytes soul_instance_id = 1;                  // UUID, 16 bytes
+  string soul_id = 2;                          // content ID
+  uint32 level = 3;
+  uint32 current_soul_exp = 4;
+  bytes contracted_item_instance_id = 5;       // UUID; empty = Collection
+}
+
+// SoulResonanceView — one resonance row inside 437.
+message SoulResonanceView {
+  string soul_id = 1;                    // content ID
+  uint32 memory_resonance_count = 2;
+}
+
+// S2C_SOUL_STATE (437) — REPLACEABLE_STATE snapshot.
+message S2C_SOUL_STATE {
+  repeated SoulView souls = 1;
+  repeated SoulResonanceView resonance = 2;
+}
+
+// OwnedCosmetic — one owned cosmetic inside 438.
+message OwnedCosmetic {
+  string cosmetic_id = 1;
+  CosmeticScope scope = 2;  // CHARACTER | ACCOUNT
+}
+
+// S2C_COSMETIC_STATE (438) — REPLACEABLE_STATE snapshot.
+message S2C_COSMETIC_STATE {
+  repeated OwnedCosmetic owned = 1;
+  repeated EquippedCosmetic equipped = 2;  // {slot, cosmetic_id}
+}
+
+// C2S_REWARD_CLAIM_LIST_REQUEST (439) — paged read; operation_id is echo
+// only (read-only, never idempotency-stored).
+message C2S_REWARD_CLAIM_LIST_REQUEST {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  uint32 offset = 2;
+  uint32 limit = 3;        // 1..50
+}
+
+// S2C_REWARD_CLAIM_LIST_RESULT (440).
+message S2C_REWARD_CLAIM_LIST_RESULT {
+  OperationResult result = 1;
+  uint64 claims_revision = 2;
+  uint32 total_count = 3;
+  uint32 offset = 4;
+  repeated RewardClaimView claims = 5;  // same order as 434
+}
+
+// S2C_REWARD_CLAIM_DELTA (441) — AUTHORITATIVE_EVENT after every committed
+// change; a client whose claims_revision gap is not +1 re-requests 439.
+message S2C_REWARD_CLAIM_DELTA {
+  uint64 claims_revision = 1;
+  uint32 total_count = 2;
+  repeated RewardClaimView added = 3;
+  repeated bytes removed = 4;  // reward_claim_id UUIDs (claimed, consolidated
+                              // or expired)
+}

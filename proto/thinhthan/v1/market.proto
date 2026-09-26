@@ -1,0 +1,346 @@
+// Direct trade (700..710) and FIXED_PRICE auction house (730..744) family.
+// Field lists: docs/05_network/messages.md § Trade and § Auction
+// (ADR-0041, ADR-0049, ADR-0060). Offered trade items stay in the owner's
+// CHARACTER_INVENTORY locked by the session until settlement; there is no
+// trade escrow row.
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+
+// TradeCancelReason — why a trade session ended (704).
+enum TradeCancelReason {
+  TRADE_CANCEL_REASON_UNSPECIFIED = 0;
+  TRADE_CANCEL_REASON_DECLINED = 1;
+  TRADE_CANCEL_REASON_CANCELLED = 2;
+  TRADE_CANCEL_REASON_EXPIRED = 3;
+  TRADE_CANCEL_REASON_INACTIVE_TIMEOUT = 4;
+  TRADE_CANCEL_REASON_PARTNER_DISCONNECTED = 5;
+  TRADE_CANCEL_REASON_VALIDATION_FAILED = 6;
+}
+
+// TradeOfferPhase — trade session offer phase (706).
+enum TradeOfferPhase {
+  TRADE_OFFER_PHASE_UNSPECIFIED = 0;
+  TRADE_OFFER_PHASE_OPEN = 1;
+  TRADE_OFFER_PHASE_LOCKED = 2;
+  TRADE_OFFER_PHASE_COMMITTING = 3;
+}
+
+// AuctionSortOrder — search result ordering (738).
+enum AuctionSortOrder {
+  AUCTION_SORT_ORDER_UNSPECIFIED = 0;
+  AUCTION_SORT_ORDER_PRICE_ASC = 1;
+  AUCTION_SORT_ORDER_PRICE_DESC = 2;
+  AUCTION_SORT_ORDER_NEWEST = 3;
+}
+
+// AuctionListingState — listing lifecycle inside 744
+// (trading_auction.md § Auction House).
+enum AuctionListingState {
+  AUCTION_LISTING_STATE_UNSPECIFIED = 0;
+  AUCTION_LISTING_STATE_ACTIVE = 1;
+  AUCTION_LISTING_STATE_SETTLING = 2;
+  AUCTION_LISTING_STATE_SOLD = 3;
+  AUCTION_LISTING_STATE_CANCELLED = 4;  // awaiting escrow reclaim
+  AUCTION_LISTING_STATE_EXPIRED = 5;    // awaiting escrow reclaim
+}
+
+// AuctionEscrowReason — why an asset sits in escrow (744).
+enum AuctionEscrowReason {
+  AUCTION_ESCROW_REASON_UNSPECIFIED = 0;
+  AUCTION_ESCROW_REASON_CANCELLED = 1;
+  AUCTION_ESCROW_REASON_EXPIRED = 2;
+}
+
+// AuctionProceedsState — proceeds row state (744).
+enum AuctionProceedsState {
+  AUCTION_PROCEEDS_STATE_UNSPECIFIED = 0;
+  AUCTION_PROCEEDS_STATE_PENDING = 1;
+  AUCTION_PROCEEDS_STATE_CLAIMED = 2;
+}
+
+// ------------------------- Direct Trade (700..710) ------------------------
+
+// C2S_TRADE_INVITE (700) — direct trade invitation; social-invite
+// eligibility gates apply (trading_auction.md § Direct Trade).
+message C2S_TRADE_INVITE {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// S2C_TRADE_INVITE (701) — invitation delivered to the target.
+message S2C_TRADE_INVITE {
+  bytes trade_id = 1;                // UUID
+  bytes inviter_character_id = 2;    // UUID
+  string inviter_name = 3;
+  uint32 expires_in_seconds = 4;
+}
+
+// C2S_TRADE_ACCEPT (702).
+message C2S_TRADE_ACCEPT {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes trade_id = 2;      // UUID
+}
+
+// C2S_TRADE_CANCEL (703) — decline before accept = cancel; legal at any
+// stage.
+message C2S_TRADE_CANCEL {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes trade_id = 2;      // UUID
+}
+
+// S2C_TRADE_CANCELLED (704) — AUTHORITATIVE_EVENT.
+message S2C_TRADE_CANCELLED {
+  bytes trade_id = 1;  // UUID
+  TradeCancelReason reason = 2;
+  ErrorCode error_code = 3;
+}
+
+// TradeOfferItem — one offered item inside a trade offer.
+message TradeOfferItem {
+  bytes item_instance_id = 1;  // UUID
+  uint32 quantity = 2;
+}
+
+// C2S_TRADE_OFFER_UPDATE (705) — full replacement of own offer; any change
+// clears both sides' confirmation.
+message C2S_TRADE_OFFER_UPDATE {
+  bytes operation_id = 1;        // UUID, 16 bytes
+  bytes trade_id = 2;            // UUID
+  uint64 expected_revision = 3;
+  repeated TradeOfferItem items = 4;  // max entries per trading_auction.md
+  int64 common_amount = 5;            // >= 0
+}
+
+// TradeOfferItemView — one offered item inside 706 (server view adds the
+// resolved item_id and enhancement_level).
+message TradeOfferItemView {
+  bytes item_instance_id = 1;   // UUID
+  string item_id = 2;           // content ID
+  uint32 quantity = 3;
+  uint32 enhancement_level = 4;
+}
+
+// TradeSide — one side's offer state inside 706.
+message TradeSide {
+  bytes character_id = 1;   // UUID
+  repeated TradeOfferItemView items = 2;
+  int64 common_amount = 3;
+  bool confirmed = 4;
+}
+
+// S2C_TRADE_OFFER_STATE (706) — both sides' offer state after any change.
+message S2C_TRADE_OFFER_STATE {
+  bytes trade_id = 1;  // UUID
+  uint64 revision = 2;
+  TradeOfferPhase state = 3;
+  repeated TradeSide sides = 4;  // exactly 2
+  int64 fee_preview = 5;
+}
+
+// C2S_TRADE_CONFIRM (707) — locks own side; any offer change clears both.
+message C2S_TRADE_CONFIRM {
+  bytes operation_id = 1;        // UUID, 16 bytes
+  bytes trade_id = 2;            // UUID
+  uint64 expected_revision = 3;
+}
+
+// C2S_TRADE_FINALISE (708) — both confirmed; commits the exchange.
+message C2S_TRADE_FINALISE {
+  bytes operation_id = 1;        // UUID, 16 bytes
+  bytes trade_id = 2;            // UUID
+  uint64 expected_revision = 3;
+}
+
+// S2C_TRADE_RESULT (709) — authoritative outcome; operation_id echoes the
+// 708 that committed or failed (empty when settlement was triggered by the
+// partner).
+message S2C_TRADE_RESULT {
+  OperationResult result = 1;  // operation_id = the 708 that committed or
+                               // failed; empty when settlement was triggered
+                               // by the partner
+  bytes trade_id = 2;          // UUID
+  bytes settlement_id = 3;     // UUID
+  repeated ItemGrant received = 4;
+  int64 common_received = 5;
+  int64 fee = 6;
+}
+
+// S2C_TRADE_REQUEST_RESULT (710) — typed result for 700 | 702 | 703 | 705 |
+// 707.
+message S2C_TRADE_REQUEST_RESULT {
+  OperationResult result = 1;      // TRADE_ELIGIBILITY_LEVEL_REQUIRED |
+                                   // TRADE_ELIGIBILITY_AGE_REQUIRED |
+                                   // SAME_ACCOUNT_FORBIDDEN | TARGET_BLOCKED |
+                                   // OUT_OF_RANGE | IN_COMBAT | ITEM_LOCKED |
+                                   // STATE_CONFLICT | TRADE_COMMON_BOTH_SIDES
+                                   // | TRADE_PRICE_FLOOR_NOT_MET |
+                                   // CURRENCY_CAP_EXCEEDED | INVENTORY_FULL |
+                                   // TRADE_PARTNER_DISCONNECTED
+  uint32 request_message_id = 2;   // 700 | 702 | 703 | 705 | 707
+  bytes trade_id = 3;              // UUID; empty when none
+}
+
+// ------------------------- Auction House (730..744) ------------------------
+
+// C2S_AUCTION_LIST (730) — create a FIXED_PRICE listing; price_common is the
+// total lot price.
+message C2S_AUCTION_LIST {
+  bytes operation_id = 1;       // UUID, 16 bytes
+  bytes item_instance_id = 2;   // UUID
+  uint32 quantity = 3;          // whole lot
+  int64 price_common = 4;
+}
+
+// S2C_AUCTION_LIST_RESULT (731).
+message S2C_AUCTION_LIST_RESULT {
+  OperationResult result = 1;  // AH_ELIGIBILITY_LEVEL_REQUIRED |
+                               // AH_ELIGIBILITY_AGE_REQUIRED |
+                               // AH_PRICE_FLOOR_NOT_MET | ITEM_LOCKED |
+                               // CAPACITY_FULL | ...
+  bytes listing_id = 2;        // UUID
+  int64 listing_fee = 3;
+  int64 expires_at = 4;        // Unix ms
+}
+
+// C2S_AUCTION_BUY (732) — purchase a FIXED_PRICE listing; the expected price
+// guards against stale UI (STATE_CONFLICT on mismatch).
+message C2S_AUCTION_BUY {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes listing_id = 2;           // UUID
+  int64 expected_price_common = 3;
+}
+
+// S2C_AUCTION_BUY_RESULT (733).
+message S2C_AUCTION_BUY_RESULT {
+  OperationResult result = 1;    // AUCTION_LISTING_NOT_ACTIVE | STATE_CONFLICT |
+                                 // INSUFFICIENT_CURRENCY | INVENTORY_FULL |
+                                 // SAME_ACCOUNT_FORBIDDEN
+  bytes listing_id = 2;          // UUID
+  int64 price_common = 3;
+  ItemGrant received = 4;
+}
+
+// C2S_AUCTION_CANCEL_LISTING (734) — the item stays in escrow pending
+// explicit reclaim.
+message C2S_AUCTION_CANCEL_LISTING {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes listing_id = 2;    // UUID
+}
+
+// S2C_AUCTION_CANCEL_RESULT (735).
+message S2C_AUCTION_CANCEL_RESULT {
+  OperationResult result = 1;   // AUCTION_LISTING_NOT_ACTIVE | NOT_OWNER
+  bytes listing_id = 2;         // UUID
+  bytes escrow_asset_id = 3;    // UUID
+}
+
+// S2C_AUCTION_SOLD (736) — seller notification.
+message S2C_AUCTION_SOLD {
+  bytes listing_id = 1;      // UUID
+  string item_id = 2;        // content ID
+  uint32 quantity = 3;
+  int64 price_common = 4;
+  int64 tax = 5;
+  bytes proceeds_id = 6;     // UUID
+  int64 proceeds_amount = 7;
+}
+
+// C2S_AUCTION_SEARCH (738) — read-only; operation_id is echo only and never
+// idempotency-stored.
+message C2S_AUCTION_SEARCH {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string item_id = 2;      // content ID; empty = any
+  string category = 3;     // item category content ID; empty = any
+  string tier = 4;         // item tier; empty = any
+  int64 min_price = 5;
+  int64 max_price = 6;
+  AuctionSortOrder sort = 7;
+  string page_cursor = 8;  // opaque; empty = first page
+  uint32 page_size = 9;    // 1..50
+}
+
+// AuctionListingRow — one search row inside 739.
+message AuctionListingRow {
+  bytes listing_id = 1;         // UUID
+  string item_id = 2;           // content ID
+  uint32 quantity = 3;
+  uint32 enhancement_level = 4;
+  int64 price_common = 5;
+  string seller_display_name = 6;
+  int64 expires_at = 7;         // Unix ms
+}
+
+// S2C_AUCTION_SEARCH_RESULT (739).
+message S2C_AUCTION_SEARCH_RESULT {
+  OperationResult result = 1;   // RATE_LIMITED | AH_ELIGIBILITY_LEVEL_REQUIRED |
+                               // OUT_OF_RANGE
+  repeated AuctionListingRow rows = 2;
+  string next_page_cursor = 3;  // opaque; empty = last page
+}
+
+// C2S_AUCTION_RECLAIM (740) — reclaim a cancelled/expired escrow asset.
+message C2S_AUCTION_RECLAIM {
+  bytes operation_id = 1;      // UUID, 16 bytes
+  bytes escrow_asset_id = 2;   // UUID
+}
+
+// S2C_AUCTION_RECLAIM_RESULT (741) — INVENTORY_FULL keeps the asset in
+// escrow.
+message S2C_AUCTION_RECLAIM_RESULT {
+  OperationResult result = 1;   // INVENTORY_FULL | ITEM_NOT_FOUND
+  bytes escrow_asset_id = 2;    // UUID
+  ItemGrant received = 3;
+}
+
+// C2S_AUCTION_PROCEEDS_CLAIM (742) — claim PENDING proceeds;
+// CURRENCY_CAP_EXCEEDED keeps it PENDING.
+message C2S_AUCTION_PROCEEDS_CLAIM {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  bytes proceeds_id = 2;    // UUID
+}
+
+// S2C_AUCTION_PROCEEDS_RESULT (743).
+message S2C_AUCTION_PROCEEDS_RESULT {
+  OperationResult result = 1;   // CURRENCY_CAP_EXCEEDED | ITEM_NOT_FOUND
+  bytes proceeds_id = 2;        // UUID
+  int64 amount_common = 3;
+}
+
+// MyAuctionListing — one own listing inside 744.
+message MyAuctionListing {
+  bytes listing_id = 1;          // UUID
+  string item_id = 2;            // content ID
+  uint32 quantity = 3;
+  int64 price_common = 4;
+  AuctionListingState state = 5;
+  int64 expires_at = 6;          // Unix ms
+}
+
+// AuctionEscrowAsset — one escrow row inside 744.
+message AuctionEscrowAsset {
+  bytes escrow_asset_id = 1;      // UUID
+  string item_id = 2;             // content ID
+  uint32 quantity = 3;
+  AuctionEscrowReason reason = 4;
+  int64 auto_claim_at = 5;        // Unix ms
+}
+
+// AuctionProceeds — one proceeds row inside 744.
+message AuctionProceeds {
+  bytes proceeds_id = 1;         // UUID
+  int64 amount_common = 2;
+  AuctionProceedsState state = 3;
+}
+
+// S2C_AUCTION_MY_STATE (744) — REPLACEABLE_STATE own-auction snapshot.
+message S2C_AUCTION_MY_STATE {
+  repeated MyAuctionListing listings = 1;
+  repeated AuctionEscrowAsset escrow_assets = 2;
+  repeated AuctionProceeds proceeds = 3;
+}
