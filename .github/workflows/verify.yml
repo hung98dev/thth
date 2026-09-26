@@ -162,7 +162,8 @@ jobs:
             sudo apt-get install -y -qq bpftrace >/dev/null 2>&1 || true
           fi
           command -v strace >/dev/null 2>&1 || sudo apt-get install -y -qq strace >/dev/null 2>&1 || true
-          mkdir -p "$RUNNER_TEMP/unity-cfg"
+          sudo sysctl kernel.yama.ptrace_scope=0 2>/dev/null || true
+          mkdir -p "$RUNNER_TEMP/unity-cfg" "$RUNNER_TEMP/unity-cache"
           if command -v bpftrace >/dev/null 2>&1; then
             (sudo bpftrace -e 'kprobe:cgroup_kill { printf("cgroup_kill writer comm=%s pid=%d\n", comm, pid); }' > "$RUNNER_TEMP/cgroup-kill.log" 2>&1 & echo $! > "$RUNNER_TEMP/bpftrace.pid") || true
           fi
@@ -195,6 +196,7 @@ jobs:
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+              -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -290,6 +292,7 @@ jobs:
               lcid=$(docker run -d -i --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+                -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
@@ -309,6 +312,7 @@ jobs:
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                   -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+                  -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -383,7 +387,10 @@ jobs:
           kill "$(cat "$RUNNER_TEMP/docker-events.pid" 2>/dev/null)" 2>/dev/null || true
           echo '=== signal_generate SIGKILL trace (sender comm/pid in prefix) ==='
           T=$(cat /tmp/tracefs-dir 2>/dev/null || echo /sys/kernel/tracing)
-          sudo cat "$T/trace" 2>/dev/null | grep -E 'signal_generate|signal_deliver|sched_process_exit' | tail -120 || true
+          sudo cat "$T/trace" 2>/dev/null > "$RUNNER_TEMP/trace.txt" || true
+          grep -c . "$RUNNER_TEMP/trace.txt" 2>/dev/null || true
+          grep -nE 'sig=(4|6|7|8|11)[^0-9]|sig=9' "$RUNNER_TEMP/trace.txt" 2>/dev/null | tail -80 || true
+          grep -nE 'comm=Unity|Unity-[0-9]+' "$RUNNER_TEMP/trace.txt" 2>/dev/null | tail -30 || true
           sudo bash -c "echo 0 > '$T/events/signal/signal_generate/enable'; echo 0 > '$T/events/signal/signal_generate/filter'; [ -d '$T/events/signal/signal_deliver' ] && echo 0 > '$T/events/signal/signal_deliver/enable'; [ -d '$T/events/sched/sched_process_exit' ] && echo 0 > '$T/events/sched/sched_process_exit/enable'" 2>/dev/null || true
           echo '=== cgroup_kill writers (bpftrace) ==='
           cat "$RUNNER_TEMP/cgroup-kill.log" 2>/dev/null | tail -30 || true
