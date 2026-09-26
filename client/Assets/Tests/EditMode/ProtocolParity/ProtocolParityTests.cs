@@ -162,7 +162,7 @@ namespace ThinhThan.Tests.EditMode
                 "statuses use the StatusList wrapper, never optional repeated");
             Assert.AreEqual(1, entity.EquippedCosmetics.Entries.Count);
             Assert.AreEqual(CosmeticSlot.WeaponTrail,
-                entity.EquippedCosmetics[0].Slot);
+                entity.EquippedCosmetics.Entries[0].Slot);
         }
     }
 }
