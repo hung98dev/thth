@@ -27,16 +27,6 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 None. IDs start at `BLK-001` and `OPS-001`.
 
-### `BLK-002` — `Q0.bootstrap.absent_paths` forbids owned feature paths unconditionally
-opened_by: implementer/IMP-063   opened_at: 2026-09-26T17:16Z
-evidence: `server/internal/conformance/gates/q0.go` `checkBootstrapAbsence` stats `client/Assets/AddressableAssetsData` (plus `proto/`, `server/migrations`, `server/cmd/server`, `client/Assets/Scenes`, `client/Assets/Prefabs`, `client/Assets/Art`, `client/Assets/Localization`, `client/Assets/Settings`) with no owner/task gating, so the check fails on the owning task's own PR and on every PR after the path lands — local run reproduced: `Q0.bootstrap.absent_paths | FAIL | client/Assets/AddressableAssetsData must not exist before its owning task` on a tree containing only IMP-063's owned directory. Blast radius: 19 packets own children of the listed roots (IMP-005, IMP-006, IMP-061, IMP-062, IMP-063, IMP-064, IMP-067, IMP-069, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-095, IMP-101, IMP-104, IMP-105); `blocks:` names only IMP-063 because `checkOpenBlockerGating` would fail this PR over IMP-061 already `IN_PROGRESS`.
-owning spec / system: `docs/10_implementation/audit_gates.md` (Q0 contract), `docs/10_implementation/task_queue.md` (packet `owned_paths`), `docs/10_implementation/repository_layout.md` (Path Ownership Index), `server/internal/conformance/gates/q0.go` (`checkBootstrapAbsence`)
-options:
-  1. make `checkBootstrapAbsence` owner-aware — flag a listed path only when its owning packet is `NOT_STARTED` on both base and head (path exists <=> owner has run) — preserves the gate's intent; requires the verifier to parse the task queue, which it already does;
-  2. scope the check to the PR diff — fail only when a PR adds a listed path its task does not own — weaker: never re-checks paths that already landed on main;
-  3. remove the check — simplest, but loses the "absent until its owning task" invariant entirely.
-blocks: IMP-063
-
 ## Resolved Blockers
 
 ### `BLK-003` — server/go.mod lacks the pinned protobuf module; IMP-000 owns the lockfiles IMP-061 must extend
@@ -49,6 +39,17 @@ options:
   3. move generated Go code behind a second module — violates the "one Go module `thinhthan`" invariant (`repository_layout.md`), do not use.
 blocks: IMP-061
 resolved_by: `spec/BLK-003-protobuf-require` (PR https://github.com/hung98dev/thth/pull/16)   resolved_at: 2026-09-26T22:50Z   resolution: options 1+2 — spec/ PR lands `require google.golang.org/protobuf v1.36.12` + `go.sum` (IMP-061 needs no lockfile edit) AND § Ownership Rules makes `server/go.mod`/`server/go.sum` co-ownable (a packet may list both to land its own pinned `require` lines), so no repeat BLK on later deps; IMP-061 -> NOT_STARTED
+
+### `BLK-002` — `Q0.bootstrap.absent_paths` forbids owned feature paths unconditionally
+opened_by: implementer/IMP-063   opened_at: 2026-09-26T17:16Z
+evidence: `server/internal/conformance/gates/q0.go` `checkBootstrapAbsence` stats `client/Assets/AddressableAssetsData` (plus `proto/`, `server/migrations`, `server/cmd/server`, `client/Assets/Scenes`, `client/Assets/Prefabs`, `client/Assets/Art`, `client/Assets/Localization`, `client/Assets/Settings`) with no owner/task gating, so the check fails on the owning task's own PR and on every PR after the path lands — local run reproduced: `Q0.bootstrap.absent_paths | FAIL | client/Assets/AddressableAssetsData must not exist before its owning task` on a tree containing only IMP-063's owned directory. Blast radius: 19 packets own children of the listed roots (IMP-005, IMP-006, IMP-061, IMP-062, IMP-063, IMP-064, IMP-067, IMP-069, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-095, IMP-101, IMP-104, IMP-105); `blocks:` names only IMP-063 because `checkOpenBlockerGating` would fail this PR over IMP-061 already `IN_PROGRESS`.
+owning spec / system: `docs/10_implementation/audit_gates.md` (Q0 contract), `docs/10_implementation/task_queue.md` (packet `owned_paths`), `docs/10_implementation/repository_layout.md` (Path Ownership Index), `server/internal/conformance/gates/q0.go` (`checkBootstrapAbsence`)
+options:
+  1. make `checkBootstrapAbsence` owner-aware — flag a listed path only when its owning packet is `NOT_STARTED` on both base and head (path exists <=> owner has run) — preserves the gate's intent; requires the verifier to parse the task queue, which it already does;
+  2. scope the check to the PR diff — fail only when a PR adds a listed path its task does not own — weaker: never re-checks paths that already landed on main;
+  3. remove the check — simplest, but loses the "absent until its owning task" invariant entirely.
+blocks: IMP-063
+resolved_by: `spec/BLK-002-owner-aware-bootstrap` (PR https://github.com/hung98dev/thth/pull/15)   resolved_at: 2026-09-26T22:50Z   resolution: option 1 — `checkBootstrapAbsence` is owner-aware (`bootstrapOwnerStarted`: a root/file unblocks when a packet owning it, a path under it, or a parent of it is `IN_PROGRESS`/`DONE`; unowned roots stay forbidden); `blocksLineRe` made case-insensitive; `verify -MergeReports` skips non-IMP branches; IMP-000 acceptance text now states the status semantics; IMP-063 -> NOT_STARTED, IMP-061 stays BLOCKED on BLK-003
 
 ### `BLK-004` — Q6.evidence.api.<task> fails forever after a squash-merged done-PR
 opened_by: implementer/IMP-061   opened_at: 2026-09-26T18:55Z
