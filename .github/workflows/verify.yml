@@ -165,7 +165,9 @@ jobs:
               exit 1
             fi
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
-            sudo dmesg 2>/dev/null | tail -10 || true
+            sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
+            sudo journalctl -k -n 20 --no-pager 2>/dev/null | tail -10 || true
+            free -m
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
@@ -203,7 +205,8 @@ jobs:
           for mode in EditMode PlayMode; do
             ok=
             for i in 1 2 3 4 5; do
-              if docker run --rm --shm-size=1536m \
+              free -m
+              if docker run --rm --shm-size=2g \
                 -v "${{ github.workspace }}:/github/workspace" \
                 -w /github/workspace \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -227,7 +230,9 @@ jobs:
                 echo "unity $mode tests failed deterministically (rc=$rc) - not retrying" >&2
                 exit 1
               fi
-              sudo dmesg 2>/dev/null | tail -10 || true
+              sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
+              sudo journalctl -k -n 20 --no-pager 2>/dev/null | tail -10 || true
+              free -m
               echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
               docker run --rm \
                 -v "${{ github.workspace }}:/github/workspace" \
