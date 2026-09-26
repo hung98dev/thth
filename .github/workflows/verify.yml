@@ -142,7 +142,7 @@ jobs:
             sudo apt-get install -y -qq auditd >/dev/null 2>&1 || true
           fi
           sudo auditctl -D 2>/dev/null || true
-          sudo auditctl -a always,exit -F arch=b64 -S kill -S tkill -S tgkill -k unitykill 2>/dev/null || echo 'auditctl rules not installed'
+          sudo auditctl -a always,exit -F arch=b64 -S kill -S tkill -S tgkill -S pidfd_send_signal -k unitykill 2>/dev/null || echo 'auditctl rules not installed'
           sudo auditctl -l 2>/dev/null || true
           (docker events --since "$(date +%s)" --filter 'event=die' --filter 'event=kill' --filter 'event=oom' --format '{{json .}}' > "$RUNNER_TEMP/docker-events.log" 2>&1 & echo $! > "$RUNNER_TEMP/docker-events.pid") || true
 
@@ -306,7 +306,7 @@ jobs:
         run: |
           echo '=== audit kill/tgkill events (sender pid/comm/exe) ==='
           sudo ausearch -k unitykill -ts recent > "$RUNNER_TEMP/audit-kills.txt" 2>/dev/null || true
-          grep -E 'a2=(9|f)\b' "$RUNNER_TEMP/audit-kills.txt" | head -60 || true
+          grep -E 'pidfd_send_signal|a2=9\b' "$RUNNER_TEMP/audit-kills.txt" | head -60 || true
           sudo grep -i 'unitykill\|SIGKILL' /var/log/audit/audit.log 2>/dev/null | tail -40 || true
           echo '=== journald oomd/memory-kill records ==='
           sudo journalctl -k -b --no-pager 2>/dev/null | grep -icE 'oom' || true
