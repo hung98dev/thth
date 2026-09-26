@@ -84,6 +84,12 @@ $env:THINHTHAN_GO_VERSION = (& go version)
 try {
     if (-not $LocalDeferMissing) { Start-LocalPostgres }
 
+    # Resolve path args against the repo root before Push-Location server —
+    # relative paths would otherwise land under server/.
+    if ($UnityResultsDir) { $UnityResultsDir = [IO.Path]::GetFullPath($UnityResultsDir) }
+    if ($ReportOut) { $ReportOut = [IO.Path]::GetFullPath($ReportOut) }
+    if ($MergeDir) { $MergeDir = [IO.Path]::GetFullPath($MergeDir) }
+
     $args = @('run', './cmd/verify')
     if ($LocalDeferMissing) { $args += '-local-defer' }
     if ($UnityResultsDir) { $args += @('-unity-results-dir', $UnityResultsDir) }
