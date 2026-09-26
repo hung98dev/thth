@@ -1,0 +1,325 @@
+// Combat intents/results (200..208) and world/entity replication (300..306).
+// Field lists: docs/05_network/messages.md § Combat and § Replication
+// (ADR-0037, ADR-0038, ADR-0054, ADR-0060, ADR-0069). Positions/velocities are
+// integer millimetres (sint32, 04_architecture/physics_geometry_contract.md).
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+
+// DamageElement — the skill's damage element
+// (07_content/class_skill_catalog.md § damage_element).
+enum DamageElement {
+  DAMAGE_ELEMENT_UNSPECIFIED = 0;
+  DAMAGE_ELEMENT_KIM = 1;
+  DAMAGE_ELEMENT_THUY = 2;
+  DAMAGE_ELEMENT_MOC = 3;
+  DAMAGE_ELEMENT_HOA = 4;
+  DAMAGE_ELEMENT_THO = 5;
+  DAMAGE_ELEMENT_PHYSICAL = 6;
+}
+
+// StatusEventKind — one status-effect lifecycle event
+// (01_gameplay/status_effects.md).
+enum StatusEventKind {
+  STATUS_EVENT_KIND_UNSPECIFIED = 0;
+  STATUS_EVENT_KIND_APPLIED = 1;
+  STATUS_EVENT_KIND_REFRESHED = 2;
+  STATUS_EVENT_KIND_STACK_CHANGED = 3;
+  STATUS_EVENT_KIND_EXPIRED = 4;
+  STATUS_EVENT_KIND_DISPELLED = 5;
+  STATUS_EVENT_KIND_CONSUMED = 6;
+}
+
+// DespawnReason — why an entity left the AOI (302).
+enum DespawnReason {
+  DESPAWN_REASON_UNSPECIFIED = 0;
+  DESPAWN_REASON_LEFT_AOI = 1;
+  DESPAWN_REASON_DIED = 2;
+  DESPAWN_REASON_REMOVED = 3;
+  DESPAWN_REASON_TRANSFERRED = 4;
+  DESPAWN_REASON_SHED = 5;
+}
+
+// CombatResultKind — primary outcome class of a combat event (304).
+enum CombatResultKind {
+  COMBAT_RESULT_KIND_UNSPECIFIED = 0;
+  COMBAT_RESULT_KIND_DAMAGE = 1;
+  COMBAT_RESULT_KIND_HEAL = 2;
+  COMBAT_RESULT_KIND_SHIELD_GRANT = 3;
+  COMBAT_RESULT_KIND_SHIELD_BREAK = 4;
+}
+
+// CombatOutcome — hit-resolution outcome (304).
+enum CombatOutcome {
+  COMBAT_OUTCOME_UNSPECIFIED = 0;
+  COMBAT_OUTCOME_HIT = 1;
+  COMBAT_OUTCOME_DODGED = 2;
+  COMBAT_OUTCOME_INVULNERABLE = 3;  // respawn protection; damage 0
+}
+
+// EncounterEventType — encounter lifecycle event classes (305).
+enum EncounterEventType {
+  ENCOUNTER_EVENT_TYPE_UNSPECIFIED = 0;
+  ENCOUNTER_EVENT_TYPE_PHASE_TRANSITION = 1;
+  ENCOUNTER_EVENT_TYPE_TELEGRAPH_START = 2;
+  ENCOUNTER_EVENT_TYPE_TELEGRAPH_END = 3;
+  ENCOUNTER_EVENT_TYPE_MECHANIC_TRIGGERED = 4;
+  ENCOUNTER_EVENT_TYPE_MECHANIC_EXPIRED = 5;
+  ENCOUNTER_EVENT_TYPE_VULNERABILITY_OPEN = 6;
+  ENCOUNTER_EVENT_TYPE_VULNERABILITY_CLOSE = 7;
+}
+
+// C2S_SKILL_USE (200) — active-skill intent.
+message C2S_SKILL_USE {
+  uint64 client_mono_ms = 1;          // advisory only
+  string skill_id = 2;                // content ID
+  Facing facing = 3;
+  uint64 target_entity_id = 4;        // 0 = none; SINGLE_TARGET requires it
+  sint32 area_center_x_mm = 5;        // AREA_POSITION only; ignored otherwise
+  sint32 area_center_y_mm = 6;
+}
+
+// C2S_BASIC_ATTACK (201) — the equipped basic attack; the client never names
+// a basic skill_id.
+message C2S_BASIC_ATTACK {
+  uint64 client_mono_ms = 1;          // advisory only
+  Facing facing = 2;
+  uint64 target_entity_id = 3;        // 0 = none
+}
+
+// C2S_TARGET_INTENT (202) — the only way to set a target; client-side cycling
+// always sends 202 and waits for the stored target in the state push.
+message C2S_TARGET_INTENT {
+  uint64 target_entity_id = 1;  // 0 = clear target
+}
+
+// S2C_ACTION_STARTED (203) — the server accepted an action.
+message S2C_ACTION_STARTED {
+  uint64 action_instance_id = 1;
+  uint64 source_entity_id = 2;
+  string skill_id = 3;                   // content ID
+  uint64 client_seq = 4;                 // echo of the request envelope
+                                         // client_seq; 0 for server-originated
+  uint64 server_tick = 5;
+  Facing facing = 6;
+  uint64 target_entity_id = 7;
+  sint32 area_center_x_mm = 8;
+  sint32 area_center_y_mm = 9;
+  uint32 cast_ms = 10;
+  uint64 cooldown_ends_at_tick = 11;
+  int64 mp_after = 12;
+}
+
+// S2C_ACTION_REJECTED (204) — echoes the request envelope's client_seq.
+message S2C_ACTION_REJECTED {
+  uint64 client_seq = 1;                 // echo of the request envelope
+  uint32 request_message_id = 2;         // 200 | 201 | 202 | 208
+  bytes operation_id = 3;                // 208 only; UUID, 16 bytes
+  string skill_id = 4;                   // content ID
+  ErrorCode error_code = 5;              // COOLDOWN_ACTIVE | INSUFFICIENT_MP |
+                                         // SKILL_NOT_LEARNED |
+                                         // SKILL_LOADOUT_INVALID |
+                                         // TARGET_INVALID | OUT_OF_RANGE |
+                                         // INVALID_STATE | STALE_INPUT
+}
+
+// S2C_STATUS_EVENT (205) — status lifecycle on a target.
+message S2C_STATUS_EVENT {
+  uint64 target_entity_id = 1;
+  uint64 source_entity_id = 2;
+  string effect_id = 3;                  // content ID (status_effects.md)
+  string status_kind = 4;                // status kind (status_effects.md)
+  StatusEventKind event = 5;
+  uint32 stacks = 6;
+  uint64 expires_at_tick = 7;
+  uint64 server_tick = 8;
+}
+
+// S2C_DEATH (206).
+message S2C_DEATH {
+  uint64 entity_id = 1;
+  uint64 killer_entity_id = 2;           // 0 = none
+  uint64 server_tick = 3;
+  uint64 respawn_available_at_tick = 4;  // 0 when server-driven (dungeon/PvP/
+                                         // Guild War)
+}
+
+// S2C_RESPAWN (207) — also the committed answer to a successful 208.
+message S2C_RESPAWN {
+  uint64 entity_id = 1;
+  string map_id = 2;                     // content ID
+  string checkpoint_id = 3;              // content ID
+  sint32 x_mm = 4;
+  sint32 y_mm = 5;
+  int64 hp_after = 6;
+  int64 mp_after = 7;
+  uint64 invulnerable_until_tick = 8;
+  uint64 server_tick = 9;
+}
+
+// C2S_RESPAWN_REQUEST (208) — valid only for a DEAD character in the normal
+// world once server_tick >= respawn_available_at_tick; rejection is 204,
+// forced-placement wait is 15.
+message C2S_RESPAWN_REQUEST {
+  bytes operation_id = 1;  // UUID, 16 bytes — retry-safe; re-answer is the
+                          // committed 207
+}
+
+// EncounterView — one active encounter inside S2C_WORLD_BASELINE (300).
+message EncounterView {
+  uint64 encounter_id = 1;
+  string encounter_content_id = 2;          // content ID
+  uint32 phase_number = 3;
+  repeated uint32 active_mechanic_ids = 4;
+}
+
+// S2C_WORLD_BASELINE (300) — full AOI baseline (synchronization.md).
+message S2C_WORLD_BASELINE {
+  uint64 baseline_id = 1;
+  uint64 server_tick = 2;
+  string map_id = 3;                     // content ID
+  uint32 channel_index = 4;
+  bytes instance_id = 5;                 // 16 bytes; empty in the normal world
+  string content_revision = 6;
+  EntityState self = 7;
+  repeated EntityState entities = 8;     // AOI set, <= MAX_ENTITIES_IN_AOI_PER_CLIENT
+  repeated EncounterView encounters = 9;
+}
+
+// S2C_ENTITY_SPAWN (301).
+message S2C_ENTITY_SPAWN {
+  uint64 baseline_id = 1;
+  uint64 server_tick = 2;
+  EntityState entity = 3;
+}
+
+// S2C_ENTITY_DESPAWN (302).
+message S2C_ENTITY_DESPAWN {
+  uint64 baseline_id = 1;
+  uint64 server_tick = 2;
+  uint64 entity_id = 3;
+  DespawnReason reason = 4;
+}
+
+// SelfAck — authoritative self state after the last processed input; used by
+// client reconciliation (synchronization.md § Local Reconciliation).
+message SelfAck {
+  uint64 last_processed_client_seq = 1;
+  sint32 x_mm = 2;
+  sint32 y_mm = 3;
+  sint32 vx_mm_s = 4;
+  sint32 vy_mm_s = 5;
+  MovementState movement_state = 6;
+  string platform_id = 7;                // empty = none
+}
+
+// StatusList / CosmeticList — repeated-field wrappers for EntityDelta
+// (ADR-0069): absent = unchanged; present = full replacement (possibly empty).
+// `optional repeated` does not exist, so the list is wrapped in a message.
+message StatusList {
+  repeated EntityStatusView entries = 1;
+}
+
+message CosmeticList {
+  repeated EquippedCosmetic entries = 1;
+}
+
+// EntityDelta — per-entity delta inside 303. Every scalar EntityState field
+// except entity_id/entity_kind/content_id/character_id is proto3 `optional`
+// (absent = unchanged).
+message EntityDelta {
+  uint64 entity_id = 1;
+  optional string display_name = 2;
+  optional uint32 level = 3;
+  optional uint64 owner_entity_id = 4;
+  optional sint32 x_mm = 5;
+  optional sint32 y_mm = 6;
+  optional sint32 vx_mm_s = 7;
+  optional sint32 vy_mm_s = 8;
+  optional Facing facing = 9;
+  optional MovementState movement_state = 10;
+  optional int64 hp = 11;
+  optional int64 max_hp = 12;
+  optional int64 shield = 13;
+  optional uint32 flags = 14;
+  StatusList statuses = 15;              // absent = unchanged; present = replace
+  CosmeticList equipped_cosmetics = 16;  // absent = unchanged; present = replace
+  optional uint64 encounter_id = 17;
+  optional uint32 stat_lifesteal = 18;
+  optional uint32 stat_reflect = 19;
+  optional uint32 stat_absorb = 20;
+  optional uint32 stat_heal_reduction = 21;
+  optional uint32 stat_healing_received = 22;
+}
+
+// S2C_STATE_DELTA (303) — REPLACEABLE_STATE AOI delta.
+message S2C_STATE_DELTA {
+  uint64 baseline_id = 1;
+  uint64 server_tick = 2;
+  SelfAck self_ack = 3;                  // always present
+  repeated EntityDelta entities = 4;
+}
+
+// S2C_COMBAT_EVENT (304) — combat event; secondary fields are present only
+// when the corresponding secondary result occurred (absence = not triggered).
+message S2C_COMBAT_EVENT {
+  uint64 event_id = 1;                   // unique per partition
+  uint64 server_tick = 2;
+  uint64 action_instance_id = 3;
+  uint64 source_entity_id = 4;
+  uint64 target_entity_id = 5;
+  string skill_id = 6;                   // empty for effect ticks
+  string effect_id = 7;                  // DoT/HoT/shield/reflect source; empty
+                                         // for direct hits
+  CombatResultKind result_kind = 8;
+  CombatOutcome outcome = 9;
+  bool is_crit = 10;
+  DamageElement damage_element = 11;
+  int64 post_mitigation_damage = 12;     // >= 0 (combat.md § Damage terms)
+  int64 shield_absorbed = 13;            // >= 0
+  int64 hp_damage = 14;                  // >= 0
+  int64 heal_amount = 15;                // >= 0
+  int64 shield_amount = 16;              // >= 0
+  int64 target_hp_after = 17;
+  int64 target_shield_after = 18;
+  bool killed = 19;
+  bool just_guard_window = 20;           // server-detected only; the client
+  bool just_guard_triggered = 21;        // never sends a presentation flag
+  bool just_guard_hint = 22;
+  bool beast_passive2_success = 23;
+  // Secondary results (Global Effect Resolution Order stage 7, ADR-0037);
+  // absent = the secondary result did not occur.
+  optional int64 reflect_damage_instance = 24;  // post-mitigation HP damage to
+                                                // the attacker; NO_CRIT |
+                                                // NO_REFLECT | NO_LIFESTEAL |
+                                                // NO_PROC
+  optional int64 lifesteal_heal_amount = 25;    // HP healed on the caster after
+                                                // LIFESTEAL_HPS_CAP
+  optional int64 absorb_shield_amount = 26;     // shield granted to the caster
+}
+
+// S2C_ENCOUNTER_EVENT (305) — AUTHORITATIVE_EVENT: boss phase transitions,
+// telegraphed mechanics, per-mechanic lifecycle.
+message S2C_ENCOUNTER_EVENT {
+  uint64 encounter_id = 1;               // stable for the encounter lifetime
+  uint64 server_tick = 2;
+  EncounterEventType event_type = 3;
+  uint32 mechanic_id = 4;                // stable content-registered ID; 0 when
+                                         // PHASE_TRANSITION
+  uint64 source_entity_id = 5;           // the entity generating the event
+  repeated uint64 affected_entity_ids = 6;  // empty = all in AOI
+  uint32 phase_number = 7;               // PHASE_TRANSITION only; else 0
+  bytes mechanic_payload = 8;            // mechanic-specific sub-message;
+                                         // absent when mechanic_id = 0 or the
+                                         // mechanic carries no extra data
+}
+
+// C2S_BASELINE_ACK (306) — acknowledges a world baseline.
+message C2S_BASELINE_ACK {
+  uint64 baseline_id = 1;
+}

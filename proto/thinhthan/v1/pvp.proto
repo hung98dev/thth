@@ -1,0 +1,256 @@
+// PvP / Sparring / Duel / Guild War family (message IDs 800..819).
+// Field lists: docs/05_network/messages.md § PvP / Guild War (ADR-0023,
+// ADR-0060, ADR-0069). Every C2S carries operation_id and gets exactly one
+// S2C_PVP_RESULT (819); 804 / 806 / 810 / 813 / 818 are the resulting state
+// events — domain outcomes never use S2C_ERROR.
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+
+// QueueUpdateState — ranked queue state pushed to the client (804).
+enum QueueUpdateState {
+  QUEUE_UPDATE_STATE_UNSPECIFIED = 0;
+  QUEUE_UPDATE_STATE_QUEUED = 1;
+  QUEUE_UPDATE_STATE_MATCHED = 2;
+  QUEUE_UPDATE_STATE_ACCEPTING = 3;
+  QUEUE_UPDATE_STATE_LEFT = 4;
+}
+
+// MatchLifecycle — shared match lifecycle (pvp.md / guild_war.md).
+enum MatchLifecycle {
+  MATCH_LIFECYCLE_UNSPECIFIED = 0;
+  MATCH_LIFECYCLE_QUEUED = 1;
+  MATCH_LIFECYCLE_MATCHED = 2;
+  MATCH_LIFECYCLE_ACCEPTING = 3;
+  MATCH_LIFECYCLE_PREPARING = 4;
+  MATCH_LIFECYCLE_ACTIVE = 5;
+  MATCH_LIFECYCLE_RESOLVING = 6;
+  MATCH_LIFECYCLE_COMPLETED = 7;
+  MATCH_LIFECYCLE_CANCELLED = 8;
+}
+
+// MatchResult — the receiver's team result inside 806.
+enum MatchResult {
+  MATCH_RESULT_UNSPECIFIED = 0;
+  MATCH_RESULT_NONE = 1;
+  MATCH_RESULT_WIN = 2;
+  MATCH_RESULT_LOSS = 3;
+  MATCH_RESULT_DRAW = 4;
+  MATCH_RESULT_VOID = 5;
+}
+
+// ReadyDecision — ready-check / duel respond decision.
+enum ReadyDecision {
+  READY_DECISION_UNSPECIFIED = 0;
+  READY_DECISION_ACCEPT = 1;
+  READY_DECISION_DECLINE = 2;
+}
+
+// SparringOutcome — sparring challenge outcome (813).
+enum SparringOutcome {
+  SPARRING_OUTCOME_UNSPECIFIED = 0;
+  SPARRING_OUTCOME_ACCEPTED = 1;
+  SPARRING_OUTCOME_DECLINED = 2;
+  SPARRING_OUTCOME_EXPIRED = 3;
+  SPARRING_OUTCOME_REJECTED = 4;
+}
+
+// DuelOutcome — duel challenge outcome (818).
+enum DuelOutcome {
+  DUEL_OUTCOME_UNSPECIFIED = 0;
+  DUEL_OUTCOME_ACCEPTED = 1;
+  DUEL_OUTCOME_DECLINED = 2;
+  DUEL_OUTCOME_CANCELLED = 3;
+  DUEL_OUTCOME_EXPIRED = 4;
+  DUEL_OUTCOME_REJECTED = 5;
+}
+
+// ------------------------- Sparring (800..801, 811..813) ------------------
+
+// C2S_SPARRING_REQUEST (800) — casual duel challenge to a character in the
+// same channel; both stand on the Sparring Ring platform
+// (pvp.mode.sparring, ADR-0023); 60 s lifetime.
+message C2S_SPARRING_REQUEST {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// C2S_SPARRING_ACCEPT (801) — the target's acceptance.
+message C2S_SPARRING_ACCEPT {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes challenge_id = 2;  // UUID — from 811
+}
+
+// S2C_SPARRING_CHALLENGE (811) — challenge delivered to the target.
+message S2C_SPARRING_CHALLENGE {
+  bytes challenge_id = 1;                // UUID
+  bytes challenger_character_id = 2;     // UUID
+  string challenger_name = 3;
+  uint32 expires_in_seconds = 4;         // 60
+}
+
+// C2S_SPARRING_DECLINE (812).
+message C2S_SPARRING_DECLINE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes challenge_id = 2;  // UUID
+}
+
+// S2C_SPARRING_OUTCOME (813) — to both parties on accept, decline, expiry or
+// validation rejection. *_OUTCOME messages carry no OperationResult.
+message S2C_SPARRING_OUTCOME {
+  bytes challenge_id = 1;  // UUID
+  SparringOutcome outcome = 2;
+  ErrorCode error_code = 3;  // REJECTED only
+}
+
+// ------------------------- Ranked queue / match (802..807) ----------------
+
+// C2S_RANKED_QUEUE_JOIN (802) — Arena only: the party leader queues the
+// whole party atomically (with_party).
+message C2S_RANKED_QUEUE_JOIN {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  string pvp_mode_id = 2;   // pvp.mode.ranked_duel | pvp.mode.five_element_arena
+  bool with_party = 3;
+}
+
+// C2S_RANKED_QUEUE_LEAVE (803) — a party member leaving removes the whole
+// party entry.
+message C2S_RANKED_QUEUE_LEAVE {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  string pvp_mode_id = 2;
+}
+
+// S2C_RANKED_QUEUE_UPDATE (804) — queue position / MATCHED / ACCEPTING.
+message S2C_RANKED_QUEUE_UPDATE {
+  string pvp_mode_id = 1;
+  QueueUpdateState state = 2;
+  uint32 queued_seconds = 3;
+  bytes pvp_match_id = 4;          // UUID; from MATCHED
+  int64 ready_deadline_ms = 5;     // absolute Unix ms; ACCEPTING
+  ErrorCode error_code = 6;
+}
+
+// C2S_MATCH_READY (805) — ready-check response.
+message C2S_MATCH_READY {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes match_id = 2;      // UUID — pvp_match_id or guild_war_match_id
+  ReadyDecision decision = 3;
+}
+
+// MatchTeamMember — one roster row inside 806.
+message MatchTeamMember {
+  bytes character_id = 1;  // UUID
+  string display_name = 2;
+  string class_id = 3;     // content ID
+  bool ready = 4;
+  bool connected = 5;
+}
+
+// MatchTeam — one team inside 806.
+message MatchTeam {
+  uint32 team_index = 1;
+  uint32 score = 2;
+  repeated MatchTeamMember members = 3;
+}
+
+// S2C_MATCH_STATE (806) — match lifecycle state; ACCEPTED creates the match
+// that follows this lifecycle through 806/807.
+message S2C_MATCH_STATE {
+  bytes match_id = 1;              // UUID
+  string pvp_mode_id = 2;
+  MatchLifecycle state = 3;
+  int64 state_deadline_ms = 4;     // absolute Unix ms
+  uint32 round_number = 5;
+  repeated MatchTeam teams = 6;
+  MatchResult result = 7;          // receiver's team
+  uint32 rating_before = 8;        // ranked only; 0 otherwise
+  uint32 rating_after = 9;         // ranked only; 0 otherwise
+}
+
+// C2S_MATCH_SURRENDER (807) — legal after ACTIVE (pvp.md).
+message C2S_MATCH_SURRENDER {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes match_id = 2;      // UUID
+}
+
+// ------------------------- Guild War (808..810) ---------------------------
+
+// C2S_GUILD_WAR_QUEUE_JOIN (808) — LEADER or VICE_LEADER only; roster is
+// exactly 10 distinct characters (guild_war.md § Roster).
+message C2S_GUILD_WAR_QUEUE_JOIN {
+  bytes operation_id = 1;                   // UUID, 16 bytes
+  repeated bytes roster_character_ids = 2;  // exactly 10 distinct UUIDs
+}
+
+// C2S_GUILD_WAR_QUEUE_LEAVE (809) — cancel the guild-war queue entry.
+message C2S_GUILD_WAR_QUEUE_LEAVE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+}
+
+// S2C_GUILD_WAR_STATE (810) — guild-war match/queue state.
+message S2C_GUILD_WAR_STATE {
+  bytes guild_id = 1;                       // UUID
+  MatchLifecycle state = 2;                 // guild_war.md lifecycle
+  repeated bytes roster_character_ids = 3;
+  bytes guild_war_match_id = 4;             // UUID
+  int64 ready_deadline_ms = 5;              // absolute Unix ms
+  ErrorCode error_code = 6;
+}
+
+// ------------------------- Duel (814..818) --------------------------------
+
+// C2S_DUEL_CHALLENGE (814) — challenge a character to pvp.mode.duel;
+// eligibility in pvp.md § Duel (level >= 10, online, not queued/matched/
+// dead/transferring, social.md direct-interaction gate).
+message C2S_DUEL_CHALLENGE {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// S2C_DUEL_CHALLENGE (815) — challenge delivered to the target.
+message S2C_DUEL_CHALLENGE {
+  bytes challenge_id = 1;                // UUID
+  bytes challenger_character_id = 2;     // UUID
+  string challenger_name = 3;
+  uint32 expires_in_seconds = 4;         // 60
+}
+
+// C2S_DUEL_RESPOND (816).
+message C2S_DUEL_RESPOND {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes challenge_id = 2;  // UUID
+  ReadyDecision decision = 3;  // ACCEPT | DECLINE
+}
+
+// C2S_DUEL_CANCEL (817) — challenger cancels a pending challenge.
+message C2S_DUEL_CANCEL {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes challenge_id = 2;  // UUID
+}
+
+// S2C_DUEL_OUTCOME (818) — to both parties. *_OUTCOME messages carry no
+// OperationResult.
+message S2C_DUEL_OUTCOME {
+  bytes challenge_id = 1;  // UUID
+  DuelOutcome outcome = 2;
+  ErrorCode error_code = 3;  // REJECTED only
+}
+
+// ------------------------- Typed result (819) -----------------------------
+
+// S2C_PVP_RESULT (819) — typed result for every PvP / Guild War C2S
+// request: 800 | 801 | 802 | 803 | 805 | 807 | 808 | 809 | 812 | 814 | 816 |
+// 817.
+message S2C_PVP_RESULT {
+  OperationResult result = 1;        // LEVEL_TOO_LOW | STATE_CONFLICT |
+                                     // COOLDOWN_ACTIVE | PERMISSION_DENIED |
+                                     // TARGET_INVALID | ...
+  uint32 request_message_id = 2;
+  bytes reference_id = 3;            // challenge_id or match_id UUID; empty
+                                     // when none
+}

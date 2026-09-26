@@ -1,0 +1,604 @@
+// Thỉnh Thần wire contract — shared types, canonical envelope, message registry.
+// Source of truth for the wire; generated outputs live in
+// server/internal/protocol/v1/ and client/Assets/Scripts/Protocol/ and are
+// never hand-edited (docs/05_network/protobuf_conventions.md).
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+// Envelope is the single wire frame inside one WebSocket binary message
+// (docs/05_network/protobuf_conventions.md §2).
+message Envelope {
+  uint32 protocol_major = 1;  // protocol major version
+  uint32 protocol_minor = 2;  // protocol minor version
+  uint32 message_id = 3;      // a MessageId value; registry docs/05_network/messages.md
+  uint64 session_epoch = 4;   // session generation issued by S2C_HELLO_OK
+  uint64 client_seq = 5;      // per-session monotonic client sequence
+  uint64 server_seq = 6;      // per-session monotonic server sequence
+  uint64 correlation_id = 7;  // correlates a result with the request client_seq
+  bytes payload = 8;          // serialized message body for message_id
+}
+
+// MessageId is the canonical wire registry: enum value name == payload message
+// name, enum number == message_id in docs/05_network/messages.md. Ranges and
+// reservations are owned by that document; retired IDs stay unassigned.
+enum MessageId {
+  MESSAGE_ID_UNSPECIFIED = 0;
+
+  // Connection / session — session.proto (1..99)
+  MESSAGE_ID_C2S_HELLO = 1;
+  MESSAGE_ID_S2C_HELLO_OK = 2;
+  MESSAGE_ID_S2C_ERROR = 3;
+  MESSAGE_ID_C2S_HEARTBEAT = 4;
+  MESSAGE_ID_S2C_HEARTBEAT = 5;
+  MESSAGE_ID_C2S_CHARACTER_ATTACH = 6;
+  MESSAGE_ID_S2C_CHARACTER_ATTACH_OK = 7;
+  MESSAGE_ID_S2C_SESSION_REPLACED = 8;
+  MESSAGE_ID_S2C_SERVER_DRAINING = 9;
+  MESSAGE_ID_C2S_CHARACTER_DETACH = 10;
+  MESSAGE_ID_S2C_CHARACTER_DETACH_OK = 11;
+  MESSAGE_ID_C2S_CHARACTER_CREATE = 12;
+  MESSAGE_ID_S2C_CHARACTER_CREATE_RESULT = 13;
+  MESSAGE_ID_S2C_CHARACTER_LIST = 14;
+  MESSAGE_ID_S2C_PLACEMENT_PENDING = 15;
+  MESSAGE_ID_S2C_RESUME_CREDENTIAL = 16;
+
+  // Input / movement / dungeon entry — movement.proto (100..199)
+  MESSAGE_ID_C2S_INPUT_STATE = 100;
+  MESSAGE_ID_C2S_JUMP = 101;
+  MESSAGE_ID_C2S_DROP_THROUGH = 102;
+  MESSAGE_ID_C2S_INTERACT = 103;
+  MESSAGE_ID_C2S_PORTAL_USE = 104;
+  MESSAGE_ID_S2C_TRANSFER_PREPARE = 105;
+  MESSAGE_ID_C2S_PRESENTATION_READY = 106;
+  MESSAGE_ID_S2C_MOVEMENT_CORRECTION = 107;
+  MESSAGE_ID_C2S_MOVEMENT_EDGE = 108;
+  MESSAGE_ID_C2S_CHANNEL_SWITCH = 109;
+  MESSAGE_ID_S2C_CHANNEL_SWITCH_RESULT = 110;
+  MESSAGE_ID_C2S_DUNGEON_ENTER_REQUEST = 111;
+  MESSAGE_ID_S2C_DUNGEON_ENTRY_STATE = 112;
+  MESSAGE_ID_C2S_DUNGEON_ENTRY_RESPOND = 113;
+  MESSAGE_ID_C2S_DUNGEON_LEAVE = 114;
+  MESSAGE_ID_S2C_DUNGEON_LEAVE_RESULT = 115;
+  MESSAGE_ID_S2C_INTERACT_RESULT = 116;
+  MESSAGE_ID_C2S_DUNGEON_ENTRY_CANCEL = 117;
+
+  // Combat — combat.proto (200..299)
+  MESSAGE_ID_C2S_SKILL_USE = 200;
+  MESSAGE_ID_C2S_BASIC_ATTACK = 201;
+  MESSAGE_ID_C2S_TARGET_INTENT = 202;
+  MESSAGE_ID_S2C_ACTION_STARTED = 203;
+  MESSAGE_ID_S2C_ACTION_REJECTED = 204;
+  MESSAGE_ID_S2C_STATUS_EVENT = 205;
+  MESSAGE_ID_S2C_DEATH = 206;
+  MESSAGE_ID_S2C_RESPAWN = 207;
+  MESSAGE_ID_C2S_RESPAWN_REQUEST = 208;
+
+  // World / entity replication — combat.proto (300..399)
+  MESSAGE_ID_S2C_WORLD_BASELINE = 300;
+  MESSAGE_ID_S2C_ENTITY_SPAWN = 301;
+  MESSAGE_ID_S2C_ENTITY_DESPAWN = 302;
+  MESSAGE_ID_S2C_STATE_DELTA = 303;
+  MESSAGE_ID_S2C_COMBAT_EVENT = 304;
+  MESSAGE_ID_S2C_ENCOUNTER_EVENT = 305;
+  MESSAGE_ID_C2S_BASELINE_ACK = 306;
+
+  // Durable operations — durable.proto (400..499)
+  MESSAGE_ID_C2S_INVENTORY_MUTATE = 400;
+  MESSAGE_ID_S2C_INVENTORY_RESULT = 401;
+  MESSAGE_ID_C2S_LOADOUT_CHANGE = 402;
+  MESSAGE_ID_S2C_LOADOUT_RESULT = 403;
+  MESSAGE_ID_C2S_CRAFT = 404;
+  MESSAGE_ID_S2C_CRAFT_RESULT = 405;
+  MESSAGE_ID_C2S_ENHANCE = 406;
+  MESSAGE_ID_S2C_ENHANCE_RESULT = 407;
+  MESSAGE_ID_C2S_REWARD_CLAIM = 408;
+  MESSAGE_ID_S2C_REWARD_CLAIM_RESULT = 409;
+  MESSAGE_ID_C2S_BEAST_SET_ACTIVE = 410;
+  MESSAGE_ID_S2C_BEAST_SET_ACTIVE_RESULT = 411;
+  MESSAGE_ID_C2S_BEAST_EQUIP = 412;
+  MESSAGE_ID_S2C_BEAST_EQUIP_RESULT = 413;
+  MESSAGE_ID_C2S_BEAST_UNEQUIP = 414;
+  MESSAGE_ID_S2C_BEAST_UNEQUIP_RESULT = 415;
+  MESSAGE_ID_C2S_BEAST_FEED = 416;
+  MESSAGE_ID_S2C_BEAST_FEED_RESULT = 417;
+  MESSAGE_ID_C2S_ENTITLEMENT_CLAIM = 418;
+  MESSAGE_ID_S2C_ENTITLEMENT_CLAIM_RESULT = 419;
+  MESSAGE_ID_C2S_NPC_SHOP_BUY = 420;
+  MESSAGE_ID_S2C_NPC_SHOP_BUY_RESULT = 421;
+  MESSAGE_ID_C2S_COSMETIC_REDEEM = 422;
+  MESSAGE_ID_S2C_COSMETIC_REDEEM_RESULT = 423;
+  MESSAGE_ID_C2S_COSMETIC_EQUIP = 424;
+  MESSAGE_ID_S2C_COSMETIC_EQUIP_RESULT = 425;
+  MESSAGE_ID_C2S_NPC_SHOP_SELL = 426;
+  MESSAGE_ID_S2C_NPC_SHOP_SELL_RESULT = 427;
+  MESSAGE_ID_C2S_INVENTORY_EXPAND = 428;
+  MESSAGE_ID_S2C_INVENTORY_EXPAND_RESULT = 429;
+  MESSAGE_ID_C2S_BEAST_LEVEL_UP = 430;
+  MESSAGE_ID_S2C_BEAST_LEVEL_UP_RESULT = 431;
+  MESSAGE_ID_S2C_WALLET_STATE = 432;
+  MESSAGE_ID_S2C_INVENTORY_STATE = 433;
+  MESSAGE_ID_S2C_REWARD_CLAIMS_STATE = 434;
+  MESSAGE_ID_S2C_ENTITLEMENT_PANEL_STATE = 435;
+  MESSAGE_ID_S2C_BEAST_STATE = 436;
+  MESSAGE_ID_S2C_SOUL_STATE = 437;
+  MESSAGE_ID_S2C_COSMETIC_STATE = 438;
+  MESSAGE_ID_C2S_REWARD_CLAIM_LIST_REQUEST = 439;
+  MESSAGE_ID_S2C_REWARD_CLAIM_LIST_RESULT = 440;
+  MESSAGE_ID_S2C_REWARD_CLAIM_DELTA = 441;
+
+  // Quest / atlas / progression — content.proto (500..599)
+  MESSAGE_ID_C2S_QUEST_ACCEPT = 500;
+  MESSAGE_ID_S2C_QUEST_ACCEPT_RESULT = 501;
+  MESSAGE_ID_C2S_QUEST_TURN_IN = 502;
+  MESSAGE_ID_S2C_QUEST_UPDATE = 503;
+  MESSAGE_ID_C2S_ATLAS_CLAIM = 504;
+  MESSAGE_ID_S2C_ATLAS_CLAIM_RESULT = 505;
+  MESSAGE_ID_S2C_PROGRESSION_EVENT = 506;
+  MESSAGE_ID_C2S_QUEST_ABANDON = 507;
+  MESSAGE_ID_S2C_QUEST_ABANDON_RESULT = 508;
+  MESSAGE_ID_C2S_STORY_BRANCH_CHOOSE = 509;
+  MESSAGE_ID_S2C_STORY_BRANCH_RESULT = 510;
+  MESSAGE_ID_C2S_SKILL_UPGRADE = 511;
+  MESSAGE_ID_C2S_POTENTIAL_ALLOCATE = 512;
+  MESSAGE_ID_C2S_RESPEC = 513;
+  MESSAGE_ID_S2C_PROGRESSION_MUTATE_RESULT = 514;
+  MESSAGE_ID_S2C_PROGRESSION_STATE = 515;
+
+  // Social / party / guild — social.proto (600..699)
+  MESSAGE_ID_C2S_CHAT_SEND = 600;
+  MESSAGE_ID_S2C_CHAT_MESSAGE = 601;
+  MESSAGE_ID_C2S_PARTY_INVITE = 602;
+  MESSAGE_ID_S2C_PARTY_INVITE = 603;
+  MESSAGE_ID_C2S_PARTY_ACCEPT = 604;
+  MESSAGE_ID_C2S_PARTY_LEAVE = 605;
+  MESSAGE_ID_C2S_PARTY_KICK = 606;
+  MESSAGE_ID_S2C_PARTY_STATE = 607;
+  MESSAGE_ID_C2S_GUILD_INVITE = 608;
+  MESSAGE_ID_S2C_GUILD_INVITE = 609;
+  MESSAGE_ID_C2S_GUILD_ACCEPT = 610;
+  MESSAGE_ID_C2S_FRIEND_REQUEST = 611;
+  MESSAGE_ID_S2C_FRIEND_REQUEST = 612;
+  MESSAGE_ID_C2S_FRIEND_ACCEPT = 613;
+  MESSAGE_ID_C2S_FRIEND_DECLINE = 614;
+  MESSAGE_ID_C2S_FRIEND_REMOVE = 615;
+  MESSAGE_ID_S2C_FRIEND_STATE = 616;
+  MESSAGE_ID_C2S_BLOCK_ADD = 617;
+  MESSAGE_ID_C2S_BLOCK_REMOVE = 618;
+  MESSAGE_ID_S2C_BLOCK_STATE = 619;
+  MESSAGE_ID_C2S_PARTY_DECLINE = 620;
+  MESSAGE_ID_C2S_PARTY_INVITE_CANCEL = 621;
+  MESSAGE_ID_C2S_PARTY_LEADER_TRANSFER = 622;
+  MESSAGE_ID_C2S_GUILD_DECLINE = 623;
+  MESSAGE_ID_C2S_GUILD_LEAVE = 624;
+  MESSAGE_ID_C2S_GUILD_KICK = 625;
+  MESSAGE_ID_C2S_GUILD_ROLE_UPDATE = 626;
+  MESSAGE_ID_C2S_GUILD_LEADER_TRANSFER = 627;
+  MESSAGE_ID_S2C_GUILD_STATE = 628;
+  MESSAGE_ID_C2S_GUILD_STORAGE_DEPOSIT = 629;
+  MESSAGE_ID_C2S_GUILD_STORAGE_WITHDRAW = 630;
+  MESSAGE_ID_S2C_GUILD_STORAGE_STATE = 631;
+  MESSAGE_ID_C2S_REPORT_PLAYER = 632;
+  MESSAGE_ID_S2C_REPORT_PLAYER_RESULT = 633;
+  MESSAGE_ID_C2S_PARTY_BOARD_POST = 634;
+  MESSAGE_ID_C2S_PARTY_BOARD_CANCEL = 635;
+  MESSAGE_ID_S2C_PARTY_BOARD_STATE = 636;
+  MESSAGE_ID_C2S_GUILD_CREATE = 637;
+  MESSAGE_ID_C2S_GUILD_DISBAND = 638;
+  MESSAGE_ID_C2S_GUILD_APPLY = 639;
+  MESSAGE_ID_C2S_GUILD_APPLICATION_DECIDE = 640;
+  MESSAGE_ID_S2C_GUILD_APPLICATIONS = 641;
+  MESSAGE_ID_C2S_GUILD_MOTD_SET = 642;
+  MESSAGE_ID_C2S_GUILD_LEADERSHIP_CLAIM = 643;
+  MESSAGE_ID_C2S_GUILD_STORAGE_MOVE = 644;
+  MESSAGE_ID_C2S_GUILD_STORAGE_CLAIM_REQUEST = 645;
+  MESSAGE_ID_C2S_GUILD_STORAGE_CLAIM_DECIDE = 646;
+  MESSAGE_ID_S2C_GUILD_STORAGE_CLAIMS = 647;
+  MESSAGE_ID_C2S_GUILD_BLESSING_VOTE = 648;
+  MESSAGE_ID_S2C_GUILD_RESULT = 649;
+  MESSAGE_ID_C2S_GUILD_SETTINGS_SET = 650;
+  MESSAGE_ID_C2S_GUILD_INVITE_CANCEL = 651;
+  MESSAGE_ID_C2S_GUILD_APPLICATION_CANCEL = 652;
+  MESSAGE_ID_S2C_PARTY_RESULT = 653;
+  MESSAGE_ID_S2C_SOCIAL_RESULT = 654;
+  MESSAGE_ID_S2C_CHAT_SEND_RESULT = 655;
+
+  // Trade — market.proto (700..729)
+  MESSAGE_ID_C2S_TRADE_INVITE = 700;
+  MESSAGE_ID_S2C_TRADE_INVITE = 701;
+  MESSAGE_ID_C2S_TRADE_ACCEPT = 702;
+  MESSAGE_ID_C2S_TRADE_CANCEL = 703;
+  MESSAGE_ID_S2C_TRADE_CANCELLED = 704;
+  MESSAGE_ID_C2S_TRADE_OFFER_UPDATE = 705;
+  MESSAGE_ID_S2C_TRADE_OFFER_STATE = 706;
+  MESSAGE_ID_C2S_TRADE_CONFIRM = 707;
+  MESSAGE_ID_C2S_TRADE_FINALISE = 708;
+  MESSAGE_ID_S2C_TRADE_RESULT = 709;
+  MESSAGE_ID_S2C_TRADE_REQUEST_RESULT = 710;
+
+  // Auction — market.proto (730..759)
+  MESSAGE_ID_C2S_AUCTION_LIST = 730;
+  MESSAGE_ID_S2C_AUCTION_LIST_RESULT = 731;
+  MESSAGE_ID_C2S_AUCTION_BUY = 732;
+  MESSAGE_ID_S2C_AUCTION_BUY_RESULT = 733;
+  MESSAGE_ID_C2S_AUCTION_CANCEL_LISTING = 734;
+  MESSAGE_ID_S2C_AUCTION_CANCEL_RESULT = 735;
+  MESSAGE_ID_S2C_AUCTION_SOLD = 736;
+  MESSAGE_ID_C2S_AUCTION_SEARCH = 738;
+  MESSAGE_ID_S2C_AUCTION_SEARCH_RESULT = 739;
+  MESSAGE_ID_C2S_AUCTION_RECLAIM = 740;
+  MESSAGE_ID_S2C_AUCTION_RECLAIM_RESULT = 741;
+  MESSAGE_ID_C2S_AUCTION_PROCEEDS_CLAIM = 742;
+  MESSAGE_ID_S2C_AUCTION_PROCEEDS_RESULT = 743;
+  MESSAGE_ID_S2C_AUCTION_MY_STATE = 744;
+
+  // PvP / Guild War — pvp.proto (800..899)
+  MESSAGE_ID_C2S_SPARRING_REQUEST = 800;
+  MESSAGE_ID_C2S_SPARRING_ACCEPT = 801;
+  MESSAGE_ID_C2S_RANKED_QUEUE_JOIN = 802;
+  MESSAGE_ID_C2S_RANKED_QUEUE_LEAVE = 803;
+  MESSAGE_ID_S2C_RANKED_QUEUE_UPDATE = 804;
+  MESSAGE_ID_C2S_MATCH_READY = 805;
+  MESSAGE_ID_S2C_MATCH_STATE = 806;
+  MESSAGE_ID_C2S_MATCH_SURRENDER = 807;
+  MESSAGE_ID_C2S_GUILD_WAR_QUEUE_JOIN = 808;
+  MESSAGE_ID_C2S_GUILD_WAR_QUEUE_LEAVE = 809;
+  MESSAGE_ID_S2C_GUILD_WAR_STATE = 810;
+  MESSAGE_ID_S2C_SPARRING_CHALLENGE = 811;
+  MESSAGE_ID_C2S_SPARRING_DECLINE = 812;
+  MESSAGE_ID_S2C_SPARRING_OUTCOME = 813;
+  MESSAGE_ID_C2S_DUEL_CHALLENGE = 814;
+  MESSAGE_ID_S2C_DUEL_CHALLENGE = 815;
+  MESSAGE_ID_C2S_DUEL_RESPOND = 816;
+  MESSAGE_ID_C2S_DUEL_CANCEL = 817;
+  MESSAGE_ID_S2C_DUEL_OUTCOME = 818;
+  MESSAGE_ID_S2C_PVP_RESULT = 819;
+
+  // messages.md retires ID 737; keep it permanently unassigned.
+  reserved 737;
+}
+
+// ErrorCode is the canonical client-visible protocol error taxonomy
+// (docs/05_network/errors.md § Canonical Codes). Numbers are append-only:
+// baseline assigns 1..110 in order of first appearance, row-major, of each
+// code inside the section's fenced code blocks. ERROR_CODE_UNSPECIFIED = 0
+// means NONE (success).
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  ERROR_CODE_PROTOCOL_MALFORMED = 1;
+  ERROR_CODE_PROTOCOL_UNSUPPORTED = 2;
+  ERROR_CODE_PROTOCOL_VIOLATION = 3;
+  ERROR_CODE_MESSAGE_UNKNOWN = 4;
+  ERROR_CODE_MESSAGE_TOO_LARGE = 5;
+  ERROR_CODE_MESSAGE_NOT_ALLOWED_IN_STATE = 6;
+  ERROR_CODE_CLIENT_UPDATE_REQUIRED = 7;
+  ERROR_CODE_CONTENT_INCOMPATIBLE = 8;
+  ERROR_CODE_RATE_LIMITED = 9;
+  ERROR_CODE_SERVER_OVERLOADED = 10;
+  ERROR_CODE_SERVER_DRAINING = 11;
+  ERROR_CODE_AUTH_REQUIRED = 12;
+  ERROR_CODE_AUTH_INVALID = 13;
+  ERROR_CODE_AUTH_EXPIRED = 14;
+  ERROR_CODE_SESSION_EPOCH_STALE = 15;
+  ERROR_CODE_SESSION_REPLACED = 16;
+  ERROR_CODE_CHARACTER_ALREADY_ACTIVE = 17;
+  ERROR_CODE_RESUME_EXPIRED = 18;
+  ERROR_CODE_ACCOUNT_BANNED = 19;
+  ERROR_CODE_ACCOUNT_PENDING_DELETION = 20;
+  ERROR_CODE_ACCOUNT_SUSPENDED = 21;
+  ERROR_CODE_ENTITLEMENT_REVOKED = 22;
+  ERROR_CODE_USERNAME_INVALID = 23;
+  ERROR_CODE_EMAIL_INVALID = 24;
+  ERROR_CODE_PASSWORD_INVALID = 25;
+  ERROR_CODE_USERNAME_TAKEN = 26;
+  ERROR_CODE_EMAIL_TAKEN = 27;
+  ERROR_CODE_PROVIDER_ALREADY_LINKED = 28;
+  ERROR_CODE_LAST_LOGIN_METHOD = 29;
+  ERROR_CODE_CREDENTIAL_CHANGE_LOCKED = 30;
+  ERROR_CODE_CHARACTER_NAME_INVALID = 31;
+  ERROR_CODE_CHARACTER_NAME_TAKEN = 32;
+  ERROR_CODE_CHARACTER_SLOTS_FULL = 33;
+  ERROR_CODE_OWNER_NOT_FOUND = 34;
+  ERROR_CODE_OWNER_CHANGED = 35;
+  ERROR_CODE_TRANSFER_IN_PROGRESS = 36;
+  ERROR_CODE_TRANSFER_FAILED = 37;
+  ERROR_CODE_STALE_INPUT = 38;
+  ERROR_CODE_INVALID_TARGET = 39;
+  ERROR_CODE_INVALID_STATE = 40;
+  ERROR_CODE_MAP_CAPACITY_FULL = 41;
+  ERROR_CODE_OPERATION_CONFLICT = 42;
+  ERROR_CODE_OPERATION_IN_PROGRESS = 43;
+  ERROR_CODE_OPERATION_REJECTED = 44;
+  ERROR_CODE_TEMPORARY_DEPENDENCY_FAILURE = 45;
+  ERROR_CODE_IAP_RECEIPT_ACCOUNT_MISMATCH = 46;
+  ERROR_CODE_IAP_PRODUCT_MISMATCH = 47;
+  ERROR_CODE_IAP_RECEIPT_INVALID = 48;
+  ERROR_CODE_IAP_SEASON_TRACK_DUPLICATE = 49;
+  ERROR_CODE_IAP_VERIFICATION_PENDING = 50;
+  ERROR_CODE_CHEST_ELIGIBILITY_INVALID = 51;
+  ERROR_CODE_TRADE_PARTNER_DISCONNECTED = 52;
+  ERROR_CODE_TRADE_ELIGIBILITY_LEVEL_REQUIRED = 53;
+  ERROR_CODE_TRADE_ELIGIBILITY_AGE_REQUIRED = 54;
+  ERROR_CODE_AH_ELIGIBILITY_LEVEL_REQUIRED = 55;
+  ERROR_CODE_AH_ELIGIBILITY_AGE_REQUIRED = 56;
+  ERROR_CODE_TRADE_COMMON_BOTH_SIDES = 57;
+  ERROR_CODE_TRADE_PRICE_FLOOR_NOT_MET = 58;
+  ERROR_CODE_AH_PRICE_FLOOR_NOT_MET = 59;
+  ERROR_CODE_SAME_ACCOUNT_FORBIDDEN = 60;
+  ERROR_CODE_INVENTORY_FULL = 61;
+  ERROR_CODE_INSUFFICIENT_CURRENCY = 62;
+  ERROR_CODE_CURRENCY_CAP_EXCEEDED = 63;
+  ERROR_CODE_COOLDOWN_ACTIVE = 64;
+  ERROR_CODE_ITEM_NOT_FOUND = 65;
+  ERROR_CODE_ITEM_LOCKED = 66;
+  ERROR_CODE_NOT_OWNER = 67;
+  ERROR_CODE_PERMISSION_DENIED = 68;
+  ERROR_CODE_TARGET_INVALID = 69;
+  ERROR_CODE_OUT_OF_RANGE = 70;
+  ERROR_CODE_IN_COMBAT = 71;
+  ERROR_CODE_LEVEL_TOO_LOW = 72;
+  ERROR_CODE_CAPACITY_FULL = 73;
+  ERROR_CODE_ALREADY_OWNED = 74;
+  ERROR_CODE_EXPIRED = 75;
+  ERROR_CODE_STATE_CONFLICT = 76;
+  ERROR_CODE_NOT_IN_SAFE_ANCHOR = 77;
+  ERROR_CODE_DAILY_LIMIT_REACHED = 78;
+  ERROR_CODE_GUILD_DISBAND_BLOCKED = 79;
+  ERROR_CODE_GUILD_STORAGE_SAME_ACCOUNT = 80;
+  ERROR_CODE_GUILD_MEMBERSHIP_TOO_NEW = 81;
+  ERROR_CODE_AUCTION_LISTING_NOT_ACTIVE = 82;
+  ERROR_CODE_CLAIM_WINDOW_CLOSED = 83;
+  ERROR_CODE_DURABLE_BACKPRESSURE = 84;
+  ERROR_CODE_BEAST_NOT_OWNED = 85;
+  ERROR_CODE_SLOT_MISMATCH = 86;
+  ERROR_CODE_SLOT_EMPTY = 87;
+  ERROR_CODE_INSUFFICIENT_ITEM = 88;
+  ERROR_CODE_DAILY_FOOD_CAP_REACHED = 89;
+  ERROR_CODE_MAX_BOND_REACHED = 90;
+  ERROR_CODE_FRIEND_LIMIT_REACHED = 91;
+  ERROR_CODE_TARGET_BLOCKED = 92;
+  ERROR_CODE_ALREADY_FRIENDS = 93;
+  ERROR_CODE_PENDING_REQUEST_EXISTS = 94;
+  ERROR_CODE_CLAIM_CAP_REACHED = 95;
+  ERROR_CODE_CHARM_INELIGIBLE = 96;
+  ERROR_CODE_SKILL_NOT_LEARNED = 97;
+  ERROR_CODE_SKILL_MAX_LEVEL = 98;
+  ERROR_CODE_SKILL_POINTS_INSUFFICIENT = 99;
+  ERROR_CODE_SKILL_LOADOUT_INVALID = 100;
+  ERROR_CODE_POTENTIAL_POINTS_INSUFFICIENT = 101;
+  ERROR_CODE_POTENTIAL_CAP_EXCEEDED = 102;
+  ERROR_CODE_INSUFFICIENT_MP = 103;
+  ERROR_CODE_SOUL_CONTRACT_LIMIT_REACHED = 104;
+  ERROR_CODE_STORY_CHOICE_REQUIRED = 105;
+  ERROR_CODE_NOT_DISCOVERED = 106;
+  ERROR_CODE_GUILD_NAME_TAKEN = 107;
+  ERROR_CODE_GUILD_NAME_INVALID = 108;
+  ERROR_CODE_ATLAS_TIER_NOT_REACHED = 109;
+  ERROR_CODE_CHAT_TEXT_INVALID = 110;
+}
+
+// Retryability class of a client-visible error
+// (docs/05_network/errors.md § Retryability).
+enum Retryability {
+  RETRYABILITY_UNSPECIFIED = 0;
+  RETRYABILITY_NEVER = 1;
+  RETRYABILITY_RETRY_SAME_OPERATION = 2;
+  RETRYABILITY_RECONNECT = 3;
+  RETRYABILITY_UPDATE_REQUIRED = 4;
+  RETRYABILITY_REAUTHENTICATE = 5;
+  RETRYABILITY_BACKOFF = 6;
+}
+
+// ResultStatus is the common success/error status of typed operation results
+// (protobuf_conventions.md §6).
+enum ResultStatus {
+  RESULT_STATUS_UNSPECIFIED = 0;
+  RESULT_STATUS_SUCCESS = 1;
+  RESULT_STATUS_ERROR = 2;
+}
+
+// OperationResult is embedded as field 1 of every *_RESULT payload
+// (protobuf_conventions.md §6). operation_id echoes the request's stable
+// client-generated idempotency UUID (16 bytes; empty when none).
+message OperationResult {
+  bytes operation_id = 1;
+  ResultStatus status = 2;
+  ErrorCode error_code = 3;
+}
+
+// ItemQuantity is an item-id + stack-count pair (consumed/granted lists).
+message ItemQuantity {
+  string item_id = 1;    // content ID
+  uint32 quantity = 2;
+}
+
+// ItemGrant is a materialized item grant: the created/mutated instance plus
+// its content identity and stack count.
+message ItemGrant {
+  bytes item_instance_id = 1;  // UUID, 16 bytes
+  string item_id = 2;          // content ID
+  uint32 quantity = 3;
+}
+
+// CurrencyDelta is a signed currency movement; amount is negative on spend.
+message CurrencyDelta {
+  string currency_id = 1;  // content ID (currency.common / currency.special / currency.premium)
+  int64 amount = 2;
+}
+
+// PositionMm is an integer-millimetre world position
+// (04_architecture/physics_geometry_contract.md).
+message PositionMm {
+  sint32 x_mm = 1;
+  sint32 y_mm = 2;
+}
+
+// Facing — horizontal facing direction.
+enum Facing {
+  FACING_UNSPECIFIED = 0;
+  FACING_LEFT = 1;
+  FACING_RIGHT = 2;
+}
+
+// MovementState — locomotion state (01_gameplay/movement.md).
+enum MovementState {
+  MOVEMENT_STATE_UNSPECIFIED = 0;
+  MOVEMENT_STATE_IDLE = 1;
+  MOVEMENT_STATE_RUN = 2;
+  MOVEMENT_STATE_JUMP = 3;
+  MOVEMENT_STATE_FALL = 4;
+  MOVEMENT_STATE_KNOCKBACK = 5;
+}
+
+// EntityKind — runtime entity classification (messages.md § Replication).
+enum EntityKind {
+  ENTITY_KIND_UNSPECIFIED = 0;
+  ENTITY_KIND_PLAYER = 1;
+  ENTITY_KIND_MONSTER = 2;
+  ENTITY_KIND_NPC = 3;
+  ENTITY_KIND_BEAST = 4;
+  ENTITY_KIND_OBJECT = 5;
+  ENTITY_KIND_PROJECTILE = 6;
+}
+
+// EntityFlag — EntityState.flags bitmask values (bit N = 1 << value).
+enum EntityFlag {
+  ENTITY_FLAG_UNSPECIFIED = 0;
+  ENTITY_FLAG_IN_COMBAT = 1;      // bit 0
+  ENTITY_FLAG_DEAD = 2;           // bit 1
+  ENTITY_FLAG_INVULNERABLE = 4;   // bit 2
+  ENTITY_FLAG_INTERACTABLE = 8;   // bit 3
+  ENTITY_FLAG_ELIGIBLE = 16;      // bit 4 — chest eligibility for this viewer
+}
+
+// OnlineState — presence flag shared by party/guild/friend views.
+enum OnlineState {
+  ONLINE_STATE_UNSPECIFIED = 0;
+  ONLINE_STATE_ONLINE = 1;
+  ONLINE_STATE_OFFLINE = 2;
+}
+
+// CosmeticSlot — cosmetic equipment slots
+// (03_systems/cosmetics.md § Categories).
+enum CosmeticSlot {
+  COSMETIC_SLOT_UNSPECIFIED = 0;
+  COSMETIC_SLOT_TITLE = 1;
+  COSMETIC_SLOT_TITLE_GLOW = 2;
+  COSMETIC_SLOT_FRAME = 3;
+  COSMETIC_SLOT_NAMEPLATE = 4;
+  COSMETIC_SLOT_APPEARANCE = 5;
+  COSMETIC_SLOT_WEAPON_TRAIL = 6;
+  COSMETIC_SLOT_AURA = 7;
+  COSMETIC_SLOT_CHARACTER_SHRINE = 8;
+  COSMETIC_SLOT_GUILD_STONE_INSCRIPTION = 9;
+}
+
+// CharacterSummary — character-select row (messages.md ID 14).
+message CharacterSummary {
+  bytes character_id = 1;        // UUID, 16 bytes
+  string character_name = 2;
+  string class_id = 3;           // class.kim | class.moc | class.thuy | class.hoa | class.tho
+  uint32 level = 4;
+  string map_id = 5;             // content ID
+  int64 last_online_at_ms = 6;   // Unix ms
+  bool is_attached = 7;
+}
+
+// EntityStatusView — one active status effect inside EntityState.
+message EntityStatusView {
+  string effect_id = 1;            // content ID (01_gameplay/status_effects.md)
+  uint64 source_entity_id = 2;     // runtime entity ID
+  uint32 stacks = 3;
+  uint64 expires_at_tick = 4;
+}
+
+// EquippedCosmetic — one equipped cosmetic inside EntityState.
+message EquippedCosmetic {
+  CosmeticSlot slot = 1;
+  string cosmetic_id = 2;  // content ID
+}
+
+// EntityState — full entity state for baseline/spawn (messages.md
+// § Replication). All runtime entity IDs are uint64 partition-scoped.
+message EntityState {
+  uint64 entity_id = 1;
+  EntityKind entity_kind = 2;
+  string content_id = 3;             // monster_id | npc_id | object ID | beast_id | projectile ID; class_id for PLAYER
+  bytes character_id = 4;            // UUID, 16 bytes; PLAYER only
+  string display_name = 5;
+  uint32 level = 6;
+  uint64 owner_entity_id = 7;        // BEAST/PROJECTILE; 0 = none
+  sint32 x_mm = 8;
+  sint32 y_mm = 9;
+  sint32 vx_mm_s = 10;
+  sint32 vy_mm_s = 11;
+  Facing facing = 12;
+  MovementState movement_state = 13;
+  int64 hp = 14;
+  int64 max_hp = 15;
+  int64 shield = 16;
+  uint32 flags = 17;                                // EntityFlag bitmask
+  repeated EntityStatusView statuses = 18;
+  repeated EquippedCosmetic equipped_cosmetics = 19; // PLAYER only
+  uint64 encounter_id = 20;                          // 0 = none
+  uint32 stat_lifesteal = 21;                        // basis points (ADR-0037)
+  uint32 stat_reflect = 22;
+  uint32 stat_absorb = 23;
+  uint32 stat_heal_reduction = 24;
+  uint32 stat_healing_received = 25;
+}
+
+// RewardSourceType — reward claim provenance
+// (03_systems/reward_claims.md § Claim Creation).
+enum RewardSourceType {
+  REWARD_SOURCE_TYPE_UNSPECIFIED = 0;
+  REWARD_SOURCE_TYPE_MONSTER = 1;
+  REWARD_SOURCE_TYPE_BOSS = 2;
+  REWARD_SOURCE_TYPE_BOSS_CHEST = 3;
+  REWARD_SOURCE_TYPE_DUNGEON = 4;
+  REWARD_SOURCE_TYPE_QUEST = 5;
+  REWARD_SOURCE_TYPE_WORLD_EVENT = 6;
+  REWARD_SOURCE_TYPE_ATLAS = 7;
+  REWARD_SOURCE_TYPE_FEAT = 8;
+  REWARD_SOURCE_TYPE_LEVEL_MILESTONE = 9;
+  REWARD_SOURCE_TYPE_PVP = 10;
+  REWARD_SOURCE_TYPE_GUILD_WAR = 11;
+  REWARD_SOURCE_TYPE_GUILD = 12;
+  REWARD_SOURCE_TYPE_AUCTION_ESCROW_EXPIRY = 13;
+  REWARD_SOURCE_TYPE_ADMIN_COMPENSATION = 14;
+}
+
+// RewardClaimState — claim lifecycle
+// (PENDING -> CLAIMING -> CLAIMED; PENDING -> EXPIRED).
+enum RewardClaimState {
+  REWARD_CLAIM_STATE_UNSPECIFIED = 0;
+  REWARD_CLAIM_STATE_PENDING = 1;
+  REWARD_CLAIM_STATE_CLAIMING = 2;
+  REWARD_CLAIM_STATE_CLAIMED = 3;
+  REWARD_CLAIM_STATE_EXPIRED = 4;
+}
+
+// RewardClaimLine — one claimable line of a reward claim; exactly one of
+// item_id / currency_id is set.
+message RewardClaimLine {
+  oneof ref {
+    string item_id = 1;
+    string currency_id = 2;
+  }
+  uint32 quantity = 3;
+}
+
+// RewardClaimView — paged view of one reward claim (messages.md ID 434).
+message RewardClaimView {
+  bytes reward_claim_id = 1;              // UUID, 16 bytes
+  RewardSourceType source_type = 2;
+  string source_reference = 3;            // source row reference
+  string reward_slot = 4;                 // stable slot ID within the source bundle
+  RewardClaimState state = 5;
+  repeated RewardClaimLine lines = 6;
+  int64 created_at_ms = 7;                // Unix ms
+  int64 expires_at_ms = 8;                // Unix ms; 0 = no expiry
+}
