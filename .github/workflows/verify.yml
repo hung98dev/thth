@@ -152,6 +152,9 @@ jobs:
               : > "$T/trace" 2>/dev/null || true
               echo "sig==9" > "$T/events/signal/signal_generate/filter" 2>/dev/null || true
               echo 1 > "$T/events/signal/signal_generate/enable" 2>/dev/null || true
+              [ -d "$T/events/signal/signal_deliver" ] && echo "sig==9" > "$T/events/signal/signal_deliver/filter" 2>/dev/null || true
+              [ -d "$T/events/signal/signal_deliver" ] && echo 1 > "$T/events/signal/signal_deliver/enable" 2>/dev/null || true
+              [ -d "$T/events/sched/sched_process_exit" ] && echo 1 > "$T/events/sched/sched_process_exit/enable" 2>/dev/null || true
               echo "$T" > /tmp/tracefs-dir
             fi
           ' || true
@@ -351,8 +354,8 @@ jobs:
           kill "$(cat "$RUNNER_TEMP/docker-events.pid" 2>/dev/null)" 2>/dev/null || true
           echo '=== signal_generate SIGKILL trace (sender comm/pid in prefix) ==='
           T=$(cat /tmp/tracefs-dir 2>/dev/null || echo /sys/kernel/tracing)
-          sudo cat "$T/trace" 2>/dev/null | grep 'signal_generate' | tail -80 || true
-          sudo bash -c "echo 0 > '$T/events/signal/signal_generate/enable'; echo 0 > '$T/events/signal/signal_generate/filter'" 2>/dev/null || true
+          sudo cat "$T/trace" 2>/dev/null | grep -E 'signal_generate|signal_deliver|sched_process_exit' | tail -120 || true
+          sudo bash -c "echo 0 > '$T/events/signal/signal_generate/enable'; echo 0 > '$T/events/signal/signal_generate/filter'; [ -d '$T/events/signal/signal_deliver' ] && echo 0 > '$T/events/signal/signal_deliver/enable'; [ -d '$T/events/sched/sched_process_exit' ] && echo 0 > '$T/events/sched/sched_process_exit/enable'" 2>/dev/null || true
           echo '=== cgroup_kill writers (bpftrace) ==='
           cat "$RUNNER_TEMP/cgroup-kill.log" 2>/dev/null | tail -30 || true
           sudo pkill -f 'bpftrace -e' 2>/dev/null || true
