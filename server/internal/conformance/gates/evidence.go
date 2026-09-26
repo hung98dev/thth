@@ -230,13 +230,69 @@ func CheckRunIdentity(root, repo, runID string, runAttempt int, token string) []
 	if runAttempt > 0 && r.RunAttempt != runAttempt {
 		problems = append(problems, fmt.Sprintf("run_attempt %d != API %d", runAttempt, r.RunAttempt))
 	}
-	// The evidence run must be an ancestor of the current head (own run).
+	// The evidence run must be an ancestor of the current head (own run). A
+	// squash/rebase merge never makes the PR head sha an ancestor — fall back
+	// to the merged PR's merge_commit_sha, which is.
 	if r.HeadSHA != "" {
 		if out, err := gitDir(root, "merge-base", "--is-ancestor", r.HeadSHA, "HEAD"); err != nil {
-			problems = append(problems, fmt.Sprintf("run head_sha %s is not an ancestor of HEAD: %v (%s)", r.HeadSHA, err, out))
+			if !landedViaMerge(root, mergedPRSHAs(repo, r.HeadSHA, token, client)) {
+				problems = append(problems, fmt.Sprintf("run head_sha %s is not an ancestor of HEAD: %v (%s)", r.HeadSHA, err, out))
+			}
 		}
 	}
 	return problems
+}
+
+// prSHAs is the subset of the /commits/{sha}/pulls record used here.
+type prSHAs struct {
+	MergeCommitSHA string  `json:"merge_commit_sha"`
+	MergedAt       *string `json:"merged_at"`
+	Head           struct {
+		SHA string `json:"sha"`
+	} `json:"head"`
+}
+
+// mergedPRSHAs returns the merge_commit_sha of every merged PR whose head
+// commit is sha — /commits/{sha}/pulls also lists PRs where sha is only an
+// intermediate commit, which must not satisfy the fallback.
+func mergedPRSHAs(repo, sha, token string, client *http.Client) []string {
+	url := fmt.Sprintf("https://api.github.com/repos/%s/commits/%s/pulls", repo, sha)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Accept", "application/vnd.github+json")
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return nil
+	}
+	var prs []prSHAs
+	if err := json.NewDecoder(resp.Body).Decode(&prs); err != nil {
+		return nil
+	}
+	var shas []string
+	for _, pr := range prs {
+		if pr.MergedAt != nil && pr.Head.SHA == sha && pr.MergeCommitSHA != "" {
+			shas = append(shas, pr.MergeCommitSHA)
+		}
+	}
+	return shas
+}
+
+// landedViaMerge reports whether any candidate commit is an ancestor of HEAD.
+func landedViaMerge(root string, candidates []string) bool {
+	for _, c := range candidates {
+		if _, err := gitDir(root, "merge-base", "--is-ancestor", c, "HEAD"); err == nil {
+			return true
+		}
+	}
+	return false
 }
 
 // VerifyReport is the per-job report written by cmd/verify next to
