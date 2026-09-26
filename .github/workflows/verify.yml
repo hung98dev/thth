@@ -143,6 +143,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           set -uo pipefail
+          sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
           mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
@@ -155,8 +156,10 @@ jobs:
               -e MONO_GC_PARAMS=nursery-size=64m \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf &&
-                timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile - &&
+                if [ ! -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then
+                  rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
+                  timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -
+                fi &&
                 unity-editor -batchmode -nographics -projectPath /github/workspace/client -quit -logFile -
               ' 2>&1 | tee unity-materialize.log \
               && ! grep -q 'Scripts have compiler errors' unity-materialize.log \
@@ -168,7 +171,7 @@ jobs:
             fi
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
             sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
-            sudo journalctl -k -n 20 --no-pager 2>/dev/null | tail -10 || true
+            sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
             free -m
             docker run --rm \
               -v "${{ github.workspace }}:/github/workspace" \
@@ -203,6 +206,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           set -euo pipefail
+          sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
           mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic"
           for mode in EditMode PlayMode; do
             ok=
@@ -213,7 +217,7 @@ jobs:
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
-                bash -c 'rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf && timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
+                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
                 || arc=$?
               if [ "$arc" -eq 198 ]; then
                 echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
@@ -239,7 +243,7 @@ jobs:
                 rc=$?
               fi
               sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
-              sudo journalctl -k -n 20 --no-pager 2>/dev/null | tail -10 || true
+              sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
               free -m
               echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
               docker run --rm \
