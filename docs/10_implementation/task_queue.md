@@ -152,7 +152,7 @@ id: IMP-000
 status: IN_PROGRESS
 claimed_by: "devin-c3b1ec9ea4184f29a01a200bb942b7e2"
 branch: "imp/IMP-000-bootstrap"
-claimed_at: "2026-09-25T09:43:37Z"
+claimed_at: "2026-09-26T00:39:16Z"
 blocked_by: ""
 
 specs: [`../00_context/technology_versions.md`, `../00_context/constraints.md`, `../00_context/glossary.md`, `../00_context/non_goals.md`, `../00_context/vision.md`, `../04_architecture/system_overview.md`, `../04_architecture/backend.md`, `repository_layout.md`, `architecture_conformance.md`, `../09_testing/test_and_release_evidence.md`, `audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`, `../04_architecture/client_performance.md`, `../08_scale_ops/capacity.md`]

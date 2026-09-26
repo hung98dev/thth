@@ -274,6 +274,37 @@ func TestQ0FailClosedMutations(t *testing.T) {
 	}
 }
 
+// TestImp000OwnedPathsCoverMaterializedAssets (BLK-001): the URP root
+// assets the editor materializes during IMP-000 CI must sit inside the
+// packet's owned_paths, else Q0.control.diff fails on them.
+func TestImp000OwnedPathsCoverMaterializedAssets(t *testing.T) {
+	root := repoRoot(t)
+	packets, _, err := ParseTaskQueue(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var imp000 *TaskPacket
+	for i := range packets {
+		if packets[i].ID == "IMP-000" {
+			imp000 = &packets[i]
+			break
+		}
+	}
+	if imp000 == nil {
+		t.Skip("IMP-000 packet not in queue")
+	}
+	for _, f := range []string{
+		"client/Assets/DefaultVolumeProfile.asset",
+		"client/Assets/DefaultVolumeProfile.asset.meta",
+		"client/Assets/UniversalRenderPipelineGlobalSettings.asset",
+		"client/Assets/UniversalRenderPipelineGlobalSettings.asset.meta",
+	} {
+		if !ownedFile(*imp000, f) {
+			t.Errorf("IMP-000 owned_paths do not cover materialized %s", f)
+		}
+	}
+}
+
 // queueFixture renders a minimal one-packet task_queue.md in the real format
 // (## `IMP-900` — heading, `key: value` fields, backticked summary row).
 func queueFixture(status string) string {
