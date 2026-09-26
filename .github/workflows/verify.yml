@@ -310,6 +310,7 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UNITY_EDITOR_PATH: '/opt/unity/Editor/Unity'
         run: pwsh -NoProfile -File scripts/verify.ps1 -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
 
       - name: Upload verify report
@@ -482,6 +483,7 @@ jobs:
           $unityExe = (docker run --rm "${{ env.UNITY_WINDOWS_IMAGE }}" powershell -NoProfile -Command "(Get-Item 'C:\UnityEditor\*\Editor\Unity.exe' -ErrorAction SilentlyContinue | Select-Object -First 1).FullName" | Out-String).Trim()
           if (-not $unityExe) { Write-Error 'Unity.exe not found under C:\UnityEditor in the pinned image'; exit 1 }
           Write-Host "unity editor: $unityExe"
+          "UNITY_EDITOR_PATH=$unityExe" >> $env:GITHUB_ENV
           $ulf = "$env:RUNNER_TEMP\unity-lic\Unity_lic.ulf"
           $logPath = "$env:RUNNER_TEMP\unity-materialize.log"
           $ok = $false

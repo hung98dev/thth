@@ -21,13 +21,11 @@ type Env struct {
 	HeadRepo        string // owner/repo of the PR head (== Repository for in-repo PRs)
 	RunID           string
 	RunAttempt      string
-	Token           string   // GITHUB_TOKEN for the Q6 run-id API check
-	RunnerOS        string   // Linux | Windows | macOS
-	UnityResultsDir string   // directory holding Unity test-results XML files
-	Worktree        string   // repo root being verified
-	MainRef         string   // ref used for "status on main", default "origin/main"
-	PRFiles         []string // diff file list base..head (when PR context exists)
-	prFilesLoaded   bool
+	Token           string // GITHUB_TOKEN for the Q6 run-id API check
+	RunnerOS        string // Linux | Windows | macOS
+	UnityResultsDir string // directory holding Unity test-results XML files
+	Worktree        string // repo root being verified
+	MainRef         string // ref used for "status on main", default "origin/main"
 }
 
 // LoadEnv builds the Env from OS environment variables.
