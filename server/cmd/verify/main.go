@@ -89,7 +89,10 @@ func mergeMode(root string, f cliFlags) error {
 	attempt, _ := strconv.Atoi(os.Getenv("GITHUB_RUN_ATTEMPT"))
 	taskID := regexp.MustCompile(`IMP-[0-9]+`).FindString(f.taskID)
 	if taskID == "" {
-		return fmt.Errorf("-task does not name an IMP id: %q", f.taskID)
+		// spec/, ops/, revert/ and other non-task branches carry no IMP id;
+		// the PR is not a task evidence run, so there is no manifest to merge.
+		fmt.Fprintf(os.Stderr, "verify: %q names no IMP task; evidence manifest skipped\n", f.taskID)
+		return nil
 	}
 	m, err := gates.MergeReports(taskID, hash, runID, attempt, reports)
 	if err != nil {

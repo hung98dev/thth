@@ -87,7 +87,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-060` | Atlas Journal Runtime | `NOT_STARTED` | IMP-005, IMP-010, IMP-011, IMP-018 | `../03_systems/atlas.md`, `../07_content/atlas_catalog.md` |
 | `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `BLOCKED` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
 | `IMP-062` | Unity Geometry Exporter & Map Geometry Parity | `NOT_STARTED` | IMP-078, IMP-079 | `../01_gameplay/movement.md`, `../04_architecture/realtime_loop.md` |
-| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `BLOCKED` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
+| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `NOT_STARTED` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
 | `IMP-064` | Unity Bilingual Localization Pipeline (vi-VN / en-US) | `NOT_STARTED` | IMP-000 | `../04_architecture/client_localization.md`, `../06_data/text.md` |
 | `IMP-065` | Unity Client Bootstrap, Session State & Network Transport | `NOT_STARTED` | IMP-061, IMP-100 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
 | `IMP-066` | Unity Input Action Mapping & Core UI/HUD State Machine | `NOT_STARTED` | IMP-013, IMP-065 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
@@ -170,7 +170,7 @@ Materialize the canonical versions from `../00_context/technology_versions.md` a
 Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.editorconfig`/`.gitattributes`, the verifier's C# style check and Go `gofmt`/`go vet`/`staticcheck` wiring, and the client player-settings baseline of `../04_architecture/client_performance.md` § Smoothness by Construction item 3.
 
 ## Acceptance
-- materialized bootstrap paths strictly conform to `repository_layout.md`; `proto/`, migrations, generated outputs, and feature paths remain absent until their owning task,
+- materialized bootstrap paths strictly conform to `repository_layout.md`; `proto/`, migrations, generated outputs, and feature paths remain absent while every packet owning a path at or under them is `NOT_STARTED` or `BLOCKED`; once an owning packet is `IN_PROGRESS` or `DONE` the path exists legitimately and `Q0.control.diff` scopes further writes (BLK-002),
 - Unity `client/ProjectSettings/ProjectVersion.txt` (6000.6.1f1) and `client/Packages/manifest.json` are hand-authored to the matrix (incl. Addressables `2.11.2`); `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset` and every `.meta` come from the editor's materialization and are committed byte-for-byte (`agent_execution_protocol.md` §4b, ADR-0072); the lock matches the matrix,
 - Go `server/go.mod` (module `thinhthan`, Go 1.27.1), `server/go.sum`, and CI use the pinned Go/direct-module versions,
 - `scripts/verify.ps1` is PowerShell 7 (`pwsh` 7.6.6), runs unchanged on Linux and Windows, calls `server/cmd/verify` and accepts `-UnityResultsDir` (CI) and `-LocalDeferMissing` (local only: a missing Unity editor, PostgreSQL, Windows-only binary or cgo C compiler becomes `DEFERRED(local-missing)` in `verify-report.json`; on Linux without `THINHTHAN_TEST_PG_DSN` it starts the pinned `postgres:18.6` digest with `docker run` when Docker exists); CI never passes `-LocalDeferMissing`; proto drift is owned by IMP-061,
@@ -209,6 +209,7 @@ Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.
 - `server/internal/conformance/gates/gates_test.go` (ADR-0072): TestBlockAndOpsPrFastPath, TestDoneWithoutManifestAllowedOnHead, TestMergedHeadRequiresManifest, TestTwoPhaseListIncludesImp083, TestLocalDeferMissingNeverInCi.
 - `server/internal/stackpin/versions_test.go` (ADR-0072): TestGoogleProtobufNupkgSha256, TestEdbZipSha256, TestDownloadArtifactAndGitLfsPins.
 - `server/internal/conformance/gates/gates_test.go` (BLK-001): TestImp000OwnedPathsCoverMaterializedAssets — IMP-000 `owned_paths` cover `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset` and their `.meta`.
+- `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware — bootstrap roots and generated-protocol files unblock once an owning packet is IN_PROGRESS/DONE and unowned paths never do; TestBlocksLineCaseInsensitive — open-blocker gating parses lowercase `blocks:` lines.
 
 generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -362,7 +363,7 @@ status: BLOCKED
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-061-proto-codegen"
 claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: "BLK-002, BLK-003"
+blocked_by: "BLK-003"
 
 specs: [`../05_network/protocol.md`, `../05_network/messages.md`, `../05_network/errors.md`, `../05_network/protobuf_conventions.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `repository_layout.md`]
 adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0060-wire-and-durable-contract-completion.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0063-economy-contract-reconciliation.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
@@ -397,6 +398,7 @@ consumers_checked: [AGENTS.md, docs/05_network/messages.md, docs/05_network/prot
 - `client/Assets/Tests/EditMode/ProtocolParity/ProtocolParityTests.cs`: generated registry coverage and shared binary golden decode/encode parity.
 - `server/internal/testing/protocol/registry_test.go`: TestAdr0060MessagesRegistered, TestErrorEnumMatchesErrorsMd (ADR-0060), TestCodegenPreservesProtocolAsmdef, TestCodegenNeverWritesMeta (ADR-0072).
 - `server/internal/testing/protocol/wire_types_test.go`: TestNoOptionalRepeatedFields, TestErrorCodeFencedRowMajorOrder, TestOutcomeMessagesHaveNoOperationResult, TestAdr0069MessagesRegistered (ADR-0069).
+- `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
 
 generated_artifacts: [`server/internal/protocol/v1/*.pb.go`, `client/Assets/Scripts/Protocol/*.cs`]
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -442,11 +444,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-062/"
 
 ## `IMP-063` — Addressables Asset Pipeline & Catalog Delivery
 id: IMP-063
-status: BLOCKED
+status: NOT_STARTED
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-063-addressables"
 claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: "BLK-002"
+blocked_by: ""
 
 specs: [`../04_architecture/client_assets.md`, `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`, `repository_layout.md`, `../04_architecture/client_performance.md`]
 adrs: [`0014-unity-addressables-asset-delivery.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0071-client-presentation-contract-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
@@ -474,6 +476,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 ## Tests
 - `client/Assets/Tests/EditMode/AddressablesValidation/AddressablesValidationTests.cs`: TestCatalogAssetKeyResolution, TestAddressableGroupBudgets, TestCanonicalSpriteImportProfiles, TestPlayableSceneKeyCoverage, TestSettingsAssetMatchesBaselineGuid.
 - `client/Assets/Tests/EditMode/AddressablesValidation/AssetKeyGroupTests.cs`: TestKeyDerivationRule, TestCanonicalGroupSetAndSingleMembership, TestPresentationAliasSingleHop, TestDeterministicGroupRamBudgets, TestResidentSteadyAndTransferPeak, TestMeshTypeRule, TestParallaxFarPpu50 (ADR-0071).
+- `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
