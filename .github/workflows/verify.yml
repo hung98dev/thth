@@ -150,6 +150,7 @@ jobs:
             docker run --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+              -v /etc/machine-id:/etc/machine-id:ro \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
@@ -219,6 +220,7 @@ jobs:
               arc=0
               docker run --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
                 bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 "/opt/unity/Editor/Unity" -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
@@ -231,13 +233,16 @@ jobs:
               if [ "$arc" -eq 0 ] && docker run --shm-size=2g \
                 -v "${{ github.workspace }}:/github/workspace" \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                -v /etc/machine-id:/etc/machine-id:ro \
                 -w /github/workspace \
+                -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 -e LIBGL_ALWAYS_SOFTWARE=1 \
                 -e MONO_GC_PARAMS=nursery-size=64m \
                 -e MODE="$mode" \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
                 bash -c '
                   "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
+                    -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" \
                     -runTests -testPlatform "$MODE" \
                     -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                     -logFile -
