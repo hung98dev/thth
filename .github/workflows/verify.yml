@@ -164,12 +164,12 @@ jobs:
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
                 "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
-              ' 2>&1 | tee unity-materialize.log; then
+              ' 2>&1 | tee "$RUNNER_TEMP/unity-materialize.log"; then
               rc=0
             else
               rc=${PIPESTATUS[0]}
             fi
-            if grep -q 'Exiting batchmode successfully' unity-materialize.log && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
+            if grep -q 'Exiting batchmode successfully' "$RUNNER_TEMP/unity-materialize.log" && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-materialize.log"; then
               exit 0
             fi
             dead=$(docker ps -ql 2>/dev/null)
@@ -204,7 +204,7 @@ jobs:
       - name: Dump unity-materialize.log on failure
         if: failure()
         shell: bash
-        run: tail -c 200000 unity-materialize.log 2>/dev/null || echo 'no unity-materialize.log produced'
+        run: tail -c 200000 "$RUNNER_TEMP/unity-materialize.log" 2>/dev/null || echo 'no unity-materialize.log produced'
 
       - name: Unity EditMode+PlayMode tests
         timeout-minutes: 30
@@ -235,7 +235,7 @@ jobs:
                 exit 1
               fi
               rc=$arc
-              rm -f "artifacts/unity-tests/$mode-results.xml" unity-tests.log
+              rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
                 if docker run --shm-size=2g \
                   -v "${{ github.workspace }}:/github/workspace" \
@@ -252,7 +252,7 @@ jobs:
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile -
-                  ' 2>&1 | tee unity-tests.log; then
+                  ' 2>&1 | tee "$RUNNER_TEMP/unity-tests.log"; then
                   rc=0
                 else
                   rc=${PIPESTATUS[0]}
@@ -260,7 +260,7 @@ jobs:
               fi
               if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
                 && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
-                && ! grep -q 'Scripts have compiler errors' unity-tests.log; then
+                && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-tests.log"; then
                 ok=1; break
               fi
               dead=$(docker ps -ql 2>/dev/null)
