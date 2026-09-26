@@ -1,0 +1,679 @@
+name: verify
+
+# Canonical Q0-Q6 gate run (IMP-000). pull_request only until the
+# pull_request_target cutover (IMP-068); no workflow_dispatch, no merge queue.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PWSH_VERSION: '7.6.6'
+  GO_VERSION: '1.27.1'
+  PROTOC_VERSION: '36.2'
+  PROTOC_GEN_GO_VERSION: 'v1.36.12'
+  STATICCHECK_VERSION: 'v0.8.1'
+  UNITY_LINUX_IMAGE: 'unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d'
+  UNITY_WINDOWS_IMAGE: 'unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534'
+  POSTGRES_IMAGE: 'postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722'
+
+jobs:
+  verify-linux:
+    name: 'Q0-Q6 verify (Linux)'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    services:
+      postgres:
+        image: postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: thinhthan_test
+        ports:
+          - '5432:5432'
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s --health-timeout 5s --health-retries 10
+    steps:
+      # -- Preconditions, in order (audit_gates.md) -------------------------
+      - name: Fork guard
+        if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+        shell: bash
+        run: |
+          if [ "${{ github.event.pull_request.head.repo.fork }}" = "true" ] || \
+             [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
+            echo "external PRs not accepted" >&2
+            exit 1
+          fi
+
+      - name: Merge freeze guard
+        shell: bash
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: |
+          case "$BRANCH_NAME" in
+            revert/*|ops/*) echo "exempt branch"; exit 0 ;;
+          esac
+          if [ "${{ vars.AUTO_MERGE_FROZEN }}" = "true" ]; then
+            echo "repository merge freeze active (AUTO_MERGE_FROZEN)" >&2
+            exit 1
+          fi
+
+      # -- Toolchain bootstrap (pinned release assets, SHA-256 verified; the
+      #    runner's preinstalled tools are never used) ---------------------
+      - name: Install pwsh (pinned)
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/tools"; mkdir -p "$T"
+          curl -fsSL "https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/powershell-7.6.6-linux-x64.tar.gz" -o /tmp/pwsh.tgz
+          echo "ddbc4a2d113bbd46d283cfedcbcd117a70caefd7673f41f2b4e0000badf103bc  /tmp/pwsh.tgz" | sha256sum -c -
+          mkdir -p "$T/pwsh" && tar -xzf /tmp/pwsh.tgz -C "$T/pwsh" && chmod +x "$T/pwsh/pwsh"
+          echo "$T/pwsh" >> "$GITHUB_PATH"
+
+      - name: Install jq / gh / git-lfs (pinned)
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/tools"; mkdir -p "$T/bin"
+          curl -fsSL "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64" -o "$T/bin/jq"
+          echo "b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f  $T/bin/jq" | sha256sum -c -
+          chmod +x "$T/bin/jq"
+          curl -fsSL "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz" -o /tmp/gh.tgz
+          echo "9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8  /tmp/gh.tgz" | sha256sum -c -
+          tar -xzf /tmp/gh.tgz -C /tmp && cp /tmp/gh_2.101.0_linux_amd64/bin/gh "$T/bin/gh"
+          curl -fsSL "https://github.com/git-lfs/git-lfs/releases/download/v3.8.0/git-lfs-linux-amd64-v3.8.0.tar.gz" -o /tmp/lfs.tgz
+          echo "e455e00f15d9b95661b8d53498ffb0c3367962cf1ec73c31ab7369516cd6ab8d  /tmp/lfs.tgz" | sha256sum -c -
+          tar -xzf /tmp/lfs.tgz -C /tmp && cp /tmp/git-lfs-3.8.0/git-lfs "$T/bin/git-lfs"
+          echo "$T/bin" >> "$GITHUB_PATH"
+          git lfs install --skip-repo || true
+
+      - name: Install Go (pinned)
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        with:
+          go-version: '1.27.1'
+          cache: false
+
+      - name: Checkout (LFS)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Install protoc + Go tool binaries (pinned)
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/tools"; mkdir -p "$T/gobin" "$T/protoc"
+          curl -fsSL "https://github.com/protocolbuffers/protobuf/releases/download/v36.2/protoc-36.2-linux-x86_64.zip" -o /tmp/protoc.zip
+          unzip -o -q /tmp/protoc.zip -d "$T/protoc"
+          echo "$T/protoc/bin" >> "$GITHUB_PATH"
+          GOBIN="$T/gobin" go install "google.golang.org/protobuf/cmd/protoc-gen-go@${{ env.PROTOC_GEN_GO_VERSION }}"
+          GOBIN="$T/gobin" go install "honnef.co/go/tools/cmd/staticcheck@${{ env.STATICCHECK_VERSION }}"
+          echo "$T/gobin" >> "$GITHUB_PATH"
+
+      - name: Verifier environment
+        shell: bash
+        run: |
+          {
+            echo "THINHTHAN_BASE_SHA=${{ github.event.pull_request.base.sha }}"
+            echo "THINHTHAN_HEAD_SHA=${{ github.event.pull_request.head.sha }}"
+            echo "THINHTHAN_RUN_ID=${{ github.run_id }}"
+            echo "THINHTHAN_RUN_ATTEMPT=${{ github.run_attempt }}"
+            echo "THINHTHAN_TEST_PG_DSN=postgres://postgres:postgres@localhost:5432/thinhthan_test?sslmode=disable"
+          } >> "$GITHUB_ENV"
+
+      - name: Pull Unity image (pinned)
+        shell: bash
+        run: docker pull "${{ env.UNITY_LINUX_IMAGE }}"
+
+      - name: Unity materialization (licence retry <=5)
+        timeout-minutes: 30
+        shell: bash
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        run: |
+          set -uo pipefail
+          sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          mkdir -p "$RUNNER_TEMP/unity-lic"
+          docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
+          for i in 1 2 3 4 5; do
+            if docker run --shm-size=2g \
+              -v "${{ github.workspace }}:/github/workspace" \
+              -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+              -v /etc/machine-id:/etc/machine-id:ro \
+              -w /github/workspace \
+              -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+              -e LIBGL_ALWAYS_SOFTWARE=1 \
+              -e MONO_GC_PARAMS=nursery-size=64m \
+              "${{ env.UNITY_LINUX_IMAGE }}" \
+              bash -c '
+                EXTRA=""
+                if [ ! -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then
+                  rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
+                  EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
+                fi
+                "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
+              ' 2>&1 | tee unity-materialize.log; then
+              rc=0
+            else
+              rc=${PIPESTATUS[0]}
+            fi
+            if grep -q 'Exiting batchmode successfully' unity-materialize.log && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
+              exit 0
+            fi
+            dead=$(docker ps -ql 2>/dev/null)
+            docker inspect "$dead" --format 'container-state: OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' 2>/dev/null || true
+            docker rm -f "$dead" >/dev/null 2>&1 || true
+            if [ "$rc" -eq 198 ]; then
+              echo "unity licence activation failed deterministically (rc=$rc) - not retrying. Fix UNITY_SERIAL/licence secrets." >&2
+              exit 1
+            fi
+            echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
+            sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
+            sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
+            free -m
+            docker run --rm \
+              -v "${{ github.workspace }}:/github/workspace" \
+              "${{ env.UNITY_LINUX_IMAGE }}" \
+              bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
+            [ "$i" -lt 5 ] && sleep 60
+          done
+          echo "unity materialization failed after 5 attempts (licence/infra)" >&2
+          exit 1
+
+      - name: Inject package nullable suppressions
+        if: success()
+        shell: bash
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/github/workspace" \
+            "${{ env.UNITY_LINUX_IMAGE }}" \
+            bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
+
+      - name: Dump unity-materialize.log on failure
+        if: failure()
+        shell: bash
+        run: tail -c 200000 unity-materialize.log 2>/dev/null || echo 'no unity-materialize.log produced'
+
+      - name: Unity EditMode+PlayMode tests
+        timeout-minutes: 30
+        shell: bash
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        run: |
+          set -euo pipefail
+          sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic"
+          for mode in EditMode PlayMode; do
+            ok=
+            for i in 1 2 3 4 5; do
+              free -m
+              arc=0
+              docker run --rm \
+                -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                -v /etc/machine-id:/etc/machine-id:ro \
+                -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+                "${{ env.UNITY_LINUX_IMAGE }}" \
+                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 "/opt/unity/Editor/Unity" -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
+                || arc=$?
+              if [ "$arc" -eq 198 ]; then
+                echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
+                exit 1
+              fi
+              rc=$arc
+              rm -f "artifacts/unity-tests/$mode-results.xml" unity-tests.log
+              if [ "$arc" -eq 0 ]; then
+                if docker run --shm-size=2g \
+                  -v "${{ github.workspace }}:/github/workspace" \
+                  -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+                  -v /etc/machine-id:/etc/machine-id:ro \
+                  -w /github/workspace \
+                  -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+                  -e LIBGL_ALWAYS_SOFTWARE=1 \
+                  -e MONO_GC_PARAMS=nursery-size=64m \
+                  -e MODE="$mode" \
+                  "${{ env.UNITY_LINUX_IMAGE }}" \
+                  bash -c '
+                    "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
+                      -runTests -testPlatform "$MODE" \
+                      -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
+                      -logFile -
+                  ' 2>&1 | tee unity-tests.log; then
+                  rc=0
+                else
+                  rc=${PIPESTATUS[0]}
+                fi
+              fi
+              if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
+                && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
+                && ! grep -q 'Scripts have compiler errors' unity-tests.log; then
+                ok=1; break
+              fi
+              dead=$(docker ps -ql 2>/dev/null)
+              docker inspect "$dead" --format 'container-state: OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' 2>/dev/null || true
+              docker rm -f "$dead" >/dev/null 2>&1 || true
+              sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
+              sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
+              free -m
+              echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
+              docker run --rm \
+                -v "${{ github.workspace }}:/github/workspace" \
+                "${{ env.UNITY_LINUX_IMAGE }}" \
+                bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
+              sleep 20
+            done
+            if [ -z "$ok" ]; then
+              echo "unity $mode tests failed after 5 attempts" >&2
+              exit 1
+            fi
+          done
+
+      - name: Unity materialized drift check
+        id: drift
+        shell: pwsh
+        run: |
+          $drift = git -C $env:GITHUB_WORKSPACE status --porcelain -- client/ |
+            Where-Object { $_ -notmatch 'client/(Library|Temp|Logs|obj)/' }
+          if ($drift) {
+            $stage = 'materialized-drift'
+            New-Item -ItemType Directory -Force -Path $stage | Out-Null
+            foreach ($line in $drift) {
+              $p = $line.Substring(3).Trim('"')
+              if (Test-Path $p -PathType Leaf) {
+                $dst = Join-Path $stage $p
+                New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
+                Copy-Item $p $dst
+              }
+            }
+            $drift | Out-Host
+            'changed=true' >> $env:GITHUB_OUTPUT
+            Write-Error 'commit unity-materialized'
+            exit 1
+          }
+          'changed=false' >> $env:GITHUB_OUTPUT
+
+      - name: Run Q0-Q6 verifier
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pwsh -NoProfile -File scripts/verify.ps1 -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
+
+      - name: Upload verify report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: verify-report-linux
+          path: verify-report.json
+          if-no-files-found: error
+
+      - name: Upload unity-materialized drift
+        if: always() && steps.drift.outputs.changed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: unity-materialized-linux
+          path: materialized-drift/
+          if-no-files-found: ignore
+
+      - name: Upload Unity test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: unity-test-results-linux
+          path: artifacts/unity-tests/
+          if-no-files-found: ignore
+
+      - name: Upload visual-review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: visual-review
+          path: artifacts/visual-review/
+          if-no-files-found: ignore
+
+  verify-windows:
+    name: 'Q0-Q6 verify (Windows)'
+    runs-on: windows-2022
+    timeout-minutes: 120
+    steps:
+      - name: Fork guard
+        if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+        shell: cmd
+        run: |
+          if /I "${{ github.event.pull_request.head.repo.fork }}"=="true" (echo external PRs not accepted >&2 & exit /b 1)
+          if /I not "${{ github.event.pull_request.head.repo.full_name }}"=="${{ github.repository }}" (echo external PRs not accepted >&2 & exit /b 1)
+
+      - name: Merge freeze guard
+        shell: cmd
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: |
+          echo %BRANCH_NAME%| findstr /b /c:"revert/" /c:"ops/" >nul && (echo exempt branch & exit /b 0)
+          if /I "${{ vars.AUTO_MERGE_FROZEN }}"=="true" (echo repository merge freeze active >&2 & exit /b 1)
+          exit /b 0
+
+      - name: Install pwsh + CLI tools (pinned)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $T = "$env:RUNNER_TEMP\tools"; New-Item -ItemType Directory -Force -Path "$T\bin" | Out-Null
+          function Get-Pinned([string]$url, [string]$sha, [string]$out) {
+            Invoke-WebRequest -Uri $url -OutFile $out -UseBasicParsing
+            if ((Get-FileHash $out -Algorithm SHA256).Hash.ToLower() -ne $sha) {
+              throw "sha256 mismatch for $url"
+            }
+          }
+          Get-Pinned 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860' "$env:TEMP\pwsh.zip"
+          Expand-Archive "$env:TEMP\pwsh.zip" -DestinationPath "$T\pwsh" -Force
+          Get-Pinned 'https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe' 'a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627' "$T\bin\jq.exe"
+          Get-Pinned 'https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_windows_amd64.zip' 'bc6c814367b193cd8e713611d61e36013c0ef843b8f516458fe3eda039192794' "$env:TEMP\gh.zip"
+          Expand-Archive "$env:TEMP\gh.zip" -DestinationPath "$env:TEMP\ghx" -Force
+          Copy-Item "$env:TEMP\ghx\bin\gh.exe" "$T\bin\gh.exe"
+          Get-Pinned 'https://github.com/git-lfs/git-lfs/releases/download/v3.8.0/git-lfs-windows-amd64-v3.8.0.zip' 'b62e7b8ceddee635f691233d77de8eaa4b213e9209e0173811d8cfa77f7882c1' "$env:TEMP\lfs.zip"
+          Expand-Archive "$env:TEMP\lfs.zip" -DestinationPath "$env:TEMP\lfsx" -Force
+          Copy-Item "$env:TEMP\lfsx\git-lfs-3.8.0\git-lfs.exe" "$T\bin\git-lfs.exe"
+          "$T\pwsh" >> $env:GITHUB_PATH
+          "$T\bin" >> $env:GITHUB_PATH
+          & "$T\bin\git-lfs.exe" install --skip-repo | Out-Null
+
+      - name: Install Go (pinned)
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        with:
+          go-version: '1.27.1'
+          cache: false
+
+      - name: Checkout (LFS)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Install protoc + Go tool binaries (pinned)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $T = "$env:RUNNER_TEMP\tools"
+          New-Item -ItemType Directory -Force -Path "$T\gobin","$T\protoc" | Out-Null
+          Invoke-WebRequest -Uri 'https://github.com/protocolbuffers/protobuf/releases/download/v36.2/protoc-36.2-win64.zip' -OutFile "$env:TEMP\protoc.zip" -UseBasicParsing
+          Expand-Archive "$env:TEMP\protoc.zip" -DestinationPath "$T\protoc" -Force
+          $env:GOBIN = "$T\gobin"
+          go install "google.golang.org/protobuf/cmd/protoc-gen-go@${{ env.PROTOC_GEN_GO_VERSION }}"
+          go install "honnef.co/go/tools/cmd/staticcheck@${{ env.STATICCHECK_VERSION }}"
+          "$T\protoc\bin" >> $env:GITHUB_PATH
+          "$T\gobin" >> $env:GITHUB_PATH
+
+      - name: PostgreSQL test server (EDB pinned)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $z = "$env:RUNNER_TEMP\edb.zip"
+          curl.exe -fSL -m 900 --retry 3 --retry-delay 10 'https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip' -o $z
+          if ($LASTEXITCODE -ne 0) { throw "edb download failed rc=$LASTEXITCODE" }
+          Write-Host 'edb download done'
+          if ((Get-FileHash $z -Algorithm SHA256).Hash.ToLower() -ne 'fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c') { throw 'edb sha256 mismatch' }
+          Write-Host 'edb sha256 ok'
+          tar.exe -xf $z -C "$env:RUNNER_TEMP"
+          Rename-Item "$env:RUNNER_TEMP\pgsql" "$env:RUNNER_TEMP\edb" -ErrorAction SilentlyContinue
+          if (-not (Test-Path "$env:RUNNER_TEMP\edb")) { New-Item -ItemType Directory -Path "$env:RUNNER_TEMP\edb" | Out-Null; tar.exe -xf $z -C "$env:RUNNER_TEMP\edb" }
+          $bin = "$env:RUNNER_TEMP\edb\pgsql\bin"
+          if (-not (Test-Path "$bin\initdb.exe")) { $bin = "$env:RUNNER_TEMP\edb\bin" }
+          Write-Host "edb extract done; bin=$bin"
+          $p = Start-Process -FilePath "$bin\initdb.exe" -ArgumentList "-D `"$env:RUNNER_TEMP\pgdata`" -U postgres -A trust -E UTF8 --locale=C" -NoNewWindow -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\initdb.out" -RedirectStandardError "$env:RUNNER_TEMP\initdb.err"
+          if (-not $p.WaitForExit(300000)) { $p | Stop-Process -Force; throw 'initdb timed out after 300s' }
+          if ($p.ExitCode -ne 0) { Get-Content "$env:RUNNER_TEMP\initdb.err" -Tail 40 -ErrorAction SilentlyContinue; throw "initdb failed rc=$($p.ExitCode)" }
+          Write-Host 'initdb done'
+          $l = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+          $l.Start(); $port = $l.LocalEndpoint.Port; $l.Stop()
+          $p = Start-Process -FilePath "$bin\pg_ctl.exe" -ArgumentList "-D `"$env:RUNNER_TEMP\pgdata`" -o `"-p $port`" -l `"$env:RUNNER_TEMP\pg.log`" -w -t 120 start" -NoNewWindow -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\pgctl.out" -RedirectStandardError "$env:RUNNER_TEMP\pgctl.err"
+          if (-not $p.WaitForExit(180000)) { $p | Stop-Process -Force; Get-Content "$env:RUNNER_TEMP\pg.log" -Tail 40 -ErrorAction SilentlyContinue; throw 'pg_ctl timed out after 180s' }
+          if ($p.ExitCode -ne 0) { Get-Content "$env:RUNNER_TEMP\pg.log" -Tail 40 -ErrorAction SilentlyContinue; throw "pg_ctl failed rc=$($p.ExitCode)" }
+          Write-Host 'postgres started'
+          "THINHTHAN_TEST_PG_DSN=postgres://postgres@127.0.0.1:$port/postgres?sslmode=disable" >> $env:GITHUB_ENV
+
+      - name: Verifier environment
+        shell: pwsh
+        run: |
+          @(
+            "THINHTHAN_BASE_SHA=${{ github.event.pull_request.base.sha }}",
+            "THINHTHAN_HEAD_SHA=${{ github.event.pull_request.head.sha }}",
+            "THINHTHAN_RUN_ID=${{ github.run_id }}",
+            "THINHTHAN_RUN_ATTEMPT=${{ github.run_attempt }}"
+          ) -join "`n" >> $env:GITHUB_ENV
+
+      - name: Ensure Docker daemon is up (windows-2022 workaround)
+        shell: pwsh
+        run: |
+          Start-Service docker -ErrorAction SilentlyContinue
+          for ($i = 0; $i -lt 60; $i++) {
+            docker info *> $null
+            if ($LASTEXITCODE -eq 0) { exit 0 }
+            Start-Sleep 2
+          }
+          docker info
+          exit 1
+
+      - name: Pull Unity image (pinned)
+        shell: pwsh
+        run: docker pull "${{ env.UNITY_WINDOWS_IMAGE }}"
+
+      - name: Unity materialization (licence retry <=5)
+        timeout-minutes: 30
+        shell: pwsh
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\unity-lic" | Out-Null
+          $unityExe = (docker run --rm "${{ env.UNITY_WINDOWS_IMAGE }}" powershell -NoProfile -Command "(Get-Item 'C:\UnityEditor\*\Editor\Unity.exe' -ErrorAction SilentlyContinue | Select-Object -First 1).FullName" | Out-String).Trim()
+          if (-not $unityExe) { Write-Error 'Unity.exe not found under C:\UnityEditor in the pinned image'; exit 1 }
+          Write-Host "unity editor: $unityExe"
+          $ulf = "$env:RUNNER_TEMP\unity-lic\Unity_lic.ulf"
+          $logPath = "$env:RUNNER_TEMP\unity-materialize.log"
+          $ok = $false
+          foreach ($i in 1..5) {
+            Remove-Item $logPath -Force -ErrorAction SilentlyContinue
+            $uargs = @('-batchmode','-nographics','-projectPath','C:\repo\client','-quit','-logFile','C:\tmp\unity-materialize.log')
+            if (-not (Test-Path $ulf)) {
+              $uargs += @('-serial', "$env:UNITY_SERIAL", '-username', "$env:UNITY_EMAIL", '-password', "$env:UNITY_PASSWORD")
+            }
+            docker run --rm `
+              -v "${{ github.workspace }}:C:\repo" `
+              -v "${env:RUNNER_TEMP}:C:\tmp" `
+              -v "${env:RUNNER_TEMP}\unity-lic:C:\ProgramData\Unity" `
+              -w C:\repo `
+              "${{ env.UNITY_WINDOWS_IMAGE }}" `
+              $unityExe $uargs
+            $rc = $LASTEXITCODE
+            $log = ''
+            if (Test-Path $logPath) {
+              $log = Get-Content $logPath -Raw
+              Get-Content $logPath -Tail 60
+            }
+            if ($log -match 'Exiting batchmode successfully' -and $log -notmatch 'Scripts have compiler errors' -and (Test-Path "${{ github.workspace }}\client\Library\PackageCache")) { $ok = $true; break }
+            if ($log -match 'license|licence' -and $log -match 'fail|error|invalid') { Remove-Item $ulf -Force -ErrorAction SilentlyContinue }
+            if ($rc -eq 198) { Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
+            Write-Host "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
+            docker run --rm `
+              -v "${{ github.workspace }}:C:\repo" `
+              "${{ env.UNITY_WINDOWS_IMAGE }}" `
+              powershell -Command "if (Test-Path 'C:\repo\client\Library\PackageCache') { Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') } } else { Write-Host 'PackageCache not yet materialized' }"
+            if ($i -lt 5) { Start-Sleep -Seconds 60 }
+          }
+          if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
+
+      - name: Inject package nullable suppressions
+        if: success()
+        shell: pwsh
+        run: |
+          docker run --rm `
+            -v "${{ github.workspace }}:C:\repo" `
+            "${{ env.UNITY_WINDOWS_IMAGE }}" `
+            powershell -Command "if (Test-Path 'C:\repo\client\Library\PackageCache') { Get-ChildItem -Recurse 'C:\repo\client\Library\PackageCache' -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path `$_.DirectoryName 'csc.rsp') -Value @('-nullable:disable','-warnaserror-') } } else { Write-Error 'PackageCache missing - materialization produced nothing'; exit 1 }"
+
+      - name: Unity EditMode+PlayMode tests
+        timeout-minutes: 30
+        uses: game-ci/unity-test-runner@fa6ced25861c16ef56187828c43f76d00df43a23 # v4.3.2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        with:
+          projectPath: client
+          unityVersion: '6000.6.1f1'
+          customImage: ${{ env.UNITY_WINDOWS_IMAGE }}
+          testMode: all
+          artifactsPath: artifacts/unity-tests
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Unity materialized drift check
+        id: drift
+        shell: pwsh
+        run: |
+          $drift = git -C $env:GITHUB_WORKSPACE status --porcelain -- client/ |
+            Where-Object { $_ -notmatch 'client/(Library|Temp|Logs|obj)/' }
+          if ($drift) {
+            $stage = 'materialized-drift'
+            New-Item -ItemType Directory -Force -Path $stage | Out-Null
+            foreach ($line in $drift) {
+              $p = $line.Substring(3).Trim('"')
+              if (Test-Path $p -PathType Leaf) {
+                $dst = Join-Path $stage $p
+                New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
+                Copy-Item $p $dst
+              }
+            }
+            $drift | Out-Host
+            'changed=true' >> $env:GITHUB_OUTPUT
+            Write-Error 'commit unity-materialized'
+            exit 1
+          }
+          'changed=false' >> $env:GITHUB_OUTPUT
+
+      - name: Run Q0-Q6 verifier
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pwsh -NoProfile -File scripts/verify.ps1 -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
+
+      - name: Upload verify report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: verify-report-windows
+          path: verify-report.json
+          if-no-files-found: error
+
+      - name: Upload unity-materialized drift
+        if: always() && steps.drift.outputs.changed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: unity-materialized-windows
+          path: materialized-drift/
+          if-no-files-found: ignore
+
+      - name: Upload Unity test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: unity-test-results-windows
+          path: artifacts/unity-tests/
+          if-no-files-found: ignore
+
+  evidence-manifest:
+    name: 'evidence manifest'
+    needs: [verify-linux, verify-windows]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Fork guard
+        if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+        shell: bash
+        run: |
+          if [ "${{ github.event.pull_request.head.repo.fork }}" = "true" ] || \
+             [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
+            echo "external PRs not accepted" >&2
+            exit 1
+          fi
+
+      - name: Merge freeze guard
+        shell: bash
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: |
+          case "$BRANCH_NAME" in
+            revert/*|ops/*) exit 0 ;;
+          esac
+          if [ "${{ vars.AUTO_MERGE_FROZEN }}" = "true" ]; then
+            echo "repository merge freeze active (AUTO_MERGE_FROZEN)" >&2
+            exit 1
+          fi
+
+      - name: Install pwsh + Go (pinned)
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/tools"; mkdir -p "$T/pwsh"
+          curl -fsSL "https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/powershell-7.6.6-linux-x64.tar.gz" -o /tmp/pwsh.tgz
+          echo "ddbc4a2d113bbd46d283cfedcbcd117a70caefd7673f41f2b4e0000badf103bc  /tmp/pwsh.tgz" | sha256sum -c -
+          tar -xzf /tmp/pwsh.tgz -C "$T/pwsh" && chmod +x "$T/pwsh/pwsh"
+          echo "$T/pwsh" >> "$GITHUB_PATH"
+          curl -fsSL "https://go.dev/dl/go1.27.1.linux-amd64.tar.gz" -o /tmp/go.tgz
+          mkdir -p "$T/go" && tar -xzf /tmp/go.tgz -C "$T/go" --strip-components=1
+          echo "$T/go/bin" >> "$GITHUB_PATH"
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Download verify report (Linux)
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: verify-report-linux
+          path: reports/linux
+
+      - name: Download verify report (Windows)
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: verify-report-windows
+          path: reports/windows
+
+      - name: Build evidence manifest
+        shell: pwsh
+        env:
+          THINHTHAN_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          THINHTHAN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          THINHTHAN_RUN_ID: ${{ github.run_id }}
+          THINHTHAN_RUN_ATTEMPT: ${{ github.run_attempt }}
+          HEAD_REF: ${{ github.head_ref }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Move-Item reports/linux/verify-report.json reports/linux-verify-report.json
+          Move-Item reports/windows/verify-report.json reports/windows-verify-report.json
+          pwsh -NoProfile -File scripts/verify.ps1 -MergeReports -MergeDir reports -TaskID "$env:HEAD_REF"
+
+      - name: Upload evidence manifest
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: evidence
+          path: docs/10_implementation/evidence/
+          if-no-files-found: ignore

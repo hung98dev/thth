@@ -1,0 +1,38 @@
+# Unity generated trees (CI materializes; never commit)
+client/Library/
+client/Temp/
+client/Logs/
+client/obj/
+client/Build/
+
+# Local tool installs (verify.ps1 / setup scripts)
+tools/
+
+# Verifier output
+verify-report.json
+artifacts/
+materialized-drift/
+reports/
+unity-materialize.log
+*.unitypackage
+
+# Build outputs
+server/thinhthan-server
+server/server
+server/verify
+*.exe
+*.dll
+!client/Assets/Plugins/**/*.dll
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.user
+*.suo
+
+# Unity per-user layout state (never committed)
+client/UserSettings/
+client/[Ll]ibrary/
+client/[Tt]emp/
+client/[Ll]ogs/
+client/obj/
