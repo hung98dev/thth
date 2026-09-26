@@ -47,17 +47,18 @@ options:
   3. move generated Go code behind a second module — violates the "one Go module `thinhthan`" invariant (`repository_layout.md`), do not use.
 blocks: IMP-061
 
+## Resolved Blockers
+
 ### `BLK-004` — Q6.evidence.api.<task> fails forever after a squash-merged done-PR
 opened_by: implementer/IMP-061   opened_at: 2026-09-26T18:55Z
-evidence: `server/internal/conformance/gates/evidence.go:233-238` (`CheckRunIdentity`) requires every committed `docs/10_implementation/evidence/*/manifest.json` to have `ci_run_id` whose GitHub-run `head_sha` is an ancestor of the PR HEAD (`git merge-base --is-ancestor`). IMP-000's manifest (`docs/10_implementation/evidence/IMP-000/manifest.json`, merged via squash in `51dae43`) records run 36250265754 with head_sha `9213525474603ecd2f42cb9e596681010884e59f` — the tip of the deleted-forever branch `imp/IMP-000-done`, never an ancestor of `main`. Reproduced on PR #12 windows verify run 36262556471: `FAIL Q6.evidence.api.IMP-000 — run head_sha 9213525... is not an ancestor of HEAD: exit status 128 (fatal: Not a valid commit name)` — the sha is not even in the fetched clone. Any non-status-only PR (which cannot SKIP Q6) fails this check permanently once one evidence manifest lands. The squash-merge rule (ADR-0072 `gh pr merge --auto --squash`) guarantees every task's recorded head_sha is a branch tip that ceases to be a main ancestor the moment it merges — the check is unsatisfiable by construction. This also makes every future done-PR's evidence unverifiable.
-owning spec / system: `docs/10_implementation/audit_gates.md` § Q6, `docs/10_implementation/agent_execution_protocol.md` §5a (squash merge + evidence), `server/internal/conformance/gates/evidence.go`, `server/internal/conformance/gates/q6.go`
+evidence: `server/internal/conformance/gates/evidence.go` (`CheckRunIdentity`) required every committed `docs/10_implementation/evidence/*/manifest.json` to have `ci_run_id` whose GitHub-run `head_sha` is an ancestor of the PR HEAD (`git merge-base --is-ancestor`). IMP-000's manifest (squash-merged in `51dae43`) records run 36250265754 with head_sha `9213525474603ecd2f42cb9e596681010884e59f` — the tip of branch `imp/IMP-000-done`, never an ancestor of `main`. Reproduced on PR #12 verify: `FAIL Q6.evidence.api.IMP-000 — run head_sha 9213525... is not an ancestor of HEAD: exit status 128`. The squash-merge rule (ADR-0072) makes the check unsatisfiable by construction: every recorded head_sha ceases to be a main ancestor the moment its PR merges.
+owning spec / system: `docs/10_implementation/audit_gates.md` § Q6, `server/internal/conformance/gates/evidence.go`, `server/internal/conformance/gates/q6.go`
 options:
-  1. accept the merge commit's sha instead of the run's head_sha — after merge, resolve the recorded run's `pull_requests[0].merge_commit_sha` (or the PR number stored in the manifest) via the API and require THAT to be an ancestor of HEAD; head_sha ancestry only for not-yet-merged manifests;
-  2. validate the run only (`run_id` exists, conclusion success, head_sha matches the manifest's recorded source_tree_hash) — drop the ancestor requirement entirely, since the manifest itself is already merged;
-  3. scope `evidence.api` to the head packet's own manifest (skip manifests for tasks already DONE on main) — minimal blast radius; merged manifests are verified at merge time by the done-PR's own Q6.
+  1. accept the merge commit's sha instead of the run's head_sha — resolve the PR(s) containing the recorded sha via `/commits/{sha}/pulls` and require a merged `merge_commit_sha` to be an ancestor of HEAD;
+  2. validate the run only (run exists, conclusion success, head_sha matches recorded tree) — drop ancestry entirely;
+  3. scope `evidence.api` to the head packet's own manifest only.
 blocks: IMP-061
-
-## Resolved Blockers
+resolved_by: `5d78a49` (PR https://github.com/hung98dev/thth/pull/5)   resolved_at: 2026-09-26T18:43Z   resolution: option 1 — `CheckRunIdentity` falls back to `mergedPRSHAs`/`landedViaMerge` (merge_commit_sha ancestry) when the run head_sha is not an ancestor
 
 ### `BLK-001` — URP materialization outputs not covered by IMP-000 owned_paths
 opened_by: implementer/IMP-000   opened_at: 2026-09-26T00:04Z
