@@ -257,6 +257,8 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Art/VFX/` | IMP-073 |
 | `client/Assets/Art/World/` | IMP-072 |
 | `client/Assets/Audio/` | IMP-075 |
+| `client/Assets/DefaultVolumeProfile.asset` | IMP-000 |
+| `client/Assets/DefaultVolumeProfile.asset.meta` | IMP-000 |
 | `client/Assets/Localization/Settings/` | IMP-064 |
 | `client/Assets/Localization/Tables/Core/` | IMP-064 |
 | `client/Assets/Notices/THIRD_PARTY_ASSETS.txt` | IMP-076 |
@@ -462,6 +464,8 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Tests/PlayMode/ThinhThan.Tests.PlayMode.asmdef` | IMP-000 |
 | `client/Assets/Tests/PlayMode/TradeUi/` | IMP-029 |
 | `client/Assets/Tests/PlayMode/WorldTransferPresentation/` | IMP-018 |
+| `client/Assets/UniversalRenderPipelineGlobalSettings.asset` | IMP-000 |
+| `client/Assets/UniversalRenderPipelineGlobalSettings.asset.meta` | IMP-000 |
 | `client/Assets/csc.rsp` | IMP-000 |
 | `client/BuildProfiles/` | IMP-067 |
 | `client/Packages/` | IMP-000 |
