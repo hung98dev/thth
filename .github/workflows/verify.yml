@@ -145,44 +145,31 @@ jobs:
         run: |
           set -uo pipefail
           sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
-          mkdir -p "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/diag"
-          docker events --filter event=kill --filter event=die --filter event=oom > "$RUNNER_TEMP/diag/docker-events.log" 2>&1 &
-          evpid=$!
-          (while sleep 5; do echo "--- $(date +%T)"; ps -eo pid,ppid,comm,rss --sort=-rss | head -8; done) > "$RUNNER_TEMP/diag/procs.log" 2>&1 &
-          pspid=$!
+          mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
           for i in 1 2 3 4 5; do
-            if docker run --shm-size=2g --cap-add SYS_PTRACE \
+            if docker run --shm-size=2g \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
-              -v "$RUNNER_TEMP/diag:/host-tmp" \
               -v /etc/machine-id:/etc/machine-id:ro \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
               -e LIBGL_ALWAYS_SOFTWARE=1 \
               -e MONO_GC_PARAMS=nursery-size=64m \
-              -e ATTEMPT="$i" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c '
-                command -v strace >/dev/null 2>&1 || { apt-get update -qq >/dev/null && apt-get install -y -qq strace >/dev/null; }
                 EXTRA=""
                 if [ ! -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then
                   rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
-                if command -v strace >/dev/null 2>&1; then
-                  strace -f -e trace=kill,tgkill -o "/host-tmp/kill-trace-$ATTEMPT.log" \
-                    "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
-                else
-                  "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
-                fi
+                "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
               ' 2>&1 | tee unity-materialize.log; then
               rc=0
             else
               rc=${PIPESTATUS[0]}
             fi
             if grep -q 'Exiting batchmode successfully' unity-materialize.log && ! grep -q 'Scripts have compiler errors' unity-materialize.log; then
-              kill $evpid $pspid 2>/dev/null || true
               exit 0
             fi
             dead=$(docker ps -ql 2>/dev/null)
@@ -193,9 +180,6 @@ jobs:
               exit 1
             fi
             echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
-            echo "--- strace kill/tgkill (attempt $i):"; tail -40 "$RUNNER_TEMP/diag/kill-trace-$i.log" 2>/dev/null || echo 'no kill trace'
-            echo "--- docker events:"; tail -20 "$RUNNER_TEMP/diag/docker-events.log" 2>/dev/null || true
-            echo "--- host procs:"; tail -30 "$RUNNER_TEMP/diag/procs.log" 2>/dev/null || true
             sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
             sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
             free -m
@@ -205,7 +189,6 @@ jobs:
               bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
             [ "$i" -lt 5 ] && sleep 60
           done
-          kill $evpid $pspid 2>/dev/null || true
           echo "unity materialization failed after 5 attempts (licence/infra)" >&2
           exit 1
 

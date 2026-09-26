@@ -218,14 +218,14 @@ func run(root string, f cliFlags) int {
 			failed = true
 		}
 	}
-	result := gates.StatusPass
+	result := "PASSED"
 	if failed {
-		result = gates.StatusFail
+		result = "FAILED"
 	}
 
 	report := gates.VerifyReport{
 		Schema:   "verify-report-v1",
-		Result:   string(result),
+		Result:   result,
 		Go:       os.Getenv("THINHTHAN_GO_VERSION"),
 		RanAt:    time.Now().UTC().Format(time.RFC3339),
 		OS:       runnerOS(e),
