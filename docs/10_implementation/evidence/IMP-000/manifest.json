@@ -1,0 +1,85 @@
+{
+  "schema_version": 2,
+  "task_id": "IMP-000",
+  "source_tree_hash": "b3f799b093545ffb165b9412d0ea873410fab0836349849a9f0d9db9ebdc9ba0",
+  "toolchain": {
+    "go": "1.27.1",
+    "unity": "6000.6.1f1",
+    "postgresql": "18.6",
+    "protoc": "36.2",
+    "protoc_gen_go": "v1.36.12"
+  },
+  "commands": [
+    "go -C server build ./...",
+    "go -C server test ./...",
+    "go -C server vet ./...",
+    "go -C server build ./...",
+    "go -C server test ./...",
+    "go -C server vet ./..."
+  ],
+  "test_summary": {
+    "total": 97,
+    "passed": 89,
+    "failed": 0,
+    "skipped": 8
+  },
+  "skipped_reasons": [
+    {
+      "id": "Q2",
+      "reason": "owner-not-done IMP-061",
+      "allowed": true
+    },
+    {
+      "id": "Q3",
+      "reason": "owner-not-done IMP-065",
+      "allowed": true
+    },
+    {
+      "id": "Q4",
+      "reason": "owner-not-done IMP-083",
+      "allowed": true
+    },
+    {
+      "id": "Q5",
+      "reason": "owner-not-done IMP-005",
+      "allowed": true
+    },
+    {
+      "id": "Q2",
+      "reason": "owner-not-done IMP-061",
+      "allowed": true
+    },
+    {
+      "id": "Q3",
+      "reason": "owner-not-done IMP-065",
+      "allowed": true
+    },
+    {
+      "id": "Q4",
+      "reason": "owner-not-done IMP-083",
+      "allowed": true
+    },
+    {
+      "id": "Q5",
+      "reason": "owner-not-done IMP-005",
+      "allowed": true
+    }
+  ],
+  "content_revision": "none",
+  "ci_run_id": "36250265754",
+  "run_attempt": 1,
+  "jobs": [
+    {
+      "name": "Q0-Q6 verify (Linux)",
+      "os": "linux",
+      "result": "PASSED"
+    },
+    {
+      "name": "Q0-Q6 verify (Windows)",
+      "os": "windows",
+      "result": "PASSED"
+    }
+  ],
+  "worktree_clean": true,
+  "result": "PASSED"
+}

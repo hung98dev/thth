@@ -3,6 +3,7 @@ package gates
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -53,13 +54,15 @@ func CheckQ3Go(root string, e *Env, goPath string, race bool, rep *RunReport) []
 		checks = append(checks, Pass(id("go.fmt"), ""))
 	}
 
-	out, err = runCmd(filepath.Join(root, "server"), 5*time.Minute, "staticcheck", "./...")
-	if err != nil {
-		checks = append(checks, Fail(id("go.staticcheck"), out))
-	} else if out != "" {
-		checks = append(checks, Fail(id("go.staticcheck"), out))
+	if _, lerr := exec.LookPath("staticcheck"); lerr != nil {
+		checks = append(checks, e.missingCheck(id("go.staticcheck"), "staticcheck not on PATH"))
 	} else {
-		checks = append(checks, Pass(id("go.staticcheck"), ""))
+		out, err = runCmd(filepath.Join(root, "server"), 5*time.Minute, "staticcheck", "./...")
+		if err != nil || out != "" {
+			checks = append(checks, Fail(id("go.staticcheck"), out))
+		} else {
+			checks = append(checks, Pass(id("go.staticcheck"), ""))
+		}
 	}
 
 	// -race on Linux only, for the package prefixes the ratchet names.

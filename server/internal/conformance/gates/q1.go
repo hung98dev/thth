@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -86,24 +85,4 @@ func CheckQ1(root string, e *Env) []Check {
 	}
 
 	return checks
-}
-
-// checkGeneratedDrift fails when gofmt/build/test left the tree dirty in
-// ways the diff did not authorize — used by Q6 for generated outputs.
-func untrackedUnder(root string, dirs ...string) []string {
-	var out []string
-	for _, d := range dirs {
-		full := filepath.Join(root, filepath.FromSlash(d))
-		if _, err := os.Stat(full); err != nil {
-			continue
-		}
-		untracked, err := gitDir(root, "ls-files", "--others", "--exclude-standard", "--", d)
-		if err != nil {
-			continue
-		}
-		for _, l := range splitLines(untracked) {
-			out = append(out, l)
-		}
-	}
-	return out
 }
