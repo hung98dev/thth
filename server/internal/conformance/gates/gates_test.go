@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"thinhthan/internal/stackpin"
 )
 
 func repoRoot(t *testing.T) string {
@@ -338,4 +340,20 @@ fixture CODE-001
 ## Tests
 fixture CODE-001
 `
+}
+
+// TestGoModDeclaresProtobufRequire (BLK-003): server/go.mod must declare
+// google.golang.org/protobuf at the GoModulePins version so generated
+// protocol code (IMP-061) compiles without the implementer editing the
+// IMP-000-owned lockfiles.
+func TestGoModDeclaresProtobufRequire(t *testing.T) {
+	root := repoRoot(t)
+	data, err := os.ReadFile(filepath.Join(root, "server", "go.mod"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "google.golang.org/protobuf " + stackpin.ProtobufGo
+	if !strings.Contains(string(data), "require "+want) {
+		t.Errorf("server/go.mod missing `require %s`", want)
+	}
 }
