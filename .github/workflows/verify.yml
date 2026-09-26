@@ -161,7 +161,7 @@ jobs:
                   rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
-                unity-editor -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
+                "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client $EXTRA -quit -logFile -
               ' 2>&1 | tee unity-materialize.log \
               && ! grep -q 'Scripts have compiler errors' unity-materialize.log \
               && exit 0
@@ -221,7 +221,7 @@ jobs:
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
-                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
+                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 "/opt/unity/Editor/Unity" -batchmode -nographics -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -' \
                 || arc=$?
               if [ "$arc" -eq 198 ]; then
                 echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
@@ -237,7 +237,7 @@ jobs:
                 -e MODE="$mode" \
                 "${{ env.UNITY_LINUX_IMAGE }}" \
                 bash -c '
-                  unity-editor -batchmode -nographics -projectPath /github/workspace/client \
+                  "/opt/unity/Editor/Unity" -batchmode -nographics -projectPath /github/workspace/client \
                     -runTests -testPlatform "$MODE" \
                     -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                     -logFile -
