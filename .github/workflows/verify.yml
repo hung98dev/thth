@@ -238,7 +238,7 @@ jobs:
           if ! command -v bpftrace >/dev/null 2>&1; then
             sudo apt-get install -y -qq bpftrace >/dev/null 2>&1 || true
           fi
-          mkdir -p "$RUNNER_TEMP/unity-cfg" "$RUNNER_TEMP/unity-cache"
+          mkdir -p "$RUNNER_TEMP/unity-cfg"
           if command -v bpftrace >/dev/null 2>&1; then
             (sudo bpftrace -e 'kprobe:cgroup_kill { printf("cgroup_kill writer comm=%s pid=%d\n", comm, pid); }' > "$RUNNER_TEMP/cgroup-kill.log" 2>&1 & echo $! > "$RUNNER_TEMP/bpftrace.pid") || true
           fi
@@ -277,11 +277,10 @@ jobs:
             getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
             curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
             ip route get 1.1.1.1 2>/dev/null | head -1 || true
-            cid=$(docker run -d -i $NET --shm-size=4g --cap-add SYS_PTRACE --security-opt apparmor=unconfined \
+            cid=$(docker run -d -i $NET --shm-size=4g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
-              -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
               -v /etc/machine-id:/etc/machine-id:ro \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -379,7 +378,6 @@ jobs:
               lcid=$(docker run -d -i --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
-                -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
@@ -399,7 +397,6 @@ jobs:
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                   -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
-                  -v "$RUNNER_TEMP/unity-cache:/root/.cache/unity3d" \
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \

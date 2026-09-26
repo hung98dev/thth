@@ -57,6 +57,10 @@ the `commit unity-materialized` drift check, or the licence activation.
 - Evidence manifests (`gates.MergeReports`) decode reports into the fixed
   `VerifyReport` struct, so `cached_steps` is dropped before the manifest —
   evidence identity is cache-independent (CI-004).
+- The evidence-manifest job's `verify.ps1 -MergeReports -Task` early-exit on
+  branches whose head ref has no `IMP-\d+` (claim//ops//spec/status PRs) is
+  the same contract: it skips *report generation* only, never a verify job.
+  The job produces no manifest on those branches by design — not a failure.
 
 ## Postgres service container
 
