@@ -134,6 +134,18 @@ jobs:
         shell: bash
         run: docker pull "${{ env.UNITY_LINUX_IMAGE }}"
 
+      - name: Arm kill-probe (SIGKILL sender diagnostic)
+        shell: bash
+        run: |
+          if ! command -v auditctl >/dev/null 2>&1; then
+            sudo apt-get update -qq >/dev/null 2>&1 || true
+            sudo apt-get install -y -qq auditd >/dev/null 2>&1 || true
+          fi
+          sudo auditctl -D 2>/dev/null || true
+          sudo auditctl -a always,exit -F arch=b64 -S kill -S tkill -S tgkill -k unitykill 2>/dev/null || echo 'auditctl rules not installed'
+          sudo auditctl -l 2>/dev/null || true
+          (docker events --since "$(date +%s)" --filter 'event=die' --filter 'event=kill' --filter 'event=oom' --format '{{json .}}' > "$RUNNER_TEMP/docker-events.log" 2>&1 & echo $! > "$RUNNER_TEMP/docker-events.pid") || true
+
       - name: Unity materialization (licence retry <=5)
         timeout-minutes: 30
         shell: bash
@@ -281,6 +293,18 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Dump kill-probe diagnostics
+        if: always()
+        shell: bash
+        run: |
+          echo '=== audit kill/tgkill events (sender pid/comm/exe) ==='
+          sudo ausearch -k unitykill -i 2>/dev/null | tail -40 || true
+          sudo grep -i 'unitykill\|SIGKILL' /var/log/audit/audit.log 2>/dev/null | tail -40 || true
+          echo '=== docker daemon events ==='
+          cat "$RUNNER_TEMP/docker-events.log" 2>/dev/null | tail -40 || true
+          kill "$(cat "$RUNNER_TEMP/docker-events.pid" 2>/dev/null)" 2>/dev/null || true
+          sudo auditctl -D -k unitykill 2>/dev/null || true
 
       - name: Unity materialized drift check
         id: drift
