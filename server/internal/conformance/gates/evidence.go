@@ -247,9 +247,14 @@ func CheckRunIdentity(root, repo, runID string, runAttempt int, token string) []
 type prSHAs struct {
 	MergeCommitSHA string  `json:"merge_commit_sha"`
 	MergedAt       *string `json:"merged_at"`
+	Head           struct {
+		SHA string `json:"sha"`
+	} `json:"head"`
 }
 
-// mergedPRSHAs returns the merge_commit_sha of every merged PR containing sha.
+// mergedPRSHAs returns the merge_commit_sha of every merged PR whose head
+// commit is sha — /commits/{sha}/pulls also lists PRs where sha is only an
+// intermediate commit, which must not satisfy the fallback.
 func mergedPRSHAs(repo, sha, token string, client *http.Client) []string {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/commits/%s/pulls", repo, sha)
 	req, err := http.NewRequest("GET", url, nil)
@@ -273,7 +278,7 @@ func mergedPRSHAs(repo, sha, token string, client *http.Client) []string {
 	}
 	var shas []string
 	for _, pr := range prs {
-		if pr.MergedAt != nil && pr.MergeCommitSHA != "" {
+		if pr.MergedAt != nil && pr.Head.SHA == sha && pr.MergeCommitSHA != "" {
 			shas = append(shas, pr.MergeCommitSHA)
 		}
 	}
