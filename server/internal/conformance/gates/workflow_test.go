@@ -3,6 +3,8 @@ package gates
 import (
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -229,10 +231,31 @@ func TestMaterializedArtifactPerOsFailsJob(t *testing.T) {
 
 func TestLicenceActivationRetriedFiveTimes(t *testing.T) {
 	wf := verifyWf(t)
+	bashLoop := regexp.MustCompile(`for\s+\w+\s+in\s+([0-9 ]+);`)
+	pwshLoop := regexp.MustCompile(`foreach\s*\(\$\w+\s+in\s+1\.\.(\d+)\)`)
 	for _, name := range []string{"verify-linux", "verify-windows"} {
 		s := stepNamed(t, jobNamed(t, wf, name), "Unity materialization (licence retry <=5)")
-		if !strings.Contains(s.Run, "5") || !strings.Contains(s.Run, "60") {
-			t.Fatalf("job %q: licence retry loop must be <=5 attempts, 60s apart", name)
+		bounds := 0
+		for _, m := range bashLoop.FindAllStringSubmatch(s.Run, -1) {
+			f := strings.Fields(m[1])
+			last, _ := strconv.Atoi(f[len(f)-1])
+			if last > 5 {
+				t.Fatalf("job %q: retry loop bound %d exceeds licence-retry limit 5", name, last)
+			}
+			bounds++
+		}
+		for _, m := range pwshLoop.FindAllStringSubmatch(s.Run, -1) {
+			n, _ := strconv.Atoi(m[1])
+			if n > 5 {
+				t.Fatalf("job %q: retry loop bound %d exceeds licence-retry limit 5", name, n)
+			}
+			bounds++
+		}
+		if bounds == 0 {
+			t.Fatalf("job %q: licence retry loop not found", name)
+		}
+		if !strings.Contains(s.Run, "60") {
+			t.Fatalf("job %q: licence retry loop must retry 60s apart", name)
 		}
 	}
 }

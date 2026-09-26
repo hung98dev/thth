@@ -178,7 +178,7 @@ jobs:
           busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p "$RUNNER_TEMP/unity-lic"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE }}" unity-editor -version
-          for i in 1 2 3 4 5 6 7 8; do
+          for i in 1 2 3 4 5; do
             find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
             if docker run --shm-size=2g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
@@ -219,9 +219,9 @@ jobs:
               -v "${{ github.workspace }}:/github/workspace" \
               "${{ env.UNITY_LINUX_IMAGE }}" \
               bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
-            [ "$i" -lt 8 ] && sleep 60
+            [ "$i" -lt 5 ] && sleep 60
           done
-          echo "unity materialization failed after 8 attempts (licence/infra)" >&2
+          echo "unity materialization failed after 5 attempts (licence/infra)" >&2
           exit 1
 
       - name: Inject package nullable suppressions
@@ -255,7 +255,7 @@ jobs:
           mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic"
           for mode in EditMode PlayMode; do
             ok=
-            for i in 1 2 3 4 5 6 7 8; do
+            for i in 1 2 3 4 5; do
               free -m
               arc=0
               find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
@@ -313,7 +313,7 @@ jobs:
               sleep 20
             done
             if [ -z "$ok" ]; then
-              echo "unity $mode tests failed after 8 attempts" >&2
+              echo "unity $mode tests failed after 5 attempts" >&2
               exit 1
             fi
           done
