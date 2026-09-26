@@ -229,12 +229,13 @@ Generated from `task_queue.md` `owned_paths`.
 
 | Path | Owner |
 |---|---|
+| `.devin/scripts/` | IMP-106 |
 | `.editorconfig` | IMP-000 |
 | `.gitattributes` | IMP-000 |
 | `.github/pull_request_template.md` | IMP-000 |
 | `.github/workflows/device_perf.yml` | IMP-096 |
 | `.github/workflows/post_merge_guard.yml` | IMP-068 |
-| `.github/workflows/verify.yml` | IMP-000, IMP-068 |
+| `.github/workflows/verify.yml` | IMP-000, IMP-068, IMP-106 |
 | `.gitignore` | IMP-000 |
 | `client/Assets/AddressableAssetsData/` | IMP-063 |
 | `client/Assets/Art/Actors/Creatures/` | IMP-104 |
@@ -479,7 +480,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `proto/thinhthan/v1/` | IMP-061 |
 | `scripts/codegen.ps1` | IMP-061 |
 | `scripts/device_perf.ps1` | IMP-096 |
-| `scripts/verify.ps1` | IMP-000 |
+| `scripts/verify.ps1` | IMP-000, IMP-106 |
 | `scripts/verify_client_build.ps1` | IMP-067 |
 | `server/cmd/compiler/` | IMP-003 |
 | `server/cmd/migrate/` | IMP-005 |
@@ -494,6 +495,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `server/internal/config/validation/beast/` | IMP-050 |
 | `server/internal/config/validation/drop/` | IMP-051 |
 | `server/internal/conformance/architecture/` | IMP-083 |
+| `server/internal/conformance/caching/` | IMP-106 |
 | `server/internal/conformance/deviceperf/` | IMP-096 |
 | `server/internal/conformance/gates/` | IMP-000 |
 | `server/internal/conformance/ratchet/` | IMP-068 |

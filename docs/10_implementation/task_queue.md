@@ -92,7 +92,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-065` | Unity Client Bootstrap, Session State & Network Transport | `NOT_STARTED` | IMP-061, IMP-100 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
 | `IMP-066` | Unity Input Action Mapping & Core UI/HUD State Machine | `NOT_STARTED` | IMP-013, IMP-065 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
 | `IMP-067` | Unity IL2CPP Player Build (Windows, Android) & Release Packaging | `NOT_STARTED` | IMP-020, IMP-024, IMP-025, IMP-028, IMP-041, IMP-042, IMP-076, IMP-084, IMP-085, IMP-086, IMP-087, IMP-088, IMP-089, IMP-090, IMP-093, IMP-099, IMP-103 | `../04_architecture/client.md`, `../04_architecture/client_assets.md` |
-| `IMP-068` | Trusted CI, Post-Merge Guard & Foundation Exit | `NOT_STARTED` | IMP-004, IMP-005, IMP-061, IMP-063, IMP-064, IMP-083 | `audit_gates.md`, `agent_execution_protocol.md` |
+| `IMP-068` | Trusted CI, Post-Merge Guard & Foundation Exit | `NOT_STARTED` | IMP-004, IMP-005, IMP-061, IMP-063, IMP-064, IMP-083, IMP-106 | `audit_gates.md`, `agent_execution_protocol.md` |
 | `IMP-069` | Server Composition Root and Lifecycle Wiring | `NOT_STARTED` | IMP-020, IMP-024, IMP-025, IMP-028, IMP-041, IMP-042, IMP-049, IMP-050, IMP-051, IMP-054, IMP-055, IMP-062, IMP-077, IMP-084, IMP-085, IMP-086, IMP-087, IMP-089, IMP-090, IMP-092, IMP-093, IMP-103 | `../04_architecture/backend.md`, `../04_architecture/service_boundaries.md` |
 | `IMP-070` | Asset Provenance Register & Validator | `NOT_STARTED` | IMP-063, IMP-101 | `../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md` |
 | `IMP-071` | Player Character & Class Art | `NOT_STARTED` | IMP-063, IMP-070 | `../07_content/presentation_asset_manifest.md`, `../01_gameplay/classes.md` |
@@ -130,11 +130,12 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-103` | Account Deletion & Data Export API / Account UI | `NOT_STARTED` | IMP-056, IMP-066 | `../07_security/data_protection.md`, `../07_security/auth.md` |
 | `IMP-104` | Monster, Boss & Spirit Beast Art | `NOT_STARTED` | IMP-063, IMP-070 | `../07_content/presentation_asset_manifest.md`, `../07_content/monster_catalog.md` |
 | `IMP-105` | Dungeon, Finale & Competitive Environment Art | `NOT_STARTED` | IMP-062, IMP-063, IMP-070 | `../07_content/presentation_asset_manifest.md`, `../07_content/dungeon_catalog.md` |
+| `IMP-106` | Verify CI Wall-Time Reduction via Caching | `NOT_STARTED` | IMP-000 | `audit_gates.md`, `agent_execution_protocol.md` |
 
 ## Topological Execution Order
 
 ```text
-IMP-000 -> IMP-001 -> IMP-061 -> IMP-063 -> IMP-064 -> IMP-101 -> IMP-002 -> IMP-005 -> IMP-070 -> IMP-083 -> IMP-003 -> IMP-071
+IMP-000 -> IMP-001 -> IMP-061 -> IMP-063 -> IMP-064 -> IMP-101 -> IMP-106 -> IMP-002 -> IMP-005 -> IMP-070 -> IMP-083 -> IMP-003 -> IMP-071
 IMP-073 -> IMP-074 -> IMP-075 -> IMP-104 -> IMP-004 -> IMP-050 -> IMP-068 -> IMP-098 -> IMP-078 -> IMP-079 -> IMP-081 -> IMP-082
 IMP-097 -> IMP-006 -> IMP-007 -> IMP-008 -> IMP-062 -> IMP-080 -> IMP-072 -> IMP-100 -> IMP-105 -> IMP-065 -> IMP-076 -> IMP-013
 IMP-066 -> IMP-009 -> IMP-011 -> IMP-018 -> IMP-095 -> IMP-010 -> IMP-012 -> IMP-014 -> IMP-020 -> IMP-029 -> IMP-030 -> IMP-034
@@ -599,7 +600,7 @@ blocked_by: ""
 
 specs: [`audit_gates.md`, `agent_execution_protocol.md`, `known_blockers.md`, `../00_context/technology_versions.md`, `../07_security/external_integrations.md`, `../08_scale_ops/deployment.md`, `../09_testing/test_and_release_evidence.md`]
 adrs: [`0010-exact-technology-version-pinning.md`, `0045-ci-evidence-without-self-referential-sha.md`, `0050-windows-only-ci-and-auto-merge.md`, `0051-first-party-username-password-login.md`, `0052-single-launch-world.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0068-implementation-packet-readiness-corrections.md`, `0060-wire-and-durable-contract-completion.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0065-data-schema-completion-and-erasure-retention.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
-depends_on: [IMP-004, IMP-005, IMP-061, IMP-063, IMP-064, IMP-083]
+depends_on: [IMP-004, IMP-005, IMP-061, IMP-063, IMP-064, IMP-083, IMP-106]
 owned_paths: [`.github/workflows/verify.yml`, `.github/workflows/post_merge_guard.yml`, `server/internal/conformance/ratchet/`, `server/internal/conformance/trusted/`]
 forbidden_paths: [`server/cmd/server/`, `server/internal/sim/`, `server/internal/global/`, `server/internal/edge/`]
 contract_inputs: [Owner Setup, Q0-Q6 implementations, DONE packets, GitHub API state]
@@ -634,6 +635,47 @@ consumers_checked: [docs/10_implementation/README.md, docs/10_implementation/mil
 generated_artifacts: [`verify-report.json`]
 cleanup_obligations: [Remove temporary codegen/build/migration workspaces; leave zero generated drift.]
 evidence_location: "docs/10_implementation/evidence/IMP-068/"
+
+## `IMP-106` — Verify CI Wall-Time Reduction via Caching
+id: IMP-106
+status: NOT_STARTED
+claimed_by: ""
+branch: ""
+claimed_at: ""
+blocked_by: ""
+
+specs: [`audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`, `../00_context/technology_versions.md`, `../09_testing/test_and_release_evidence.md`]
+adrs: [`0010-exact-technology-version-pinning.md`, `0050-windows-only-ci-and-auto-merge.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0068-implementation-packet-readiness-corrections.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+depends_on: [IMP-000]
+owned_paths: [`.github/workflows/verify.yml`, `scripts/verify.ps1`, `.devin/scripts/`, `server/internal/conformance/caching/`]
+forbidden_paths: [`server/cmd/server/`, `.github/workflows/post_merge_guard.yml`, `client/`]
+contract_inputs: [pinned version matrix, verify job topology, materialized artifact contract]
+contract_outputs: [pinned cache steps in verify.yml, `.devin/scripts/` cache helpers + cache-key policy doc, cache hit/miss + wall-time fields in `verify-report.json`]
+consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation/dependency_graph.md, docs/10_implementation/wave_execution_prompts.md, docs/10_implementation/repository_layout.md, docs/10_implementation/spec_traceability.md]
+
+## Change
+- Add pinned `actions/cache` steps to `verify.yml` and extend `scripts/verify.ps1` so a warm PR run is measurably faster than a cold run without weakening any gate (`engineering_conventions.md` §6):
+  - Go module and build caches (`~/go/pkg/mod`, `~/.cache/go-build`; Windows `%LOCALAPPDATA%\go-build`) keyed on OS + Go pin + `server/go.sum` hash (`actions/setup-go` stays `cache: false`; explicit `actions/cache` is the mechanism);
+  - `docker save`/`docker load` through `actions/cache` for the pinned `docker pull` images (both `unityci/editor` digests), keyed on the exact digest string — a hit skips the pull; the `services:` postgres image is pulled before job steps and cannot be cached, so it either stays or converts to a step-managed container when the measured saving justifies it;
+  - Unity `client/Library/` build cache via `actions/cache` keyed on `client/Packages/manifest.json` + `client/ProjectSettings/` hash + the pinned editor image digest: `Library/` is gitignored build output, not §4b evidence, so it may be cached; the editor still opens the project and runs the full materialization + compile on every run, and every materialized file outside `Library/` is still uploaded via `unity-materialized-<os>` and committed byte-for-byte — a Library hit only skips regenerate work, never a check;
+  - Windows PostgreSQL EDB binaries keyed on version + download SHA-256 — the extracted directory may be cached; the hash is still asserted before use on a hit;
+  - licence paths are never cached: the Unity licence volume/directory and licence activation stay fresh per run (`audit_gates.md` § Unity materialization); no cache `key` or `restore-keys` may cover licence state.
+- Cache-key policy and restore rules documented in `.devin/scripts/` and enforced by the conformance tests below.
+
+## Acceptance
+- every `actions/cache` step uses the pinned SHA from `technology_versions.md`; every `key` hashes all lockfile/pin/digest inputs, and `restore-keys` never substitute a different pinned version or OS (CI-001),
+- a cache hit never skips or weakens a Q gate, the fork guard, job preconditions, the §4b materialization commit, or licence activation (licence state is never cached) (CI-002),
+- `verify-report.json` records `hit|miss` and `wall_seconds` per cached step, and the task PR reports lower total Linux+Windows wall-time on a warm-cache run than its own cold run (CI-003),
+- cold and warm runs produce identical `source_tree_hash`, zero codegen drift and identical evidence manifests; no new secrets, runners or services (CI-004, ADR-0058).
+
+## Tests
+- `server/internal/conformance/caching/caching_test.go` (CI-001): TestCacheActionPinnedSha, TestCacheKeysCoverPinInputs, TestRestoreKeysNeverCrossPinOrOs.
+- `server/internal/conformance/caching/caching_test.go` (CI-002): TestNoGateSkippedOnCacheHit, TestMaterializeCommitStillRequiredOnHit, TestLicenceStateNeverCached.
+- `server/internal/conformance/caching/caching_test.go` (CI-003, CI-004): TestWallTimeFieldsRecorded, TestEvidenceIdentityIndependentOfCache.
+
+generated_artifacts: []
+cleanup_obligations: [Remove temporary cache-warm workflows or scratch scripts.]
+evidence_location: "docs/10_implementation/evidence/IMP-106/"
 
 # Task Group — Runtime Cores
 
