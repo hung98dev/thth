@@ -1,0 +1,878 @@
+#key	vi-VN	en-US
+loc.atlas.page.quai_dam.ben_nuoc_den.bong_nuoc_ma.desc	Bóng nước ma mị	An eerie shadow drifts upon the water.
+loc.atlas.page.quai_dam.ben_nuoc_den.ca_tinh.desc	Cá tinh hóa người	The fish Spirit has taken on human form.
+loc.atlas.page.quai_dam.ben_nuoc_den.ca_tinh_gia.desc	Theo lời kể dân gian, cá tinh già đã ẩn bao năm dưới bùn; đi chậm nhưng dòng nước sau lưng nó thì không thể chạy thoát	According to folk tales, the old fish Spirit has hidden beneath the mud for many years; it moves slowly, but the current at its back cannot be outrun.
+loc.atlas.page.quai_dam.ben_nuoc_den.hon_chet_duoi.desc	Hồn chết đuối oan khuất	The wronged Soul of one who drowned still lingers.
+loc.atlas.page.quai_dam.ben_nuoc_den.ma_da.desc	Ma da kéo giò bến nước đen	The Ma Da drags its victims by the legs at the black-water landing.
+loc.atlas.page.quai_dam.ben_nuoc_den.ma_da_gia.desc	Ma da già giữ bến	The old Ma Da holds the landing.
+loc.atlas.page.quai_dam.ben_nuoc_den.nguoi_song_co.desc	Theo lời kể dân gian, người sông cổ là hồn xưa nằm lại dưới đáy bùn từ thời loạn lạc; vẫn bắn hai tên một lúc như thuở chiến trận	According to folk tales, the ancient river-dweller is a soul left lying beneath the mud since the age of turmoil; it still fires two arrows at once, as it did in the days of battle.
+loc.atlas.page.quai_dam.ben_nuoc_den.quy_song_dem.desc	Theo lời kể dân gian, quỷ sông đêm ẩn dưới bùn đen, dụ đèn lên rồi kéo người xuống	According to folk tales, the night river Demon hides beneath the black mud, luring lanterns closer before dragging people down.
+loc.atlas.page.quai_dam.ben_nuoc_den.thuong_luong.desc	Theo lời kể dân gian, thuồng luồng sông là loài thủy quái nhỏ lang thang theo dòng nước, khác với chúa tể đã thành tinh ở vùng sâu	According to folk tales, the river Thuong Luong is a small water monster that drifts with the current, unlike the overlord that has already become a Spirit in the deep reaches.
+loc.atlas.page.quai_dam.ben_nuoc_den.thuy_quai.desc	Thủy quái bến đen	A water monster haunts the black-water landing.
+loc.atlas.page.quai_dam.deo_may.ho_con_tinh.desc	Hổ con tinh nghịch	The tiger-cub Spirit is a playful one.
+loc.atlas.page.quai_dam.deo_may.ho_tinh.desc	Theo lời kể dân gian, hổ tinh đèo mây là hổ rừng đã luyện phép nhỏ; khác với chúa tinh chin đuôi đã thành tướng	According to folk tales, the tiger Spirit of Deo May is a forest tiger that has cultivated minor magic; it is unlike the nine-tailed Spirit lord that has already become a general.
+loc.atlas.page.quai_dam.deo_may.ho_tinh_lon.desc	Theo lời kể dân gian, hổ tinh lớn đèo mây đã tích đủ khí để cào xé bất kỳ ai rời con đường mòn	According to folk tales, the great tiger Spirit of Deo May has gathered enough qi to maul anyone who strays from the trail.
+loc.atlas.page.quai_dam.deo_may.ho_tinh_ve.desc	Hổ tinh vệ canh núi	The tiger Spirit sentinel guards the mountain.
+loc.atlas.page.quai_dam.deo_may.khi_nui.desc	Khỉ núi tinh ranh	The mountain monkey is sly and cunning.
+loc.atlas.page.quai_dam.deo_may.ma_tranh.desc	Ma trành đèo mây	The Ma Tranh haunts Deo May.
+loc.atlas.page.quai_dam.deo_may.ma_tranh_gia.desc	Ma trành già đèo mây	The old Ma Tranh haunts Deo May.
+loc.atlas.page.quai_dam.deo_may.ma_van_dem.desc	Theo lời kể dân gian, ma vân đêm là bóng mây tụ lại thành hình sau nửa đêm; tiếng nổ của nó là điềm báo giông tố	According to folk tales, the night-cloud Ghost is a mass of cloud that gathers into a shape after midnight; its rumblings are an omen of coming storms.
+loc.atlas.page.quai_dam.deo_may.vong_nui_gia.desc	Theo lời kể dân gian, vong núi già là bóng ma núi lâu năm; vùng nguy hiểm của nó rộng dần như sương buổi sáng	According to folk tales, the old mountain Vong spirit is an age-old mountain shade; its danger zone widens slowly like the morning mist.
+loc.atlas.page.quai_dam.deo_may.vong_rung.desc	Vong rừng sương mù	A Vong spirit haunts the mist-shrouded forest.
+loc.atlas.page.quai_dam.lang_da.bu_nhin_rom.desc	Bù nhìn canh đồng lúa đêm trăng	A scarecrow keeps watch over the rice fields on moonlit nights.
+loc.atlas.page.quai_dam.lang_da.coc_thanh_tinh.desc	Cóc cụ bên miếu Đình	An old toad lives beside the shrine at Dinh Lang.
+loc.atlas.page.quai_dam.lang_da.dom_dom_ma.desc	Đom đóm ma lập lòe chỗ bến Đình Làng	A ghost firefly flickers by the Dinh Lang landing.
+loc.atlas.page.quai_dam.lang_da.hon_do_trang.desc	Theo lời kể dân gian, hồn đo trăng lang thang dưới trăng khuya, dùng bóng làm tấm che che mặt	According to folk tales, the moon-counting Soul wanders beneath the midnight moon, using its own shadow as a veil to hide its face.
+loc.atlas.page.quai_dam.lang_da.hon_ma_co_thu.desc	Theo lời kể dân gian, hồn ma cổ thụ là linh hồn gắn vào cây già trăm năm; tán lá che khuất bao điều	According to folk tales, the old-tree Soul Ghost is a soul bound to a hundred-year-old tree; its canopy conceals many things.
+loc.atlas.page.quai_dam.lang_da.hon_xo_non.desc	Theo lời kể dân gian, hồn xó nón giữ đường ranh làng; ai vô tình phá cột mốc sẽ bị ngăn lại	According to folk tales, the boundary Soul guards the village boundary path; anyone who unwittingly breaks a marker is turned back.
+loc.atlas.page.quai_dam.lang_da.ma_xo.desc	Ma xó giữ nhà	The Ma Xo keeps watch over the house.
+loc.atlas.page.quai_dam.lang_da.quy_nhap_trang.desc	Theo lời kể dân gian, quỷ nhập tràng là hồn lạc nhập vào xác đêm sương, chưa đủ mạnh để thành tướng đầu sỏ	According to folk tales, the possessing Demon is a lost soul that enters a corpse on misty nights, not yet strong enough to become a horde-leading general.
+loc.atlas.page.quai_dam.lang_da.vong_hon.desc	Vong lang thang bờ tre	A Vong spirit wanders the bamboo bank.
+loc.atlas.page.quai_dam.lang_da.vong_hon_gia.desc	Theo lời kể dân gian, vong hồn già là những linh hồn lâu năm không siêu thoát, chập chờn theo ánh đèn dầu	According to folk tales, old Vong spirits are souls that have lingered for years without passing on, flickering beside the light of oil lamps.
+loc.atlas.page.quai_dam.nui_thieng.bong_vong.desc	Theo lời kể dân gian, bóng vong núi thiêng là bóng tối hút sinh lực của người đi lạc; khi nó nắm được người, một phần sức mạnh của nạn nhân biến thành lớp che chở tạm thời cho nó	According to folk tales, the Vong shade of Nui Thieng is a darkness that drains the life force of the lost; when it catches someone, part of the victim's strength turns into a temporary shield for it.
+loc.atlas.page.quai_dam.nui_thieng.dai_vong_linh.desc	Theo lời kể dân gian, đại vong linh núi thiêng là những bóng ma lớn đã học được phép đổi hướng lúc chạy nước rút	According to folk tales, the great Vong spirits of Nui Thieng are large shades that have learned the art of changing direction mid-dash.
+loc.atlas.page.quai_dam.nui_thieng.hon_binh_co.desc	Theo lời kể dân gian, hồn binh cổ núi thiêng là linh hồn lính từ buổi đầu dựng cổng núi; nhát chém quét ngang của nó vẫn đủ lực sau bao thế kỷ canh gác một mình	According to folk tales, the ancient soldier Soul of Nui Thieng is the soul of a soldier from the days when the mountain gate was first raised; its sweeping slash still carries full force after centuries of standing watch alone.
+loc.atlas.page.quai_dam.nui_thieng.linh_ve.desc	Theo lời kể dân gian, linh vệ núi thiêng là bộ giáp cũ của người canh cổng núi đã thành tinh; nó giữ thế thủ rồi phản đòn theo kiểu riêng, khác với thạch vệ thành cổ dùng thân đỡ	According to folk tales, the guardian Spirit of Nui Thieng is the old armor of a mountain gatekeeper that has become a Spirit; it holds a defensive stance, then counterattacks in its own way, unlike the stone guardian of Thanh Co that blocks with its body.
+loc.atlas.page.quai_dam.nui_thieng.ma_nui.desc	Theo lời kể dân gian, ma núi sương phủ là bóng người chết vì lạc đường trên núi; nó đánh dấu vùng đất nguy hiểm trước khi hiện ra, nhắc lại lời cảnh báo của những cột mốc ranh giới cũ	According to folk tales, the mist-shrouded mountain Ghost is the shade of someone who died after losing the way on the mountain; it marks the dangerous ground before appearing, echoing the warnings of the old boundary markers.
+loc.atlas.page.quai_dam.nui_thieng.ngu_tinh.desc	Theo lời kể dân gian, ngư tinh núi thiêng là cá lạ bơi trong hồ trên cao; khác với đại vương đã hóa thành tướng tinh dưới vực sâu	According to folk tales, the fish Spirit of Nui Thieng is a strange fish swimming in the high mountain lake, unlike the great king that has become a Spirit general in the deep abyss.
+loc.atlas.page.quai_dam.nui_thieng.than_rung_dem.desc	Theo lời kể dân gian, thần rừng đêm núi thiêng là bóng tối tụ hình sau hoàng hôn; chạy trốn nó theo vết mờ trên đất mà nó để lại trước khi lao tới	According to folk tales, the night forest deity of Nui Thieng is darkness that takes shape after dusk; it is fled by following the faint trail it leaves on the ground before it lunges.
+loc.atlas.page.quai_dam.nui_thieng.than_trung.desc	Theo lời kể dân gian, thần trùng đồng là loài linh trùng nhỏ sống trong vùng đất thiêng; khác với thủ lĩnh đội lốt đã tích đủ khí để thống lĩnh	According to folk tales, the bronze divine insect is a small sacred insect that lives in the hallowed ground, unlike the shell-clad leader that has gathered enough qi to take command.
+loc.atlas.page.quai_dam.nui_thieng.tinh_nui_gia.desc	Theo lời kể dân gian, tinh núi già núi thiêng ẩn dưới đám mây mù; vùng nguy hiểm của nó xuất hiện khi người dám đứng bên bờ vực	According to folk tales, the old mountain Spirit of Nui Thieng hides beneath the misty clouds; its danger zone appears when someone dares to stand beside the precipice.
+loc.atlas.page.quai_dam.nui_thieng.tinh_thu.desc	Theo lời kể dân gian, tinh thú núi thiêng là thú rừng già đã hấp thụ linh khí từ các đá ranh; viên đạn lửa nó phun ra sáng rõ trước khi rời miệng, như điềm báo mỗi khi núi nổi giận	According to folk tales, the Spirit beast of Nui Thieng is an old forest beast that has absorbed spiritual energy from the boundary stones; the firebolt it spits glows brightly before leaving its mouth, like an omen each time the mountain grows wrathful.
+loc.atlas.page.quai_dam.nui_thieng.vong_linh.desc	Theo lời kể dân gian, vong linh núi thiêng là linh hồn kẻ chết trên đường hành hương chưa dứt được; nó dịch chỗ rất nhanh nhưng luôn để lại bóng báo trước hướng di chuyển	According to folk tales, the Vong spirit of Nui Thieng is the soul of one who died on the pilgrimage road and could not find release; it shifts position very quickly but always leaves a shadow announcing its direction beforehand.
+loc.atlas.page.quai_dam.rung_u_minh.bong_nguoi.desc	Bóng người chập chờn	A human shadow flickers in and out of sight.
+loc.atlas.page.quai_dam.rung_u_minh.dai_tinh_cay.desc	Theo lời kể dân gian, đại tinh cây là cổ thụ trăm tuổi đã thành tinh; rễ nó kéo lại những ai dám chặt cành	According to folk tales, the great tree Spirit is a hundred-year-old tree that has become a Spirit; its roots drag back anyone who dares cut its branches.
+loc.atlas.page.quai_dam.rung_u_minh.dom_lua.desc	Đóm lửa rừng thiêng	Firelights glow in the sacred forest.
+loc.atlas.page.quai_dam.rung_u_minh.ma_rung.desc	Tiếng hú trong rừng U Minh	A howl echoes through the U Minh forest.
+loc.atlas.page.quai_dam.rung_u_minh.ma_tranh.desc	Ma trành dắt lối	The Ma Tranh leads travelers along the path.
+loc.atlas.page.quai_dam.rung_u_minh.moc_tinh.desc	Mộc tinh canh rừng	The wood Spirit keeps watch over the forest.
+loc.atlas.page.quai_dam.rung_u_minh.tinh_cay.desc	Cây cổ thụ thành tinh	An ancient tree has become a Spirit.
+loc.atlas.page.quai_dam.rung_u_minh.vong_rung_sau.desc	Theo lời kể dân gian, vong rừng sâu dẫn lối người lạ đi vòng mãi không ra; hai con đường nó vẽ chỉ một là thật	According to folk tales, the deep-forest Vong spirit leads strangers in circles they cannot escape; of the two paths it draws, only one is real.
+loc.atlas.page.quai_dam.thanh_co.hon_binh.desc	Theo lời kể dân gian, hồn binh thành cổ vẫn tuần tra theo khu vực đặt lính ngày trước; giáo mác vô hình nhưng nhát chém từ nó để lại dấu vết thật	According to folk tales, the soldier Soul of Thanh Co still patrols the ground where the garrison once stood; its spear is invisible, yet the slashes it deals leave real marks.
+loc.atlas.page.quai_dam.thanh_co.hon_tran_linh.desc	Theo lời kể dân gian, hồn trận linh là linh hồn tướng lĩnh cũ vẫn giữ thế trận, nhát chém từ trên xuống rõ nét như thuở sinh thời	According to folk tales, the battle-array Soul is the soul of an old commander still holding formation; its downward slash is as crisp as it was in life.
+loc.atlas.page.quai_dam.thanh_co.hon_tuong.desc	Theo lời kể dân gian, hồn tướng giữ thành là vị tướng chưa chịu rời vị trí; bóng phân thân nó dẫn lính ảo theo sau, như những ngày còn chỉ huy đồn thành	According to folk tales, the Soul of the citadel's general is a commander who refuses to leave his post; its split-image shade leads phantom soldiers after it, as in the days when it commanded the fortress.
+loc.atlas.page.quai_dam.thanh_co.ma_co.desc	Theo lời kể dân gian, ma cổ thành hoang là bóng của kẻ chết không toàn thây trong trận chiến; nó đánh dấu đất trước khi xuất hiện, như lời cảnh báo duy nhất trước khi sập bẫy	According to folk tales, the ancient Ghost of the ruined citadel is the shade of one who died without a whole body in battle; it marks the ground before appearing, the only warning before the trap is sprung.
+loc.atlas.page.quai_dam.thanh_co.oan_hon_dem.desc	Theo lời kể dân gian, oan hồn đêm thành cổ là linh hồn lính chết oan không ai thờ cúng; chữ nguyền khắc lên người bị nó chạm	According to folk tales, the wronged night Soul of Thanh Co is the soul of an unjustly slain soldier whom no one worships; it carves a curse upon anyone it touches.
+loc.atlas.page.quai_dam.thanh_co.qua_tinh.desc	Theo lời kể dân gian, quạ tinh canh thành là linh hồn sứ giả cũ đã hóa vào đàn quạ; tên bắn của nó bay lệch theo vòm đá như thuở chuyển thư hiệu lệnh qua pháo đài	According to folk tales, the crow Spirit that keeps watch over the citadel is the soul of an old envoy that merged into the crow flock; its arrows veer along the stone arches as when it relayed orders through the ramparts.
+loc.atlas.page.quai_dam.thanh_co.qua_tinh_lon.desc	Theo lời kể dân gian, quạ tinh lớn thành cổ đã tích đủ năm tháng để bắn hai tên lệch hướng theo vòm đá	According to folk tales, the great crow Spirit of Thanh Co has gathered enough years to loose two arrows that veer along the stone arches.
+loc.atlas.page.quai_dam.thanh_co.thach_ve.desc	Theo lời kể dân gian, thạch vệ là phiến đá cổng thành đã hóa linh sau nghìn năm canh gác; nó dùng thân làm mộc đỡ rồi phản công — không bao giờ tấn công kẻ đứng im	According to folk tales, the stone guardian is a slab of the citadel gate that became animate after a thousand years of watch; it uses its own body to block, then counterattacks — it never attacks anyone who stands still.
+loc.atlas.page.quai_dam.thanh_co.tuong_da.desc	Theo lời kể dân gian, tượng đá thành cổ là hồn lính chết nơi đồn trú không ai thờ cúng; đá hóa hình người khi đêm xuống — chậm chạp nhưng không thể xuyên qua được	According to folk tales, the stone statue of Thanh Co is the Soul of a soldier who died at the outpost with no one to worship him; the stone takes human shape when night falls — slow, but impossible to get past.
+loc.atlas.page.season.0.lang_da.bup_lua.desc	Theo lời kể dân gian, búp lửa đồng là bông lửa nhỏ bay trên ruộng lúa đêm hè; có người nói nó là khí đất tích tụ, có người nói là hồn lúa chưa gặt kịp trước mưa lũ	According to folk tales, the field flame-bud is a small ball of fire drifting over the rice paddies on summer nights; some say it is gathered earth-qi, others that it is the Soul of rice left unharvested before the floods.
+loc.atlas.page.season.0.lang_da.co_lua.desc	Theo lời kể dân gian, cô lúa già là bù nhìn đứng canh đồng từ nhiều mùa gặt; bao nhiêu hồn lúa thấm vào cọc tre cũ đã làm nó cử động vào đêm khuya, dù không ai thấy nó nhúc nhích khi trời sáng	According to folk tales, the old rice lady is a scarecrow that has stood watch over the fields for many harvests; the Souls of rice soaked into its old bamboo stake make it stir deep in the night, though no one has ever seen it move by day.
+loc.atlas.page.season.0.lang_da.dom_dom_nguyen.desc	Theo lời kể dân gian, đom đóm nguyên sơ là linh hồn nhỏ đầu tiên xuất hiện ở bến Đình Làng khi trời chưa sáng; khác với đom đóm ma thường gặp, nó chỉ xuất hiện đúng dịp và không ai biết từ đâu đến	According to folk tales, the primal firefly is the first little soul to appear at the Dinh Lang landing while the sky is still dark; unlike the common ghost firefly, it appears only on appointed occasions, and no one knows where it comes from.
+loc.atlas.page.season.0.lang_da.hon_gao.desc	Theo lời kể dân gian, hồn gạo gò mả là linh hồn gắn vào những nắm gạo cúng để lâu không ai thu; đêm khuya nó lang thang theo bờ tre, tìm lại chỗ cũ như còn nhớ ơn người thờ cúng	According to folk tales, the grave-mound rice Soul is a soul bound to handfuls of offering rice left too long unclaimed; deep in the night it wanders along the bamboo bank, seeking its old spot as if it still remembered the kindness of those who worshipped it.
+loc.atlas.page.season.0.lang_da.tinh_buoi.desc	Theo lời kể dân gian, tinh bưởi đồng làng là hồn cây bưởi trồng ven ruộng đã thành tinh nhỏ; khác với các tinh cây to lớn trong rừng sâu, nó chỉ bảo vệ mảnh vườn mà nó đã gắn bó từ lúc còn là hạt giống	According to folk tales, the pomelo Spirit of the village fields is the soul of a pomelo tree planted beside the paddies that has become a small Spirit; unlike the great tree Spirits of the deep forest, it protects only the garden plot it has been bound to since it was a seed.
+loc.atlas.page.season.0.lang_da.vong_bien.desc	Theo lời kể dân gian, vong biến bến đa là bóng người đã qua đò nhưng chưa đến nơi; nó lặp lại con đường mình quen, không biết mình đã không còn là người sống	According to folk tales, the departed Vong spirit of the banyan landing is the shadow of someone who boarded the ferry but never reached the far bank; it retraces the road it once knew, unaware it is no longer among the living.
+loc.beast.hoa.ga_than.name	Gà Lửa	Fire Rooster
+loc.beast.hoa.hoa_diep.name	Hỏa Điệp	Fire Butterfly
+loc.beast.kim.ho_vang.name	Hổ Vàng	Golden Tiger
+loc.beast.kim.nghe_dong.name	Nghê Đồng	Bronze Lion-Dog
+loc.beast.moc.chim_lac.name	Chim Lạc	Lac Bird
+loc.beast.moc.huou_sao.name	Hươu Sao	Spotted Deer
+loc.beast.skill.chim_lac.phi_vu.name	Lạc Vũ Phong	Lacwing Gale
+loc.beast.skill.chim_lac.truy_kich.name	Lạc Dực Truy Kích	Lacwing Pursuit
+loc.beast.skill.coc_than.khi_bao.name	Khí Bào Hộ Mệnh	Lifeward Qi Mantle
+loc.beast.skill.coc_than.tran_tho.name	Trấn Thổ Uy Nghi	Earth-Quelling Majesty
+loc.beast.skill.ga_than.hoa_long.name	Hỏa Lông Rực Cháy	Blazing Fireplume
+loc.beast.skill.ga_than.kich_no.name	Phụng Hỏa Kích Nộ	Phoenixflame Wrath
+loc.beast.skill.ho_vang.ho_uy.name	Hổ Uy	Tiger's Majesty
+loc.beast.skill.ho_vang.khoa_huyet.name	Khóa Huyết	Bloodlock
+loc.beast.skill.hoa_diep.boc_liet.name	Tàn Hỏa Bộc Liệt	Ember Eruption
+loc.beast.skill.hoa_diep.hoa_tran.name	Điệp Vũ Hỏa Trần	Butterfly Ember Dance
+loc.beast.skill.huou_sao.ho_menh.name	Hoa Thần Hộ Mệnh	Blossom Lifeward
+loc.beast.skill.huou_sao.linh_duoc.name	Linh Dược Hương	Elixir Fragrance
+loc.beast.skill.nghe_dong.dong_tam.name	Đồng Tâm Trấn Miếu	Bronzeheart Temple Ward
+loc.beast.skill.nghe_dong.pha_hon.name	Nghê Hống Phá Hồn	Nghe's Soulshattering Roar
+loc.beast.skill.rai_ca.luot_song.name	Thủy Bộ Linh Hoạt	Nimble Waterstride
+loc.beast.skill.rai_ca.thoat_xac.name	Thoát Xác Thủy Quái	Water Fiend's Shedskin
+loc.beast.skill.rua_than.mai_rua.name	Mai Rùa Kiên Cố	Steadfast Turtle Shell
+loc.beast.skill.rua_than.thuy_khien.name	Thủy Khiên Bất Hoại	Unbreakable Watershield
+loc.beast.skill.trau_dong.chan_dia.name	Kim Ngưu Chấn Địa	Golden Ox Earthshock
+loc.beast.skill.trau_dong.thiet_nguu.name	Thiết Ngưu Hộ Thể	Iron Ox Guard
+loc.beast.tho.coc_than.name	Cóc Vàng	Golden Toad
+loc.beast.tho.trau_dong.name	Trâu Đồng	Golden Ox
+loc.beast.thuy.rai_ca.name	Rái Cá Sông	River Otter
+loc.beast.thuy.rua_than.name	Kim Quy	Golden Turtle
+loc.boss.ho_tinh.name	Hổ Tinh	Ho Tinh
+loc.boss.ho_tinh_chin_duoi.name	Hồ Tinh Chín Đuôi	Ho Tinh Chin Duoi
+loc.boss.ma_da_chua.name	Ma Da Chúa	Ma Da Chua
+loc.boss.moc_tinh_da.name	Mộc Tinh Cây Đa	Moc Tinh Cay Da
+loc.boss.ngu_tinh.name	Ngư Tinh	Ngu Tinh
+loc.boss.quy_nhap_trang.name	Quỷ Nhập Tràng	Quy Nhap Trang
+loc.boss.than_trung.name	Thần Trùng	Than Trung
+loc.boss.thuong_luong.name	Thuồng Luồng	Thuong Luong
+loc.chest.hidden.map.lang_da.bo_ruong.01.name	Rương Ẩn Bờ Ruộng	Hidden Ruom Bank Chest
+loc.chest.hidden.season.0.lang_da.01.name	Rương Ẩn Làng Đa	Hidden Chest of Lang Da
+loc.chest.hidden.season.1.u_minh.01.name	Rương Ẩn U Minh	Hidden Chest of U Minh
+loc.chest.hidden.season.2.ben_nuoc.01.name	Rương Ẩn Bến Nước	Hidden Chest of Ben Nuoc
+loc.chest.hidden.season.3.deo_may.01.name	Rương Ẩn Đèo Mây	Hidden Chest of Deo May
+loc.chest.hidden.season.4.thanh_co.01.name	Rương Ẩn Thành Cổ	Hidden Chest of Thanh Co
+loc.chest.hidden.season.5.nui_thieng.01.name	Rương Ẩn Núi Thiêng	Hidden Chest of Nui Thieng
+loc.class.hoa.name	Phù Sư	Talismancer
+loc.class.kim.name	Kiếm Khách	Swordmaster
+loc.class.moc.name	Dược Sư	Apothecary
+loc.class.tho.name	Hộ Pháp	Guardian
+loc.class.thuy.name	Thủy Sư	Tidemaster
+loc.cosmetic.appearance.ao_toi_la.name	Áo Tơi Lá	Leaf Rain Cape
+loc.cosmetic.appearance.ao_vai_hoa_van.name	Áo Vải Hoa Văn	Patterned Cloth Tunic
+loc.cosmetic.appearance.khan_ben_nuoc.name	Khăn Bến Nước	Ben Nuoc Scarf
+loc.cosmetic.appearance.non_la_moc.name	Nón Lá Mộc	Rustic Leaf Hat
+loc.cosmetic.aura.linh_khi.name	Linh Khí	Spirit Aura
+loc.cosmetic.aura.quy_khi.name	Quỷ Khí	Demon Aura
+loc.cosmetic.emote.season.0.paid.chap_tay.name	Chắp Tay	Clasped Hands
+loc.cosmetic.emote.season.1.paid.name	Cử Chỉ Mùa 1 (Cao Cấp)	Season 1 Emote (Premium)
+loc.cosmetic.emote.season.2.paid.name	Cử Chỉ Mùa 2 (Cao Cấp)	Season 2 Emote (Premium)
+loc.cosmetic.emote.season.3.paid.name	Cử Chỉ Mùa 3 (Cao Cấp)	Season 3 Emote (Premium)
+loc.cosmetic.emote.season.4.paid.name	Cử Chỉ Mùa 4 (Cao Cấp)	Season 4 Emote (Premium)
+loc.cosmetic.emote.season.5.paid.name	Cử Chỉ Mùa 5 (Cao Cấp)	Season 5 Emote (Premium)
+loc.cosmetic.frame.bach_ho.name	Khung Bạch Hổ	Bach Ho Frame
+loc.cosmetic.frame.ben_da.name	Khung Bến Đa	Ben Da Frame
+loc.cosmetic.frame.guild_war.chien_ky.name	Khung Chiến Kỳ	Battle-Flag Frame
+loc.cosmetic.frame.ho_tinh.name	Khung Hồ Tinh	Fox Spirit Frame
+loc.cosmetic.frame.huyen_vu.name	Khung Huyền Vũ	Huyen Vu Frame
+loc.cosmetic.frame.lan_linh.name	Khung Lân Lân	Lan Linh Frame
+loc.cosmetic.frame.nui_thieng.name	Khung Núi Thiêng	Nui Thieng Frame
+loc.cosmetic.frame.phuong_hoang.name	Khung Phượng Hoàng	Phuong Hoang Frame
+loc.cosmetic.frame.pvp.bac.name	Khung Bạc Đấu Trường	Silver Arena Frame
+loc.cosmetic.frame.pvp.linh.name	Khung Linh Đấu Trường	Spirit Arena Frame
+loc.cosmetic.frame.pvp.ngoc.name	Khung Ngọc Đấu Trường	Jade Arena Frame
+loc.cosmetic.frame.pvp.than_thoai.name	Khung Thần Thoại Đấu Trường	Mythic Arena Frame
+loc.cosmetic.frame.pvp.vang.name	Khung Vàng Đấu Trường	Gold Arena Frame
+loc.cosmetic.frame.rong_vang.name	Khung Rồng Vàng	Rong Vang Frame
+loc.cosmetic.frame.season.0.name	Khung Mùa Làng Đa	Lang Da Season Frame
+loc.cosmetic.frame.season.0.paid.name	Khung Đêm Làng	Village Night Frame
+loc.cosmetic.frame.season.1.name	Khung Mùa 1	Season 1 Frame
+loc.cosmetic.frame.season.1.paid.name	Khung Mùa 1 (Cao Cấp)	Season 1 Frame (Premium)
+loc.cosmetic.frame.season.2.name	Khung Mùa 2	Season 2 Frame
+loc.cosmetic.frame.season.2.paid.name	Khung Mùa 2 (Cao Cấp)	Season 2 Frame (Premium)
+loc.cosmetic.frame.season.3.name	Khung Mùa 3	Season 3 Frame
+loc.cosmetic.frame.season.3.paid.name	Khung Mùa 3 (Cao Cấp)	Season 3 Frame (Premium)
+loc.cosmetic.frame.season.4.name	Khung Mùa 4	Season 4 Frame
+loc.cosmetic.frame.season.4.paid.name	Khung Mùa 4 (Cao Cấp)	Season 4 Frame (Premium)
+loc.cosmetic.frame.season.5.name	Khung Mùa 5	Season 5 Frame
+loc.cosmetic.frame.season.5.paid.name	Khung Mùa 5 (Cao Cấp)	Season 5 Frame (Premium)
+loc.cosmetic.guild.banner.guild_war_champion.name	Cờ Bá Chủ Ngũ Ấn	Five-Seals Champion Banner
+loc.cosmetic.guild.banner.ritual_8.name	Cờ Hoa Văn	Patterned Banner
+loc.cosmetic.guild.crest.ritual_4.name	Nét Tre	Bamboo Stroke
+loc.cosmetic.guild.shrine.guild_war_top10.name	Đàn Ngũ Ấn	Five-Seals Altar
+loc.cosmetic.guild.shrine.ritual_12.name	Đèn Hội Tụ	Gathering Lantern
+loc.cosmetic.guild_stone.inscription.kim_bach.name	Kim Bạch	Gold-White
+loc.cosmetic.guild_stone.inscription.long_van.name	Long Vân	Dragon Cloud
+loc.cosmetic.guild_stone.inscription.ngoc_bich.name	Ngọc Bích	Jade Green
+loc.cosmetic.guild_stone.inscription.phuong_vi.name	Phượng Vĩ	Phoenix Plume
+loc.cosmetic.guild_stone.inscription.thien_long.name	Thiên Long	Heavenly Dragon
+loc.cosmetic.guild_stone.inscription.trung_nguyen.name	Trung Nguyên	Trung Nguyen
+loc.cosmetic.iap.appearance.co_tam_truyen.name	Trang Phục Cô Tấm Truyền	Co Tam Truyen Outfit
+loc.cosmetic.iap.appearance.co_tien.name	Cô Tiên	Co Tien Outfit
+loc.cosmetic.iap.appearance.nu_tuong_trong_dong.name	Nữ Tướng Trống Đồng	Bronze-Drum Heroine Outfit
+loc.cosmetic.iap.appearance.vo_quan_thanh_co.name	Võ Quan Thành Cổ	Old-Fort Warlord Outfit
+loc.cosmetic.iap.emote.bai_chao_lang.name	Bái Chào Làng	Village Salute
+loc.cosmetic.iap.emote.ngoi_thien_dinh.name	Ngồi Thiền Định	Seated Meditation
+loc.cosmetic.iap.emote.vo_tay_thang_tran.name	Vỗ Tay Thắng Trận	Victory Clap
+loc.cosmetic.iap.frame.thien_long.name	Khung Thiên Long	Heavenly Dragon Frame
+loc.cosmetic.iap.nameplate.hun_thuoc_co.name	Danh Bảng Hủn Thuộc Cổ	Hun Thuoc Co Nameplate
+loc.cosmetic.iap.title_glow.long_nhan.name	Hào Quang Danh Hiệu Long Nhãn	Dragon-Eye Title Glow
+loc.cosmetic.iap.trail.bao_gam.name	Báo Gấm	Brocade-Panther Trail
+loc.cosmetic.iap.trail.long_hoa.name	Vệt Long Hỏa	Dragon-Fire Trail
+loc.cosmetic.iap.trail.phuong_hoang_vu.name	Vệt Phượng Hoàng Vũ	Phoenix-Dance Trail
+loc.cosmetic.nameplate.ky_luat_vang.name	Danh Bảng Kỵ Luật Vàng	Ky Luat Vang Nameplate
+loc.cosmetic.nameplate.linh_thuyen.name	Danh Bảng Linh Thuyền	Linh Thuyen Nameplate
+loc.cosmetic.nameplate.son_ha.name	Danh Bảng Sơn Hà	Son Ha Nameplate
+loc.cosmetic.shrine.kim_trang.name	Miếu Kim Trắng	Metal-White Shrine
+loc.cosmetic.shrine.linh_khoi.name	Miếu Linh Khói	Spirit-Smoke Shrine
+loc.cosmetic.shrine.lua_do.name	Miếu Lửa Đỏ	Flame-Red Shrine
+loc.cosmetic.shrine.moc_xanh.name	Miếu Mộc Xanh	Forest-Green Shrine
+loc.cosmetic.shrine.season.0.name	Miếu Mùa Làng Đa	Lang Da Season Shrine
+loc.cosmetic.shrine.season.1.name	Đền Thờ Mùa 1	Season 1 Shrine
+loc.cosmetic.shrine.season.2.name	Đền Thờ Mùa 2	Season 2 Shrine
+loc.cosmetic.shrine.season.3.name	Đền Thờ Mùa 3	Season 3 Shrine
+loc.cosmetic.shrine.season.4.name	Đền Thờ Mùa 4	Season 4 Shrine
+loc.cosmetic.shrine.season.5.name	Đền Thờ Mùa 5	Season 5 Shrine
+loc.cosmetic.shrine.tho_vang.name	Miếu Thổ Vàng	Earth-Gold Shrine
+loc.cosmetic.shrine.thuy_ngoc.name	Miếu Thủy Ngọc	Water-Jade Shrine
+loc.cosmetic.shrine_special.bach_ngoc.name	Miếu Bạch Ngọc	Bach Ngoc Shrine
+loc.cosmetic.shrine_special.cu_thach.name	Miếu Cự Thạch	Cu Thach Shrine
+loc.cosmetic.shrine_special.dai_hong.name	Miếu Đại Hồng	Dai Hong Shrine
+loc.cosmetic.shrine_special.hong_tran.name	Miếu Hồng Trần	Hong Tran Shrine
+loc.cosmetic.shrine_special.ngoc_bich.name	Miếu Ngọc Bích	Ngoc Bich Shrine
+loc.cosmetic.title.atlas.bach_khoa_dan_gian.name	Bách Khoa Dân Gian	Folk Encyclopedia
+loc.cosmetic.title.atlas.bep_bong.name	Cá Bống Kho Tộ	Clay-Pot Braised Gudgeon
+loc.cosmetic.title.atlas.bep_chep.name	Cá Chép Nướng Mộc	Wood-Grilled Carp
+loc.cosmetic.title.atlas.bep_tom.name	Tôm Nướng Than	Charcoal-Grilled Shrimp
+loc.cosmetic.title.atlas.bong_nguoi.name	Bóng Người	Human Shadow
+loc.cosmetic.title.atlas.bong_nuoc_ma.name	Bóng Nước Ma	Ghostly Water Shadow
+loc.cosmetic.title.atlas.bong_vong.name	Bóng Vong	Shadow Vong Spirit
+loc.cosmetic.title.atlas.bu_nhin_rom.name	Bù Nhìn Rơm	Straw Scarecrow
+loc.cosmetic.title.atlas.ca_bong2.name	Cá Bống	Gudgeon
+loc.cosmetic.title.atlas.ca_chep2.name	Cá Chép	Carp
+loc.cosmetic.title.atlas.ca_chep_hoa_rong.name	Cá Chép Hóa Rồng	Dragon-Transformed Carp
+loc.cosmetic.title.atlas.ca_tinh.name	Cá Tinh	Fish Sprite
+loc.cosmetic.title.atlas.ca_tinh_gia.name	Cá Tinh Già	Elder Fish Sprite
+loc.cosmetic.title.atlas.can_cau.name	Cần Câu Tre	Bamboo Fishing Rod
+loc.cosmetic.title.atlas.chia_khoa.name	Chìa Khóa Cổ	Ancient Key
+loc.cosmetic.title.atlas.coc_thanh_tinh.name	Cóc Thành Tinh	Toad Spirit
+loc.cosmetic.title.atlas.cui_lua.name	Củi Lửa Trại	Campfire Firewood
+loc.cosmetic.title.atlas.dai_tinh_cay.name	Đại Tinh Cây	Great Tree Spirit
+loc.cosmetic.title.atlas.dai_vong_linh.name	Đại Vong Linh	Great Sacred Vong Spirit
+loc.cosmetic.title.atlas.di_ho_chin.name	Hồ Tinh Chín Đuôi	Ho Tinh Chin Duoi
+loc.cosmetic.title.atlas.di_ho_tinh.name	Hổ Tinh	Ho Tinh
+loc.cosmetic.title.atlas.di_ma_da_chua.name	Ma Da Chúa	Ma Da Chua
+loc.cosmetic.title.atlas.di_moc.name	Mộc Tinh Cây Đa	Moc Tinh Cay Da
+loc.cosmetic.title.atlas.di_ngu_tinh.name	Ngư Tinh	Ngu Tinh
+loc.cosmetic.title.atlas.di_quy.name	Quỷ Nhập Tràng	Quy Nhap Trang
+loc.cosmetic.title.atlas.di_than_trung.name	Thần Trùng	Than Trung
+loc.cosmetic.title.atlas.di_thuong.name	Thuồng Luồng	Thuong Luong
+loc.cosmetic.title.atlas.dom_dom_ma.name	Đom Đóm Ma	Ghost Firefly
+loc.cosmetic.title.atlas.dom_lua.name	Đom Lửa	Fire Wisp
+loc.cosmetic.title.atlas.ho_con_tinh.name	Hồ Tinh Con	Fox Spirit Cub
+loc.cosmetic.title.atlas.ho_tinh_dong.name	Hồ Tinh	Fox Spirit
+loc.cosmetic.title.atlas.ho_tinh_lon.name	Hồ Tinh Lớn	Greater Fox Spirit
+loc.cosmetic.title.atlas.ho_tinh_ve.name	Hồ Tinh Vệ	Fox Spirit Guard
+loc.cosmetic.title.atlas.hoc_gia_dan_gian.name	Học Giả Dân Gian	Folk Scholar
+loc.cosmetic.title.atlas.hon_binh.name	Hồn Binh	Soldier Soul
+loc.cosmetic.title.atlas.hon_binh_co.name	Hồn Binh Cổ	Ancient Soldier Soul
+loc.cosmetic.title.atlas.hon_binh_suu.name	Hồn Binh Cũ	Old Soldier Soul
+loc.cosmetic.title.atlas.hon_bu_nhin.name	Hồn Bù Nhìn Rơm	Straw Scarecrow Soul
+loc.cosmetic.title.atlas.hon_ca_tinh.name	Hồn Cá Tinh	Fish Spirit Soul
+loc.cosmetic.title.atlas.hon_chet_duoi.name	Hồn Chết Đuối	Drowned Soul
+loc.cosmetic.title.atlas.hon_chet_duoi2.name	Hồn Chết Đuối	Drowned Soul
+loc.cosmetic.title.atlas.hon_coc.name	Hồn Cóc Thành Tinh	Toad Spirit Soul
+loc.cosmetic.title.atlas.hon_do_trang.name	Hồn Đỏ Trắng	Red and White Soul
+loc.cosmetic.title.atlas.hon_dom_dom.name	Hồn Đom Đóm Ma	Ghost Firefly Soul
+loc.cosmetic.title.atlas.hon_dom_lua.name	Hồn Đốm Lửa Rừng	Forest Ember Soul
+loc.cosmetic.title.atlas.hon_ho_con.name	Hồn Hổ Con Tinh	Tiger Cub Spirit Soul
+loc.cosmetic.title.atlas.hon_ho_tinh_chin.name	Hồn Hồ Tinh Chín Đuôi	Nine-Tailed Fox Soul
+loc.cosmetic.title.atlas.hon_ho_tinh_ve.name	Hồn Hổ Tinh Vệ	Tiger Sentinel Soul
+loc.cosmetic.title.atlas.hon_khi_nui.name	Hồn Khỉ Núi	Mountain Monkey Soul
+loc.cosmetic.title.atlas.hon_ma_co2.name	Hồn Ma Cổ	Ancient Ghost Soul
+loc.cosmetic.title.atlas.hon_ma_co_thu.name	Hồn Ma Cổ Thụ	Ancient Tree Soul
+loc.cosmetic.title.atlas.hon_ma_da2.name	Hồn Ma Da	Ma Da Soul
+loc.cosmetic.title.atlas.hon_ma_da_gia2.name	Hồn Ma Da Già	Elder Ma Da Soul
+loc.cosmetic.title.atlas.hon_ma_rung.name	Hồn Ma Rừng	Forest Ghost Soul
+loc.cosmetic.title.atlas.hon_ma_tranh2.name	Hồn Ma Trành	Ma Tranh Soul
+loc.cosmetic.title.atlas.hon_ma_tranh_gia2.name	Hồn Ma Trành Già	Elder Ma Tranh Soul
+loc.cosmetic.title.atlas.hon_ma_xo2.name	Hồn Ma Xó	Ma Xo Soul
+loc.cosmetic.title.atlas.hon_moc_tinh.name	Hồn Mộc Tinh	Wood Spirit Soul
+loc.cosmetic.title.atlas.hon_qua_tinh.name	Hồn Quạ Tinh	Crow Spirit Soul
+loc.cosmetic.title.atlas.hon_thach_ve.name	Hồn Thạch Vệ	Stone Sentinel Soul
+loc.cosmetic.title.atlas.hon_than_trung2.name	Hồn Thần Trùng	Than Trung Soul
+loc.cosmetic.title.atlas.hon_thuong_luong2.name	Hồn Thuồng Luồng	Thuong Luong Soul
+loc.cosmetic.title.atlas.hon_tinh_cay.name	Hồn Tinh Cây	Tree Spirit Soul
+loc.cosmetic.title.atlas.hon_tran_linh.name	Hồn Trấn Linh	Guardian Soul
+loc.cosmetic.title.atlas.hon_tuong.name	Hồn Tượng	Statue Soul
+loc.cosmetic.title.atlas.hon_vong_hon2.name	Hồn Vong	Vong Soul
+loc.cosmetic.title.atlas.hon_xo_non.name	Hồn Xo Nón	Tilted Hat Soul
+loc.cosmetic.title.atlas.khi_nui.name	Khỉ Núi	Mountain Monkey
+loc.cosmetic.title.atlas.kho_bau.name	Kho Báu	Treasure
+loc.cosmetic.title.atlas.linh_dan2.name	Linh Đan	Spirit Pellet
+loc.cosmetic.title.atlas.linh_ve.name	Linh Vệ	Sacred Guard
+loc.cosmetic.title.atlas.ma_co.name	Ma Cổ	Ancient Ghost
+loc.cosmetic.title.atlas.ma_da.name	Ma Đá	Stone Ghost
+loc.cosmetic.title.atlas.ma_da_gia.name	Ma Đá Già	Elder Stone Ghost
+loc.cosmetic.title.atlas.ma_nui.name	Ma Núi	Mountain Ghost
+loc.cosmetic.title.atlas.ma_rung.name	Ma Rừng	Forest Ghost
+loc.cosmetic.title.atlas.ma_tranh.name	Ma Tranh	Reed Ghost
+loc.cosmetic.title.atlas.ma_tranh_deo.name	Ma Trành	Reed Ghost
+loc.cosmetic.title.atlas.ma_tranh_gia.name	Ma Trành Già	Elder Reed Ghost
+loc.cosmetic.title.atlas.ma_van_dem.name	Ma Văn Đêm	Night Chant Ghost
+loc.cosmetic.title.atlas.ma_xo.name	Ma Xó	Corner Ghost
+loc.cosmetic.title.atlas.moc_tinh.name	Mộc Tinh	Wood Spirit
+loc.cosmetic.title.atlas.ngu_tinh_song.name	Ngư Tinh	Fish Spirit
+loc.cosmetic.title.atlas.nguoi_song_co.name	Người Sông Cổ	Ancient River Man
+loc.cosmetic.title.atlas.nha_suu_tam.name	Nhà Sưu Tầm	The Collector
+loc.cosmetic.title.atlas.oan_hon_dem.name	Oan Hồn Đêm	Night Vengeful Soul
+loc.cosmetic.title.atlas.qua_tinh.name	Quạ Tinh	Crow Spirit
+loc.cosmetic.title.atlas.qua_tinh_lon.name	Quạ Tinh Lớn	Greater Crow Spirit
+loc.cosmetic.title.atlas.quy_nhap_trang_dong.name	Quỷ Nhập Tràng	Possessing Demon
+loc.cosmetic.title.atlas.quy_song_dem.name	Quỷ Sông Đêm	Night River Demon
+loc.cosmetic.title.atlas.ruou_nep.name	Rượu Nếp Làng	Village Sticky Rice Wine
+loc.cosmetic.title.atlas.thach_ve.name	Thạch Vệ	Stone Guard
+loc.cosmetic.title.atlas.than_rung_dem.name	Thần Rừng Đêm	Night Forest God
+loc.cosmetic.title.atlas.than_trung_dong.name	Thần Trùng	Worm God
+loc.cosmetic.title.atlas.thuong_luong_song.name	Thuồng Luồng	Thuong Luong
+loc.cosmetic.title.atlas.thuy_quai.name	Thủy Quái	Water Fiend
+loc.cosmetic.title.atlas.tinh_cay.name	Tinh Cây	Tree Spirit
+loc.cosmetic.title.atlas.tinh_nui_gia.name	Tinh Núi Già	Elder Mountain Spirit
+loc.cosmetic.title.atlas.tinh_thu.name	Tinh Thú	Beast Spirit
+loc.cosmetic.title.atlas.tom_song2.name	Tôm Sông	River Shrimp
+loc.cosmetic.title.atlas.tuong_da.name	Tượng Đá	Stone Statue
+loc.cosmetic.title.atlas.vong_hon.name	Vong Hồn	Wandering Soul
+loc.cosmetic.title.atlas.vong_hon_gia.name	Vong Hồn Giả	False Wandering Soul
+loc.cosmetic.title.atlas.vong_linh.name	Vong Linh	Sacred Vong Spirit
+loc.cosmetic.title.atlas.vong_nui_gia.name	Vong Núi Giả	False Mountain Vong Spirit
+loc.cosmetic.title.atlas.vong_rung.name	Vong Rừng	Forest Vong Spirit
+loc.cosmetic.title.atlas.vong_rung_sau.name	Vong Rừng Sâu	Deep Forest Vong Spirit
+loc.cosmetic.title.ban_tay_than.name	Bàn Tay Thần	Divine Hand
+loc.cosmetic.title.ben_nuoc.name	Người Qua Bến Nước	Wayfarer of Ben Nuoc
+loc.cosmetic.title.canh_cuoi.name	Người Khép Canh Cuối	Keeper of the Last Watch
+loc.cosmetic.title.dai_hiep_lang_que.name	Đại Hiệp Làng Quê	Great Hero of the Village
+loc.cosmetic.title.deo_may.name	Người Qua Đèo Mây	Wayfarer of Deo May
+loc.cosmetic.title.doi_mat_than_trung.name	Người Đối Mặt Thần Trùng	Than Trung Challenger
+loc.cosmetic.title.dung_si_tru_ho.name	Dũng Sĩ Trừ Hổ	Tiger-Slaying Champion
+loc.cosmetic.title.guild_war.hung_binh.name	Hùng Binh Ngũ Ấn	Vanguard of the Five Seals
+loc.cosmetic.title.hiep_nghia_vo_song.name	Hiệp Nghĩa Vô Song	Peerless Gallantry
+loc.cosmetic.title.khac_tinh_ma_da.name	Khắc Tinh Ma Da	Bane of Ma Da
+loc.cosmetic.title.lang_da.name	Người Qua Làng Đa	Wayfarer of Lang Da
+loc.cosmetic.title.ngu_ong_ben_do.name	Ngư Ông Bến Đò	Ferryman Fisher
+loc.cosmetic.title.pvp.than_thoai.name	Thần Thoại Đấu Trường	Arena Myth
+loc.cosmetic.title.season.0.bup_lua.name	Búp Lửa	Flame Bud
+loc.cosmetic.title.season.0.ca_linh.name	Cá Linh Giang	Linh Giang Fish
+loc.cosmetic.title.season.0.ca_linh_giang.name	Cá Linh Giang	Linh Giang Fish
+loc.cosmetic.title.season.0.co_lua.name	Cỏ Lửa	Flame Grass
+loc.cosmetic.title.season.0.di_hon_dau.name	Hồn Đầu	Head Soul
+loc.cosmetic.title.season.0.di_quy_xuan.name	Quỷ Xuân	Spring Demon
+loc.cosmetic.title.season.0.di_tich_hon_dau.name	Hồn Đầu	Head Soul
+loc.cosmetic.title.season.0.di_tich_quy_xuan.name	Quỷ Xuân	Spring Demon
+loc.cosmetic.title.season.0.dom_dom_nguyen.name	Đom Đóm Nguyên	Primal Firefly
+loc.cosmetic.title.season.0.dom_nguyen.name	Đom Đóm Nguyên	Primal Firefly
+loc.cosmetic.title.season.0.hon_gao.name	Danh Hiệu Hồn Gào	Howling Soul
+loc.cosmetic.title.season.0.ky_xuan.name	Rương Ẩn Làng Đa	Hidden Chest of Lang Da
+loc.cosmetic.title.season.0.lang_da_ky_ghe.name	Kỳ Ghé Làng Đa	The Lang Da Visit
+loc.cosmetic.title.season.0.paid.dem_lang.name	Đêm Làng	Village Night
+loc.cosmetic.title.season.0.tinh_buoi.name	Tinh Bưởi	Pomelo Spirit
+loc.cosmetic.title.season.0.vong_bien.name	Vong Biển	Sea Vong Spirit
+loc.cosmetic.title.season.1.bong_nguoi.name	Bóng Người	Human Shadow
+loc.cosmetic.title.season.1.ca_sam.name	Cá Sặt U Minh	U Minh Eel Catfish
+loc.cosmetic.title.season.1.dai_tinh_cay.name	Đại Tinh Cây	Great Tree Spirit
+loc.cosmetic.title.season.1.di_mieu.name	Mộc Miếu	Wooden Shrine
+loc.cosmetic.title.season.1.di_moc.name	Mộc Tinh	Wood Spirit
+loc.cosmetic.title.season.1.dom_lua.name	Đom Lửa	Fire Wisp
+loc.cosmetic.title.season.1.ky_ram.name	Rương Ẩn U Minh	Hidden Chest of U Minh
+loc.cosmetic.title.season.1.ma_rung.name	Ma Rừng	Forest Ghost
+loc.cosmetic.title.season.1.paid.name	Danh Hiệu Mùa 1 (Cao Cấp)	Season 1 Title (Premium)
+loc.cosmetic.title.season.1.tinh_cay.name	Tinh Cây	Tree Spirit
+loc.cosmetic.title.season.1.u_minh_suong.name	Danh Hiệu U Minh Sương	Mist of U Minh Title
+loc.cosmetic.title.season.1.vong_rung_sau.name	Vong Rừng Sâu	Deep Forest Vong Spirit
+loc.cosmetic.title.season.2.ben_den.name	Danh Hiệu Bến Đen	Black Wharf Title
+loc.cosmetic.title.season.2.bong_nuoc_ma.name	Bóng Nước Ma	Ghostly Water Shadow
+loc.cosmetic.title.season.2.ca_bong_den.name	Cá Bống Đen	Black Gudgeon
+loc.cosmetic.title.season.2.ca_tinh.name	Cá Tinh	Fish Sprite
+loc.cosmetic.title.season.2.ca_tinh_gia.name	Cá Tinh Già	Elder Fish Sprite
+loc.cosmetic.title.season.2.di_ma_da.name	Ma Đá Già	Elder Stone Ghost
+loc.cosmetic.title.season.2.di_xom.name	Xóm Chim	Sunken Hamlet
+loc.cosmetic.title.season.2.hon_chet_duoi.name	Hồn Chết Đuối	Drowned Soul
+loc.cosmetic.title.season.2.ky_ben.name	Rương Ẩn Bến Nước	Hidden Chest of Ben Nuoc
+loc.cosmetic.title.season.2.ma_da.name	Ma Đá	Stone Ghost
+loc.cosmetic.title.season.2.paid.name	Danh Hiệu Mùa 2 (Cao Cấp)	Season 2 Title (Premium)
+loc.cosmetic.title.season.2.quy_song_dem.name	Quỷ Sông Đêm	Night River Demon
+loc.cosmetic.title.season.3.deo_suong.name	Danh Hiệu Đèo Sương	Misty Pass Title
+loc.cosmetic.title.season.3.di_hang.name	Hang	Cave
+loc.cosmetic.title.season.3.di_ho_ve.name	Hổ Vệ	Tiger Guard
+loc.cosmetic.title.season.3.ho_con_tinh.name	Hồ Tinh Con	Fox Spirit Cub
+loc.cosmetic.title.season.3.ho_tinh_lon.name	Hồ Tinh Lớn	Greater Fox Spirit
+loc.cosmetic.title.season.3.khi_nui.name	Khỉ Núi	Mountain Monkey
+loc.cosmetic.title.season.3.ky_deo.name	Rương Ẩn Đèo Mây	Hidden Chest of Deo May
+loc.cosmetic.title.season.3.ma_tranh.name	Ma Trành	Reed Ghost
+loc.cosmetic.title.season.3.ma_van_dem.name	Ma Văn Đêm	Night Chant Ghost
+loc.cosmetic.title.season.3.paid.name	Danh Hiệu Mùa 3 (Cao Cấp)	Season 3 Title (Premium)
+loc.cosmetic.title.season.3.ruou_nep.name	Rượu Nếp Làng	Village Sticky Rice Wine
+loc.cosmetic.title.season.3.vong_rung.name	Vong Rừng	Forest Vong Spirit
+loc.cosmetic.title.season.4.ca_bong_kho.name	Cá Bống Kho Tộ	Clay-Pot Braised Gudgeon
+loc.cosmetic.title.season.4.di_den.name	Đèn	Lantern
+loc.cosmetic.title.season.4.di_thach.name	Thạch	Stone
+loc.cosmetic.title.season.4.hon_binh.name	Hồn Binh	Soldier Soul
+loc.cosmetic.title.season.4.hon_tran_linh.name	Hồn Trấn Linh	Guardian Soul
+loc.cosmetic.title.season.4.ky_thanh.name	Rương Ẩn Thành Cổ	Hidden Chest of Thanh Co
+loc.cosmetic.title.season.4.ma_co.name	Ma Cổ	Ancient Ghost
+loc.cosmetic.title.season.4.paid.name	Danh Hiệu Mùa 4 (Cao Cấp)	Season 4 Title (Premium)
+loc.cosmetic.title.season.4.qua_tinh.name	Quạ Tinh	Crow Spirit
+loc.cosmetic.title.season.4.qua_tinh_lon.name	Quạ Tinh Lớn	Greater Crow Spirit
+loc.cosmetic.title.season.4.thanh_mua.name	Danh Hiệu Thành Mưa	Rainy Citadel Title
+loc.cosmetic.title.season.4.tuong_da.name	Tượng Đá	Stone Statue
+loc.cosmetic.title.season.5.ca_suong.name	Cá Sương Hồ	Mist Lake Fish
+loc.cosmetic.title.season.5.dai_vong_linh.name	Đại Vong Linh	Great Sacred Vong Spirit
+loc.cosmetic.title.season.5.di_cong.name	Cổng	Gate
+loc.cosmetic.title.season.5.di_linh_ve.name	Linh Vệ	Sacred Guard
+loc.cosmetic.title.season.5.hon_binh_co.name	Hồn Binh Cổ	Ancient Soldier Soul
+loc.cosmetic.title.season.5.ky_nui.name	Rương Ẩn Núi Thiêng	Hidden Chest of Nui Thieng
+loc.cosmetic.title.season.5.ma_nui.name	Ma Núi	Mountain Ghost
+loc.cosmetic.title.season.5.nui_mua.name	Danh Hiệu Núi Mưa	Rainy Mountain Title
+loc.cosmetic.title.season.5.paid.name	Danh Hiệu Mùa 5 (Cao Cấp)	Season 5 Title (Premium)
+loc.cosmetic.title.season.5.than_rung_dem.name	Thần Rừng Đêm	Night Forest God
+loc.cosmetic.title.season.5.tinh_thu.name	Tinh Thú	Beast Spirit
+loc.cosmetic.title.season.5.vong_linh.name	Vong Linh	Sacred Vong Spirit
+loc.cosmetic.title.tam_giao_vien_man.name	Tâm Giao Viên Mãn	Bonds Fulfilled
+loc.cosmetic.title.thanh_co.name	Người Nghe Trống Thành	Listener of the Citadel Drum
+loc.cosmetic.title.thien_ha_de_nhat.name	Thiên Hạ Đệ Nhất	Number One Under Heaven
+loc.cosmetic.title.tho_san_thuong_luong.name	Người Săn Thuồng Luồng	Thuong Luong Hunter
+loc.cosmetic.title.trang_si_giup_doi.name	Tráng Sĩ Giúp Đời	Hero Who Aids the World
+loc.cosmetic.title.tuyet_dinh_than_binh.name	Tuyệt Đỉnh Thần Binh	Peerless Divine Blade
+loc.cosmetic.title.u_minh.name	Người Đi U Minh	Traveler of U Minh
+loc.cosmetic.title_glow.bach_nhat.name	Ánh Bạch Nhạt	White-Shimmer Glow
+loc.cosmetic.title_glow.do_quang.name	Ánh Đỏ Quang	Red Glow
+loc.cosmetic.title_glow.hoa_quang.name	Ánh Hỏa Quang	Fire Glow
+loc.cosmetic.title_glow.hong_phuc.name	Ánh Hồng Phúc	Rose-Blessing Glow
+loc.cosmetic.title_glow.kim_quang.name	Ánh Kim Quang	Golden Glow
+loc.cosmetic.title_glow.linh_hoa.name	Ánh Linh Hoa	Spirit-Flower Glow
+loc.cosmetic.title_glow.moc_xanh.name	Ánh Mộc Xanh	Forest-Green Glow
+loc.cosmetic.title_glow.thien_van.name	Ánh Thiên Vân	Celestial-Cloud Glow
+loc.cosmetic.title_glow.tho_bach.name	Ánh Thổ Bạch	Earth-White Glow
+loc.cosmetic.title_glow.thuy_linh.name	Ánh Thủy Linh	Water-Spirit Glow
+loc.cosmetic.title_glow.tim_nhat.name	Ánh Tím Nhạt	Soft-Purple Glow
+loc.cosmetic.title_glow.vang_nhat.name	Ánh Vàng Nhạt	Pale-Gold Glow
+loc.cosmetic.title_glow.xanh_nhat.name	Ánh Xanh Nhạt	Light-Blue Glow
+loc.dungeon.den_tran.name	Đền Trấn	Guardian Temple
+loc.dungeon.dinh_lang_bo_hoang.name	Đình Làng Bỏ Hoang	Abandoned Communal Hall
+loc.dungeon.hang_ma_tranh.name	Hang Ma Trành	Reed Ghost Cave
+loc.dungeon.mieu_ba_trong_rung.name	Miếu Bà Trong Rừng	Shrine of the Forest Lady
+loc.dungeon.xom_chim.name	Xóm Chìm	Sunken Hamlet
+loc.error.account_banned	Tài khoản đã bị khóa	This account is banned
+loc.error.account_pending_deletion	Tài khoản đang chờ xóa	This account is pending deletion
+loc.error.account_suspended	Tài khoản đang bị đình chỉ	This account is suspended
+loc.error.ah_eligibility_age_required	Tài khoản chưa đủ tuổi để dùng chợ	Your account is not old enough to use the market
+loc.error.ah_eligibility_level_required	Chưa đủ cấp để dùng chợ	Your level is too low to use the market
+loc.error.ah_price_floor_not_met	Giá rao bán dưới mức tối thiểu	Listing price is below the floor
+loc.error.already_friends	Hai bên đã là bạn bè	Already friends
+loc.error.already_owned	Đã sở hữu	Already owned
+loc.error.atlas_tier_not_reached	Chưa đạt bậc Linh Thú Lục	Atlas tier not reached
+loc.error.auction_listing_not_active	Tin rao bán không còn hiệu lực	Listing is no longer active
+loc.error.auth_expired	Phiên đăng nhập đã hết hạn	Your sign-in session has expired
+loc.error.auth_invalid	Thông tin đăng nhập không hợp lệ	Invalid sign-in credentials
+loc.error.auth_required	Yêu cầu đăng nhập	Sign-in required
+loc.error.beast_not_owned	Chưa sở hữu Linh Thú này	You do not own this Spirit Beast
+loc.error.capacity_full	Đã đầy	Capacity is full
+loc.error.character_already_active	Nhân vật đang hoạt động	This character is already active
+loc.error.character_name_invalid	Tên nhân vật không hợp lệ	Invalid character name
+loc.error.character_name_taken	Tên nhân vật đã được dùng	Character name is taken
+loc.error.character_slots_full	Đã hết ô nhân vật	No free character slots
+loc.error.charm_ineligible	Không đủ điều kiện dùng Bùa	Charm cannot be used
+loc.error.chat_text_invalid	Nội dung chat không hợp lệ	Invalid chat text
+loc.error.chest_eligibility_invalid	Không đủ điều kiện mở rương	Not eligible to open this chest
+loc.error.claim_cap_reached	Đã đạt giới hạn nhận thưởng	Reward claim cap reached
+loc.error.claim_window_closed	Đã hết thời gian nhận	Claim window has closed
+loc.error.client_update_required	Cần cập nhật client	Please update your game client
+loc.error.content_incompatible	Nội dung không tương thích	Incompatible content
+loc.error.cooldown_active	Đang trong thời gian hồi	On cooldown
+loc.error.credential_change_locked	Đổi thông tin đăng nhập đang bị khóa	Credential change is locked
+loc.error.currency_cap_exceeded	Vượt giới hạn tiền tệ	Currency cap exceeded
+loc.error.daily_food_cap_reached	Đã đạt giới hạn ăn uống hôm nay	Daily food limit reached
+loc.error.daily_limit_reached	Đã đạt giới hạn trong ngày	Daily limit reached
+loc.error.durable_backpressure	Hệ thống đang bận, thử lại sau	System busy, try again later
+loc.error.email_invalid	Email không hợp lệ	Invalid email
+loc.error.email_taken	Email đã được dùng	Email is already in use
+loc.error.entitlement_revoked	Quyền lợi đã bị thu hồi	Entitlement revoked
+loc.error.expired	Đã hết hạn	Expired
+loc.error.friend_limit_reached	Đã đạt giới hạn bạn bè	Friend limit reached
+loc.error.guild_disband_blocked	Không thể giải tán bang hội	Guild cannot be disbanded
+loc.error.guild_membership_too_new	Thời gian gia nhập bang chưa đủ	Guild membership is too recent
+loc.error.guild_name_invalid	Tên bang không hợp lệ	Invalid guild name
+loc.error.guild_name_taken	Tên bang đã được dùng	Guild name is taken
+loc.error.guild_storage_same_account	Không thể chuyển vào kho bang cùng tài khoản	Cannot use guild storage on the same account
+loc.error.iap_product_mismatch	Sản phẩm không khớp	Product mismatch
+loc.error.iap_receipt_account_mismatch	Biên lai không khớp tài khoản	Receipt does not match this account
+loc.error.iap_receipt_invalid	Biên lai không hợp lệ	Invalid receipt
+loc.error.iap_season_track_duplicate	Gói mùa đã kích hoạt	Season track already activated
+loc.error.iap_verification_pending	Đang xác minh giao dịch	Purchase verification pending
+loc.error.in_combat	Không thể thực hiện khi đang chiến đấu	Cannot do that while in combat
+loc.error.insufficient_currency	Không đủ tiền tệ	Insufficient currency
+loc.error.insufficient_item	Không đủ vật phẩm	Insufficient items
+loc.error.insufficient_mp	Không đủ MP	Not enough MP
+loc.error.invalid_state	Trạng thái không hợp lệ	Invalid state
+loc.error.invalid_target	Mục tiêu không hợp lệ	Invalid target
+loc.error.inventory_full	Túi đồ đã đầy	Inventory is full
+loc.error.item_locked	Vật phẩm đang bị khóa	Item is locked
+loc.error.item_not_found	Không tìm thấy vật phẩm	Item not found
+loc.error.last_login_method	Không thể gỡ phương thức đăng nhập cuối cùng	Cannot remove the last sign-in method
+loc.error.level_too_low	Cấp độ chưa đủ	Level too low
+loc.error.map_capacity_full	Bản đồ đã đầy	Map is full
+loc.error.max_bond_reached	Đã đạt thân mật tối đa	Maximum bond reached
+loc.error.message_not_allowed_in_state	Hành động không hợp lệ lúc này	That action is not allowed right now
+loc.error.message_too_large	Gói tin quá lớn	Message is too large
+loc.error.message_unknown	Gói tin không xác định	Unknown message
+loc.error.not_discovered	Chưa khám phá	Not discovered yet
+loc.error.not_in_safe_anchor	Chỉ thực hiện tại điểm an toàn	Only available at a safe anchor
+loc.error.not_owner	Không phải chủ sở hữu	Not the owner
+loc.error.operation_conflict	Xung đột thao tác	Conflicting operation
+loc.error.operation_in_progress	Thao tác đang thực hiện	Operation already in progress
+loc.error.operation_rejected	Thao tác bị từ chối	Operation was rejected
+loc.error.out_of_range	Ngoài tầm	Out of range
+loc.error.owner_changed	Chủ sở hữu đã thay đổi	Ownership has changed
+loc.error.owner_not_found	Không tìm thấy chủ sở hữu	Owner not found
+loc.error.password_invalid	Mật khẩu không hợp lệ	Invalid password
+loc.error.pending_request_exists	Đã có yêu cầu đang chờ	A pending request already exists
+loc.error.permission_denied	Không có quyền	Permission denied
+loc.error.potential_cap_exceeded	Vượt giới hạn tiềm năng	Potential cap exceeded
+loc.error.potential_points_insufficient	Không đủ điểm tiềm năng	Not enough potential points
+loc.error.protocol_malformed	Dữ liệu mạng không hợp lệ	Malformed network data
+loc.error.protocol_unsupported	Giao thức không được hỗ trợ	Unsupported protocol
+loc.error.protocol_violation	Vi phạm giao thức	Protocol violation
+loc.error.provider_already_linked	Nhà cung cấp đã được liên kết	Provider already linked
+loc.error.rate_limited	Thao tác quá nhanh, vui lòng thử lại sau	Too many requests, try again later
+loc.error.resume_expired	Phiên khôi phục đã hết hạn	Session resume period has expired
+loc.error.same_account_forbidden	Không thể thao tác với cùng tài khoản	Cannot operate on the same account
+loc.error.server_draining	Máy chủ đang bảo trì	Server is under maintenance
+loc.error.server_overloaded	Máy chủ quá tải	Server is overloaded
+loc.error.session_epoch_stale	Phiên đã lỗi thời, vui lòng đồng bộ lại	Session is out of date, please re-sync
+loc.error.session_replaced	Phiên bị thay thế bởi đăng nhập khác	Session replaced by another sign-in
+loc.error.skill_loadout_invalid	Bộ kỹ năng không hợp lệ	Invalid skill loadout
+loc.error.skill_max_level	Kỹ năng đã đạt cấp tối đa	Skill is at max level
+loc.error.skill_not_learned	Chưa học kỹ năng	Skill not learned
+loc.error.skill_points_insufficient	Không đủ điểm kỹ năng	Not enough skill points
+loc.error.slot_empty	Ô trống	Slot is empty
+loc.error.slot_mismatch	Ô không khớp	Slot mismatch
+loc.error.soul_contract_limit_reached	Đã đạt giới hạn khế ước Hồn	Soul contract limit reached
+loc.error.stale_input	Dữ liệu đầu vào đã lỗi thời	Input is out of date
+loc.error.state_conflict	Trạng thái xung đột	State conflict
+loc.error.story_choice_required	Cần chọn hướng cốt truyện	Story choice required
+loc.error.target_blocked	Mục tiêu bị chặn	Target is blocked
+loc.error.target_invalid	Mục tiêu không hợp lệ	Invalid target
+loc.error.temporary_dependency_failure	Dịch vụ tạm thời gián đoạn	Service temporarily unavailable
+loc.error.trade_common_both_sides	Chỉ một bên được đưa tiền thường	Only one side may offer common currency
+loc.error.trade_eligibility_age_required	Tài khoản chưa đủ tuổi để giao dịch	Your account is not old enough to trade
+loc.error.trade_eligibility_level_required	Chưa đủ cấp để giao dịch	Your level is too low to trade
+loc.error.trade_partner_disconnected	Đối tác giao dịch đã ngắt kết nối	Trade partner disconnected
+loc.error.trade_price_floor_not_met	Giá giao dịch dưới mức tối thiểu	Trade price is below the floor
+loc.error.transfer_failed	Chuyển giao thất bại	Transfer failed
+loc.error.transfer_in_progress	Đang chuyển giao	Transfer in progress
+loc.error.username_invalid	Tên đăng nhập không hợp lệ	Invalid username
+loc.error.username_taken	Tên đăng nhập đã được dùng	Username is taken
+loc.formation.dat_nuoc.name	Đất Giữ Nước	Earth Holds Water
+loc.formation.nam_cua_pha.name	Năm Cửa Phá	Five Gates Sunder
+loc.formation.nam_cua_tran.name	Năm Cửa Trấn	Five Gates Ward
+loc.formation.tre_lua.name	Tre Gặp Lửa	Bamboo Meets Fire
+loc.formation.trong_dong_sau_canh.name	Trống Đồng Sáu Cánh	Six-Winged Bronze Drum
+loc.formation.vong_mua_nghich.name	Vòng Mùa Nghịch	Reverse Season Cycle
+loc.formation.vong_mua_thuan.name	Vòng Mùa Thuận	Forward Season Cycle
+loc.instance.finale.than_trung.name	Trận Thần Trùng	The Than Trung Battle
+loc.item.beast_eq.t1.ao_giap.name	Áo Vải Thô Thú	Coarse Cloth Beast Armor
+loc.item.beast_eq.t1.linh_chau.name	Hạt Gỗ Khắc Chú	Charm-Carved Wooden Bead
+loc.item.beast_eq.t1.vong_co.name	Vòng Cổ Mây Tre	Bamboo-Rattan Collar
+loc.item.beast_eq.t2.ao_giap.name	Áo Yếm Nhuộm Chàm	Indigo-Dyed Halter Armor
+loc.item.beast_eq.t2.linh_chau.name	Chuỗi Hạt Chu Sa	Cinnabar Bead Strand
+loc.item.beast_eq.t2.vong_co.name	Vòng Đồng Lục Lạc	Bronze Bell Collar
+loc.item.beast_eq.t3.ao_giap.name	Đai Da Sơn Lâm	Mountain-Forest Leather Belt
+loc.item.beast_eq.t3.linh_chau.name	Ngọc Phỉ Thúy Thú	Jadeite Beast Pearl
+loc.item.beast_eq.t3.vong_co.name	Vòng Bạc Chạm Hoa	Floral-Engraved Silver Collar
+loc.item.beast_eq.t4.ao_giap.name	Áo Giáp Vảy Tinh	Spirit-Scale Armor
+loc.item.beast_eq.t4.linh_chau.name	Linh Châu Lam Thủy	Azure-Water Spirit Pearl
+loc.item.beast_eq.t4.vong_co.name	Lục Lạc Vàng Cổ	Antique-Gold Bell Collar
+loc.item.beast_eq.t5.ao_giap.name	Giáp Thêu Chỉ Vàng	Gold-Thread Embroidered Armor
+loc.item.beast_eq.t5.linh_chau.name	Minh Châu Trấn Thú	Beast-Warding Luminous Pearl
+loc.item.beast_eq.t5.vong_co.name	Vòng Xích Kim Cang	Rose-Gold Vajra Collar
+loc.item.beast_eq.t6.ao_giap.name	Hoàng Kim Giáp Thú	Golden Beast Armor
+loc.item.beast_eq.t6.linh_chau.name	Cửu Thiên Linh Châu	Nine-Heavens Spirit Pearl
+loc.item.beast_eq.t6.vong_co.name	Khuyên Vàng Thần Thú	Golden Divine-Beast Hoop
+loc.item.book.potential.name	Sách Tiềm Năng	Potential Book
+loc.item.book.skill.name	Sách Kỹ Năng	Skill Book
+loc.item.consumable.bua_giu_bac.cao_cap.name	Bùa Giữ Bậc (Cao Cấp)	Grade-Keep Charm (Advanced)
+loc.item.consumable.bua_giu_bac.so_cap.name	Bùa Giữ Bậc (Sơ Cấp)	Grade-Keep Charm (Basic)
+loc.item.consumable.bua_giu_bac.trung_cap.name	Bùa Giữ Bậc (Trung Cấp)	Grade-Keep Charm (Intermediate)
+loc.item.consumable.bua_may.cao_cap.name	Bùa May Mắn (Cao Cấp)	Lucky Charm (Advanced)
+loc.item.consumable.bua_may.sieu_cap.name	Bùa May Mắn (Siêu Cấp)	Lucky Charm (Superior)
+loc.item.consumable.bua_may.so_cap.name	Bùa May Mắn (Sơ Cấp)	Lucky Charm (Basic)
+loc.item.consumable.bua_may.trung_cap.name	Bùa May Mắn (Trung Cấp)	Lucky Charm (Intermediate)
+loc.item.consumable.chia_khoa_co.name	Chìa Khóa Cổ	Ancient Key
+loc.item.consumable.food.ca_bong_kho.name	Cá Bống Kho Tộ	Clay-Pot Braised Gudgeon
+loc.item.consumable.food.ca_chep_nuong.name	Cá Chép Nướng Mộc	Wood-Grilled Carp
+loc.item.consumable.food.tom_nuong.name	Tôm Nướng Than	Charcoal-Grilled Shrimp
+loc.item.consumable.moi_cau.name	Mồi Câu Giun Đất	Earthworm Fishing Bait
+loc.item.consumable.nuoc_la.name	Nước Lá	Leaf Water
+loc.item.consumable.ruou_nep.name	Rượu Nếp Làng	Village Sticky Rice Wine
+loc.item.consumable.tra_sen.name	Trà Sen	Lotus Tea
+loc.item.material.ben_nuoc.da_song.name	Đá Sông	River Stone
+loc.item.material.ca_bong.name	Cá Bống	Gudgeon
+loc.item.material.ca_bong_den.name	Cá Bống Đen	Black Gudgeon
+loc.item.material.ca_chep.name	Cá Chép	Carp
+loc.item.material.ca_chep_hoa_rong.name	Cá Chép Hóa Rồng	Dragon-Transformed Carp
+loc.item.material.ca_linh_giang.name	Cá Linh Giang	Linh Giang Fish
+loc.item.material.ca_ro_dong.name	Cá Rô Đồng	Field Perch
+loc.item.material.ca_sam_u_minh.name	Cá Sặt U Minh	U Minh Eel Catfish
+loc.item.material.ca_suong_ho.name	Cá Sương Hồ	Mist Lake Fish
+loc.item.material.cui_lua_trai.name	Củi Lửa Trại	Campfire Firewood
+loc.item.material.deo_may.da_voi.name	Mảnh Đá Vôi	Limestone Fragment
+loc.item.material.gung_lang.name	Gừng Làng	Village Ginger
+loc.item.material.lang_da.manh_dong.name	Mảnh Đồng Làng	Village Bronze Fragment
+loc.item.material.linh_dan.cao_cap.name	Linh Đan (Cao Cấp)	Spirit Elixir (Advanced)
+loc.item.material.linh_dan.so_cap.name	Linh Đan (Sơ Cấp)	Spirit Elixir (Basic)
+loc.item.material.linh_dan.trung_cap.name	Linh Đan (Trung Cấp)	Spirit Elixir (Intermediate)
+loc.item.material.nui_thieng.da_suong.name	Đá Sương Núi	Mountain-Mist Stone
+loc.item.material.rau_ram.name	Rau Răm	Vietnamese Coriander
+loc.item.material.thanh_co.gach_co.name	Mảnh Gạch Cổ	Ancient Brick Fragment
+loc.item.material.tom_song.name	Tôm Sông	River Shrimp
+loc.item.material.u_minh.vo_cay.name	Vỏ Cây U Minh	U Minh Tree Bark
+loc.item.material.vai_hoa_van.name	Vải Hoa Văn	Patterned Cloth
+loc.item.tool.can_cau_tre.name	Cần Câu Tre	Bamboo Fishing Rod
+loc.map.ben_nuoc_den.bai_lau.name	Bến Nước Đen — Bãi Lau	Ben Nuoc Den Docks — Reed Flats
+loc.map.ben_nuoc_den.ben_do_cu.name	Bến Nước Đen — Bến Đỏ Cũ	Ben Nuoc Den Docks — Old Red Landing
+loc.map.ben_nuoc_den.cho_ben.name	Bến Nước Đen — Chợ Bến	Ben Nuoc Den Docks — Dockside Market
+loc.map.ben_nuoc_den.duong_ngap.name	Bến Nước Đen — Đường Ngập	Ben Nuoc Den Docks — Flooded Road
+loc.map.deo_may.ban_chan_deo.name	Đèo Mây — Bàn Chân Đèo	Deo May Pass — Foot of the Pass
+loc.map.deo_may.duong_rung.name	Đèo Mây — Đường Rừng	Deo May Pass — Forest Road
+loc.map.deo_may.khe_da.name	Đèo Mây — Khe Đa	Deo May Pass — Stone Creek
+loc.map.deo_may.rung_cam.name	Đèo Mây — Rừng Cấm	Deo May Pass — Forbidden Forest
+loc.map.lang_da.ben_da.name	Làng Đa — Bến Đa	Lang Da Village — Ben Da Landing
+loc.map.lang_da.bo_ruong.name	Làng Đa — Bờ Ruộm	Lang Da Village — Ruom Bank
+loc.map.lang_da.dinh_lang.name	Làng Đa — Đình Làng	Lang Da Village — Communal Hall
+loc.map.lang_da.go_ma.name	Làng Đa — Gò Ma	Lang Da Village — Ghost Mound
+loc.map.nui_thieng.chan_nui.name	Núi Thiêng — Chân Núi	Nui Thieng Mountain — Foot of the Mountain
+loc.map.nui_thieng.cong_co.name	Núi Thiêng — Cổng Cỏ	Nui Thieng Mountain — Grass Gate
+loc.map.nui_thieng.rung_may.name	Núi Thiêng — Rừng May	Nui Thieng Mountain — Cloud Forest
+loc.map.nui_thieng.suon_da.name	Núi Thiêng — Sườn Đa	Nui Thieng Mountain — Stone Slope
+loc.map.rung_u_minh.loi_tram.name	Rừng U Minh — Lối Trạm	Rung U Minh Forest — Tram Path
+loc.map.rung_u_minh.mieu_bo_hoang.name	Rừng U Minh — Miếu Bỏ Hoang	Rung U Minh Forest — Abandoned Shrine
+loc.map.rung_u_minh.rung_sau.name	Rừng U Minh — Rừng Sâu	Rung U Minh Forest — Deep Forest
+loc.map.rung_u_minh.xom_rung.name	Rừng U Minh — Xóm Rừng	Rung U Minh Forest — Forest Hamlet
+loc.map.thanh_co.cong_ngoai.name	Thành Cổ — Cổng Ngoại	Thanh Co Citadel — Outer Gate
+loc.map.thanh_co.den_tran.name	Thành Cổ — Đền Trấn	Thanh Co Citadel — Guardian Temple
+loc.map.thanh_co.duong_da.name	Thành Cổ — Đường Đá	Thanh Co Citadel — Stone Road
+loc.map.thanh_co.hao_can.name	Thành Cổ — Hào Cạn	Thanh Co Citadel — Dry Moat
+loc.monster.ben_nuoc_den.bong_nuoc_ma.name	Bóng Nước Ma	Ghostly Water Shadow
+loc.monster.ben_nuoc_den.ca_tinh.name	Cá Tinh	Fish Sprite
+loc.monster.ben_nuoc_den.ca_tinh_gia.name	Cá Tinh Già	Elder Fish Sprite
+loc.monster.ben_nuoc_den.hon_chet_duoi.name	Hồn Chết Đuối	Drowned Soul
+loc.monster.ben_nuoc_den.ma_da.name	Ma Đá	Stone Ghost
+loc.monster.ben_nuoc_den.ma_da_gia.name	Ma Đá Già	Elder Stone Ghost
+loc.monster.ben_nuoc_den.nguoi_song_co.name	Người Sông Cổ	Ancient River Man
+loc.monster.ben_nuoc_den.quy_song_dem.name	Quỷ Sông Đêm	Night River Demon
+loc.monster.ben_nuoc_den.thuong_luong.name	Thuồng Luồng	Thuong Luong
+loc.monster.ben_nuoc_den.thuy_quai.name	Thủy Quái	Water Fiend
+loc.monster.deo_may.ho_con_tinh.name	Hồ Tinh Con	Fox Spirit Cub
+loc.monster.deo_may.ho_tinh.name	Hồ Tinh	Fox Spirit
+loc.monster.deo_may.ho_tinh_lon.name	Hồ Tinh Lớn	Greater Fox Spirit
+loc.monster.deo_may.ho_tinh_ve.name	Hồ Tinh Vệ	Fox Spirit Guard
+loc.monster.deo_may.khi_nui.name	Khỉ Núi	Mountain Monkey
+loc.monster.deo_may.ma_tranh.name	Ma Trành	Reed Ghost
+loc.monster.deo_may.ma_tranh_gia.name	Ma Trành Già	Elder Reed Ghost
+loc.monster.deo_may.ma_van_dem.name	Ma Văn Đêm	Night Chant Ghost
+loc.monster.deo_may.vong_nui_gia.name	Vong Núi Giả	False Mountain Vong Spirit
+loc.monster.deo_may.vong_rung.name	Vong Rừng	Forest Vong Spirit
+loc.monster.lang_da.bu_nhin_rom.name	Bù Nhìn Rơm	Straw Scarecrow
+loc.monster.lang_da.bup_lua.name	Búp Lửa	Flame Bud
+loc.monster.lang_da.co_lua.name	Cỏ Lửa	Flame Grass
+loc.monster.lang_da.coc_thanh_tinh.name	Cóc Thành Tinh	Toad Spirit
+loc.monster.lang_da.dom_dom_ma.name	Đom Đóm Ma	Ghost Firefly
+loc.monster.lang_da.dom_dom_nguyen.name	Đom Đóm Nguyên	Primal Firefly
+loc.monster.lang_da.hon_do_trang.name	Hồn Đỏ Trắng	Red and White Soul
+loc.monster.lang_da.hon_gao.name	Hồn Gào	Howling Soul
+loc.monster.lang_da.hon_ma_co_thu.name	Hồn Ma Cổ Thụ	Ancient Tree Soul
+loc.monster.lang_da.hon_xo_non.name	Hồn Xo Nón	Tilted Hat Soul
+loc.monster.lang_da.ma_xo.name	Ma Xó	Corner Ghost
+loc.monster.lang_da.quy_nhap_trang.name	Quỷ Nhập Tràng	Possessing Demon
+loc.monster.lang_da.tinh_buoi.name	Tinh Bưởi	Pomelo Spirit
+loc.monster.lang_da.vong_bien.name	Vong Biển	Sea Vong Spirit
+loc.monster.lang_da.vong_hon.name	Vong Hồn	Wandering Soul
+loc.monster.lang_da.vong_hon_gia.name	Vong Hồn Giả	False Wandering Soul
+loc.monster.nui_thieng.bong_vong.name	Bóng Vong	Shadow Vong Spirit
+loc.monster.nui_thieng.dai_vong_linh.name	Đại Vong Linh	Great Sacred Vong Spirit
+loc.monster.nui_thieng.hon_binh_co.name	Hồn Binh Cổ	Ancient Soldier Soul
+loc.monster.nui_thieng.linh_ve.name	Linh Vệ	Sacred Guard
+loc.monster.nui_thieng.ma_nui.name	Ma Núi	Mountain Ghost
+loc.monster.nui_thieng.ngu_tinh.name	Ngư Tinh	Fish Spirit
+loc.monster.nui_thieng.than_rung_dem.name	Thần Rừng Đêm	Night Forest God
+loc.monster.nui_thieng.than_trung.name	Thần Trùng	Worm God
+loc.monster.nui_thieng.tinh_nui_gia.name	Tinh Núi Già	Elder Mountain Spirit
+loc.monster.nui_thieng.tinh_thu.name	Tinh Thú	Beast Spirit
+loc.monster.nui_thieng.vong_linh.name	Vong Linh	Sacred Vong Spirit
+loc.monster.rung_u_minh.bong_nguoi.name	Bóng Người	Human Shadow
+loc.monster.rung_u_minh.dai_tinh_cay.name	Đại Tinh Cây	Great Tree Spirit
+loc.monster.rung_u_minh.dom_lua.name	Đom Lửa	Fire Wisp
+loc.monster.rung_u_minh.ma_rung.name	Ma Rừng	Forest Ghost
+loc.monster.rung_u_minh.ma_tranh.name	Ma Tranh	Reed Ghost
+loc.monster.rung_u_minh.moc_tinh.name	Mộc Tinh	Wood Spirit
+loc.monster.rung_u_minh.tinh_cay.name	Tinh Cây	Tree Spirit
+loc.monster.rung_u_minh.vong_rung_sau.name	Vong Rừng Sâu	Deep Forest Vong Spirit
+loc.monster.thanh_co.hon_binh.name	Hồn Binh	Soldier Soul
+loc.monster.thanh_co.hon_tran_linh.name	Hồn Trấn Linh	Guardian Soul
+loc.monster.thanh_co.hon_tuong.name	Hồn Tượng	Statue Soul
+loc.monster.thanh_co.ma_co.name	Ma Cổ	Ancient Ghost
+loc.monster.thanh_co.oan_hon_dem.name	Oan Hồn Đêm	Night Vengeful Soul
+loc.monster.thanh_co.qua_tinh.name	Quạ Tinh	Crow Spirit
+loc.monster.thanh_co.qua_tinh_lon.name	Quạ Tinh Lớn	Greater Crow Spirit
+loc.monster.thanh_co.thach_ve.name	Thạch Vệ	Stone Guard
+loc.monster.thanh_co.tuong_da.name	Tượng Đá	Stone Statue
+loc.npc.ben_nuoc_den.cho_1.name	Sạp Chợ Một	Market Stall One
+loc.npc.ben_nuoc_den.cho_2.name	Sạp Chợ Hai	Market Stall Two
+loc.npc.ben_nuoc_den.dem_1.name	Sạp Đêm Một	Night Stall One
+loc.npc.ben_nuoc_den.dem_2.name	Sạp Đêm Hai	Night Stall Two
+loc.npc.ben_nuoc_den.hang_quan.name	Quán Chợ Bến	Dock Market Eatery
+loc.npc.ben_nuoc_den.nguoi_dan_duong.name	Người Giữ Bến	Dock Keeper
+loc.npc.ben_nuoc_den.tho_nghe.name	Thợ Bến	Dock Artisan
+loc.npc.deo_may.cho_1.name	Sạp Chợ Một	Market Stall One
+loc.npc.deo_may.cho_2.name	Sạp Chợ Hai	Market Stall Two
+loc.npc.deo_may.dem_1.name	Sạp Đêm Một	Night Stall One
+loc.npc.deo_may.dem_2.name	Sạp Đêm Hai	Night Stall Two
+loc.npc.deo_may.hang_quan.name	Quán Chân Đèo	Pass Foot Eatery
+loc.npc.deo_may.nguoi_dan_duong.name	Người Gác Đèo	Pass Warden
+loc.npc.deo_may.tho_nghe.name	Thợ Chân Đèo	Pass Foot Artisan
+loc.npc.lang_da.cho_1.name	Sạp Chợ Một	Market Stall One
+loc.npc.lang_da.cho_2.name	Sạp Chợ Hai	Market Stall Two
+loc.npc.lang_da.dem_1.name	Sạp Đêm Một	Night Stall One
+loc.npc.lang_da.dem_2.name	Sạp Đêm Hai	Night Stall Two
+loc.npc.lang_da.hang_quan.name	Hàng Nước Làng	Village Drink Stand
+loc.npc.lang_da.nguoi_dan_duong.name	Người Dẫn Đường Làng	Village Guide
+loc.npc.lang_da.tho_nghe.name	Bác Thợ Làng	Village Artisan
+loc.npc.nui_thieng.cho_1.name	Sạp Chợ Một	Market Stall One
+loc.npc.nui_thieng.cho_2.name	Sạp Chợ Hai	Market Stall Two
+loc.npc.nui_thieng.dem_1.name	Sạp Đêm Một	Night Stall One
+loc.npc.nui_thieng.dem_2.name	Sạp Đêm Hai	Night Stall Two
+loc.npc.nui_thieng.hang_quan.name	Quán Chân Núi	Mountain Foot Eatery
+loc.npc.nui_thieng.nguoi_dan_duong.name	Người Dẫn Đường Núi	Mountain Guide
+loc.npc.nui_thieng.tho_nghe.name	Thợ Chân Núi	Mountain Foot Artisan
+loc.npc.rung_u_minh.cho_1.name	Sạp Chợ Một	Market Stall One
+loc.npc.rung_u_minh.cho_2.name	Sạp Chợ Hai	Market Stall Two
+loc.npc.rung_u_minh.dem_1.name	Sạp Đêm Một	Night Stall One
+loc.npc.rung_u_minh.dem_2.name	Sạp Đêm Hai	Night Stall Two
+loc.npc.rung_u_minh.hang_quan.name	Quán Ven Rừng	Forest-Edge Eatery
+loc.npc.rung_u_minh.nguoi_dan_duong.name	Người Dẫn Đường Rừng	Forest Guide
+loc.npc.rung_u_minh.tho_nghe.name	Thợ Xóm Rừng	Forest Hamlet Artisan
+loc.npc.thanh_co.cho_1.name	Sạp Chợ Một	Market Stall One
+loc.npc.thanh_co.cho_2.name	Sạp Chợ Hai	Market Stall Two
+loc.npc.thanh_co.dem_1.name	Sạp Đêm Một	Night Stall One
+loc.npc.thanh_co.dem_2.name	Sạp Đêm Hai	Night Stall Two
+loc.npc.thanh_co.hang_quan.name	Quán Ngoài Thành	Outer Citadel Eatery
+loc.npc.thanh_co.nguoi_dan_duong.name	Người Giữ Cổng	Gatekeeper
+loc.npc.thanh_co.tho_nghe.name	Thợ Ngoài Thành	Outer Citadel Artisan
+loc.quest.event.spirit_surge.contribute.title	Đóng Góp Linh Triều	Contribute to the Spirit Surge
+loc.quest.main.a1.ben_da_lanh.title	Bến Đa Lạnh	The Cold Ben Da Landing
+loc.quest.main.a1.dinh_lang_bo_hoang.title	Đêm Ở Đình Bỏ Hoang	Night at the Abandoned Village Hall
+loc.quest.main.a1.duong_vao_lang.title	Đường Vào Làng	The Road Into the Village
+loc.quest.main.a1.go_ma_thuc_giac.title	Gò Mả Thức Giấc	The Grave Mound Awakens
+loc.quest.main.a2.dom_lua_dan_duong.title	Đốm Lửa Dẫn Đường	The Guiding Ember
+loc.quest.main.a2.loi_vao_u_minh.title	Lối Vào U Minh	The Path Into U Minh
+loc.quest.main.a2.mieu_ba_trong_rung.title	Miếu Bà Trong Rừng	The Lady's Shrine in the Forest
+loc.quest.main.a2.re_da_quan_mieu.title	Rễ Đa Quấn Miếu	Banyan Roots Around the Shrine
+loc.quest.main.a3.bai_lau_co_tieng_goi.title	Bãi Lau Có Tiếng Gọi	The Reed Field That Calls
+loc.quest.main.a3.ben_do_cu.title	Bến Đò Cũ	The Old Ferry Landing
+loc.quest.main.a3.duong_ngap.title	Đường Ngập	The Flooded Road
+loc.quest.main.a3.xom_chim.title	Xóm Chìm	The Sunken Hamlet
+loc.quest.main.a4.duong_rung.title	Đường Rừng	The Forest Road
+loc.quest.main.a4.hang_ma_tranh.title	Hang Ma Trành	The Thatch Ghost's Cave
+loc.quest.main.a4.loi_sai.title	Lối Sai	The Wrong Path
+loc.quest.main.a4.vet_chan_ho.title	Vết Chân Hổ	Tiger Tracks
+loc.quest.main.a5.cong_ngoai.title	Cổng Ngoài	The Outer Gate
+loc.quest.main.a5.den_tran.title	Đền Trấn	The Guardian Temple
+loc.quest.main.a5.hao_can.title	Hào Cạn	The Dry Moat
+loc.quest.main.a5.tieng_trong_tran.title	Tiếng Trống Trấn	The Garrison Drums
+loc.quest.main.a6.da_ranh.title	Đá Ranh	The Boundary Stone
+loc.quest.main.a6.dau_cu.title	Dấu Cũ	The Old Mark
+loc.quest.main.a6.rung_may.title	Rừng Mây	The Cloud Forest
+loc.quest.main.a6.than_trung.title	Canh Cuối	The Final Watch
+loc.quest.side.a1.chiec_non_ben_da.title	Chiếc Nón Ở Bến Đa	The Hat at Ben Da Landing
+loc.quest.side.a1.luy_tre_keu_dem.title	Lũy Tre Kêu Đêm	The Bamboo Hedge That Cries at Night
+loc.quest.side.a2.goc_da_co.title	Gốc Đa Cũ	The Old Banyan Stump
+loc.quest.side.a2.nguoi_di_rung_muon.title	Người Đi Rừng Muộn	The Late Forest Wanderer
+loc.quest.side.a3.den_ben_do.title	Đèn Bến Đò	The Lantern at the Ferry Landing
+loc.quest.side.a3.tieng_go_tren_mai.title	Tiếng Gõ Trên Mái	Knocking on the Roof
+loc.quest.side.a4.cau_tre_gay.title	Cầu Tre Gãy	The Broken Bamboo Bridge
+loc.quest.side.a4.chiec_mong_sat.title	Chiếc Móng Sắt	The Iron Claw
+loc.quest.side.a5.tieng_buoc_tren_tuong.title	Tiếng Bước Trên Tường	Footsteps on the Wall
+loc.quest.side.a5.vien_gach_co.title	Viên Gạch Cổ	The Ancient Brick
+loc.quest.side.a6.duong_may_nguoc.title	Đường Mây Ngược	The Cloud Path in Reverse
+loc.quest.side.a6.vet_tren_da_suong.title	Vết Trên Đá Sương	Marks on the Frosted Stone
+loc.relic.season.0.hon_dau.name	Hồn Đầu	Head Soul
+loc.relic.season.0.quy_xuan.name	Quỷ Xuân	Spring Demon
+loc.relic.season.1.moc_mieu.name	Mộc Miếu	Wooden Shrine
+loc.relic.season.1.moc_tinh.name	Mộc Tinh	Wood Spirit
+loc.relic.season.2.ma_da_gia.name	Ma Đá Già	Elder Stone Ghost
+loc.relic.season.2.xom_chim.name	Xóm Chim	Sunken Hamlet
+loc.relic.season.3.hang.name	Hang	Cave
+loc.relic.season.3.ho_ve.name	Hổ Vệ	Tiger Guard
+loc.relic.season.4.den.name	Đèn	Lantern
+loc.relic.season.4.thach.name	Thạch	Stone
+loc.relic.season.5.cong.name	Cổng	Gate
+loc.relic.season.5.linh_ve.name	Linh Vệ	Sacred Guard
+loc.resonance.full_ring.duong_lang.name	Đường Làng Liền Mạch	Unbroken Village Road
+loc.resonance.full_ring.vong_dinh.name	Vòng Đình Khép Kín	Sealed Village Hall Ring
+loc.set.t1.ben_da.name	Bộ Bến Đa	Banyan Wharf Set
+loc.set.t1.dinh_lang.name	Bộ Đình Làng	Village Hall Set
+loc.set.t2.dom_lua_rung.name	Bộ Đốm Lửa Rừng	Forest Ember Set
+loc.set.t2.u_minh.name	Bộ U Minh	U Minh Set
+loc.set.t3.ben_nuoc.name	Bộ Bến Nước	River Wharf Set
+loc.set.t3.xom_chim.name	Bộ Xóm Chìm	Sunken Hamlet Set
+loc.set.t4.dau_ho.name	Bộ Dấu Hổ	Tiger Seal Set
+loc.set.t4.deo_may.name	Bộ Đèo Mây	Cloud Pass Set
+loc.set.t5.thanh_co.name	Bộ Thành Cổ	Ancient Citadel Set
+loc.set.t5.trong_tran.name	Bộ Trống Trấn	Garrison Drum Set
+loc.set.t6.dau_cu.name	Bộ Dấu Cũ	Old Seal Set
+loc.set.t6.nui_thieng.name	Bộ Núi Thiêng	Sacred Mountain Set
+loc.skill.hoa.active.boc_bo.name	Bộc Bộ	Eruption
+loc.skill.hoa.active.cuu_hoa_lien.name	Cửu Hỏa Liên	Nine-Flame Lotus
+loc.skill.hoa.active.hoa_giap.name	Hỏa Giáp	Flame Armor
+loc.skill.hoa.active.hoa_vuc.name	Hỏa Vực	Flame Abyss
+loc.skill.hoa.active.lien_bao.name	Liên Bạo	Chain Burst
+loc.skill.hoa.basic.hoa_phu.name	Hỏa Phù	Fire Talisman
+loc.skill.hoa.basic.hoa_xa.name	Hỏa Xạ	Flame Shot
+loc.skill.hoa.basic.lua_tao_quan.name	Lửa Táo Quân	Kitchen-God Flame
+loc.skill.hoa.basic.viem_dan.name	Viêm Đạn	Flame Bullet
+loc.skill.hoa.passive.cuong_hoa.name	Cuồng Hỏa	Raging Flame
+loc.skill.hoa.passive.du_hoa.name	Dư Hỏa	Afterflame
+loc.skill.hoa.passive.hoa_hon.name	Hỏa Hồn	Flame Soul
+loc.skill.kim.active.hoi_kiem.name	Hồi Kiếm	Sword Recall
+loc.skill.kim.active.kiem_tran.name	Kiếm Trận	Sword Array
+loc.skill.kim.active.nhat_kiem_dinh_hon.name	Kiếm Dứt Vong	Life-Severing Sword
+loc.skill.kim.active.pha_giap.name	Phá Giáp Trảm	Armor-Sundering Slash
+loc.skill.kim.active.xuyen_phong.name	Xuyên Phong	Piercing Gale
+loc.skill.kim.basic.kiem_thuc.name	Kiếm Thức	Sword Form
+loc.skill.kim.basic.pha_khong_kiem.name	Phá Không Kiếm	Void-Splitting Sword
+loc.skill.kim.basic.truy_phong_kiem.name	Truy Phong Kiếm	Wind-Chasing Sword
+loc.skill.kim.basic.vo_song_kiem.name	Vô Song Kiếm	Peerless Sword
+loc.skill.kim.passive.kiem_tam.name	Kiếm Tâm	Sword Heart
+loc.skill.kim.passive.kiem_y_bat_diet.name	Kiếm Ý Bất Diệt	Undying Sword Intent
+loc.skill.kim.passive.lien_kiem.name	Liên Kiếm	Linked Blades
+loc.skill.moc.active.hoi_xuan.name	Hồi Xuân	Spring's Return
+loc.skill.moc.active.moc_bo.name	Mộc Bộc	Verdant Burst
+loc.skill.moc.active.thanh_dang.name	Thanh Đằng	Verdant Creeper
+loc.skill.moc.active.van_doc.name	Vạn Độc Trận	Myriad Venom Array
+loc.skill.moc.active.van_moc_hoi_sinh.name	Vạn Mộc Hồi Sinh	Myriad Trees Reborn
+loc.skill.moc.basic.co_thu_kich.name	Cổ Thụ Kích	Elderwood Strike
+loc.skill.moc.basic.linh_diep.name	Linh Diệp	Spirit Leaf
+loc.skill.moc.basic.thao_kich.name	Thảo Kích	Wildgrass Strike
+loc.skill.moc.basic.truc_phi_tieu.name	Trúc Phi Tiêu	Bamboo Dart
+loc.skill.moc.passive.duoc_tinh.name	Dược Tính	Herbal Affinity
+loc.skill.moc.passive.sinh_tuc.name	Sinh Tức	Breath of Life
+loc.skill.moc.passive.thao_moc_dong_hoa.name	Thảo Mộc Đồng Hóa	Verdant Assimilation
+loc.skill.tho.active.dia_chan.name	Địa Chấn	Earthquake
+loc.skill.tho.active.son_bich.name	Sơn Bích	Mountain Wall
+loc.skill.tho.active.thach_kich.name	Thạch Kích	Stone Strike
+loc.skill.tho.active.thien_son_tran.name	Thiên Sơn Trận	Thousand Peaks Array
+loc.skill.tho.active.tho_giap.name	Thổ Giáp	Earth Armor
+loc.skill.tho.basic.dia_liet_kich.name	Địa Liệt Kích	Earth-Splitting Strike
+loc.skill.tho.basic.kim_cang_quyen.name	Kim Cang Quyền	Vajra Fist
+loc.skill.tho.basic.pha_thach_kich.name	Phá Thạch Kích	Stonebreaker Strike
+loc.skill.tho.basic.tran_quyen.name	Trấn Quyền	Quelling Fist
+loc.skill.tho.passive.bat_dong.name	Bất Động	Immovable
+loc.skill.tho.passive.hau_tho.name	Hậu Thổ	Hau Tho
+loc.skill.tho.passive.son_ha_ho_the.name	Sơn Hà Hộ Thể	Mountain-River Guard
+loc.skill.thuy.active.han_trieu.name	Hàn Triều	Frigid Tide
+loc.skill.thuy.active.luu_bo.name	Lưu Bộ	Flowing Steps
+loc.skill.thuy.active.thien_ha.name	Thiên Hà Lạc	Milky Way Descent
+loc.skill.thuy.active.thuy_kinh.name	Thủy Kính	Water Mirror
+loc.skill.thuy.active.trieu_quyen.name	Triều Quyến	Maelstrom
+loc.skill.thuy.basic.am_luu.name	Ám Lưu	Undercurrent
+loc.skill.thuy.basic.bang_phien.name	Băng Phiến	Ice Shard
+loc.skill.thuy.basic.huyen_bang_kich.name	Huyền Băng Kích	Blackfrost Strike
+loc.skill.thuy.basic.thuy_tien.name	Thủy Tiễn	Water Arrow
+loc.skill.thuy.passive.bang_giap_tam.name	Băng Giáp Tâm	Ice-Armored Heart
+loc.skill.thuy.passive.han_khi.name	Hàn Khí	Chill Qi
+loc.skill.thuy.passive.luu_chuyen.name	Lưu Chuyển	Ceaseless Flow
+loc.soul.boss.ho_tinh_chin_duoi.name	Hồn Hồ Tinh Chín Đuôi	Nine-Tailed Fox Soul
+loc.soul.boss.than_trung.name	Hồn Thần Trùng	Than Trung Soul
+loc.soul.boss.thuong_luong.name	Hồn Thuồng Luồng	Thuong Luong Soul
+loc.soul.elite.ho_tinh_ve.name	Hồn Hổ Tinh Vệ	Tiger Sentinel Soul
+loc.soul.elite.ma_da_gia.name	Hồn Ma Da Già	Elder Ma Da Soul
+loc.soul.elite.ma_tranh.name	Hồn Ma Trành	Ma Tranh Soul
+loc.soul.elite.ma_tranh_gia.name	Hồn Ma Trành Già	Elder Ma Tranh Soul
+loc.soul.elite.ma_xo.name	Hồn Ma Xó	Ma Xo Soul
+loc.soul.elite.moc_tinh.name	Hồn Mộc Tinh	Wood Spirit Soul
+loc.soul.elite.thach_ve.name	Hồn Thạch Vệ	Stone Sentinel Soul
+loc.soul.normal.bu_nhin_rom.name	Hồn Bù Nhìn Rơm	Straw Scarecrow Soul
+loc.soul.normal.ca_tinh.name	Hồn Cá Tinh	Fish Spirit Soul
+loc.soul.normal.coc_thanh_tinh.name	Hồn Cóc Thành Tinh	Toad Spirit Soul
+loc.soul.normal.dom_dom_ma.name	Hồn Đom Đóm Ma	Ghost Firefly Soul
+loc.soul.normal.dom_lua.name	Hồn Đốm Lửa Rừng	Forest Ember Soul
+loc.soul.normal.ho_con_tinh.name	Hồn Hổ Con Tinh	Tiger Cub Spirit Soul
+loc.soul.normal.hon_binh.name	Hồn Binh Cũ	Old Soldier Soul
+loc.soul.normal.hon_chet_duoi.name	Hồn Chết Đuối	Drowned Soul
+loc.soul.normal.khi_nui.name	Hồn Khỉ Núi	Mountain Monkey Soul
+loc.soul.normal.ma_co.name	Hồn Ma Cổ	Ancient Ghost Soul
+loc.soul.normal.ma_da.name	Hồn Ma Da	Ma Da Soul
+loc.soul.normal.ma_rung.name	Hồn Ma Rừng	Forest Ghost Soul
+loc.soul.normal.qua_tinh.name	Hồn Quạ Tinh	Crow Spirit Soul
+loc.soul.normal.tinh_cay.name	Hồn Tinh Cây	Tree Spirit Soul
+loc.soul.normal.vong_hon.name	Hồn Vong	Vong Soul
+loc.zone.ben_nuoc_den.name	Bến Nước Đen	Ben Nuoc Den
+loc.zone.deo_may.name	Đèo Mây	Deo May
+loc.zone.lang_da.name	Làng Đa	Lang Da
+loc.zone.nui_thieng.name	Núi Thiêng	Nui Thieng
+loc.zone.rung_u_minh.name	Rừng U Minh	Rung U Minh
+loc.zone.thanh_co.name	Thành Cổ	Thanh Co
