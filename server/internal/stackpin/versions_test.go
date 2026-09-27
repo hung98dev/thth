@@ -1,6 +1,10 @@
 package stackpin
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
 
 func TestExactToolchainPins(t *testing.T) {
 	cases := []struct{ name, got, want string }{
@@ -41,10 +45,11 @@ func TestImageDigests(t *testing.T) {
 		t.Errorf("PostgresDigest %q", PostgresDigest)
 	}
 	want := map[string]string{
-		"linux":          "unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d",
-		"windows":        "unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534",
-		"android":        "unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab",
-		"windows-il2cpp": "unityci/editor:windows-6000.6.1f1-windows-il2cpp-3.2.2@sha256:5bd80a61ac442b81745f653dd39395f6e93167ebc51c4b494bdd42c2b656195b",
+		"linux":   "unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d",
+		"android": "unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab",
+	}
+	if len(UnityImages) != len(want) {
+		t.Errorf("UnityImages = %v, want only linux + android (Windows is native, ADR-0073)", UnityImages)
 	}
 	for k, w := range want {
 		if UnityImages[k] != w {
@@ -173,4 +178,59 @@ func TestCliAssetSha256(t *testing.T) {
 			t.Errorf("%s missing download URL", name)
 		}
 	}
+}
+
+func TestCscRspScopedPerAsmdef(t *testing.T) {
+	mkroot := func(t *testing.T) string {
+		t.Helper()
+		return t.TempDir()
+	}
+	write := func(t *testing.T, root, rel, body string) {
+		t.Helper()
+		p := filepath.Join(root, filepath.FromSlash(rel))
+		if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	good := "-warnaserror+\n-nullable:enable\n"
+	asmdef := "client/Assets/Scripts/Core/ThinhThan.Core.asmdef"
+	rspec := "client/Assets/Scripts/Core/csc.rsp"
+
+	t.Run("root csc.rsp forbidden", func(t *testing.T) {
+		root := mkroot(t)
+		write(t, root, "client/Assets/csc.rsp", good)
+		write(t, root, asmdef, "{}")
+		write(t, root, rspec, good)
+		if f := checkCscRsp(root); len(f.Problems) == 0 {
+			t.Fatal("expected failure when client/Assets/csc.rsp exists")
+		}
+	})
+	t.Run("asmdef without csc.rsp fails", func(t *testing.T) {
+		root := mkroot(t)
+		write(t, root, asmdef, "{}")
+		if f := checkCscRsp(root); len(f.Problems) == 0 {
+			t.Fatal("expected failure when an asmdef has no sibling csc.rsp")
+		}
+	})
+	t.Run("extra flag fails", func(t *testing.T) {
+		root := mkroot(t)
+		write(t, root, asmdef, "{}")
+		write(t, root, rspec, "-warnaserror+\n-nullable:enable\n-nowarn:1591\n")
+		if f := checkCscRsp(root); len(f.Problems) == 0 {
+			t.Fatal("expected failure on extra flag")
+		}
+	})
+	t.Run("per-asmdef csc.rsp passes", func(t *testing.T) {
+		root := mkroot(t)
+		for _, d := range []string{"client/Assets/Scripts/Core", "client/Assets/Scripts/Net", "client/Assets/Tests/EditMode"} {
+			write(t, root, d+"/A.asmdef", "{}")
+			write(t, root, d+"/csc.rsp", good)
+		}
+		if f := checkCscRsp(root); len(f.Problems) != 0 {
+			t.Fatalf("expected pass, got %v", f.Problems)
+		}
+	})
 }

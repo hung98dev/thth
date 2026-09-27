@@ -95,12 +95,27 @@ const EdbZipSHA256 = "fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360
 const GoogleProtobufNupkgURL = "https://api.nuget.org/v3-flatcontainer/google.protobuf/3.36.2/google.protobuf.3.36.2.nupkg"
 const GoogleProtobufNupkgSHA256 = "1182590db175f9057707857a1df48b217226d0732716cd353fa4aa4683d38dcb"
 
-// UnityImages are the pinned unityci editor images used by verify.yml.
+// UnityImages are the pinned unityci editor images: Linux verify + Android
+// builds. Windows runs the editor natively (ADR-0073) — see
+// UnityWindowsInstallers.
 var UnityImages = map[string]string{
-	"linux":          "unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d",
-	"windows":        "unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534",
-	"android":        "unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab",
-	"windows-il2cpp": "unityci/editor:windows-6000.6.1f1-windows-il2cpp-3.2.2@sha256:5bd80a61ac442b81745f653dd39395f6e93167ebc51c4b494bdd42c2b656195b",
+	"linux":   "unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d",
+	"android": "unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab",
+}
+
+// UnityWindowsInstallers pins the official Unity 6000.6.1f1 (changeset
+// 7efac9f6c10e) Windows installers used natively on windows-2022 (ADR-0073):
+// the editor for verify.yml and the Windows IL2CPP module for IMP-067 player
+// builds.
+var UnityWindowsInstallers = map[string]CliAsset{
+	"editor": {
+		URL:    "https://download.unity3d.com/download_unity/7efac9f6c10e/Windows64EditorInstaller/UnitySetup64-6000.6.1f1.exe",
+		SHA256: "8884daa489c8708c17da571c46a869839dd7bbf45f69048bd4db5c6d054d5e36",
+	},
+	"windows-il2cpp": {
+		URL:    "https://download.unity3d.com/download_unity/7efac9f6c10e/TargetSupportInstaller/UnitySetup-Windows-IL2CPP-Support-for-Editor-6000.6.1f1.exe",
+		SHA256: "03f0cadf1e54f3eb80bb59865e95bfd7725c9c3b94d22ed0f175a23ac5e5bde4",
+	},
 }
 
 // RunnerLabels is the closed set of allowed runs-on labels (ADR-0058:
