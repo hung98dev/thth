@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -170,7 +171,7 @@ func CheckQ0(root string, e *Env) []Check {
 	checks = append(checks, checkTraceability(root, packets, byID)...)
 	checks = append(checks, checkRequirementCoverage(root, packets)...)
 	checks = append(checks, checkOpenBlockerGating(root, byID)...)
-	checks = append(checks, checkBootstrapAbsence(root))
+	checks = append(checks, checkBootstrapAbsence(root, packets))
 
 	checks = append(checks, checkEvidenceOnDisk(root, packets)...)
 	checks = append(checks, checkDoneManifestRule(root, e, packets)...)
@@ -530,7 +531,7 @@ func checkOpenBlockerGating(root string, byID map[string]TaskPacket) []Check {
 	return []Check{statusCheck("Q0.blockers.open_gating", viol)}
 }
 
-var blocksLineRe = regexp.MustCompile(`^(?:(?:[-*+]|\d+[.)])\s*)?Blocks:\s*(.*)$`)
+var blocksLineRe = regexp.MustCompile(`^(?:(?:[-*+]|\d+[.)])\s*)?(?i:blocks):\s*(.*)$`)
 var openBlockerRe = regexp.MustCompile("^###\\s+`?(BLK-[0-9]+|OPS-[0-9]+)`?")
 
 // openBlockedTasks returns task ids named by `Blocks:` lines under each open
@@ -569,9 +570,12 @@ func openBlockedTasks(path string) map[string][]string {
 }
 
 // checkBootstrapAbsence enforces IMP-000's acceptance rule: proto/,
-// migrations, generated outputs and feature paths remain absent until their
-// owning task.
-func checkBootstrapAbsence(root string) Check {
+// migrations, generated outputs and feature paths remain absent while every
+// packet owning a path at or under the listed root is still NOT_STARTED or
+// BLOCKED (BLK-002). Once an owning packet is IN_PROGRESS or DONE the path
+// exists legitimately; per-file scoping stays with Q0.control.diff. A root
+// with no owning packet stays forbidden.
+func checkBootstrapAbsence(root string, packets []TaskPacket) Check {
 	const id = "Q0.bootstrap.absent_paths"
 	var problems []string
 	for _, rel := range []string{
@@ -585,12 +589,13 @@ func checkBootstrapAbsence(root string) Check {
 		"client/Assets/Localization",
 		"client/Assets/Settings",
 	} {
-		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(rel))); err == nil {
-			problems = append(problems, rel+" must not exist before its owning task")
+		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(rel))); err == nil &&
+			!bootstrapOwnerStarted(packets, rel) {
+			problems = append(problems, rel+" must not exist while its owning tasks are unclaimed")
 		}
 	}
-	// Generated protocol dirs may exist holding only their asmdef (IMP-000
-	// owns the asmdef; generated .cs/.go come from IMP-061).
+	// Generated protocol dirs may hold their asmdef (IMP-000) and, once the
+	// owning packet has started, generated .cs/.go.
 	for _, dir := range []string{
 		"client/Assets/Scripts/Protocol",
 		"server/internal/protocol",
@@ -604,12 +609,31 @@ func checkBootstrapAbsence(root string) Check {
 				continue
 			}
 			name := en.Name()
-			if !strings.HasSuffix(name, ".asmdef") && !strings.HasSuffix(name, ".meta") {
-				problems = append(problems, dir+"/"+name+" present before its owning task")
+			if !strings.HasSuffix(name, ".asmdef") && !strings.HasSuffix(name, ".meta") &&
+				!bootstrapOwnerStarted(packets, dir+"/"+name) {
+				problems = append(problems, dir+"/"+name+" present while its owning tasks are unclaimed")
 			}
 		}
 	}
 	return statusCheck(id, problems)
+}
+
+// bootstrapOwnerStarted reports whether a packet owning rel itself, a path
+// under rel, or a parent of rel is past claim (IN_PROGRESS or DONE). Paths
+// with no owner report false, so unowned bootstrap roots never unblock.
+func bootstrapOwnerStarted(packets []TaskPacket, rel string) bool {
+	for _, p := range packets {
+		if p.Status != "IN_PROGRESS" && p.Status != "DONE" {
+			continue
+		}
+		for _, o := range p.OwnedPaths {
+			oc := path.Clean(strings.TrimSuffix(o, "/"))
+			if oc == rel || strings.HasPrefix(oc, rel+"/") || strings.HasPrefix(rel, oc+"/") {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // checkEvidenceOnDisk validates every committed evidence manifest schema-v2.

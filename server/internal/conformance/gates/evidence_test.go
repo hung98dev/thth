@@ -125,6 +125,38 @@ func TestRunIdAttemptApiCheck(t *testing.T) {
 	}
 }
 
+func TestLandedViaMergeSquashAncestor(t *testing.T) {
+	// Squash merges land the PR's content as a NEW commit on main: the PR
+	// head sha is never an ancestor of HEAD, the merge/squash commit is.
+	// The gate must accept the merge commit and still fail closed when no
+	// candidate is an ancestor.
+	dir := t.TempDir()
+	initRepo(t, dir)
+	writeRepoFile(t, dir, "x.txt", "one")
+	commitAll(t, dir)
+	// PR head content squashed into a separate main commit (like GitHub's
+	// squash merge: new sha, same tree delta).
+	writeRepoFile(t, dir, "x.txt", "two")
+	commitAll(t, dir)
+	squashed := strings.TrimSpace(gitT(t, dir, "rev-parse", "HEAD"))
+	// A commit that exists but is NOT an ancestor (orphan line).
+	gitT(t, dir, "checkout", "-q", "--orphan", "side")
+	gitT(t, dir, "rm", "-rf", ".")
+	writeRepoFile(t, dir, "side.txt", "s")
+	commitAll(t, dir)
+	orphan := strings.TrimSpace(gitT(t, dir, "rev-parse", "HEAD"))
+	gitT(t, dir, "checkout", "-q", "main")
+	if !landedViaMerge(dir, []string{squashed}) {
+		t.Fatal("merge-commit ancestor must satisfy the squash fallback")
+	}
+	if landedViaMerge(dir, []string{orphan}) {
+		t.Fatal("non-ancestor candidate must not pass")
+	}
+	if landedViaMerge(dir, nil) {
+		t.Fatal("no candidates must fail closed")
+	}
+}
+
 func TestTwoPhaseStatusPrOwnRunEvidence(t *testing.T) {
 	// A -done PR's own verify run produces the manifest the merged head
 	// must carry: merge → write under evidence/<task>/ → validate.

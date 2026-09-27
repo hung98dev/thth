@@ -217,6 +217,7 @@ Do not put `*.prefab`, `*.asset`, `*.meta`, or `*.unity` in LFS.
 - Go tests live in the package they test (`<package>/<name>_test.go`) and therefore inside the packet's owned directory.
 - Unity tests live in `client/Assets/Tests/{EditMode|PlayMode}/<Feature>/`, one folder per packet, listed in its `owned_paths`. The root test asmdefs belong to IMP-000; `PlayMode/Harness/` belongs to IMP-065 and is read-only for other packets.
 - Shared registries: `client/Assets/AddressableAssetsData/` is owned by IMP-063; a packet that depends on IMP-063 may append groups/entries only for keys it owns (append-only, key-owner checked by the IMP-063 validator). Localization string tables are per feature: the packet owning `client/Assets/Scripts/{Systems|UI}/<Feature>/` implicitly owns `client/Assets/Localization/Tables/<Feature>/`; `Tables/Core/` belongs to IMP-064.
+- Module lockfiles: `server/go.mod`/`server/go.sum` are owned by IMP-000 and co-ownable — a packet whose code imports a module already pinned in `../00_context/technology_versions.md` may list both in `owned_paths` (every packet transitively depends on IMP-000, so `paths.ownership_overlap` ordering holds) and then lands its own `require`/`go.sum` lines; until a packet lists them, the spec-owner lands pinned `require` lines for blocked tasks directly (BLK-003).
 - Provenance: `client/Assets/Art/Provenance/asset_source_register.json` is created empty by IMP-070 and merged by IMP-076 from `fragments/<name>.json`, each fragment owned by exactly one art packet.
 - Evidence directories are implied by `evidence_location` only; no packet lists `docs/10_implementation/evidence/` in `owned_paths`.
 - Unity `.meta` files are implied by ownership (ADR-0072): a packet owning `client/**` path P also owns `P.meta`, and the `.meta` of every folder it is the first to create; they are editor-materialized in CI (artifact `unity-materialized-<os>`) and committed byte-for-byte, never hand-written, except the path-derived GUIDs of § ProjectSettings Baseline.
@@ -229,12 +230,13 @@ Generated from `task_queue.md` `owned_paths`.
 
 | Path | Owner |
 |---|---|
+| `.devin/scripts/` | IMP-106 |
 | `.editorconfig` | IMP-000 |
 | `.gitattributes` | IMP-000 |
 | `.github/pull_request_template.md` | IMP-000 |
 | `.github/workflows/device_perf.yml` | IMP-096 |
 | `.github/workflows/post_merge_guard.yml` | IMP-068 |
-| `.github/workflows/verify.yml` | IMP-000, IMP-068 |
+| `.github/workflows/verify.yml` | IMP-000, IMP-068, IMP-106 |
 | `.gitignore` | IMP-000 |
 | `client/Assets/AddressableAssetsData/` | IMP-063 |
 | `client/Assets/Art/Actors/Creatures/` | IMP-104 |
@@ -479,7 +481,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `proto/thinhthan/v1/` | IMP-061 |
 | `scripts/codegen.ps1` | IMP-061 |
 | `scripts/device_perf.ps1` | IMP-096 |
-| `scripts/verify.ps1` | IMP-000 |
+| `scripts/verify.ps1` | IMP-000, IMP-106 |
 | `scripts/verify_client_build.ps1` | IMP-067 |
 | `server/cmd/compiler/` | IMP-003 |
 | `server/cmd/migrate/` | IMP-005 |
@@ -494,6 +496,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `server/internal/config/validation/beast/` | IMP-050 |
 | `server/internal/config/validation/drop/` | IMP-051 |
 | `server/internal/conformance/architecture/` | IMP-083 |
+| `server/internal/conformance/caching/` | IMP-106 |
 | `server/internal/conformance/deviceperf/` | IMP-096 |
 | `server/internal/conformance/gates/` | IMP-000 |
 | `server/internal/conformance/ratchet/` | IMP-068 |
