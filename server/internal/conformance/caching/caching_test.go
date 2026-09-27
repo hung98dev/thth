@@ -578,3 +578,33 @@ func TestUnityRunsBatchmode(t *testing.T) {
 		}
 	}
 }
+
+// BLK-010: `-runTests` invocations must not touch the GL/Xvfb path at all and
+// must log to a real file — the editor's in-process abort fired inside
+// GfxDevice init (GLX over Xvfb+llvmpipe) even under -batchmode, and
+// `-logFile -` loses the buffered tail containing the fatal line on SIGKILL.
+func TestUnityTestRunsHeadless(t *testing.T) {
+	wf := workflowText(t)
+	lines := strings.Split(wf, "\n")
+	for i, line := range lines {
+		// an editor invocation may span continued lines — join the block
+		if !strings.Contains(line, "unity-editor") {
+			continue
+		}
+		inv := line
+		for strings.HasSuffix(strings.TrimSpace(inv), "\\") && i+1 < len(lines) {
+			i++
+			inv += " " + lines[i]
+		}
+		if !strings.Contains(inv, "-runTests") {
+			continue
+		}
+		if !strings.Contains(inv, "-nographics") {
+			t.Errorf("-runTests invocation missing -nographics (GLX/Xvfb abort surface, BLK-010): %s", strings.TrimSpace(inv))
+		}
+		m := regexp.MustCompile(`-logFile\s+(\S+)`).FindStringSubmatch(inv)
+		if m == nil || m[1] == "-" {
+			t.Errorf("-runTests invocation must write -logFile to a real file (stdout tail is lost on SIGKILL, BLK-010): %s", strings.TrimSpace(inv))
+		}
+	}
+}
