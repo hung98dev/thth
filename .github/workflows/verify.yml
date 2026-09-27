@@ -396,6 +396,10 @@ jobs:
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
                 # /root/.cache writable for the licensing client (BLK-009).
+                # -nographics: no GL device, no Xvfb/llvmpipe path — removes the GfxDevice
+                # init surface where the editor's abort path fired (BLK-010).
+                # -logFile is a REAL file under the workspace bind-mount: a SIGKILL no
+                # longer drops the buffered tail containing the fatal line.
                 cid=$(docker run -d -i --shm-size=4g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
@@ -404,15 +408,14 @@ jobs:
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
-                  -e LIBGL_ALWAYS_SOFTWARE=1 \
                   -e MONO_GC_PARAMS=nursery-size=64m \
                   -e MODE="$mode" \
                   "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
                   bash -c '
-                    unity-editor -batchmode -projectPath /github/workspace/client \
+                    unity-editor -batchmode -nographics -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
-                      -logFile -
+                      -logFile "/github/workspace/artifacts/unity-tests/$MODE-editor.log"
                   ') || cid=
                 df -h / "$RUNNER_TEMP" | tail -2 || true
                 docker system df 2>/dev/null | tail -3 || true
@@ -425,6 +428,11 @@ jobs:
                 fi
                 tail -200 "$RUNNER_TEMP/unity-tests.log" 2>/dev/null || true
                 grep -E 'Licensing|license|Access token' "$RUNNER_TEMP/unity-tests.log" 2>/dev/null | tail -10 || true
+                # the real editor log survives a SIGKILL — print head + tail (BLK-010)
+                echo "== artifacts/unity-tests/$mode-editor.log (head 60) =="
+                head -60 "artifacts/unity-tests/$mode-editor.log" 2>/dev/null || true
+                echo "== artifacts/unity-tests/$mode-editor.log (tail 300) =="
+                tail -300 "artifacts/unity-tests/$mode-editor.log" 2>/dev/null || true
               fi
               if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
                 && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
