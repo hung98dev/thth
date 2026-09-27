@@ -482,6 +482,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
 - `server/internal/conformance/caching/caching_test.go` (BLK-005): TestLibraryCacheExactKeyOnly.
 - `server/internal/stackpin/versions_test.go` (BLK-007): TestCscRspScopedPerAsmdef.
+- `server/internal/conformance/gates/gates_test.go` (BLK-007): TestGeneratedBoundaryAllowsCscRsp.
 - `client/Assets/Tests/EditMode/AssemblyGraph/CompilerSettingsTests.cs` (BLK-007): TestCscRspWarnAsErrorNullable.
 
 generated_artifacts: []

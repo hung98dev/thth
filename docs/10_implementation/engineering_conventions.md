@@ -147,7 +147,7 @@ services            constructor injection from ThinhThan.App       constructor i
   - `option go_package = "thinhthan/internal/protocol/v1;protocolv1";`
   - `option csharp_namespace = "ThinhThan.Protocol.V1";`
 - **Tên field:** snake_case cho field names, PascalCase cho message và enum names, SCREAMING_SNAKE_CASE cho enum values (với tiền tố enum name).
-- **Generated Code:** Cấm sửa tay code sinh ra trong `server/internal/protocol/v1/` và `client/Assets/Scripts/Protocol/`. Mọi thay đổi phải sinh qua `scripts/codegen.ps1`; Go parity tests nằm ngoài generated-only tree tại `server/internal/testing/protocol/`.
+- **Generated Code:** Cấm sửa tay code sinh ra trong `server/internal/protocol/v1/` và `client/Assets/Scripts/Protocol/`. Mọi thay đổi phải sinh qua `scripts/codegen.ps1`; Go parity tests nằm ngoài generated-only tree tại `server/internal/testing/protocol/`. The only non-generated files allowed in `client/Assets/Scripts/Protocol/` are the IMP-000-owned skeleton: `ThinhThan.Protocol.asmdef`, its CODE-001 `csc.rsp`, and `.meta` companions (BLK-007).
 
 ## 4. Testing & Verification Conventions
 

@@ -122,7 +122,7 @@ client/
 │   │   │                              # Rendering IMP-101, Geometry (+ Editor exporter) IMP-062, Session + Runtime IMP-065, Input IMP-066,
 │   │   │                              # Performance IMP-095, PerformanceDevice IMP-096
 │   │   ├── Net/                       # IMP-065 (asmdef IMP-000)
-│   │   ├── Protocol/                  # IMP-061 generated C# (asmdef IMP-000); never hand-edit
+│   │   ├── Protocol/                  # IMP-061 generated C# (asmdef + csc.rsp IMP-000); never hand-edit
 │   │   ├── Systems/<Feature>/         # feature packets (asmdef IMP-000); Replication IMP-065, Camera IMP-066
 │   │   └── UI/<Feature>/              # feature packets (asmdef IMP-000)
 │   └── Tests/
