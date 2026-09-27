@@ -14,10 +14,7 @@ namespace ThinhThan.Core.Assets
         // zone and must be assigned explicitly by their owning packet).
         public static string? Assign(string key, string? bossSpaceId)
         {
-            string? identity;
-            AssetFacet facet;
-            bool catalogBacked;
-            if (!TrySplitUnchecked(key, out identity, out facet, out catalogBacked))
+            if (!TrySplitUnchecked(key, out var identity, out var facet, out var catalogBacked))
             {
                 return null;
             }
@@ -178,15 +175,12 @@ namespace ThinhThan.Core.Assets
             return dot <= 0 ? identity : identity.Substring(0, dot);
         }
 
-        private static bool TrySplitUnchecked(string key, out string? identity, out AssetFacet facet, out bool catalogBacked)
+        private static bool TrySplitUnchecked(string key, out string identity, out AssetFacet facet, out bool catalogBacked)
         {
-            catalogBacked = false;
-            if (!AssetKey.TrySplit(key, out var parsed, out facet, out catalogBacked))
+            if (!AssetKey.TrySplit(key, out identity, out facet, out catalogBacked))
             {
-                identity = null;
                 return false;
             }
-            identity = parsed;
             return true;
         }
     }
