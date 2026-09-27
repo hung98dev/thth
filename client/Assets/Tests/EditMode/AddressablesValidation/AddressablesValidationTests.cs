@@ -6,6 +6,7 @@ using ThinhThan.Core.Assets;
 using ThinhThan.Core.Assets.Editor;
 using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
+using UnityEngine;
 
 namespace ThinhThan.Tests.EditMode.AddressablesValidation
 {
