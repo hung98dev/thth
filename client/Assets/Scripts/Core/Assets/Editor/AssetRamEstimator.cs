@@ -6,9 +6,13 @@ namespace ThinhThan.Core.Assets.Editor
     // Deterministic per-entry RAM estimate used by the budget gates
     // (presentation_asset_manifest.md §1): texture entries model the
     // declared profile at mobile ASTC block size (the binding platform
-    // for the RAM budgets), BGM entries charge the streaming buffer
-    // allowance, and every other placeholder carries the fixed
-    // structural cost of AssetRamModel.StructuralBytesPerEntry.
+    // for the RAM budgets) and every other placeholder carries the
+    // fixed structural cost of AssetRamModel.StructuralBytesPerEntry.
+    // Audio groups hold placeholder ScriptableObjects only until real
+    // clips land; the audio.bgm.* RAM figure budgets the group's one
+    // active streaming buffer, not per-track payloads (a zone group can
+    // hold several track references while audio.bgm.shared already owns
+    // two), so bgm/clip placeholders bill the structural cost.
     public static class AssetRamEstimator
     {
         public static long EntryBytes(string projectRelativePath)
@@ -28,10 +32,6 @@ namespace ThinhThan.Core.Assets.Editor
 
         private static long PlaceholderBytes(AddressablePlaceholder placeholder)
         {
-            if (placeholder.Facet == AssetFacet.Bgm.ToKeySegment())
-            {
-                return AssetRamModel.BgmStreamingBufferBytes;
-            }
             if (placeholder.Facet == AssetFacet.Clip.ToKeySegment())
             {
                 // SFX cues are short; a 4s stereo cue at 44.1 kHz is a

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using NUnit.Framework;
@@ -131,10 +132,17 @@ namespace ThinhThan.Tests.EditMode.AddressablesValidation
             var guid = AssetDatabase.AssetPathToGUID(SettingsPath);
             Assert.AreEqual(PinnedSettingsGuid, guid, "AddressableAssetSettings.asset GUID drifted from the repository_layout.md baseline");
             Assert.AreEqual(PinnedGuidOf(SettingsPath), guid);
-            Assert.IsTrue(
-                EditorBuildSettings.TryGetConfigObject("com.unity.addressableassets", out AddressableAssetSettings configured),
-                "EditorBuildSettings must map com.unity.addressableassets to the settings asset");
-            Assert.NotNull(configured);
+            // Baseline contract is the serialized m_configObjects slot
+            // (repository_layout.md § ProjectSettings Baseline, same
+            // convention as ProjectSettingsBaselineTests): the
+            // com.unity.addressableassets key must reference the
+            // path-derived GUID of the settings asset.
+            var ebs = File.ReadAllText(Path.Combine("ProjectSettings", "EditorBuildSettings.asset"));
+            var idx = ebs.IndexOf("com.unity.addressableassets", System.StringComparison.Ordinal);
+            Assert.GreaterOrEqual(idx, 0, "m_configObjects entry missing: com.unity.addressableassets");
+            var window = ebs.Substring(idx, System.Math.Min(300, ebs.Length - idx));
+            Assert.IsTrue(window.Contains(guid),
+                "com.unity.addressableassets must reference path-derived GUID " + guid);
         }
 
         private static string PinnedGuidOf(string path)

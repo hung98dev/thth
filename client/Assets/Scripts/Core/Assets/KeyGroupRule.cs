@@ -39,26 +39,19 @@ namespace ThinhThan.Core.Assets
                 {
                     // space ids: map.<zone>.<map>, map.pvp.*,
                     // map.guild_war.* (physics_geometry_contract.md §6.1).
-                    var spaceZone = SpaceZone(identity);
-                    return facet == AssetFacet.Bgm ? BgmGroupForZone(spaceZone) : MapGroupFor(spaceZone);
+                    // A space's .bgm key is the PresentationAlias owned by
+                    // that space — it lives in the space's own group, not
+                    // the audio group that stores the shared track.
+                    return MapGroupFor(SpaceZone(identity));
                 }
                 case CatalogAssetKind.Dungeon:
                 {
+                    // Same rule for the dungeon's bgm alias.
                     var dungeonKey = identity.Substring(head.Length + 1);
-                    if (facet == AssetFacet.Bgm)
-                    {
-                        var zone = AddressableGroups.DungeonZone(identity);
-                        return BgmGroupForZone(zone);
-                    }
                     return AddressableGroups.DungeonGroup(dungeonKey);
                 }
                 case CatalogAssetKind.Instance:
                 {
-                    if (facet == AssetFacet.Bgm)
-                    {
-                        var zone = AddressableGroups.DungeonZone(identity);
-                        return BgmGroupForZone(zone);
-                    }
                     return AddressableGroups.DungeonFinale;
                 }
                 case CatalogAssetKind.Monster:
@@ -66,10 +59,6 @@ namespace ThinhThan.Core.Assets
                 {
                     // monster.<zone>.<name> / npc.<zone>.<name>.
                     var zone = SpaceZone(identity);
-                    if (facet == AssetFacet.Bgm)
-                    {
-                        return BgmGroupForZone(zone);
-                    }
                     return zone == null ? null : AddressableGroups.RegionGroup(zone);
                 }
                 case CatalogAssetKind.Boss:
@@ -150,11 +139,6 @@ namespace ThinhThan.Core.Assets
                 return AddressableGroups.PvpShared;
             }
             return AddressableGroups.RegionGroup(zoneSegment);
-        }
-
-        private static string BgmGroupForZone(string? zoneKey)
-        {
-            return zoneKey == null ? AddressableGroups.AudioBgmShared : AddressableGroups.AudioBgmGroup(zoneKey);
         }
 
         private static string? SpaceZone(string catalogId)
