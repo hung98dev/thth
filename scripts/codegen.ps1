@@ -76,7 +76,10 @@ $GenGoBin   = Join-Path $ToolsBin $GenGoBinName
 # ---------------------------------------------------------------------------
 function Get-BinVersion([string]$bin) {
     try {
-        return (& $bin --version) -join ' '
+        # protoc-gen-go prints filepath.Base(argv[0]); invoked by full path the
+        # reported name carries the host's executable suffix ('protoc-gen-go.exe'
+        # on Windows) — normalize it so pin compares are identical on both OSes.
+        return ((& $bin --version) -join ' ') -replace '\.exe ', ' '
     } catch {
         return $null
     }
