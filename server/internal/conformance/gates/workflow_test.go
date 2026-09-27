@@ -208,8 +208,10 @@ func TestUnityMaterializeRunsWhenUnityGatesSkip(t *testing.T) {
 	for _, name := range []string{"verify-linux", "verify-windows"} {
 		j := jobNamed(t, wf, name)
 		s := stepNamed(t, j, "Unity materialization (licence retry <=5)")
-		if strings.Contains(s.If, "unity") || strings.Contains(s.If, "gate") {
-			t.Fatalf("job %q materialization must run unconditionally (no gate if), got %q", name, s.If)
+		// Never gated on gate activation (owner-not-done): its only condition
+		// is the ADR-0073 path scope, validated by the verifier.
+		if s.If != "steps.unity-scope.outputs.run == 'true'" {
+			t.Fatalf("job %q materialization may only be conditioned on the Unity scope, got %q", name, s.If)
 		}
 		// It must come before the verifier step.
 		ver := stepNamed(t, j, "Run Q0-Q6 verifier")

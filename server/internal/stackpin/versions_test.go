@@ -41,10 +41,11 @@ func TestImageDigests(t *testing.T) {
 		t.Errorf("PostgresDigest %q", PostgresDigest)
 	}
 	want := map[string]string{
-		"linux":          "unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d",
-		"windows":        "unityci/editor:windows-6000.6.1f1-base-3.2.2@sha256:a995b9d1d03dc08c1702f91acc05c64297217522aebb9387af7ce912331fb534",
-		"android":        "unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab",
-		"windows-il2cpp": "unityci/editor:windows-6000.6.1f1-windows-il2cpp-3.2.2@sha256:5bd80a61ac442b81745f653dd39395f6e93167ebc51c4b494bdd42c2b656195b",
+		"linux":   "unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d",
+		"android": "unityci/editor:ubuntu-6000.6.1f1-android-3.2.2@sha256:33f6f1056b02dcabd46ed9bfb8ff26aae241e0af412f9628bc06fc760df248ab",
+	}
+	if len(UnityImages) != len(want) {
+		t.Errorf("UnityImages = %v, want only linux + android (Windows is native, ADR-0073)", UnityImages)
 	}
 	for k, w := range want {
 		if UnityImages[k] != w {
