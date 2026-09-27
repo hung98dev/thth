@@ -27,6 +27,16 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 None. IDs start at `BLK-001` and `OPS-001`.
 
+### `BLK-012` — `Q0.control.diff` has no shared-registry append exemption: the `unity-materialized` `localization.*` group entries that §4b's drift gate requires committing (and `repository_layout.md` rule "a packet that depends on IMP-063 may append groups/entries only for keys it owns" permits) land in IMP-063-owned files and fail `owned_paths`
+opened_by: implementer/IMP-064   opened_at: 2026-09-27T21:32Z
+evidence: PR #43 verify run https://github.com/hung98dev/thth/actions/runs/36351372447 — head `9a61c66` carries the byte-for-byte `unity-materialized-{linux,windows}` commit (the two OS artifacts were identical): `client/Assets/AddressableAssetsData/AddressableAssetSettings.asset` and `AssetGroups/localization.locales|localization.shared|localization.strings.vi_vn|localization.strings.en_us.asset` gained the package-managed entries the ADR-0074 provisioner rehomed (`RehomePackageGroups`: locales -> `localization.locales`, `Core_vi-VN`/`Core_en-US` tables -> `localization.strings.<key>`, shared table data -> `localization.shared`, addresses/labels preserved). The `Unity materialized drift check` requires committing these files; `Q0.control.diff` then reports `file <path> outside IMP-064 owned_paths` — `ownedFile()` in `server/internal/conformance/gates/diff.go` matches only literal owned_path prefixes and has no shared-registry carve-out, so the append permission named by `repository_layout.md` § Path Ownership exists in spec but not in the gate. IMP-064 cannot satisfy §4b (commit materialized output byte-for-byte) and Q0 (no path outside owned_paths) at once: the canonical entries for its own locales/tables serialize only into IMP-063-owned files. §4b.2's "materialized files outside owned_paths are a BLK-xxx" applies verbatim.
+owning spec / system: `docs/10_implementation/repository_layout.md` § Path Ownership (shared registries: AddressableAssetsData append-for-owned-keys rule); `docs/10_implementation/agent_execution_protocol.md` §4b (materialized-commit contract); `server/internal/conformance/gates/diff.go` (`Q0.control.diff` / `ownedFile()` — no exemption implemented); IMP-063 (packet owning `client/Assets/AddressableAssetsData/`).
+options:
+  1. extend IMP-064's `owned_paths` with the localization registry surface — `client/Assets/AddressableAssetsData/AssetGroups/localization.locales|shared|strings.vi_vn|strings.en_us` (+`.meta`) and `client/Assets/AddressableAssetsData/AddressableAssetSettings.asset`; smallest spec-only change, but gives the packet write access to the whole shared settings file;
+  2. implement the append exemption in `Q0.control.diff`: paths under a shared registry owned by a `depends_on` packet pass when the hunk is append-only and every added entry's address/key belongs to the packet's assets (the IMP-063 validator already enforces the canonical set); matches the written rule, more gate work;
+  3. land the converged registry files via a coordinator ops/PR (or spec-owner commit) so IMP-064's diff never touches IMP-063 paths; no gate change, but serializes every package-materialized append through coordination.
+blocks: IMP-064 — PR #43 cannot merge while Q0 rejects the files §4b mandates committing.
+
 
 ## Resolved Blockers
 
