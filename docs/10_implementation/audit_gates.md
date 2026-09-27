@@ -15,7 +15,8 @@ The repository owner is the only human in the process. Before `IMP-000` the owne
 repository         public GitHub repo with docs/ pushed to main; allow auto-merge; delete branch on merge;
                    Actions: require approval for all outside collaborators; fork PRs are never accepted (ADR-0058)
 runners            GitHub-hosted standard runners only: ubuntu-24.04 and windows-2022 (no self-hosted runner, no VM,
-                   no GPU); nothing to install: CI provisions Go, pwsh, gh, jq, Git LFS, GameCI Unity images,
+                   no GPU); nothing to install: CI provisions Go, pwsh, gh, jq, Git LFS, Unity (Linux GameCI image,
+                   native Windows editor, ADR-0073),
                    PostgreSQL and gcloud from the pins in ../00_context/technology_versions.md; no local Unity editor
                    is required (CI materializes Unity files, agent_execution_protocol.md §4b)
 android devices    Google Cloud project on the free Firebase Spark plan with Test Lab enabled. Recorded physical
@@ -65,6 +66,8 @@ backup storage     one S3-compatible bucket for the pgBackRest 2.59.1 repo1 and 
 
 A Q gate or sub-gate is required iff its owner task is `DONE` on `main` or set to `DONE` in the PR head (ADR-0068): Q0/Q1/Q3-Go/Q4/Q6 after `IMP-000` (including C# style, `csc.rsp`, `gofmt`/`go vet`/`staticcheck`); Q2 after `IMP-061` (including the generated C# header); the Q4 client API fence and canonical-implementation checks after `IMP-083`; each Go allocation budget after its owning packet; Q5 after `IMP-005`, `IMP-003`, `IMP-004`; Unity EditMode after `IMP-000`; Unity PlayMode after `IMP-065`; client performance after its owning task. Otherwise it reports `SKIP(owner-not-done)` naming the gate and its owner task, which is not a failure.
 
+`SKIP(no-client-change)` (ADR-0073) applies only to the Unity checks (`Q1.unity.editor`, Q3 Unity EditMode/PlayMode) of a `pull_request*` run whose diff touches no Unity-relevant path (§ Job Preconditions item 3); the verifier re-derives the diff and fails the Unity checks when the workflow skipped Unity on a Unity-relevant diff, on a `push`, or on an `imp/IMP-068-*` / `*-done` branch. It is never valid on `main` pushes.
+
 A PR head that sets a packet `DONE` without `evidence/<ID>/manifest.json` passes Q0/Q6 (the manifest cannot exist before the run that produces it); the head that is merged must contain the manifest, and Q6 verifies it there (ADR-0072).
 
 ## Job Preconditions (always on, not gates)
@@ -73,7 +76,7 @@ Every `verify.yml` job runs these steps before any gate, in every PR including `
 
 1. Fork guard: only on `pull_request` / `pull_request_target` events, the first step fails when `head.repo.full_name != github.repository` (`external PRs not accepted`); on `push` (post-merge guard) the step is skipped.
 2. Freeze: when repository variable `AUTO_MERGE_FROZEN == 'true'`, the job fails with `AUTO_MERGE_FROZEN` unless the head branch starts with `revert/` or `ops/`.
-3. Unity materialization: the job opens `client/` in the pinned editor (GameCI, batchmode; licence activation retried up to 5 times, 60 s apart, before the failure is classified infrastructure) even when every Unity gate reports `SKIP`. If the editor created or modified any tracked or untracked file under `client/` (outside ignored `Library/`, `Temp/`, `Logs/`, `obj/`), the job uploads those files as artifact `unity-materialized-<linux|windows>` and fails with `commit unity-materialized`. Editor-generated GUIDs are accepted as committed; only the § ProjectSettings Baseline references of `repository_layout.md` use path-derived GUIDs.
+3. Unity materialization: the job opens `client/` in the pinned editor (Linux: GameCI image; Windows: native pinned install; batchmode; licence activation retried up to 5 times, 60 s apart, before the failure is classified infrastructure) even when every Unity gate reports `SKIP(owner-not-done)`. On a `pull_request*` run whose diff (`base...head`) matches no Unity-relevant path (`client/`, `proto/`, `scripts/codegen.*`, `scripts/verify.ps1`, `.github/workflows/`, `server/cmd/verify/`, `server/internal/conformance/`, `../00_context/technology_versions.md`), every Unity step is skipped and the Unity checks report `SKIP(no-client-change)`; `push` runs, `imp/IMP-068-*` and `*-done` branches always run Unity (ADR-0073). If the editor created or modified any tracked or untracked file under `client/` (outside ignored `Library/`, `Temp/`, `Logs/`, `obj/`), the job uploads those files as artifact `unity-materialized-<linux|windows>` and fails with `commit unity-materialized`. Editor-generated GUIDs are accepted as committed; only the § ProjectSettings Baseline references of `repository_layout.md` use path-derived GUIDs.
 
 ## Gate A — Contract Coherence
 
@@ -103,7 +106,7 @@ Met only when:
 
 ## Gate C — Executable Conformance
 
-Every required Q gate executes; `SKIP(owner-not-done)` is allowed only for a gate whose owner task is not `DONE` (§ Gate Activation), and `SKIP(status-only)` only on the Q0-only fast path (§ Protected Paths). Otherwise a tool missing in either CI job is an `OPS-xxx` failure, never a silent skip.
+Every required Q gate executes; `SKIP(owner-not-done)` is allowed only for a gate whose owner task is not `DONE` (§ Gate Activation), `SKIP(status-only)` only on the Q0-only fast path (§ Protected Paths), and `SKIP(no-client-change)` only for the Unity checks of a pull request that touches no Unity-relevant path (§ Gate Activation, ADR-0073). Otherwise a tool missing in either CI job is an `OPS-xxx` failure, never a silent skip.
 
 - Q1 toolchain/dependency/action pins;
 - Q2 protobuf Go/C# regenerated into a temp directory and byte-compared, including the generated C# header (`CODE-004`);
