@@ -85,7 +85,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-058` | Folk Fishing Runtime | `NOT_STARTED` | IMP-002, IMP-008, IMP-010, IMP-018 | `../02_world/world_rules.md`, `../07_content/economy_catalog.md` |
 | `IMP-059` | Hearth / Cooking / Bonfire Runtime | `NOT_STARTED` | IMP-003, IMP-007, IMP-008, IMP-018 | `../02_world/world_rules.md`, `../07_content/crafting_catalog.md` |
 | `IMP-060` | Atlas Journal Runtime | `NOT_STARTED` | IMP-005, IMP-010, IMP-011, IMP-018 | `../03_systems/atlas.md`, `../07_content/atlas_catalog.md` |
-| `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `BLOCKED` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
+| `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `NOT_STARTED` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
 | `IMP-062` | Unity Geometry Exporter & Map Geometry Parity | `NOT_STARTED` | IMP-078, IMP-079 | `../01_gameplay/movement.md`, `../04_architecture/realtime_loop.md` |
 | `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `NOT_STARTED` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
 | `IMP-064` | Unity Bilingual Localization Pipeline (vi-VN / en-US) | `NOT_STARTED` | IMP-000 | `../04_architecture/client_localization.md`, `../06_data/text.md` |
@@ -209,6 +209,7 @@ Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.
 - `server/internal/conformance/gates/gates_test.go` (ADR-0072): TestBlockAndOpsPrFastPath, TestDoneWithoutManifestAllowedOnHead, TestMergedHeadRequiresManifest, TestTwoPhaseListIncludesImp083, TestLocalDeferMissingNeverInCi.
 - `server/internal/stackpin/versions_test.go` (ADR-0072): TestGoogleProtobufNupkgSha256, TestEdbZipSha256, TestDownloadArtifactAndGitLfsPins.
 - `server/internal/conformance/gates/gates_test.go` (BLK-001): TestImp000OwnedPathsCoverMaterializedAssets — IMP-000 `owned_paths` cover `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset` and their `.meta`.
+- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire — `server/go.mod` declares `require google.golang.org/protobuf v1.36.12` (the `GoModulePins` pin) so generated protocol code compiles without implementers editing lockfiles.
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware — bootstrap roots and generated-protocol files unblock once an owning packet is IN_PROGRESS/DONE and unowned paths never do; TestBlocksLineCaseInsensitive — open-blocker gating parses lowercase `blocks:` lines.
 
 generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
@@ -359,11 +360,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-004/"
 
 ## `IMP-061` — Protocol Buffers Schema & Multi-Language Codegen Harness
 id: IMP-061
-status: BLOCKED
+status: NOT_STARTED
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-061-proto-codegen"
 claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: "BLK-003"
+blocked_by: ""
 
 specs: [`../05_network/protocol.md`, `../05_network/messages.md`, `../05_network/errors.md`, `../05_network/protobuf_conventions.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `repository_layout.md`]
 adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0060-wire-and-durable-contract-completion.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0063-economy-contract-reconciliation.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
@@ -398,6 +399,7 @@ consumers_checked: [AGENTS.md, docs/05_network/messages.md, docs/05_network/prot
 - `client/Assets/Tests/EditMode/ProtocolParity/ProtocolParityTests.cs`: generated registry coverage and shared binary golden decode/encode parity.
 - `server/internal/testing/protocol/registry_test.go`: TestAdr0060MessagesRegistered, TestErrorEnumMatchesErrorsMd (ADR-0060), TestCodegenPreservesProtocolAsmdef, TestCodegenNeverWritesMeta (ADR-0072).
 - `server/internal/testing/protocol/wire_types_test.go`: TestNoOptionalRepeatedFields, TestErrorCodeFencedRowMajorOrder, TestOutcomeMessagesHaveNoOperationResult, TestAdr0069MessagesRegistered (ADR-0069).
+- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire.
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
 
 generated_artifacts: [`server/internal/protocol/v1/*.pb.go`, `client/Assets/Scripts/Protocol/*.cs`]
