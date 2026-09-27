@@ -1,6 +1,10 @@
 package stackpin
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
 
 func TestExactToolchainPins(t *testing.T) {
 	cases := []struct{ name, got, want string }{
@@ -174,4 +178,59 @@ func TestCliAssetSha256(t *testing.T) {
 			t.Errorf("%s missing download URL", name)
 		}
 	}
+}
+
+func TestCscRspScopedPerAsmdef(t *testing.T) {
+	mkroot := func(t *testing.T) string {
+		t.Helper()
+		return t.TempDir()
+	}
+	write := func(t *testing.T, root, rel, body string) {
+		t.Helper()
+		p := filepath.Join(root, filepath.FromSlash(rel))
+		if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	good := "-warnaserror+\n-nullable:enable\n"
+	asmdef := "client/Assets/Scripts/Core/ThinhThan.Core.asmdef"
+	rspec := "client/Assets/Scripts/Core/csc.rsp"
+
+	t.Run("root csc.rsp forbidden", func(t *testing.T) {
+		root := mkroot(t)
+		write(t, root, "client/Assets/csc.rsp", good)
+		write(t, root, asmdef, "{}")
+		write(t, root, rspec, good)
+		if f := checkCscRsp(root); len(f.Problems) == 0 {
+			t.Fatal("expected failure when client/Assets/csc.rsp exists")
+		}
+	})
+	t.Run("asmdef without csc.rsp fails", func(t *testing.T) {
+		root := mkroot(t)
+		write(t, root, asmdef, "{}")
+		if f := checkCscRsp(root); len(f.Problems) == 0 {
+			t.Fatal("expected failure when an asmdef has no sibling csc.rsp")
+		}
+	})
+	t.Run("extra flag fails", func(t *testing.T) {
+		root := mkroot(t)
+		write(t, root, asmdef, "{}")
+		write(t, root, rspec, "-warnaserror+\n-nullable:enable\n-nowarn:1591\n")
+		if f := checkCscRsp(root); len(f.Problems) == 0 {
+			t.Fatal("expected failure on extra flag")
+		}
+	})
+	t.Run("per-asmdef csc.rsp passes", func(t *testing.T) {
+		root := mkroot(t)
+		for _, d := range []string{"client/Assets/Scripts/Core", "client/Assets/Scripts/Net", "client/Assets/Tests/EditMode"} {
+			write(t, root, d+"/A.asmdef", "{}")
+			write(t, root, d+"/csc.rsp", good)
+		}
+		if f := checkCscRsp(root); len(f.Problems) != 0 {
+			t.Fatalf("expected pass, got %v", f.Problems)
+		}
+	})
 }
