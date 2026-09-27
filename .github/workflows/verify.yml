@@ -119,7 +119,9 @@ jobs:
 
       # IMP-106: explicit cache steps (policy: .devin/scripts/cache-policy.md).
       # Keys = <scope>-<os>-<pin>-<content hash>; restore-keys keep OS+pin and
-      # may only roll the hash. Licence state is never cached (CI-002).
+      # may only roll the hash on content-addressed stores. Caches whose
+      # payload derives from the hashed inputs restore on exact key only
+      # (CI-001, BLK-005). Licence state is never cached (CI-002).
       - name: Cache Go modules + build (pinned)
         id: cache-go
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -189,10 +191,11 @@ jobs:
         id: cache-unity-library
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
+          # exact key only (CI-001): a prefix restore returns a Library built
+          # from different manifest/lock/ProjectSettings inputs — a silent
+          # wrong-content restore (BLK-005). A miss = cold import.
           path: client/Library
-          key: unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**') }}
-          restore-keys: |
-            unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-
+          key: unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/csc.rsp') }}
 
       - name: Verifier environment
         shell: bash
@@ -612,7 +615,9 @@ jobs:
 
       # IMP-106: explicit cache steps (policy: .devin/scripts/cache-policy.md).
       # Keys = <scope>-<os>-<pin>-<content hash>; restore-keys keep OS+pin and
-      # may only roll the hash. Licence state is never cached (CI-002).
+      # may only roll the hash on content-addressed stores. Caches whose
+      # payload derives from the hashed inputs restore on exact key only
+      # (CI-001, BLK-005). Licence state is never cached (CI-002).
       - name: Cache Go modules + build (pinned)
         id: cache-go
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -757,10 +762,11 @@ jobs:
         id: cache-unity-library
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
+          # exact key only (CI-001): a prefix restore returns a Library built
+          # from different manifest/lock/ProjectSettings inputs — a silent
+          # wrong-content restore (BLK-005). A miss = cold import.
           path: client/Library
-          key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**') }}
-          restore-keys: |
-            unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_IMAGE_DIGEST }}-
+          key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/csc.rsp') }}
 
       - name: Unity materialization (licence retry <=5)
         timeout-minutes: 30
