@@ -37,6 +37,7 @@ namespace ThinhThan.Tests.EditMode.AssemblyGraph
             {
                 "Unity.InputSystem", "Unity.RenderPipelines.Core.Runtime",
                 "Unity.RenderPipelines.Universal.Runtime",
+                "Unity.RenderPipelines.Universal.2D.Runtime",
             },
             ["ThinhThan.Core.Assets"] = new[]
             {
