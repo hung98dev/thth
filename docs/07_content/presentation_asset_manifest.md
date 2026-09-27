@@ -21,16 +21,19 @@ Tên nhóm, nội dung nhóm và quy tắc khóa là canonical tại `../04_arch
 | `region.<zone_key>` (6) | ≤ 60 MB mỗi vùng | ≤ 120 MB | nạp khi đích chuyển map thuộc vùng; giải phóng khi rời vùng (kể cả khi vào instance) |
 | `dungeon.<dungeon_key>`, `dungeon.finale`, `pvp.shared` | ≤ 25 MB mỗi nhóm | ≤ 60 MB | nạp khi vào instance/trận; giải phóng khi rời |
 | `audio.bgm.<zone_key>` (6), `audio.bgm.shared` | ≤ 15 MB mỗi nhóm | ≤ 4 MB (bộ đệm streaming) | stream khi vào map dùng BGM đó; không nạp cả file vào RAM |
+| `localization.locales` | ≤ 1 MB (trong player) | ≤ 2 MB | nạp ở `BOOT`; giữ suốt phiên |
+| `localization.shared` | ≤ 1 MB (trong player) | ≤ 4 MB | nạp ở `BOOT`; giữ suốt phiên |
+| `localization.strings.<locale_key>` (2: `vi_vn`, `en_us`) | ≤ 4 MB mỗi nhóm (trong player) | ≤ 8 MB | nạp ở `BOOT`; giữ suốt phiên |
 
 ```text
 RAM runtime            = bộ nhớ texture tính từ định dạng x kích thước x số mip đã import + mesh + audio đã giải nén,
                          tính tất định từ import settings (validator IMP-063), không đo từ process
-resident steady        tổng RAM các nhóm đang nạp <= 450 MB   (tối đa: bootstrap + shared + icons + beast + cosmetic + 1 region
-                         hoặc 1 dungeon/pvp)
+resident steady        tổng RAM các nhóm đang nạp <= 450 MB   (tối đa: bootstrap + shared + icons + beast + cosmetic +
+                         localization.* + 1 region hoặc 1 dungeon/pvp)
 resident transfer peak <= 570 MB (nhóm đích nạp trước khi nhóm nguồn giải phóng)
 ràng buộc              resident transfer peak + engine/managed/native <= 1.3 GB resident của ANDROID_MIN
                          (../04_architecture/client_performance.md § Memory and GC)
-base install           bootstrap.local + shared.local <= 82 MB nén
+base install           bootstrap.local + shared.local + localization.* <= 92 MB nén
 ```
 
 ## 2. Quy chuẩn Định danh Khóa Tài nguyên (Asset Key Namespace)

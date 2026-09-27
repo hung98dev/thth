@@ -53,7 +53,7 @@ namespace ThinhThan.Tests.EditMode.AddressablesValidation
         {
             var settings = LoadSettings();
             var canonical = new HashSet<string>(AddressableGroups.CanonicalNames());
-            Assert.AreEqual(25, canonical.Count);
+            Assert.AreEqual(29, canonical.Count);
             var seen = new HashSet<string>();
             var bossSpaces = BossSpaceMap();
             foreach (var group in settings.groups)
@@ -62,6 +62,14 @@ namespace ThinhThan.Tests.EditMode.AddressablesValidation
                 foreach (var entry in group.entries)
                 {
                     Assert.IsTrue(seen.Add(entry.address), "key in more than one group: " + entry.address);
+                    // Entries in localization.* groups are package-managed:
+                    // they keep Unity Localization's address/label contract
+                    // (Locale, Locale-<code>, <Table>_<code>) and are exempt
+                    // from the asset.* grammar (client_assets.md, BLK-011).
+                    if (AddressableGroups.IsLocalizationGroup(group.Name))
+                    {
+                        continue;
+                    }
                     var space = bossSpaces.TryGetValue(entry.address, out var s) ? s : null;
                     var want = KeyGroupRule.Assign(entry.address, space);
                     Assert.AreEqual(want, group.Name, "group mismatch for " + entry.address);

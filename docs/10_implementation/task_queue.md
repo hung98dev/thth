@@ -87,7 +87,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-060` | Atlas Journal Runtime | `NOT_STARTED` | IMP-005, IMP-010, IMP-011, IMP-018 | `../03_systems/atlas.md`, `../07_content/atlas_catalog.md` |
 | `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `DONE` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
 | `IMP-062` | Unity Geometry Exporter & Map Geometry Parity | `NOT_STARTED` | IMP-078, IMP-079 | `../01_gameplay/movement.md`, `../04_architecture/realtime_loop.md` |
-| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `IN_PROGRESS` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
+| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `DONE` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
 | `IMP-064` | Unity Bilingual Localization Pipeline (vi-VN / en-US) | `IN_PROGRESS` | IMP-000 | `../04_architecture/client_localization.md`, `../06_data/text.md` |
 | `IMP-065` | Unity Client Bootstrap, Session State & Network Transport | `NOT_STARTED` | IMP-061, IMP-100 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
 | `IMP-066` | Unity Input Action Mapping & Core UI/HUD State Machine | `NOT_STARTED` | IMP-013, IMP-065 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
@@ -447,14 +447,14 @@ evidence_location: "docs/10_implementation/evidence/IMP-062/"
 
 ## `IMP-063` — Addressables Asset Pipeline & Catalog Delivery
 id: IMP-063
-status: IN_PROGRESS
+status: DONE
 claimed_by: "devin-a0dc979c37fe463dbc1cbb55a542e778"
 branch: "imp/IMP-063-addressables"
 claimed_at: "2026-09-27T17:56:00Z"
 blocked_by: ""
 
 specs: [`../04_architecture/client_assets.md`, `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`, `repository_layout.md`, `../04_architecture/client_performance.md`]
-adrs: [`0014-unity-addressables-asset-delivery.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0071-client-presentation-contract-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0014-unity-addressables-asset-delivery.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0071-client-presentation-contract-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0074-localization-addressables-group-integration.md`]
 depends_on: [IMP-000]
 owned_paths: [`client/Assets/AddressableAssetsData/`, `client/Assets/Scripts/Core/Assets/`, `client/Assets/Tests/EditMode/AddressablesValidation/`]
 forbidden_paths: [`server/`]
@@ -473,7 +473,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 - gameplay sprites validate 2x texture size, `100 PPU`, Bottom Center pivot, canonical cell/silhouette, compression class, Transform scale `(1,1,1)` (ADR-0055) and mesh type `Tight` for textures whose long side is >= 256 texture px with transparent margins, `Full Rect` otherwise (ADR-0059, ADR-0071); `PARALLAX_FAR` 1x imports at `50 PPU`, UI at `200 PPU`,
 - every playable scene key resolves without requiring a monolithic map bitmap,
 - Content catalog asset references resolve 100% against declared Addressables keys.
-- ADR-0071: groups are exactly the canonical set of `../04_architecture/client_assets.md` § Grouping and every asset is in exactly one; every key follows § Stable Asset Keys (`asset.<catalog_id>.<facet>` / `asset.<kind>.<name>.<facet>`, no variant segment); `PresentationAlias` resolves in exactly one hop; each group's deterministic RAM (texture format × size × mips + mesh + decompressed audio, from import settings) and compressed size are within `presentation_asset_manifest.md` §1, resident steady <= 450 MB, transfer peak <= 570 MB, base install <= 82 MB.
+- ADR-0071: groups are exactly the canonical set of `../04_architecture/client_assets.md` § Grouping and every asset is in exactly one; every key follows § Stable Asset Keys (`asset.<catalog_id>.<facet>` / `asset.<kind>.<name>.<facet>`, no variant segment); `PresentationAlias` resolves in exactly one hop; each group's deterministic RAM (texture format × size × mips + mesh + decompressed audio, from import settings) and compressed size are within `presentation_asset_manifest.md` §1, resident steady <= 450 MB, transfer peak <= 570 MB, base install <= 92 MB. ADR-0074: the provisioner re-homes any package-created `Localization-*` groups into the canonical `localization.*` groups (preserving package addresses/labels, exempt from the `asset.*` grammar), removes the empty package groups, restores the `com.unity.addressableassets` EditorBuildSettings slot to the canonical settings object and deletes `DefaultObject.asset` before materialization commits.
 - `AddressableAssetSettings.asset` exists at the path and GUID pre-declared in `repository_layout.md` § ProjectSettings Baseline; this packet never edits `client/ProjectSettings/` (ADR-0068).
 
 ## Tests
@@ -486,6 +486,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 - `client/Assets/Tests/EditMode/AssemblyGraph/CompilerSettingsTests.cs` (BLK-007): TestCscRspWarnAsErrorNullable.
 - `server/internal/conformance/caching/caching_test.go` (BLK-008): TestUnityContainersKeepNetworkEgress.
 - `server/internal/conformance/caching/caching_test.go` (BLK-009/BLK-010): TestUnityContainersMountLicensingDirs, TestUnityRunsBatchmode, TestUnityTestRunsHeadless.
+- `client/Assets/Tests/EditMode/AddressablesValidation/AssetKeyGroupTests.cs` (BLK-011): TestCanonicalGroupSetAndSingleMembership (29 groups incl. `localization.*`; package-managed entries exempt from `asset.*` grammar).
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -532,11 +533,11 @@ id: IMP-064
 status: IN_PROGRESS
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-064-localization"
-claimed_at: "2026-09-27T18:55:00Z"
+claimed_at: "2026-09-27T20:35:00Z"
 blocked_by: ""
 
 specs: [`../04_architecture/client_localization.md`, `../06_data/text.md`, `repository_layout.md`]
-adrs: [`0015-unity-localization.md`, `0068-implementation-packet-readiness-corrections.md`, `0065-data-schema-completion-and-erasure-retention.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0015-unity-localization.md`, `0068-implementation-packet-readiness-corrections.md`, `0065-data-schema-completion-and-erasure-retention.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0074-localization-addressables-group-integration.md`]
 depends_on: [IMP-000]
 owned_paths: [`client/Assets/Localization/Settings/`, `client/Assets/Localization/Tables/Core/`, `client/Assets/Scripts/Core/Localization/`, `client/Assets/Tests/EditMode/LocalizationValidation/`]
 forbidden_paths: [`server/`]
@@ -557,6 +558,7 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 
 ## Tests
 - `client/Assets/Tests/EditMode/LocalizationValidation/LocalizationValidationTests.cs`: TestBilingualKeyParity, TestNoMissingTranslations, TestSettingsAssetMatchesBaselineGuid.
+- `client/Assets/Tests/EditMode/AddressablesValidation/AssetKeyGroupTests.cs` (BLK-011): TestCanonicalGroupSetAndSingleMembership.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]

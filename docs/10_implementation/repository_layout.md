@@ -158,6 +158,11 @@ All 13 `.asmdef` files are authored by IMP-000 with exactly these references (na
 
 IMP-000 commits the `client/ProjectSettings/*.asset` files produced by the editor's first materialization in CI (`agent_execution_protocol.md` §4b, ADR-0072), then pre-declares every entry a later packet needs (ADR-0068). Only the assets referenced below use a path-derived GUID: the first 32 lowercase hex characters of SHA-256 over the asset's repository-relative path (UTF-8, `/` separators); the owning packet creates the asset with that GUID in its `.meta`. Every other GUID is editor-generated and committed as materialized. Only `QualitySettings.asset` (IMP-095) is edited later.
 
+The `com.unity.addressableassets` config-object slot is pinned to the canonical settings asset: if a
+package import hook creates `client/Assets/AddressableAssetsData/DefaultObject.asset` and repoints the slot,
+the IMP-063 provisioner restores the slot to the canonical settings object and deletes the rogue asset
+before materialization commits (ADR-0074); `unity-materialized-*` must never contain `DefaultObject.asset`.
+
 ```text
 EditorBuildSettings.asset  m_configObjects com.unity.addressableassets     -> client/Assets/AddressableAssetsData/AddressableAssetSettings.asset (IMP-063)
                            m_configObjects com.unity.localization.settings -> client/Assets/Localization/Settings/LocalizationSettings.asset (IMP-064)
