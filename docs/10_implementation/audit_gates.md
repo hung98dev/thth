@@ -138,7 +138,7 @@ PRs touching these need the protected-path checklist in the reviewer's `policy-r
 ```text
 .github/  scripts/  .devin/**
 server/cmd/verify/  server/internal/conformance/  server/internal/stackpin/  server/internal/conformance/architecture/
-.editorconfig  .gitattributes  client/Assets/csc.rsp
+.editorconfig  .gitattributes  client/Assets/**/csc.rsp
 AGENTS.md  README.md
 docs/** outside docs/10_implementation/        (specs, ADRs, templates — spec-owner only)
 docs/10_implementation/*.md                    (control files)

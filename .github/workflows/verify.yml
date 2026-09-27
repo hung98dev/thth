@@ -203,7 +203,7 @@ jobs:
           # from different manifest/lock/ProjectSettings inputs — a silent
           # wrong-content restore (BLK-005). A miss = cold import.
           path: client/Library
-          key: unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/csc.rsp') }}
+          key: unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
 
       - name: Verifier environment
         shell: bash
@@ -336,24 +336,11 @@ jobs:
             free -m
             tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
             find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
-            docker run --rm \
-              -v "${{ github.workspace }}:/github/workspace" \
-              "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
-              bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
             [ "$i" -lt 5 ] && sleep 60
           done
           cache_telemetry_emit unity-library "$libhit" "$((SECONDS-start))"
           echo "unity materialization failed after 5 attempts (licence/infra)" >&2
           exit 1
-
-      - name: Inject package nullable suppressions
-        if: success() && steps.unity-scope.outputs.run == 'true'
-        shell: bash
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/github/workspace" \
-            "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
-            bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"'
 
       - name: Dump unity-materialize.log on failure
         if: failure() && steps.unity-scope.outputs.run == 'true'
@@ -448,11 +435,7 @@ jobs:
               free -m
               tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
               find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
-              echo "unity $mode tests attempt $i failed (rc=$rc); injecting package suppressions and retrying"
-              docker run --rm \
-                -v "${{ github.workspace }}:/github/workspace" \
-                "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
-                bash -c 'n=$(find /github/workspace/client/Library/PackageCache -name "*.asmdef" -execdir sh -c "printf -- \"-nullable:disable\\n-warnaserror-\\n\" > csc.rsp" \; | wc -l); echo "injected suppressing csc.rsp next to $n package asmdefs"' || true
+              echo "unity $mode tests attempt $i failed (rc=$rc); retrying"
               sleep 20
             done
             if [ -z "$ok" ]; then
@@ -820,7 +803,7 @@ jobs:
           # from different manifest/lock/ProjectSettings inputs — a silent
           # wrong-content restore (BLK-005). A miss = cold import.
           path: client/Library
-          key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/csc.rsp') }}
+          key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
 
       - name: Unity materialization (licence retry <=5)
         if: steps.unity-scope.outputs.run == 'true'
@@ -856,23 +839,10 @@ jobs:
             if ($log -match 'license|licence' -and $log -match 'fail|error|invalid') { Remove-Item $ulf -Force -ErrorAction SilentlyContinue }
             if ($rc -eq 198) { Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds; Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
             Write-Host "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
-            if (Test-Path "$proj\Library\PackageCache") {
-              Get-ChildItem -Recurse "$proj\Library\PackageCache" -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path $_.DirectoryName 'csc.rsp') -Value @('-nullable:disable', '-warnaserror-') }
-            }
-            # Package compile errors are fixed by the injection above and are
-            # not licence/infra: retry at once; otherwise back off 60s.
             if ($i -lt 5 -and $log -notmatch 'Scripts have compiler errors') { Start-Sleep -Seconds 60 }
           }
           Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds
           if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
-
-      - name: Inject package nullable suppressions
-        if: success() && steps.unity-scope.outputs.run == 'true'
-        shell: pwsh
-        run: |
-          $pc = "$env:GITHUB_WORKSPACE\client\Library\PackageCache"
-          if (-not (Test-Path $pc)) { Write-Error 'PackageCache missing - materialization produced nothing'; exit 1 }
-          Get-ChildItem -Recurse $pc -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path $_.DirectoryName 'csc.rsp') -Value @('-nullable:disable', '-warnaserror-') }
 
       - name: Unity EditMode+PlayMode tests
         if: steps.unity-scope.outputs.run == 'true'

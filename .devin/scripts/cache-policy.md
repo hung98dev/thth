@@ -26,7 +26,7 @@ Applies to `.github/workflows/verify.yml`. Enforced by
   | `go-build`      | `env.GO_VERSION`                     | `hashFiles('server/go.sum')` |
   | `unity-editor`  | `env.UNITY_WINDOWS_EDITOR_SHA256` (Windows only, ADR-0073) | (sha is the pin) |
   | `cli-tools`     | pinned pwsh/jq/gh/git-lfs versions + sha prefixes (Windows only) | (pins only) |
-  | `unity-library` | Linux `env.UNITY_LINUX_IMAGE_DIGEST`, Windows `env.UNITY_WINDOWS_EDITOR_SHA256` | `hashFiles(manifest.json, packages-lock.json, ProjectSettings/**, Assets/csc.rsp)` |
+  | `unity-library` | Linux `env.UNITY_LINUX_IMAGE_DIGEST`, Windows `env.UNITY_WINDOWS_EDITOR_SHA256` | `hashFiles(manifest.json, packages-lock.json, ProjectSettings/**, Assets/**/csc.rsp)` |
   | `edb`           | `env.EDB_ZIP_SHA256` + version       | (sha is the pin) |
 - `restore-keys:` entries must keep `${{ runner.os }}` AND the pin segment —
   a fallback may only roll the content hash within the same OS + same pinned
