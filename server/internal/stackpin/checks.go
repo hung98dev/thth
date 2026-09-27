@@ -227,23 +227,43 @@ func checkProtobufCSharp(root string) Finding {
 	return ok(id)
 }
 
-// checkCscRsp enforces CODE-001: client/Assets/csc.rsp is exactly
-// -warnaserror+ and -nullable:enable.
+// checkCscRsp enforces CODE-001: a csc.rsp beside every first-party *.asmdef
+// is exactly -warnaserror+ and -nullable:enable, and no root
+// client/Assets/csc.rsp exists — a global response file would apply the
+// flags to Library/PackageCache package sources, which are not
+// nullable-clean (BLK-007).
 func checkCscRsp(root string) Finding {
 	const id = "Q1.csc_rsp"
-	data, err := os.ReadFile(filepath.Join(root, "client", "Assets", "csc.rsp"))
-	if err != nil {
-		return bad(id, "client/Assets/csc.rsp missing")
+	if _, err := os.Stat(filepath.Join(root, "client", "Assets", "csc.rsp")); err == nil {
+		return bad(id, "client/Assets/csc.rsp must not exist — compiler flags are scoped per-asmdef")
 	}
-	var flags []string
-	for _, line := range strings.Split(string(data), "\n") {
-		if t := strings.TrimSpace(line); t != "" {
-			flags = append(flags, t)
+	assets := filepath.Join(root, "client", "Assets")
+	var asmdefDirs []string
+	_ = filepath.WalkDir(assets, func(p string, d os.DirEntry, err error) error {
+		if err == nil && !d.IsDir() && strings.HasSuffix(d.Name(), ".asmdef") {
+			asmdefDirs = append(asmdefDirs, filepath.Dir(p))
 		}
+		return nil
+	})
+	if len(asmdefDirs) == 0 {
+		return bad(id, "no .asmdef under client/Assets")
 	}
-	want := []string{"-warnaserror+", "-nullable:enable"}
-	if strings.Join(flags, " ") != strings.Join(want, " ") {
-		return bad(id, fmt.Sprintf("csc.rsp = %q, want %q", strings.Join(flags, " "), strings.Join(want, " ")))
+	want := "-warnaserror+ -nullable:enable"
+	for _, dir := range asmdefDirs {
+		rsp := filepath.Join(dir, "csc.rsp")
+		data, err := os.ReadFile(rsp)
+		if err != nil {
+			return bad(id, rsp+" missing — every asmdef carries its own csc.rsp")
+		}
+		var flags []string
+		for _, line := range strings.Split(string(data), "\n") {
+			if t := strings.TrimSpace(line); t != "" {
+				flags = append(flags, t)
+			}
+		}
+		if strings.Join(flags, " ") != want {
+			return bad(id, fmt.Sprintf("%s = %q, want %q", rsp, strings.Join(flags, " "), want))
+		}
 	}
 	return ok(id)
 }

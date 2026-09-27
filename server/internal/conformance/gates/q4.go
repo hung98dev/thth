@@ -315,7 +315,9 @@ func checkGeneratedBoundary(root string) Check {
 			}
 			name := en.Name()
 			switch {
-			case strings.HasSuffix(name, ".asmdef"), strings.HasSuffix(name, ".meta"):
+			case strings.HasSuffix(name, ".asmdef"), strings.HasSuffix(name, ".meta"), name == "csc.rsp":
+				// asmdef + its CODE-001 csc.rsp + .meta companions are the
+				// IMP-000-owned skeleton inside a generated dir (BLK-007).
 			case strings.HasSuffix(name, ".pb.go"):
 			case strings.HasSuffix(name, ".cs"):
 				data, err := os.ReadFile(filepath.Join(full, name))

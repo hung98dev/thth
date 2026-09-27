@@ -3,18 +3,29 @@ using NUnit.Framework;
 
 namespace ThinhThan.Tests.EditMode.AssemblyGraph
 {
-    // CODE-001: csc.rsp enforces -warnaserror+ and -nullable:enable; no
-    // committed .cs may suppress warnings or linters.
+    // CODE-001: every first-party assembly is compiled by its own csc.rsp
+    // beside the .asmdef carrying -warnaserror+ and -nullable:enable; a root
+    // Assets/csc.rsp is forbidden because a global response file also applies
+    // to Library/PackageCache package sources, which are not nullable-clean
+    // (BLK-007). No committed .cs may suppress warnings or linters.
     public class CompilerSettingsTests
     {
         [Test]
         public void TestCscRspWarnAsErrorNullable()
         {
-            var path = Path.Combine("Assets", "csc.rsp");
-            Assert.IsTrue(File.Exists(path), "Assets/csc.rsp missing");
-            var text = File.ReadAllText(path);
-            Assert.IsTrue(text.Contains("-warnaserror+"), "csc.rsp must set -warnaserror+");
-            Assert.IsTrue(text.Contains("-nullable:enable"), "csc.rsp must set -nullable:enable");
+            Assert.IsFalse(File.Exists(Path.Combine("Assets", "csc.rsp")),
+                "Assets/csc.rsp must not exist — flags are scoped per-asmdef");
+            var asmdefs = Directory.GetFiles("Assets", "*.asmdef", SearchOption.AllDirectories);
+            Assert.GreaterOrEqual(asmdefs.Length, 13, "mandatory asmdefs missing");
+            foreach (var asmdef in asmdefs)
+            {
+                var path = Path.Combine(Path.GetDirectoryName(asmdef), "csc.rsp");
+                Assert.IsTrue(File.Exists(path), path + ": asmdef-scoped csc.rsp missing");
+                var text = File.ReadAllText(path);
+                Assert.IsTrue(text.Contains("-warnaserror+"), path + " must set -warnaserror+");
+                Assert.IsTrue(text.Contains("-nullable:enable"), path + " must set -nullable:enable");
+                Assert.IsFalse(text.Contains("-nullable:disable"), path + " must not disable nullable");
+            }
         }
 
         [Test]
