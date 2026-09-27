@@ -106,7 +106,7 @@ client/
 │   ├── Localization/                  # Settings/ + Tables/Core/ IMP-064; Tables/<Feature>/ per feature packet
 │   ├── Notices/                       # IMP-076
 │   ├── Plugins/Google.Protobuf/       # IMP-000 exact 3.36.2 runtime
-│   ├── csc.rsp                        # IMP-000 -warnaserror+ -nullable:enable (ADR-0059)
+│   ├── {Scripts,Tests}/**/csc.rsp     # IMP-000 — scoped per-asmdef (-warnaserror+ -nullable:enable); no root csc.rsp (BLK-007, ADR-0059)
 │   ├── Scenes/
 │   │   ├── Bootstrap/                 # IMP-067
 │   │   ├── Collision/                 # IMP-062 collision-only authoring scenes (ServerGeometry)
@@ -134,7 +134,7 @@ client/
 
 ## Mandatory Assemblies
 
-All 13 `.asmdef` files are authored by IMP-000 with exactly these references (name references, `autoReferenced: false`, `overrideReferences: true` where precompiled DLLs are listed); no later packet edits an asmdef (ADR-0068). An assembly whose folder has no script yet is valid by name. Folder paths are under `client/Assets/`.
+All 13 `.asmdef` files are authored by IMP-000 with exactly these references (name references, `autoReferenced: false`, `overrideReferences: true` where precompiled DLLs are listed); no later packet edits an asmdef (ADR-0068). An assembly whose folder has no script yet is valid by name. Folder paths are under `client/Assets/`. Each assembly's folder also carries an IMP-000-authored `csc.rsp` containing exactly `-warnaserror+` and `-nullable:enable` — compiler flags are scoped per-asmdef so they never reach `Library/PackageCache` package sources; there is no root `client/Assets/csc.rsp` (BLK-007, ADR-0059).
 
 | Assembly | Folder | Platforms / constraints | References |
 |---|---|---|---|
@@ -469,7 +469,19 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Tests/PlayMode/WorldTransferPresentation/` | IMP-018 |
 | `client/Assets/UniversalRenderPipelineGlobalSettings.asset` | IMP-000 |
 | `client/Assets/UniversalRenderPipelineGlobalSettings.asset.meta` | IMP-000 |
-| `client/Assets/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Protocol/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Core/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Core/Assets/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Core/Assets/Editor/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Core/Localization/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Core/Localization/Editor/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Core/Geometry/Editor/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Net/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/Systems/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/UI/csc.rsp` | IMP-000 |
+| `client/Assets/Scripts/App/csc.rsp` | IMP-000 |
+| `client/Assets/Tests/EditMode/csc.rsp` | IMP-000 |
+| `client/Assets/Tests/PlayMode/csc.rsp` | IMP-000 |
 | `client/BuildProfiles/` | IMP-067 |
 | `client/Packages/` | IMP-000 |
 | `client/ProjectSettings/` | IMP-000 |
