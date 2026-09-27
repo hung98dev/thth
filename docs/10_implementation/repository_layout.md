@@ -139,7 +139,7 @@ All 13 `.asmdef` files are authored by IMP-000 with exactly these references (na
 | Assembly | Folder | Platforms / constraints | References |
 |---|---|---|---|
 | `ThinhThan.Protocol` | `Scripts/Protocol/` | any | precompiled `Google.Protobuf.dll` only |
-| `ThinhThan.Core` | `Scripts/Core/` | any | `Unity.InputSystem`, `Unity.RenderPipelines.Core.Runtime`, `Unity.RenderPipelines.Universal.Runtime` |
+| `ThinhThan.Core` | `Scripts/Core/` | any | `Unity.InputSystem`, `Unity.RenderPipelines.Core.Runtime`, `Unity.RenderPipelines.Universal.Runtime`, `Unity.RenderPipelines.Universal.2D.Runtime` |
 | `ThinhThan.Core.Assets` | `Scripts/Core/Assets/` | any | `ThinhThan.Core`, `Unity.Addressables`, `Unity.ResourceManager` |
 | `ThinhThan.Core.Assets.Editor` | `Scripts/Core/Assets/Editor/` | Editor | `ThinhThan.Core`, `ThinhThan.Core.Assets`, `Unity.Addressables`, `Unity.Addressables.Editor`, `Unity.ResourceManager` |
 | `ThinhThan.Core.Localization` | `Scripts/Core/Localization/` | any | `ThinhThan.Core`, `Unity.Localization`, `Unity.Addressables`, `Unity.ResourceManager` |
