@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: cosmetic.shared
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: cosmetic.shared
+  m_GUID: d7973f129fdeaca5f9c5a643040bdd99
+  m_SerializeEntries:
+  - m_GUID: 20239ce90e7b4600d997ca49c61ca7e6
+    m_Address: asset.cosmetic.iap.appearance.vo_quan_thanh_co.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2144e1fb36ba693d59530156411fe983
+    m_Address: asset.cosmetic.iap.appearance.co_tien.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3cf17b4cc7baa849dbde455de73628be
+    m_Address: asset.cosmetic.appearance.ao_vai_hoa_van.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 828eca036205c6e18a242081aeac4be8
+    m_Address: asset.cosmetic.appearance.ao_toi_la.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8be8d294296ba714a3387d9487dc8cf
+    m_Address: asset.cosmetic.appearance.khan_ben_nuoc.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c1f3f18965b675409a649df9b7e457d0
+    m_Address: asset.cosmetic.appearance.non_la_moc.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef26c96bb59cd19b8baab55e02792731
+    m_Address: asset.cosmetic.iap.appearance.co_tam_truyen.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3ef53cc6164e0b61a79f5f512b4f9b9
+    m_Address: asset.cosmetic.iap.appearance.nu_tuong_trong_dong.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 8d4957630e826598996c6554a9bcf165, type: 2}
+    - {fileID: 11400000, guid: 11b811331ebf9ae0e95564ca6f268b7d, type: 2}

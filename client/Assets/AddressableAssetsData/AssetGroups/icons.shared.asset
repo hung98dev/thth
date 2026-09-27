@@ -1,0 +1,2223 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: icons.shared
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: icons.shared
+  m_GUID: e715d0c7022a07b02904c066f5f3f6bb
+  m_SerializeEntries:
+  - m_GUID: 0018195ce7ed407899520c3487243a4a
+    m_Address: asset.item.eq.5.trong_tran.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 005f89f491a5f7032aae82e2e255e403
+    m_Address: asset.effect.basic.stun_500ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 00ed6e28a6a6166dba4c399216347c72
+    m_Address: asset.cosmetic.appearance.khan_ben_nuoc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0161559d1522a9938bf1466c877766cb
+    m_Address: asset.effect.skill.tho.thien_son_tran_shield.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0201305680404b02bb3a187e8c3d95fa
+    m_Address: asset.item.eq.5.thanh_co.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 035e5705fb436a10f9dc761c1ec1b71d
+    m_Address: asset.item.eq.4.deo_may.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 03defce32d9a8828bacfcb8b37a71cef
+    m_Address: asset.effect.basic.burn_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 03e4631b75df18c7abe18e97cc30b3fd
+    m_Address: asset.cosmetic.title.guild_war.hung_binh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 04536474ac59658c1920cd575901fb2a
+    m_Address: asset.item.eq.4.deo_may.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 047da273b9f2a5fbeb67eb4983128e14
+    m_Address: asset.cosmetic.title.season.3.deo_suong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 05dcba541d6581cedafba353da7937b3
+    m_Address: asset.item.eq.1.ben_da.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0673d76b9a08a524b9e2fd7cb1f165c7
+    m_Address: asset.item.eq.4.deo_may.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 06880c1d5512b56c7a7912b6731dfc2c
+    m_Address: asset.skill.tho.passive.son_ha_ho_the.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 072e1e05dd17d7059b227a507a12d6a5
+    m_Address: asset.cosmetic.emote.season.3.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 07cc78b7aa14c106ebfd323f73102e6c
+    m_Address: asset.skill.moc.passive.sinh_tuc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 07d7a79864f671a80bdab9291a30976b
+    m_Address: asset.item.eq.1.ben_da.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0aae7469c23afe0b0856390fded081d1
+    m_Address: asset.cosmetic.frame.season.5.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c6cb0a8a1a260d0c929cfb339986fb9
+    m_Address: asset.item.eq.6.dau_cu.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d95fac1ba36bc13cbd987ac5915397d
+    m_Address: asset.cosmetic.frame.season.2.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0dea2122b27fd150696a15e68020131c
+    m_Address: asset.item.tool.can_cau_tre.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0e7dbc3024d0e992b947b9896da89206
+    m_Address: asset.effect.basic.heal_reduction_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0eab76675ae4ed280a98713f8b968f39
+    m_Address: asset.item.eq.3.xom_chim.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0ef36a914be878c1ebedf4a6796a1ddc
+    m_Address: asset.cosmetic.title.atlas.hon_coc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1054d301efda3dbfab4abbc78f72f078
+    m_Address: asset.skill.kim.basic.vo_song_kiem.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 131fab819b22fee739fa8febb140cb87
+    m_Address: asset.skill.hoa.active.hoa_giap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 137fad60d77599e22b3f9634e42debbc
+    m_Address: asset.item.eq.6.nui_thieng.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 140b9f36a714aecfdb2caa2c27a200c8
+    m_Address: asset.item.eq.5.thanh_co.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 146e6f43aee81a7978bba2c014e0c7c0
+    m_Address: asset.item.eq.3.ben_nuoc.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14a923f8e8b8d0384aa0fb6fd2a6b949
+    m_Address: asset.effect.basic.weaken_12_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15807343952aaca4e9f0d6570aa123a2
+    m_Address: asset.cosmetic.title.season.5.nui_mua.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15ae71dcb6bcb1bd9a3a4f0346d12b12
+    m_Address: asset.item.eq.2.u_minh.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15de226b5212d5ea69fae45beab9b0c6
+    m_Address: asset.item.eq.4.deo_may.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 163407fcae17501e69dca3780d31a93d
+    m_Address: asset.cosmetic.title.ban_tay_than.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 165d06ea8be88c63e869f4254557a902
+    m_Address: asset.item.eq.4.dau_ho.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1714b2a7abff47b32a3e6b1ba2210498
+    m_Address: asset.cosmetic.title.ben_nuoc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 186937bcbe5ff64768b6f25d23519b1e
+    m_Address: asset.item.eq.6.dau_cu.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 188f0c0b315bd8c149e11b767f551912
+    m_Address: asset.skill.tho.active.thach_kich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 189ee029159225da2b3539eeaf73b5cc
+    m_Address: asset.cosmetic.title_glow.hoa_quang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 18ded418e4ce321958febd2388626520
+    m_Address: asset.item.eq.4.dau_ho.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1914afe1c829ad101a9e15aa4add5121
+    m_Address: asset.cosmetic.frame.season.4.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19a51790331de61c19bce41e7ec70e27
+    m_Address: asset.cosmetic.emote.season.0.paid.chap_tay.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19c88a64fbf49e5e79dd7cbd42239c77
+    m_Address: asset.item.eq.4.dau_ho.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a5ac4de9d14302ec9740cee700fd587
+    m_Address: asset.effect.basic.slow_25_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a77138d25f01eca59c8f337a9edc00a
+    m_Address: asset.item.consumable.chia_khoa_co.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1aed6cf34ab695e088a56c37d2b00b1e
+    m_Address: asset.item.consumable.moi_cau.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d42b181b0827e3e8a003f47f1f7b89b
+    m_Address: asset.item.eq.3.xom_chim.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d86bd7c60428a8528bde4f432c16872
+    m_Address: asset.cosmetic.shrine.kim_trang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1defe406ccf406ca88703c862e7c270a
+    m_Address: asset.skill.kim.passive.kiem_tam.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e60fcb17e23bb88391a2e3293bbcadc
+    m_Address: asset.item.eq.5.thanh_co.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1efcad1237bce0d27bfa223e4dc377cc
+    m_Address: asset.cosmetic.iap.emote.bai_chao_lang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1faef6ddb2108766fa44ab848078c1b3
+    m_Address: asset.item.eq.4.deo_may.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20096b2b8000b04d786911356cc518b8
+    m_Address: asset.cosmetic.title_glow.tim_nhat.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21242676bd7219aab9ecadf51965986f
+    m_Address: asset.cosmetic.title_glow.do_quang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2172c656bc7509e738dd9afebbcea1f7
+    m_Address: asset.effect.skill.thuy.slow_40_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 23f3eb9f28ebf9bf2ad34126465c9b04
+    m_Address: asset.item.eq.2.u_minh.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2464b5f866c82d9ad859d5d7f4fd94c7
+    m_Address: asset.cosmetic.shrine.season.0.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 249260ba50fa0f189a92ad09718f56f8
+    m_Address: asset.item.consumable.tra_sen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24b9e63aab028ea48a2284f145e59f67
+    m_Address: asset.cosmetic.title.season.5.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25457c4f7ddce9911b2a251f50a69a5e
+    m_Address: asset.skill.tho.basic.pha_thach_kich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 258e359f975dd7deeadb88de81fad854
+    m_Address: asset.item.material.linh_dan.trung_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 265e4141d060bb4b18b3c6836bcae785
+    m_Address: asset.item.eq.5.trong_tran.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26b7e3c2a5693437bbc86e8f8b60bbe6
+    m_Address: asset.cosmetic.title.lang_da.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26ec67df97e7548199f063ec82b0e423
+    m_Address: asset.item.eq.6.nui_thieng.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 273adbfc89c7297ed84dc32bcd1833d4
+    m_Address: asset.effect.skill.kim.pha_giap_vulnerable_5s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27b4daec1f97bf054907f86129edef3b
+    m_Address: asset.effect.basic.weaken_10_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28a523cd5da521dfe9a89150834a9826
+    m_Address: asset.item.eq.6.dau_cu.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28ceb5f9703caaea6994ea39b711509f
+    m_Address: asset.item.eq.5.thanh_co.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2ac1136e5f0047afdaacee48f41893e7
+    m_Address: asset.cosmetic.title.atlas.nha_suu_tam.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2bedf73f323bd15e9bd0c68b26f43cba
+    m_Address: asset.item.eq.5.thanh_co.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c86d64b268f548f58830f5a8ad883b0
+    m_Address: asset.item.eq.5.thanh_co.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c9030895016cde04b1b825f0c797018
+    m_Address: asset.cosmetic.frame.season.3.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2cf514b352ecd4f0f9b6b89ab9f64d80
+    m_Address: asset.cosmetic.frame.phuong_hoang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e7e53cbd1ecacdf6a9365d88fbe74d6
+    m_Address: asset.item.eq.6.nui_thieng.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f3efa05015beabd0a0aae80d7c67616
+    m_Address: asset.cosmetic.iap.appearance.nu_tuong_trong_dong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f8af3f1572fad834a17fe50b5b56153
+    m_Address: asset.effect.skill.thuy.thuy_kinh_ward.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2fea3d1afe55500d0a8bf6acce063f98
+    m_Address: asset.item.eq.3.ben_nuoc.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 316005634897899cf9a48b5b710408ed
+    m_Address: asset.cosmetic.guild.crest.ritual_4.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 317f0f2c15687f2d4886d5d7a68f9812
+    m_Address: asset.cosmetic.title.season.2.ben_den.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3274f06729f8e7d839e85e31d43faedc
+    m_Address: asset.cosmetic.emote.season.4.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 337c6d1eaff1285bd8e7b584ffca74c8
+    m_Address: asset.effect.basic.area_splash_50.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 33a4e9b4477c927529d825473e84d5b4
+    m_Address: asset.cosmetic.frame.pvp.vang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3437fe0fb88d2ab0e8e2fc842d379250
+    m_Address: asset.skill.hoa.active.hoa_vuc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 349c61e2336afb9baa1a62535ec22f1b
+    m_Address: asset.item.eq.2.u_minh.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35dcc37005f5573fa95fb579cceca9a2
+    m_Address: asset.effect.skill.tho.airborne_800ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35dfc7f3d5fe0945a97a2e4be5397bd9
+    m_Address: asset.item.eq.6.nui_thieng.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 36af19830ab49e97b93dbdf7a407ac3a
+    m_Address: asset.skill.moc.basic.truc_phi_tieu.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 37cfe91cedc4aeb079485dc7dafd1890
+    m_Address: asset.cosmetic.shrine_special.ngoc_bich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 37df6c4b88cb38d4ea71fc7f4e03a632
+    m_Address: asset.cosmetic.frame.season.5.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 382b9be8bb72e8d1f848e324e428c537
+    m_Address: asset.effect.skill.thuy.thuy_kinh_shield.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38e0d96f97dc80f6987eb299b1ce87ff
+    m_Address: asset.cosmetic.title.khac_tinh_ma_da.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 399d29d7a8e3cca868e15baafffceb17
+    m_Address: asset.cosmetic.aura.linh_khi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39c4f44352a379ee0b79c19b571ae31f
+    m_Address: asset.cosmetic.title.canh_cuoi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39d2f674fde2666ccbe1de703928a1b9
+    m_Address: asset.item.eq.5.thanh_co.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a449d2de97affdaabc50e1c437a6b0a
+    m_Address: asset.cosmetic.title.season.1.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a799ed18463358739c87f282cdc1a01
+    m_Address: asset.item.eq.2.u_minh.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3aba95b0665ea78adace62a0cd43f468
+    m_Address: asset.cosmetic.title.thanh_co.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3bed798e9c2228438bab508ec0001b90
+    m_Address: asset.effect.skill.kim.kiem_tran_slow.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3cca4c32ccc3bf4ff9ec024b768ffdcb
+    m_Address: asset.item.eq.2.dom_lua_rung.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d4a7b42ecabf9e4ebddcbb62988dd59
+    m_Address: asset.skill.moc.active.thanh_dang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e088a8fde037f11a8f5add406c6e02b
+    m_Address: asset.cosmetic.nameplate.son_ha.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e0b91d1b2acdc3ac8b789a7f20d12e2
+    m_Address: asset.cosmetic.title.season.1.u_minh_suong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e145c63fbc335b1f9d0bc98e9753a82
+    m_Address: asset.skill.thuy.passive.han_khi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e20fd5ba4c573a159a2fb2872a3fa45
+    m_Address: asset.effect.basic.poison_stack_4s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ea5d39e89dbe27ceb501ee8c9973767
+    m_Address: asset.skill.kim.basic.kiem_thuc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3f4caef743c353adca7ced32a3e13815
+    m_Address: asset.item.eq.4.deo_may.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4029ae5fb1c1902f392aae903ec8b52e
+    m_Address: asset.item.eq.1.dinh_lang.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41e4a586a45a4ef51a4713145a3c766d
+    m_Address: asset.item.material.nui_thieng.da_suong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42897ca32ebdd11b8aa44fa83e4f14a6
+    m_Address: asset.cosmetic.title_glow.linh_hoa.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 441cabec90b82691bafcc730418c9c87
+    m_Address: asset.skill.thuy.active.thuy_kinh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44cd4ef50ecc65b36a0cab2d99aeb00c
+    m_Address: asset.item.eq.4.dau_ho.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45899a6e9c8c8c5b980727682bbaad02
+    m_Address: asset.cosmetic.guild.shrine.guild_war_top10.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 458f8e038ea6c6a4e8eb47d314e460e2
+    m_Address: asset.item.eq.6.dau_cu.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 459f8a9230425a280a48cb9065c45dbc
+    m_Address: asset.item.eq.2.dom_lua_rung.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46165f12745309d8aa01c9da7330003d
+    m_Address: asset.item.eq.2.dom_lua_rung.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46564408720f2c5af9acfd67ab6885e2
+    m_Address: asset.cosmetic.iap.frame.thien_long.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46662343b5d807e0a8f2da325404f91d
+    m_Address: asset.effect.skill.moc.root_1500ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 467291723a179af5daaa9b3e9bfde2fb
+    m_Address: asset.item.eq.6.nui_thieng.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4687ed45d415aefe3a5ad981352c0e7d
+    m_Address: asset.skill.moc.basic.linh_diep.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46d441a6257c12e9b9fda86458a68d7e
+    m_Address: asset.cosmetic.shrine.season.1.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47b77a27f75840fe3a510746de34a87a
+    m_Address: asset.item.eq.3.ben_nuoc.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47d88a8721fe3ddd589b426d4e4957f4
+    m_Address: asset.item.eq.1.dinh_lang.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47e64cfcf9433a8178033e629cbe8ae2
+    m_Address: asset.item.eq.3.ben_nuoc.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47f6492f38979e313b481c2956696402
+    m_Address: asset.item.eq.2.u_minh.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 488cf3c9baed7053f8cc846eb4a2a61d
+    m_Address: asset.item.consumable.bua_giu_bac.trung_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 498797caf4e0a16aebdb6840b3ff81d2
+    m_Address: asset.effect.skill.thuy.chill_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 49a4ec74436de4d40bf8252026e97c62
+    m_Address: asset.skill.thuy.basic.am_luu.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 49bc8d17934a2dc48a9aa9767cae8295
+    m_Address: asset.item.eq.3.xom_chim.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b9f185671fdead78991f8b78d60bf76
+    m_Address: asset.item.eq.6.nui_thieng.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4bb07463f786ca3c78952e8df37b9015
+    m_Address: asset.cosmetic.title.atlas.hoc_gia_dan_gian.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4bc47c731081094d4bf2a97cbddc1269
+    m_Address: asset.item.eq.6.dau_cu.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c1444a95b84f27bbb44799a5a8e34a8
+    m_Address: asset.cosmetic.title.atlas.ca_chep_hoa_rong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c52efc3796eaad139c82293ea3ff51c
+    m_Address: asset.item.eq.2.dom_lua_rung.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4cb39bac5a62af48895b6b319ec0078e
+    m_Address: asset.item.eq.1.ben_da.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d5b39d52abf6862f99f48b049dfc23e
+    m_Address: asset.cosmetic.appearance.ao_vai_hoa_van.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4da77acf38ec2aef68bc2b3913518e47
+    m_Address: asset.cosmetic.frame.season.0.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4e77d379bffbb55bebd916b936db4b2f
+    m_Address: asset.item.eq.3.ben_nuoc.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4e8d12add807b973da4ef37aeb958c03
+    m_Address: asset.cosmetic.guild_stone.inscription.long_van.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f0e2f8a7334823ca9b21c91a7aa3fbb
+    m_Address: asset.item.eq.6.dau_cu.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f499ab70740c761aa87de7f6d56e9a8
+    m_Address: asset.item.eq.3.xom_chim.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f7397d1f6a557d90aa68f7c2293d216
+    m_Address: asset.item.eq.4.dau_ho.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f977277d248ae012a8af9482358a33a
+    m_Address: asset.skill.kim.active.nhat_kiem_dinh_hon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4fa5993e70a1bfa34b5441b6045cde60
+    m_Address: asset.item.eq.2.u_minh.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4fde5df0c8bc2dc7e99c8383b33e97e7
+    m_Address: asset.item.material.gung_lang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 501eb8a5456eaafc39ca68b76a0d0418
+    m_Address: asset.cosmetic.shrine.season.3.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 507c6f55333ae81aa809ce4d1996ce84
+    m_Address: asset.item.eq.1.ben_da.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 515795baf746c358daba79f472447357
+    m_Address: asset.cosmetic.emote.season.5.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51f460ac6a94ad48eba5e07de0b2e3c7
+    m_Address: asset.cosmetic.frame.ben_da.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 525c645e250c9326fbc241b1ee645221
+    m_Address: asset.item.eq.5.trong_tran.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 526d7af797b81029a84186256d68c3cc
+    m_Address: asset.item.eq.6.nui_thieng.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52a1554ea676a0ef99a93beb60221181
+    m_Address: asset.cosmetic.frame.pvp.ngoc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 536499af33a83e4d4b065c1e7516f984
+    m_Address: asset.item.eq.4.deo_may.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 543e1deaaf547b7349197e1b0e7e177f
+    m_Address: asset.cosmetic.title.season.0.lang_da_ky_ghe.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 54640c97c3de60e5b956e36ca362ffe6
+    m_Address: asset.item.eq.2.dom_lua_rung.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5524c96419f2ecf1d9dc4cdb69505171
+    m_Address: asset.item.eq.4.dau_ho.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 556f25c7e2e794197b99a410ae4d6d5a
+    m_Address: asset.skill.kim.basic.truy_phong_kiem.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 559872f413db8ed918ccdbf0838695a5
+    m_Address: asset.cosmetic.shrine.thuy_ngoc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56383403c3eb41deb895cad37d6941b5
+    m_Address: asset.skill.hoa.passive.hoa_hon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 570e837422a99c9998cfe65fc479ac2c
+    m_Address: asset.item.book.potential.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 576721da134083602918b279cd1c3e99
+    m_Address: asset.item.eq.1.dinh_lang.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58abed31f7a97d7d4994688e1e395677
+    m_Address: asset.item.eq.3.xom_chim.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58da384aad43bea58a72f4697701fb5c
+    m_Address: asset.effect.skill.hoa.hoa_giap_aura.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 590fc5162c0c40988b436ad699496373
+    m_Address: asset.item.material.ca_chep_hoa_rong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 592e3c14a0a1f5684b6fe0f96b3b8aa8
+    m_Address: asset.cosmetic.title_glow.vang_nhat.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59d3f957cb907cef4af84aed396bf2ed
+    m_Address: asset.effect.basic.resist_shred_hoa_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5bef84f09005ef23a99340dd38211adb
+    m_Address: asset.skill.hoa.passive.du_hoa.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c3e2173541aa9eddacefd194b00c91e
+    m_Address: asset.item.eq.1.ben_da.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5db8485b5af554a46bd8af67d4139780
+    m_Address: asset.item.eq.2.dom_lua_rung.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e212bb1fd5d1e26d92c19e0fe73e57b
+    m_Address: asset.item.eq.6.nui_thieng.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e22a05a4c71bbd9cb4d8cc7e262f55a
+    m_Address: asset.cosmetic.nameplate.ky_luat_vang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e5a0dc46785fad28891bade0bb12305
+    m_Address: asset.cosmetic.title.season.4.thanh_mua.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e6926382599b58d1b1b7946464763d5
+    m_Address: asset.skill.tho.basic.tran_quyen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5f0aa58c5a7c8055c87253f9bf307173
+    m_Address: asset.cosmetic.aura.quy_khi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5f35d41017bca1b1b8e50229b397ba9b
+    m_Address: asset.cosmetic.title.tam_giao_vien_man.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5f829897b14ac2da680bea55dc8a0e1a
+    m_Address: asset.effect.basic.bleed_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5faa8be1d8b4d9939b591aa6c79b5f12
+    m_Address: asset.cosmetic.title_glow.thuy_linh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 609ae97eb84956ac98956b03b775789b
+    m_Address: asset.item.eq.1.ben_da.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 60b1d624aacdfb1ff9db6526268a7c59
+    m_Address: asset.effect.skill.hoa.cuong_hoa_buff.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 60ea6039b1311b740b97ef167db7a93f
+    m_Address: asset.item.material.vai_hoa_van.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61609b6ced280d29f986f825cbe4aa67
+    m_Address: asset.item.consumable.bua_may.sieu_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 622746b076bb200f5940331c5a7aee88
+    m_Address: asset.cosmetic.frame.pvp.linh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6278bef7a62af6676800c3b445823515
+    m_Address: asset.cosmetic.nameplate.linh_thuyen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 63db67d0c80b88a158208bd94b534417
+    m_Address: asset.item.eq.3.xom_chim.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 641aa5b71733ea6bc9546ee0ab9ad000
+    m_Address: asset.item.eq.1.ben_da.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 663df5076c0b40e2ca6a77aced9ea740
+    m_Address: asset.cosmetic.frame.nui_thieng.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 667269d7d1a6bdb97a4c3150fd20b6d8
+    m_Address: asset.item.eq.1.dinh_lang.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6695ecb4b1adc0f45b1e16a5d6290063
+    m_Address: asset.skill.kim.active.hoi_kiem.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 677bbe62b364488ffaadb70eb55134a9
+    m_Address: asset.item.eq.2.dom_lua_rung.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68a40dc4651cd016c874f581f0359469
+    m_Address: asset.cosmetic.frame.season.1.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68a6665e465b5fceda082f77ad60e5ed
+    m_Address: asset.item.material.ca_bong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a04beb1149e0167bac2e0e955ddc327
+    m_Address: asset.skill.thuy.active.luu_bo.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a351f3071c5c5839a931fd117b4d33d
+    m_Address: asset.item.eq.5.trong_tran.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a35abbbac02f3f019dbe6599835c0bd
+    m_Address: asset.effect.basic.root_1200ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6bd2b9ac112ccde9b9ed6e357bb49db9
+    m_Address: asset.skill.hoa.active.boc_bo.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6dc53396eef2acb1eae53f8ea4e30f75
+    m_Address: asset.cosmetic.frame.huyen_vu.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6dc92a3e18feeb519bc001d820d80720
+    m_Address: asset.effect.basic.slow_15_2s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f43037d50d728753a6102dc324a177a
+    m_Address: asset.item.eq.3.xom_chim.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f87bc611df6c05cd805d47f84fc86dc
+    m_Address: asset.item.material.linh_dan.cao_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 70ea4b04595eb0fdd9811e556c0823a1
+    m_Address: asset.cosmetic.frame.pvp.than_thoai.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7107dc304578a39558af48bb2893f0f5
+    m_Address: asset.effect.basic.freeze_1200ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7139004af7b521056b7ad42d2ef247b5
+    m_Address: asset.skill.kim.basic.pha_khong_kiem.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 71f023490944d589da3eeb18d2fef551
+    m_Address: asset.skill.hoa.basic.viem_dan.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72dd68b916f4b029f842bbd4d1716a5d
+    m_Address: asset.cosmetic.title_glow.kim_quang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72dfe0725847166718544b4cbb00a8d7
+    m_Address: asset.item.eq.6.nui_thieng.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7489ff602e942596e88d8164e3b76e7f
+    m_Address: asset.cosmetic.guild_stone.inscription.ngoc_bich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7508561a7af0190e0ac9f5d7f08bcac2
+    m_Address: asset.cosmetic.guild_stone.inscription.thien_long.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 765a2cca3c93a50eaaed6dc3b7fc9acc
+    m_Address: asset.item.eq.2.dom_lua_rung.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76a2715343b5fd83596a7c652db06f01
+    m_Address: asset.cosmetic.title.atlas.bach_khoa_dan_gian.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76d7cb2f042a111bc9d15fff0a7f1d2a
+    m_Address: asset.item.eq.6.nui_thieng.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7767609ad0859dd0f9d1e84f335b2267
+    m_Address: asset.cosmetic.title.season.2.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77b1d435b16ba273288c3ef856b61e30
+    m_Address: asset.item.eq.3.ben_nuoc.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77ff81295ce90bccb8cc3748cf2fb9e4
+    m_Address: asset.item.eq.5.thanh_co.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78595bae081e4d93697f888b759a0784
+    m_Address: asset.cosmetic.iap.emote.ngoi_thien_dinh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7864b854b12ba4b04beea7550abdda88
+    m_Address: asset.item.eq.6.dau_cu.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78cb8320935b4eb5fa2f9d14e56a99ef
+    m_Address: asset.item.material.linh_dan.so_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78f54750a875d0a40945f155e00a19a7
+    m_Address: asset.cosmetic.title_glow.moc_xanh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7948b831da8b32c9bad4b598f5b7e624
+    m_Address: asset.effect.basic.burn_true_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7989dad78e6c7c7129537ed8fb95f5fd
+    m_Address: asset.cosmetic.guild.banner.guild_war_champion.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cad4973e6ede681c87bfccacbd22712
+    m_Address: asset.cosmetic.frame.season.1.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cecb74cd7e32eea385802f5e808d483
+    m_Address: asset.item.eq.1.dinh_lang.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7df59695553d128ed8dd991ea05067c8
+    m_Address: asset.item.eq.5.trong_tran.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e360004a2bf0d94482c132fc99f0103
+    m_Address: asset.item.material.lang_da.manh_dong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e56370b9b60987bab07c72d90e02852
+    m_Address: asset.cosmetic.title.hiep_nghia_vo_song.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f04d07a3dab678029d37123dbb22636
+    m_Address: asset.cosmetic.shrine_special.cu_thach.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f0e83df8af3453938d95cf67216b281
+    m_Address: asset.cosmetic.title.atlas.di_than_trung.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7fc409a2a4fcad6ab8cad2c74a93eede
+    m_Address: asset.cosmetic.appearance.non_la_moc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 808c1b8e4c929f812900929e1125fb3d
+    m_Address: asset.item.eq.2.dom_lua_rung.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80d7af8d325eb5ceb96d1b11efbc990e
+    m_Address: asset.cosmetic.title.season.0.paid.dem_lang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 817766bfe19d4914cb615c7491013b46
+    m_Address: asset.item.eq.2.dom_lua_rung.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8266696cbef8e0ea7a102eabb845c0ac
+    m_Address: asset.item.eq.5.thanh_co.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83444ad35e51e3792b3b460f0532e189
+    m_Address: asset.cosmetic.title_glow.tho_bach.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 837bbc6b169fd7bd4b3603648c205653
+    m_Address: asset.item.consumable.bua_may.so_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83fe4fa774fd9c4dea27bffc0961f394
+    m_Address: asset.skill.moc.active.van_moc_hoi_sinh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84302cfe2493125288150347bb7abdf4
+    m_Address: asset.effect.skill.moc.thanh_dang_slow.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 85863d8cb8787b4919cf69027ed4ee70
+    m_Address: asset.cosmetic.title.thien_ha_de_nhat.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 85a8ac2e7ab149f93ac8084a7174665b
+    m_Address: asset.cosmetic.iap.appearance.vo_quan_thanh_co.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 865480d6c1e79f37d8b2893e5eb56d99
+    m_Address: asset.item.eq.6.nui_thieng.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8687d4899b7ca2d1393182bb37a6ba26
+    m_Address: asset.cosmetic.frame.season.3.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8710233a65808a3588db5427cca88986
+    m_Address: asset.item.eq.3.xom_chim.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87f062889817bf44b91af470744fc1b7
+    m_Address: asset.cosmetic.shrine.season.2.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 88352d0763218e0ca96e4f1f24ce3d75
+    m_Address: asset.cosmetic.shrine.moc_xanh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 891bbc4a32444ce2e8c3cd4ddcc192dc
+    m_Address: asset.item.consumable.food.ca_chep_nuong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 892bb0e486842af55a3e3e193159f3ba
+    m_Address: asset.item.eq.4.deo_may.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8bf887c1599132433aa0eac9e1c27bef
+    m_Address: asset.cosmetic.shrine.linh_khoi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d6ec635a2d71d67fb8624f55046f007
+    m_Address: asset.item.eq.1.dinh_lang.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8e5b93c8afb22c944b419aa4141d5118
+    m_Address: asset.item.eq.6.nui_thieng.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ea1d637ea034845aa56827ea3710978
+    m_Address: asset.cosmetic.title.dung_si_tru_ho.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ef2c938b94045d2aacdc3d1d82c097e
+    m_Address: asset.cosmetic.frame.season.4.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f33b8cd7c66269a285c6c6e6ba30c3d
+    m_Address: asset.item.material.cui_lua_trai.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f44f8eef20d215589761fed997e8c53
+    m_Address: asset.cosmetic.shrine.lua_do.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9069397ccc7872d74b640dfb2a7d6aa2
+    m_Address: asset.effect.basic.vulnerable_8_4s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9154db97695fa6eba9d199a38abd83ec
+    m_Address: asset.item.eq.1.dinh_lang.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91ac479abc11f5816a3cdd2ec2473c1b
+    m_Address: asset.cosmetic.guild.shrine.ritual_12.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 92d8160ed0511cffe9d3f32ecb6ce41b
+    m_Address: asset.item.eq.2.u_minh.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 930ed86e0f4df923b8b43b0e6aed39ee
+    m_Address: asset.cosmetic.frame.ho_tinh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 935ca0d7d653a100e8a02a15ffba1b61
+    m_Address: asset.item.eq.1.ben_da.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93707ec52fab93a14be03ad7e2b54536
+    m_Address: asset.cosmetic.title_glow.thien_van.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94363b82efc8934769de58aa363abde4
+    m_Address: asset.item.eq.1.dinh_lang.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 944476e0bdf7b96b4af53117ef80c54a
+    m_Address: asset.item.eq.4.dau_ho.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 956dd75e6c7fbf1119128401e2ec33f0
+    m_Address: asset.item.eq.6.dau_cu.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 962ddafc074de5b199676e625340a965
+    m_Address: asset.effect.skill.tho.tho_giap_shield.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96fca2c0c61d2ef38b66969d10c812ff
+    m_Address: asset.item.eq.4.deo_may.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9703b5b5abc02b9cdb63ec9e92a85333
+    m_Address: asset.item.eq.3.xom_chim.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 970fe227fc89d2414b0b410a0d3ef872
+    m_Address: asset.skill.tho.passive.bat_dong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97c73aeeb11e14d7fb79eca9e9e07f9f
+    m_Address: asset.cosmetic.frame.guild_war.chien_ky.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 984bf06ee994d93288f242eed67cf4b7
+    m_Address: asset.item.material.ca_suong_ho.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98ea21526689ac2e2b2dbd45527dbea1
+    m_Address: asset.skill.hoa.active.lien_bao.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 995075cb87e883f1081e01a4d08e029d
+    m_Address: asset.item.eq.3.xom_chim.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a5a931c617deefe9860fbf5a7af50ea
+    m_Address: asset.item.material.thanh_co.gach_co.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9b088685f55926b0ca6dfccc072ff744
+    m_Address: asset.skill.tho.active.tho_giap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c82f4b927558eccc9ed2bf520d7fb67
+    m_Address: asset.item.eq.1.dinh_lang.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c8e5410150dea6629a99fdeedee52d7
+    m_Address: asset.cosmetic.appearance.ao_toi_la.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d4314790b0ebad1a94242cd1fd7d899
+    m_Address: asset.cosmetic.iap.emote.vo_tay_thang_tran.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e53dce6bea20f8f780ecb3e7edd1805
+    m_Address: asset.cosmetic.iap.nameplate.hun_thuoc_co.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e7cbb1d4ae630b4db46d55053528b52
+    m_Address: asset.cosmetic.shrine.tho_vang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e82071f2976f3e4199682f4a84cc313
+    m_Address: asset.item.eq.4.dau_ho.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ee512ce20bb1b52b88580874b844b27
+    m_Address: asset.skill.thuy.active.han_trieu.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a03ab08ce80fc3fbe8d10e628f6ab78e
+    m_Address: asset.item.eq.1.ben_da.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a28440842cd28a6a5ba290cf96ad0258
+    m_Address: asset.item.consumable.ruou_nep.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a2d27a54ac3230874b48327a673328b0
+    m_Address: asset.cosmetic.iap.appearance.co_tam_truyen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a2da10f1e7dcaf61f80ad4a8387c5dd5
+    m_Address: asset.cosmetic.title.season.4.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a32e0223b54081234960d90daa87b1dc
+    m_Address: asset.item.material.deo_may.da_voi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a470d99b69a046501b7ad52ae424df8f
+    m_Address: asset.item.eq.3.xom_chim.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a596d94625a286b4ca378484a4ced4dd
+    m_Address: asset.item.eq.2.u_minh.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7508534fb1b7fcd4b86ec720e555a35
+    m_Address: asset.cosmetic.title.dai_hiep_lang_que.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7d4262a1ba216330b08770256f57866
+    m_Address: asset.skill.thuy.passive.luu_chuyen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8362f3f06ff184378f6cfac041f46db
+    m_Address: asset.item.consumable.food.tom_nuong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa858ccbd05221471a592869dd41bfc2
+    m_Address: asset.skill.kim.active.pha_giap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa9d72ab437681d108c39cf73fc77e2e
+    m_Address: asset.item.eq.2.u_minh.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab75e668a7501515fbae6ffd918dde44
+    m_Address: asset.item.eq.5.trong_tran.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: abb06f0c91764e5298c708d16271566b
+    m_Address: asset.item.eq.4.deo_may.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac5773d808be800e898e523348810820
+    m_Address: asset.item.eq.1.dinh_lang.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac5bdabdc3d017731b13626adcbb58cd
+    m_Address: asset.cosmetic.guild_stone.inscription.kim_bach.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: addd4ae1d3ef4fc478bacca973c5f8bd
+    m_Address: asset.item.eq.5.thanh_co.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae98d083fe798359386523b52378feac
+    m_Address: asset.item.eq.4.dau_ho.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aedab48d06e084b0d9ca8d09cff28a27
+    m_Address: asset.effect.skill.thuy.freeze_2000ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0990b7a4c40b9732b89a90535aecf4a
+    m_Address: asset.item.eq.5.trong_tran.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0ee7271b0813f7af8669a5ad00ca043
+    m_Address: asset.cosmetic.guild_stone.inscription.trung_nguyen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b175adb17867e1273855a9d0f96fe00c
+    m_Address: asset.item.consumable.bua_giu_bac.so_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b197a236b6aa329139ef71fbcf5adccb
+    m_Address: asset.item.eq.4.deo_may.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1d0eb34d593f1511aa8ea5ceea0cac1
+    m_Address: asset.item.eq.5.trong_tran.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b289907bfc770a19899223a0747bf64c
+    m_Address: asset.cosmetic.title_glow.hong_phuc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b2d7b26e253e896efb8d6b497dffc48f
+    m_Address: asset.item.eq.2.u_minh.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4b9fcb7d25d8ca90a40dd9edcc4170a
+    m_Address: asset.item.consumable.bua_may.cao_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b514be7ac46e6f194b3fb2fce8a45a63
+    m_Address: asset.item.material.ca_bong_den.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5e7590d4bede93fc8da8a919c1df576
+    m_Address: asset.cosmetic.title.trang_si_giup_doi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b621f59aeed81c33fac4c6146dedc4d6
+    m_Address: asset.item.eq.5.trong_tran.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b726d115a3b5d59c9b344cedb2b677a0
+    m_Address: asset.cosmetic.title.pvp.than_thoai.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7425ca62cd69c59980f52a6c1089cff
+    m_Address: asset.item.eq.4.dau_ho.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7cdbf8250ec5af3ba97325e0775199e
+    m_Address: asset.effect.skill.tho.stun_1500ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b801e976466907ba1988a9eccaf7aee7
+    m_Address: asset.effect.basic.crit_mark_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b837f81b795e0286ab79afc35d4fd482
+    m_Address: asset.cosmetic.iap.trail.phuong_hoang_vu.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b83a53840839a86c2b110a8b692d982c
+    m_Address: asset.item.eq.2.dom_lua_rung.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8825255b342cb4f48ec633c1a0fc126
+    m_Address: asset.item.eq.5.trong_tran.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8a8332917ab5afb69d8bccd92ebce03
+    m_Address: asset.item.eq.4.dau_ho.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b917a36742c80b4fd8b7dccaa655d1e7
+    m_Address: asset.item.material.ca_linh_giang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b950c1b88fe9efd35a971502d90af7f2
+    m_Address: asset.item.eq.5.trong_tran.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba03072f5c6b9e56799a2fb35fbd5004
+    m_Address: asset.item.material.ca_sam_u_minh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba1c35367ee05bb4fbf54649563c5b2e
+    m_Address: asset.skill.thuy.active.thien_ha.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba5e0047a8c66f3bbb741edad40cf18f
+    m_Address: asset.item.eq.6.dau_cu.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba939d75afb7713f3b03563a9dded150
+    m_Address: asset.effect.basic.poison_4s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: baa3932275880f3399aa87f8cf7c6a59
+    m_Address: asset.item.eq.5.thanh_co.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb65ea79ac2050eff8259c2487ea85fa
+    m_Address: asset.effect.skill.thuy.luu_bo_haste.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bc5701fda4496eaffa69dbcbafbfe492
+    m_Address: asset.cosmetic.shrine_special.bach_ngoc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bcb98c37e9b27976f95dcd6a81d0f5d1
+    m_Address: asset.cosmetic.shrine.season.4.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bf7a6b25304a1299e9db3819b7435ebe
+    m_Address: asset.item.eq.5.thanh_co.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bfe9a6d597fea7f6c9a58b1ef3bc90b8
+    m_Address: asset.skill.moc.active.van_doc.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c203165062ba5ae22bdfef0b74ddbe6c
+    m_Address: asset.item.eq.4.deo_may.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c22372cfbab13e3968664c0e2bb54668
+    m_Address: asset.skill.moc.passive.thao_moc_dong_hoa.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c257125594b6c2b63bf620b542571ee3
+    m_Address: asset.item.eq.5.thanh_co.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2854262fc5f5d98b8a4509c616d4d28
+    m_Address: asset.skill.kim.passive.lien_kiem.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c30af401edca996d9af492118b904768
+    m_Address: asset.skill.hoa.passive.cuong_hoa.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c3921ae577398457eb1b689dc19d0225
+    m_Address: asset.skill.tho.basic.kim_cang_quyen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c47cfc68199d1c167921f39ac70f27c8
+    m_Address: asset.item.eq.2.dom_lua_rung.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4d10b3ca9cd70f0b9db51b686be4856
+    m_Address: asset.cosmetic.emote.season.2.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c522886b0b7850426bf5f0f4b08b667e
+    m_Address: asset.cosmetic.title.atlas.dom_dom_ma.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c61d06b5d2bac996ea647f87988d979b
+    m_Address: asset.effect.skill.tho.tho_giap_ward.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7d686017310f556d93be50e7ccd7808
+    m_Address: asset.cosmetic.iap.trail.long_hoa.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c8ebe7e31541048e0b01403f68bf3780
+    m_Address: asset.item.eq.3.ben_nuoc.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c96c5b16cf79189429651bd5145df375
+    m_Address: asset.item.eq.3.ben_nuoc.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c99cf15de66400c2189723027aafc6a6
+    m_Address: asset.cosmetic.emote.season.1.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca0b7b7114b4a78bf97f8e923cf0abfc
+    m_Address: asset.item.eq.1.ben_da.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca730dd2ea403a3728968321010bba6e
+    m_Address: asset.skill.moc.passive.duoc_tinh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca7e4993cc2ea71cd90828808d62fe88
+    m_Address: asset.skill.thuy.basic.bang_phien.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb1b7c20f9d95bc6ea270bb78edee30f
+    m_Address: asset.skill.moc.active.moc_bo.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb3906d6fdc52c41c8349782a86aec71
+    m_Address: asset.item.eq.3.ben_nuoc.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce166d6cc0b9bec38abcc577cb63f774
+    m_Address: asset.item.eq.1.dinh_lang.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce170393f09868bb5a3e90c37a1b58a9
+    m_Address: asset.cosmetic.iap.title_glow.long_nhan.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ceadbd81a68bb08468e81c75a9685b6c
+    m_Address: asset.skill.tho.passive.hau_tho.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf32b89850c581edfa4fe38c6c1ff1bd
+    m_Address: asset.item.eq.3.xom_chim.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf60d96b9c23b9158977e43e46028425
+    m_Address: asset.item.eq.3.ben_nuoc.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d05b8a027dbbf80b4a358382642a1cd3
+    m_Address: asset.skill.moc.basic.thao_kich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d110c8dd08c1f68d2bb626506e4aeb7d
+    m_Address: asset.cosmetic.frame.pvp.bac.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d14909e41581fb6deb38342bb693b57e
+    m_Address: asset.skill.kim.active.kiem_tran.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1682c998dbf9ddbc9811486016cfb3b
+    m_Address: asset.cosmetic.title.u_minh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d180d76e9d9ff8b91bd30f1caed7ef09
+    m_Address: asset.skill.thuy.basic.thuy_tien.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1aab2a5e4499d631a85a220b9c90f99
+    m_Address: asset.cosmetic.guild.banner.ritual_8.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d2ce69c8e0eebcd70a5359826b61f5f7
+    m_Address: asset.skill.tho.active.thien_son_tran.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d2e91fc742c65505ba54877d733a4a68
+    m_Address: asset.item.eq.5.trong_tran.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3d8158e13583217d8d538a37ce97034
+    m_Address: asset.item.eq.1.dinh_lang.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4447eb33654e0708807cc8d616505cf
+    m_Address: asset.effect.basic.slow_20_3s.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d54f6fc6b28afac17a1468349b531894
+    m_Address: asset.item.eq.2.u_minh.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d5cdc971ea22d9777a0f8e60a4814bbd
+    m_Address: asset.item.eq.3.ben_nuoc.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d5fdf25afe505b5699cce0fe22d6d69e
+    m_Address: asset.cosmetic.title.doi_mat_than_trung.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6068f5059e43ad5685b073ca435ab16
+    m_Address: asset.skill.thuy.basic.huyen_bang_kich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d677fe036ac3f2977a6e1eac655427f3
+    m_Address: asset.item.consumable.nuoc_la.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7363fe1ac95e3ec3b32823e8af340e3
+    m_Address: asset.cosmetic.frame.lan_linh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8758161c5c9c48eb83230b35ef16783
+    m_Address: asset.skill.moc.active.hoi_xuan.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8fe775f0227a6165ac2c600957e8816
+    m_Address: asset.item.eq.4.deo_may.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da0555a1057ee0a65af5789ef252511e
+    m_Address: asset.item.eq.2.u_minh.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da0deae5551a20a3db4010a5edc9e674
+    m_Address: asset.item.eq.4.deo_may.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da54c15185c044d108b4ab39ff92af13
+    m_Address: asset.skill.moc.basic.co_thu_kich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dba3a384481eb704bba1739517bd58e6
+    m_Address: asset.cosmetic.title_glow.bach_nhat.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc021e6335b1d7adba1d1e9f7e8f313b
+    m_Address: asset.item.eq.6.dau_cu.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc7fccf3644e700d483b144537e35b6a
+    m_Address: asset.item.eq.1.ben_da.feet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dd48519bb27cd0d20ba7766b04c972d0
+    m_Address: asset.cosmetic.frame.bach_ho.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dd7f1aec3f2cefe96a54226ce2fcc9df
+    m_Address: asset.cosmetic.title.tuyet_dinh_than_binh.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dee5059fe018b50609ed2f8c1fefd904
+    m_Address: asset.item.eq.1.dinh_lang.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df47c066e6bcd8e5ba0488e59ad3d79d
+    m_Address: asset.item.consumable.bua_may.trung_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df68b5f1ca3c0d09ba44cee737669453
+    m_Address: asset.item.book.skill.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfb32e3de79a907af91ab6ffd07485f3
+    m_Address: asset.item.eq.1.ben_da.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e10fb20512a5fc712ab1b90826785ba4
+    m_Address: asset.skill.tho.active.dia_chan.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e2b8f3ac50a8614f9b017e76027af54e
+    m_Address: asset.skill.thuy.active.trieu_quyen.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e375c86f2dc95e955acedc5ae6dc2981
+    m_Address: asset.skill.hoa.basic.hoa_xa.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e388cd81a44f64f55b66c2f140c4a261
+    m_Address: asset.item.eq.1.ben_da.body.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e396ed36b2573cba9ba5a9cb4184a105
+    m_Address: asset.item.eq.6.dau_cu.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e51974efb2d5a5b22ab3591020395a04
+    m_Address: asset.cosmetic.guild_stone.inscription.phuong_vi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e565aada3615c70c5a2dca442de81863
+    m_Address: asset.effect.skill.kim.hoi_kiem_guard.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e57d2cb2a9dc5bb668d4bb08872641fc
+    m_Address: asset.item.eq.4.dau_ho.charm.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5f6cae7f391c66c589435474fd6bac4
+    m_Address: asset.skill.kim.passive.kiem_y_bat_diet.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e664bb10e570a355a8981d9948435a6c
+    m_Address: asset.item.eq.4.dau_ho.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e69ebf6b3eaf8fdbd97bcf2579b86218
+    m_Address: asset.item.eq.1.dinh_lang.costume.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6b09169f0812a137a85c6898a5127b3
+    m_Address: asset.item.consumable.bua_giu_bac.cao_cap.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e82fe62092f8520f28ab7d8611e5980b
+    m_Address: asset.skill.thuy.passive.bang_giap_tam.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e868d4114d0b00292850122f55816b96
+    m_Address: asset.item.eq.6.dau_cu.legs.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb6fbaf43c061fc0092019b414bb81c4
+    m_Address: asset.item.eq.3.ben_nuoc.relic.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb757921ad9a19bafafea0cdaa86ab82
+    m_Address: asset.item.material.ca_chep.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed45f907b9946c847b10239486dafd9f
+    m_Address: asset.item.eq.3.xom_chim.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed4e64209c273889498ff450e177711f
+    m_Address: asset.item.eq.2.dom_lua_rung.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: efb059b44813c02bfac61fdb83abd3be
+    m_Address: asset.item.eq.4.dau_ho.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f04b7b10c96dc44c9bb1c00c4ece02d4
+    m_Address: asset.cosmetic.title.ngu_ong_ben_do.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f054973c1d7aba47ba89335b7d3b8bb0
+    m_Address: asset.item.eq.2.u_minh.weapon.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f099821522df6999faa171705f647e2f
+    m_Address: asset.item.eq.5.thanh_co.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f0efeda7f344b6a30b8866f42e5f4c76
+    m_Address: asset.skill.hoa.active.cuu_hoa_lien.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f18afc2b2681db7cca71d9e9f955349b
+    m_Address: asset.item.eq.6.dau_cu.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1a526d38f6160f38b1d59b7e9380c23
+    m_Address: asset.cosmetic.iap.trail.bao_gam.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1afab597c1ddda79899bb6e8c5a83fa
+    m_Address: asset.cosmetic.title.season.3.paid.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1b897d5528feece79ce39a694bdfbf0
+    m_Address: asset.item.eq.6.nui_thieng.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f357180b8b81ccfa2925924cbab4c8fe
+    m_Address: asset.cosmetic.shrine_special.hong_tran.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3c40f3ec45e10cf087d25f6b36c3193
+    m_Address: asset.item.consumable.food.ca_bong_kho.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4e74a385c29ed576ad8cd6ca7a0383b
+    m_Address: asset.item.material.tom_song.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5152450bb932da8fbee4432660f8e52
+    m_Address: asset.item.eq.3.xom_chim.talisman.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f581645c4a60b178094ac82a41eee164
+    m_Address: asset.cosmetic.title.deo_may.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f58eabba290c0d33b9a3f1e51a48891f
+    m_Address: asset.cosmetic.frame.season.0.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5b1c6618a90554ffa6bc38408b7472f
+    m_Address: asset.skill.tho.active.son_bich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f7cc2495bfa315be280dfe1954d7b256
+    m_Address: asset.cosmetic.frame.season.2.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f7e69cf676ccf82a6b82aa03233c4297
+    m_Address: asset.cosmetic.title_glow.xanh_nhat.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f94e452d4d443d91295c97b83db848b1
+    m_Address: asset.cosmetic.frame.rong_vang.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f94f751ef5f9737f1bffc6cd103ad6ef
+    m_Address: asset.item.eq.3.ben_nuoc.head.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f973f739983c6582cbd336664863e741
+    m_Address: asset.cosmetic.title.tho_san_thuong_luong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9875da0e2cb283638cb53516a8facfb
+    m_Address: asset.item.eq.1.ben_da.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9ea42da5941cdc588b5176ce00d50e0
+    m_Address: asset.item.eq.5.trong_tran.ring.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9f434909772cde00bb7fa12589b064a
+    m_Address: asset.item.material.ben_nuoc.da_song.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa02407cc80a82713ae06d02bf8ce57c
+    m_Address: asset.item.eq.2.u_minh.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa4e597f69a25cdbebaf0549c685e2c1
+    m_Address: asset.effect.basic.stun_400ms.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa895fc185de1834daaa623dd893fbd7
+    m_Address: asset.item.material.u_minh.vo_cay.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa987d6af6c738de7913c43096bce1f4
+    m_Address: asset.cosmetic.iap.appearance.co_tien.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb1bb06311273d9a48b28dcd617525ab
+    m_Address: asset.effect.skill.thuy.freeze_han_khi.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb519d93891536371bf1aed639784b73
+    m_Address: asset.skill.hoa.basic.hoa_phu.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc61717bcb46738a8a9d7aef673db917
+    m_Address: asset.skill.kim.active.xuyen_phong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc7047455e3e224109036a59ad8cc964
+    m_Address: asset.item.eq.5.trong_tran.seal.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc8fdb5f036a37ff5ad1556a4da13056
+    m_Address: asset.cosmetic.shrine_special.dai_hong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fcb43c3b32cddd72e8426ddc428e7600
+    m_Address: asset.cosmetic.shrine.season.5.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fcf8960aaf5346f31be85a4804940b81
+    m_Address: asset.skill.tho.basic.dia_liet_kich.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd0ec739cff0ffdf99e0afcf279b0615
+    m_Address: asset.item.eq.6.dau_cu.hands.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd2e94b7a2b2cd299b396849c324b8a5
+    m_Address: asset.item.material.rau_ram.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd6b97b5bb2ff255cba8f5b46598040a
+    m_Address: asset.item.eq.2.dom_lua_rung.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fdf52979643b95b418e926d9680bc0b8
+    m_Address: asset.skill.hoa.basic.lua_tao_quan.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: febff41760f8f8c188f1eaa6ad860ef4
+    m_Address: asset.item.material.ca_ro_dong.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fec16329126dbbcb79da2b84a468be50
+    m_Address: asset.item.eq.6.nui_thieng.jade.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ff7d38c7713f5c8f0ae3098949da158b
+    m_Address: asset.item.eq.3.ben_nuoc.necklace.icon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a2888c97f22fe0a5aa98df1b6b7fd7a8, type: 2}
+    - {fileID: 11400000, guid: 21bb030e4c6b8ab11ba9bbbfe075addc, type: 2}

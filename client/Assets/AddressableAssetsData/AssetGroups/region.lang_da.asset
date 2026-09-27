@@ -1,0 +1,178 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: region.lang_da
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: region.lang_da
+  m_GUID: ecfb5d2ca1ee094cc83d74dcd5aeff76
+  m_SerializeEntries:
+  - m_GUID: 00a0345b1066bc9089aad48b1fb908f5
+    m_Address: asset.npc.lang_da.cho_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 03cb8ef48410d27b9b66a6bd2a61915b
+    m_Address: asset.npc.lang_da.dem_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 271b994db387be22987dde1639c736fd
+    m_Address: asset.monster.lang_da.quy_nhap_trang.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32a555918e558309fbe23d69520bda1c
+    m_Address: asset.monster.lang_da.tinh_buoi.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 40efa7763cd7b6852a1b35bd1b498020
+    m_Address: asset.npc.lang_da.tho_nghe.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 455c38d6fd173a7dcb67618651db4bd0
+    m_Address: asset.map.lang_da.go_ma.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a146eeb48997bb4d85632af933d3a47
+    m_Address: asset.monster.lang_da.dom_dom_nguyen.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4fd8e12174cbceb31bba9832c906a11b
+    m_Address: asset.monster.lang_da.vong_hon.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55207aaa19dcd1be68d674fc4f98401a
+    m_Address: asset.monster.lang_da.vong_hon_gia.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a1da0ea673982de9900a589e3cc2fe6
+    m_Address: asset.monster.lang_da.co_lua.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a8d9c67bf5bc32e6acc8ab98e54be9d
+    m_Address: asset.monster.lang_da.ma_xo.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76b1c1b60b9825bbb84fc73cfae1426e
+    m_Address: asset.map.lang_da.ben_da.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b968e28905f3f757bb9454e5028737e
+    m_Address: asset.monster.lang_da.vong_bien.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8cd93539e35e9507d97c791771dbada6
+    m_Address: asset.monster.lang_da.hon_do_trang.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90b8d861754def6a68e7a5daadd51ddf
+    m_Address: asset.monster.lang_da.bu_nhin_rom.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 985d033ea7bb9ee8c8df71757c0df537
+    m_Address: asset.map.lang_da.dinh_lang.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a06d78e3b595907da362cad03a1515a
+    m_Address: asset.map.lang_da.ben_da.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b46248bedc2b337549dfe0924cf53160
+    m_Address: asset.monster.lang_da.hon_gao.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7521cf9aa9b4ca8b9c9a8db2ad6dc63
+    m_Address: asset.npc.lang_da.cho_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b821bb4a35a720b98af204c585fa7cd4
+    m_Address: asset.map.lang_da.go_ma.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b938b6fff394c67d78c85e47ea76bfa9
+    m_Address: asset.monster.lang_da.hon_ma_co_thu.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9d9df879c412bc4499c145af8f892bc
+    m_Address: asset.monster.lang_da.dom_dom_ma.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd838286972bfc78291aa5b6b90d6840
+    m_Address: asset.map.lang_da.bo_ruong.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c391800a7fefd667aab1c383a0cc3897
+    m_Address: asset.map.lang_da.bo_ruong.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9c6356de412b71479dc55eb78656e25
+    m_Address: asset.npc.lang_da.hang_quan.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca51a41797f4e19578c18a3b56439671
+    m_Address: asset.npc.lang_da.nguoi_dan_duong.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d62bafc4738895fc2a07ed95382ad58a
+    m_Address: asset.monster.lang_da.coc_thanh_tinh.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc99dc64b2b47e6be988a1cce75b3681
+    m_Address: asset.monster.lang_da.bup_lua.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eef73ee8d31bca1969028856e00fa085
+    m_Address: asset.npc.lang_da.dem_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3e3119de43c455abb878653df800029
+    m_Address: asset.map.lang_da.dinh_lang.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4ab480fa85dcf480ae9f28bfd361a68
+    m_Address: asset.monster.lang_da.hon_xo_non.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4bba191e5c5fef703a316d30419394e7, type: 2}
+    - {fileID: 11400000, guid: 63a82b0e512d2feb680163d84fad3edc, type: 2}
