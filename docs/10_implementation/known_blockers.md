@@ -25,6 +25,10 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
+None. IDs start at `BLK-001` and `OPS-001`.
+
+## Resolved Blockers
+
 ### `BLK-006` — `ThinhThan.Core` asmdef lacks `Unity.RenderPipelines.Universal.2D.Runtime`; no first-party assembly can reference `Light2D`, so IMP-101's light-bound contract outputs cannot compile
 opened_by: implementer/IMP-101   opened_at: 2026-09-27T05:45Z
 evidence: `Light2D` is defined in `com.unity.render-pipelines.universal` `Runtime/2D/` under its own assembly definition `Unity.RenderPipelines.Universal.2D.Runtime` (asmdef guid `516a5277b8c3b4f4c8cc86b77b1591ff`); the main `Unity.RenderPipelines.Universal.Runtime` asmdef does not reference it. `repository_layout.md` § Mandatory Assemblies gives `ThinhThan.Core` (`client/Assets/Scripts/Core/` — the only script path IMP-101 owns) exactly `Unity.InputSystem`, `Unity.RenderPipelines.Core.Runtime`, `Unity.RenderPipelines.Universal.Runtime`, and no other `ThinhThan.*` assembly lists the 2D runtime either. ADR-0068 forbids later packets editing an asmdef. PR #21 (`imp/IMP-101-urp-2d`, head `70d9532`) verify run https://github.com/hung98dev/thth/actions/runs/36296777181 job 108556974726: materialization compile emits `error CS0246: The type or namespace name 'Light2D' could not be found` at `Assets/Scripts/Core/Rendering/GlobalLightDayNightDriver.cs(12,34)` and `Assets/Scripts/Core/Rendering/PointLight2DBudget.cs(22,31),(48,30),(57,32)` on attempts 3–4; attempts 1/2/5 additionally reproduce BLK-005's stale-Library ugui CS86xx + editor self-SIGKILL (rc=137). `client.md` § Rendering requires one Global Light2D per map driven by the day/night cycle and point Light2D budgets — both need `Light2D`-typed fields, which no owned assembly can express.
@@ -34,9 +38,7 @@ options:
   2. move `Light2D`-bound components out of IMP-101 into a packet whose asmdef gains the 2D reference (e.g. a Systems presentation packet) — rewrites `contract_outputs`/`owned_paths`/acceptance and still requires option 1's asmdef edit somewhere;
   3. type the components against `Behaviour`/`Component` + reflection — hides the fixable root cause, violates the no-workaround baseline; do not use.
 blocks: IMP-101
-
-
-## Resolved Blockers
+resolved_by: `spec/BLK-006-urp-2d-runtime` (PR https://github.com/hung98dev/thth/pull/23)   resolved_at: 2026-09-27T07:45Z   resolution: option 1 — `ThinhThan.Core` gains `Unity.RenderPipelines.Universal.2D.Runtime` in the Mandatory Assemblies table and `client/Assets/Scripts/Core/ThinhThan.Core.asmdef` is updated in the same spec PR under IMP-000 ownership (IMP-000 is DONE; spec-owner carries IMP-000-scope corrections — precedent BLK-003 lockfiles); `ThinhThan.Tests.EditMode`/`ThinhThan.Tests.PlayMode` asmdefs also gain the reference because their table rows say "every Unity package assembly listed above" and IMP-101's `RenderingSetupTests` binds `Light2D`-typed driver fields; `Q4.asmdefs` self-updates (`unityAssemblies` parses the table) while `AssemblyGraphTests.cs` `ExpectedRefs` is updated alongside; IMP-101 `owned_paths` unchanged — the implementer never edits an asmdef (ADR-0068); IMP-101 -> NOT_STARTED
 
 ### `BLK-007` — global `client/Assets/csc.rsp` (`-warnaserror+`, `-nullable:enable`) also compiles registry-package sources; every cold Unity build fails on `com.unity.ugui` CS86xx
 opened_by: implementer/IMP-063   opened_at: 2026-09-27T11:02Z
