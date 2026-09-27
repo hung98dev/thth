@@ -529,10 +529,10 @@ evidence_location: "docs/10_implementation/evidence/IMP-101/"
 
 ## `IMP-064` — Unity Bilingual Localization Pipeline (vi-VN / en-US)
 id: IMP-064
-status: NOT_STARTED
-claimed_by: ""
-branch: ""
-claimed_at: ""
+status: IN_PROGRESS
+claimed_by: "coordinator-wave1"
+branch: "imp/IMP-064-localization"
+claimed_at: "2026-09-27T18:55:00Z"
 blocked_by: ""
 
 specs: [`../04_architecture/client_localization.md`, `../06_data/text.md`, `repository_layout.md`]
