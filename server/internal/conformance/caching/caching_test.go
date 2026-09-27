@@ -531,3 +531,50 @@ func TestUnityContainersKeepNetworkEgress(t *testing.T) {
 		t.Error("verify.yml still carries the NET/TNET offline conditional (BLK-008)")
 	}
 }
+
+// BLK-009: every containerized Unity run bind-mounts the licensing state
+// dirs writable — unity-lic at /root/.local/share/unity3d, unity-cfg at
+// /root/.config/unity3d AND unity-cache at /root/.cache. Without the
+// cache dir the licensing client cannot persist its token/state
+// (CreateDirectory '/root/.cache/unity3d' failed) and self-terminates
+// the editor's process group ~25s into startup.
+func TestUnityContainersMountLicensingDirs(t *testing.T) {
+	wf := workflowText(t)
+	lic := strings.Count(wf, "unity-lic:/root/.local/share/unity3d")
+	cfg := strings.Count(wf, "unity-cfg:/root/.config/unity3d")
+	cache := strings.Count(wf, "unity-cache:/root/.cache")
+	if lic == 0 || cfg == 0 {
+		t.Fatal("verify.yml lost the unity-lic/unity-cfg bind mounts entirely")
+	}
+	if lic != cfg {
+		t.Errorf("unity-lic mounts (%d) and unity-cfg mounts (%d) diverge — every licensing container needs both", lic, cfg)
+	}
+	if cache != lic {
+		t.Errorf("unity-cache:/root/.cache mounts (%d) != unity-lic mounts (%d) — every container running the Unity editor needs the licensing cache dir writable (BLK-009)", cache, lic)
+	}
+	if !strings.Contains(wf, `mkdir -p "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache"`) &&
+		!strings.Contains(wf, `mkdir -p "$RUNNER_TEMP/unity-cache" "$RUNNER_TEMP/unity-lic"`) &&
+		!strings.Contains(wf, "unity-cache\"") {
+		t.Error("verify.yml must mkdir the unity-cache runner dir before mounting it")
+	}
+}
+
+// BLK-009 (primary fix): every `unity-editor` invocation in the Linux job
+// runs with -batchmode. Without it the editor runs headed under Xvfb and
+// the auto-quit/fatal path issues killpg on its own process group —
+// deterministic SIGKILL ~15ms into assembly registration.
+func TestUnityRunsBatchmode(t *testing.T) {
+	wf := workflowText(t)
+	for _, line := range strings.Split(wf, "\n") {
+		s := strings.TrimSpace(line)
+		// covered below via the wrapped bash -c payloads too: match any
+		// `unity-editor` invocation that runs the editor (not just the
+		// wrapper's -version probe is exempt — it never opens the editor).
+		if strings.Contains(s, "unity-editor") &&
+			(strings.Contains(s, "-runTests") || strings.Contains(s, "-projectPath") ||
+				strings.Contains(s, "-serial") || strings.Contains(s, "-quit")) &&
+			!strings.Contains(s, "-batchmode") {
+			t.Errorf("unity-editor invocation missing -batchmode (headed under Xvfb → killpg, BLK-009): %s", s)
+		}
+	}
+}
