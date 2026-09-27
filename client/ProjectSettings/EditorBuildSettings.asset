@@ -6,5 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes: []
   m_configObjects:
-    com.unity.addressableassets: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 3}
+    com.unity.addressableassets: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
     com.unity.localization.settings: {fileID: 11400000, guid: 62784203d690f64ca75841bbefc963da, type: 3}
