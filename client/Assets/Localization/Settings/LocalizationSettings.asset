@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07b5cd0b1b829245bc8c4b6978793e8, type: 3}
+  m_Name: LocalizationSettings
+  m_EditorClassIdentifier:
+  m_StartupSelectors:
+  - rid: 9000000000000000001
+  m_AvailableLocales:
+    rid: 9000000000000000002
+  m_AssetDatabase:
+    rid: 9000000000000000003
+  m_StringDatabase:
+    rid: 9000000000000000004
+  m_Metadata:
+    m_Items: []
+  m_ProjectLocaleIdentifier:
+    m_Code: vi-VN
+  m_PreloadBehavior: 1
+  m_InitializeSynchronously: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 9000000000000000001
+      type: {class: LaunchLocaleSelector, ns: ThinhThan.Core.Localization, asm: ThinhThan.Core.Localization}
+      data:
+    - rid: 9000000000000000002
+      type: {class: LocalesProvider, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
+      data:
+    - rid: 9000000000000000003
+      type: {class: LocalizedAssetDatabase, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
+      data:
+        m_DefaultTableReference:
+          m_TableCollectionName:
+        m_CustomTableProvider:
+          rid: -2
+        m_CustomTablePostprocessor:
+          rid: -2
+        m_UseFallback: 0
+    - rid: 9000000000000000004
+      type: {class: LocalizedStringDatabase, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
+      data:
+        m_DefaultTableReference:
+          m_TableCollectionName: Core
+        m_CustomTableProvider:
+          rid: -2
+        m_CustomTablePostprocessor:
+          rid: -2
+        m_UseFallback: 0
+        m_MissingTranslationState: 1
+        m_NoTranslationFoundMessage: '[MISSING:{key}]'
+        m_SmartFormat:
+          rid: 9000000000000000005
+    - rid: 9000000000000000005
+      type: {class: SmartFormatter, ns: UnityEngine.Localization.SmartFormat, asm: Unity.Localization}
+      data:
+        m_Settings:
+          rid: 9000000000000000006
+        m_Parser:
+          rid: 9000000000000000007
+        m_Sources:
+        - rid: 9000000000000000008
+        - rid: 9000000000000000009
+        - rid: 9000000000000000010
+        - rid: 9000000000000000011
+        - rid: 9000000000000000012
+        - rid: 9000000000000000013
+        - rid: 9000000000000000014
+        m_Formatters:
+        - rid: 9000000000000000008
+        - rid: 9000000000000000015
+        - rid: 9000000000000000016
+        - rid: 9000000000000000017
+        - rid: 9000000000000000018
+        - rid: 9000000000000000019
+        - rid: 9000000000000000020
+        - rid: 9000000000000000021
+        - rid: 9000000000000000022
+    - rid: 9000000000000000006
+      type: {class: SmartSettings, ns: UnityEngine.Localization.SmartFormat.Core.Settings, asm: Unity.Localization}
+      data:
+        m_FormatErrorAction: 0
+        m_ParseErrorAction: 0
+        m_CaseSensitivity: 0
+        m_ConvertCharacterStringLiterals: 1
+    - rid: 9000000000000000007
+      type: {class: Parser, ns: UnityEngine.Localization.SmartFormat.Core.Parsing, asm: Unity.Localization}
+      data:
+        m_OpeningBrace: 123
+        m_ClosingBrace: 125
+        m_Settings:
+          rid: 9000000000000000006
+        m_AlphanumericSelectors: 1
+        m_AllowedSelectorChars: _-
+        m_Operators: '[]().,'
+        m_AlternativeEscaping: 0
+        m_AlternativeEscapeChar: 92
+    - rid: 9000000000000000008
+      type: {class: ListFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - list
+        - l
+        - ''
+        m_SmartSettings:
+          rid: 9000000000000000006
+    - rid: 9000000000000000009
+      type: {class: PersistentVariablesSource, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Groups: []
+    - rid: 9000000000000000010
+      type: {class: DictionarySource, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+    - rid: 9000000000000000011
+      type: {class: ValueTupleSource, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+    - rid: 9000000000000000012
+      type: {class: XmlSource, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+    - rid: 9000000000000000013
+      type: {class: ReflectionSource, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+    - rid: 9000000000000000014
+      type: {class: DefaultSource, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+    - rid: 9000000000000000015
+      type: {class: PluralLocalizationFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - plural
+        - p
+        - ''
+        m_DefaultTwoLetterISOLanguageName: en
+    - rid: 9000000000000000016
+      type: {class: ChooseFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - choose
+        - c
+        - ''
+        m_SmartSettings:
+          rid: 9000000000000000006
+    - rid: 9000000000000000017
+      type: {class: SubStringFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - substr
+        - ''
+        m_AllowEmpty: 0
+        m_SmartSettings:
+          rid: 9000000000000000006
+    - rid: 9000000000000000018
+      type: {class: TimeFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - time
+        - ''
+        m_TwoLetterISOLanguageName: en
+        m_SmartSettings:
+          rid: 9000000000000000006
+    - rid: 9000000000000000019
+      type: {class: XPathFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - xpath
+        - ''
+        m_SmartSettings:
+          rid: 9000000000000000006
+    - rid: 9000000000000000020
+      type: {class: DictionaryFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - {}
+        - ''
+        m_SmartSettings:
+          rid: 9000000000000000006
+    - rid: 9000000000000000021
+      type: {class: IsMatchFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - ismatch
+        - ''
+        m_SmartSettings:
+          rid: 9000000000000000006
+    - rid: 9000000000000000022
+      type: {class: DefaultFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      data:
+        m_Names:
+        - def
+        - d
+        - ''
+        m_SmartSettings:
+          rid: 9000000000000000006
