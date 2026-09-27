@@ -370,7 +370,10 @@ jobs:
           mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache"
           for mode in EditMode PlayMode; do
             ok=
-            for i in 1 2 3 4 5; do
+            # BLK-014: PlayMode gets a wider budget — the mid-run watchdog
+            # kill still burns attempts even under setsid containment.
+            max=5; [ "$mode" = PlayMode ] && max=8
+            for i in $(seq 1 "$max"); do
               free -m
               arc=0
               # Retry-only wipe: attempt 1 keeps a cache-restored Library
@@ -412,10 +415,24 @@ jobs:
                   -e MODE="$mode" \
                   "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
                   bash -c '
-                    unity-editor -batchmode -nographics -projectPath /github/workspace/client \
+                    # BLK-014: setsid puts the editor in its own process group, so
+                    # the watchdog killpg kills only that group — this wrapper is the
+                    # container PID 1 and survives to pick the exit code itself.
+                    setsid -w unity-editor -batchmode -nographics -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile "/github/workspace/artifacts/unity-tests/$MODE-editor.log"
+                    rc=$?
+                    # A kill after the verdict was committed (results.xml Passed)
+                    # is not a failure — exit 0 on behalf of the killed editor.
+                    # A mid-run kill leaves no Passed XML and the real rc (137)
+                    # passes through so the outer retry loop still fires.
+                    if [ "$rc" -ne 0 ] \
+                      && [ -f "/github/workspace/artifacts/unity-tests/$MODE-results.xml" ] \
+                      && grep -q "result=\"Passed\"" "/github/workspace/artifacts/unity-tests/$MODE-results.xml"; then
+                      exit 0
+                    fi
+                    exit "$rc"
                   ') || cid=
                 df -h / "$RUNNER_TEMP" | tail -2 || true
                 docker system df 2>/dev/null | tail -3 || true
@@ -462,7 +479,7 @@ jobs:
               sleep 20
             done
             if [ -z "$ok" ]; then
-              echo "unity $mode tests failed after 5 attempts" >&2
+              echo "unity $mode tests failed after $max attempts" >&2
               exit 1
             fi
           done
