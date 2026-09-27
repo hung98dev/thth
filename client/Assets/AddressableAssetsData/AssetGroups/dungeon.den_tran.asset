@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: dungeon.den_tran
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: dungeon.den_tran
+  m_GUID: ccf386d89ad1bde3bb076d0fc9cac38c
+  m_SerializeEntries:
+  - m_GUID: 74983e6f96d9e0344a57474bce557d08
+    m_Address: asset.dungeon.den_tran.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4ef86dac06fd6a16b24bfe793cd7af9
+    m_Address: asset.boss.ho_tinh_chin_duoi.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6eea19a4e4ae1eacac6fb543c789a72
+    m_Address: asset.dungeon.den_tran.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 3b7e49cceb45592ba96585cfbdbb56d5, type: 2}
+    - {fileID: 11400000, guid: c16a5f3e4f0868101b38ac64bda10efe, type: 2}

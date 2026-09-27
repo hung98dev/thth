@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: region.rung_u_minh
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: region.rung_u_minh
+  m_GUID: 53d9352d4ea180dc6b899e5e191b9bce
+  m_SerializeEntries:
+  - m_GUID: 05c18d38f27b823bb978e4d5fa3abf1b
+    m_Address: asset.map.rung_u_minh.rung_sau.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 112aaabbe204ed23ab8fdccb6e1f2177
+    m_Address: asset.npc.rung_u_minh.nguoi_dan_duong.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b9335bbb5a435d60b927a8bcfc80538
+    m_Address: asset.map.rung_u_minh.xom_rung.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32911be34b33df0bf8fb6ff5544794be
+    m_Address: asset.monster.rung_u_minh.dai_tinh_cay.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38ef4731c5f8aa20fbae0aab9e301d4d
+    m_Address: asset.monster.rung_u_minh.vong_rung_sau.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 43b978d80f9c2014da1538dc079d7755
+    m_Address: asset.map.rung_u_minh.mieu_bo_hoang.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 507020d93a4fe63b9b4159482e3d1368
+    m_Address: asset.npc.rung_u_minh.dem_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5730245b13b7be175a994c72e398c8dc
+    m_Address: asset.map.rung_u_minh.loi_tram.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5731b3ff65643c6ca947a4d4aa4fca93
+    m_Address: asset.monster.rung_u_minh.ma_tranh.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ff7d369b9588441b840aabf67219ad6
+    m_Address: asset.npc.rung_u_minh.hang_quan.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 612b48b0d24f25a24b7b0e4a1d48772a
+    m_Address: asset.monster.rung_u_minh.tinh_cay.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 79c18f3b9e9ea7b10b1508cd414b4ad7
+    m_Address: asset.map.rung_u_minh.xom_rung.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8402907c73cb0872c82e560162cb4e6c
+    m_Address: asset.monster.rung_u_minh.dom_lua.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9589c8808ff1dc1a785ba03c843511cf
+    m_Address: asset.npc.rung_u_minh.cho_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a911b4b8e2ef6f2b39524cd862ed37b3
+    m_Address: asset.npc.rung_u_minh.dem_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c1e6401d26fe5ef61a54f7992c2f1f5e
+    m_Address: asset.npc.rung_u_minh.tho_nghe.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2bb0f668e8168a8baf81f14a6d4235c
+    m_Address: asset.monster.rung_u_minh.ma_rung.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4f56472c9617215caa84fb5c0424879
+    m_Address: asset.map.rung_u_minh.loi_tram.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c974fc70a9a19a685be443e4eb43c849
+    m_Address: asset.map.rung_u_minh.rung_sau.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca9a2a6f7fc424db28894946995d4c82
+    m_Address: asset.monster.rung_u_minh.bong_nguoi.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dba035121c0b26d4d97c2ce7528e0278
+    m_Address: asset.monster.rung_u_minh.moc_tinh.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6e02c748b2dabfc499464ce68e198bf
+    m_Address: asset.npc.rung_u_minh.cho_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f40cf773e1225bcb1910837f8cdb0c1c
+    m_Address: asset.map.rung_u_minh.mieu_bo_hoang.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 27b140b050c3a63e7b1a255feb20a22e, type: 2}
+    - {fileID: 11400000, guid: 9426a3eb56637d1e38777938526c397b, type: 2}
