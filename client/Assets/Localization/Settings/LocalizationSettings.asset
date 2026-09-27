@@ -46,6 +46,7 @@ MonoBehaviour:
           rid: -2
         m_CustomTablePostprocessor:
           rid: -2
+        m_AsynchronousBehaviour: 0
         m_UseFallback: 0
     - rid: 9000000000000000004
       type: {class: LocalizedStringDatabase, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
@@ -56,6 +57,7 @@ MonoBehaviour:
           rid: -2
         m_CustomTablePostprocessor:
           rid: -2
+        m_AsynchronousBehaviour: 0
         m_UseFallback: 0
         m_MissingTranslationState: 1
         m_NoTranslationFoundMessage: '[MISSING:{key}]'
@@ -79,11 +81,11 @@ MonoBehaviour:
         m_Formatters:
         - rid: 9000000000000000008
         - rid: 9000000000000000015
+        - rid: 9000000000000000019
+        - rid: 9000000000000000018
+        - rid: 9000000000000000020
         - rid: 9000000000000000016
         - rid: 9000000000000000017
-        - rid: 9000000000000000018
-        - rid: 9000000000000000019
-        - rid: 9000000000000000020
         - rid: 9000000000000000021
         - rid: 9000000000000000022
     - rid: 9000000000000000006
@@ -147,57 +149,48 @@ MonoBehaviour:
         m_Names:
         - choose
         - c
-        - ''
-        m_SmartSettings:
-          rid: 9000000000000000006
+        m_SplitChar: 124
     - rid: 9000000000000000017
       type: {class: SubStringFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
       data:
         m_Names:
         - substr
-        - ''
-        m_AllowEmpty: 0
-        m_SmartSettings:
-          rid: 9000000000000000006
+        m_ParameterDelimiter: 44
+        m_NullDisplayString: (null)
+        m_OutOfRangeBehavior: 0
     - rid: 9000000000000000018
       type: {class: TimeFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
       data:
         m_Names:
+        - timespan
         - time
+        - t
         - ''
-        m_TwoLetterISOLanguageName: en
-        m_SmartSettings:
-          rid: 9000000000000000006
+        m_DefaultTwoLetterIsoLanguageName: en
     - rid: 9000000000000000019
-      type: {class: XPathFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      type: {class: ConditionalFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
       data:
         m_Names:
-        - xpath
+        - conditional
+        - cond
         - ''
-        m_SmartSettings:
-          rid: 9000000000000000006
     - rid: 9000000000000000020
-      type: {class: DictionaryFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
+      type: {class: XElementFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
       data:
         m_Names:
-        - {}
+        - xelement
+        - xml
+        - x
         - ''
-        m_SmartSettings:
-          rid: 9000000000000000006
     - rid: 9000000000000000021
       type: {class: IsMatchFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
       data:
         m_Names:
         - ismatch
-        - ''
-        m_SmartSettings:
-          rid: 9000000000000000006
     - rid: 9000000000000000022
       type: {class: DefaultFormatter, ns: UnityEngine.Localization.SmartFormat.Extensions, asm: Unity.Localization}
       data:
         m_Names:
-        - def
+        - default
         - d
         - ''
-        m_SmartSettings:
-          rid: 9000000000000000006
