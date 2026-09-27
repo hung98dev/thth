@@ -50,8 +50,10 @@ Applies to `.github/workflows/verify.yml`. Enforced by
 ## Never cached (CI-002)
 
 No `path`/`key`/`restore-keys` may cover licence or credential state:
-`unity-lic`, `Unity_lic.ulf`, `~/.local/share/unity3d`, `ProgramData\Unity`,
-`.ulf` files. Licence activation runs every attempt. A cache hit must never
+`unity-lic`, `unity-cfg`, `unity-cache`, `Unity_lic.ulf`,
+`~/.local/share/unity3d`, `~/.config/unity3d`, `~/.cache/unity3d`,
+`ProgramData\Unity`, `.ulf` files. These are `$RUNNER_TEMP` dirs —
+fresh every run, only bind-mounted into the Unity containers. Licence activation runs every attempt. A cache hit must never
 skip a Q0-Q6 gate, the fork/freeze guards, the materialization retry loop,
 the `commit unity-materialized` drift check, or the licence activation.
 

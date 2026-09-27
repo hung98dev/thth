@@ -274,7 +274,7 @@ jobs:
           sudo systemctl mask --runtime systemd-oomd.service 2>/dev/null || true
           systemctl is-active systemd-oomd 2>/dev/null || true
           busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
-          mkdir -p "$RUNNER_TEMP/unity-lic"
+          mkdir -p "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache"
           docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE_TAG }}" unity-editor -version
           for i in 1 2 3 4; do
             docker run --rm --shm-size=4g "${{ env.UNITY_LINUX_IMAGE_TAG }}" bash -c '/opt/unity/Editor/Unity -batchmode -nographics -version -logFile -' >/dev/null 2>&1
@@ -289,10 +289,13 @@ jobs:
             getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
             curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
             ip route get 1.1.1.1 2>/dev/null | head -1 || true
+            # /root/.cache must stay writable — the licensing client persists
+            # token/state under .cache/unity3d or it self-terminates (BLK-009).
             cid=$(docker run -d -i --shm-size=4g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
               -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+              -v "$RUNNER_TEMP/unity-cache:/root/.cache" \
               -v /etc/machine-id:/etc/machine-id:ro \
               -w /github/workspace \
               -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -305,7 +308,7 @@ jobs:
                   rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
                   EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
                 fi
-                unity-editor -projectPath /github/workspace/client $EXTRA -quit -logFile -
+                unity-editor -batchmode -projectPath /github/workspace/client $EXTRA -quit -logFile -
               ') || cid=
             df -h / "$RUNNER_TEMP" | tail -2 || true
             docker system df 2>/dev/null | tail -3 || true
@@ -335,6 +338,9 @@ jobs:
             free -m
             tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
             find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+            for f in $(find "$RUNNER_TEMP/unity-lic" -type f \( -name '*.log' -o -name '*.log.*' \) 2>/dev/null | sort); do
+              echo "== licensing log $f"; tail -60 "$f" || true
+            done
             [ "$i" -lt 5 ] && sleep 60
           done
           cache_telemetry_emit unity-library "$libhit" "$((SECONDS-start))"
@@ -361,7 +367,7 @@ jobs:
           sudo systemctl mask --runtime systemd-oomd.service 2>/dev/null || true
           systemctl is-active systemd-oomd 2>/dev/null || true
           busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
-          mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic"
+          mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache"
           for mode in EditMode PlayMode; do
             ok=
             for i in 1 2 3 4 5; do
@@ -372,13 +378,15 @@ jobs:
               [ "$i" -gt 1 ] && find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
               getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
               curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
+              # /root/.cache writable for the licensing client (BLK-009).
               lcid=$(docker run -d -i --rm \
                 -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                 -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+                -v "$RUNNER_TEMP/unity-cache:/root/.cache" \
                 -v /etc/machine-id:/etc/machine-id:ro \
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
-                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
+                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -batchmode -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
               if [ -n "$lcid" ]; then arc=$(docker wait "$lcid"); else arc=199; fi
               if [ "$arc" -eq 198 ]; then
                 echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
@@ -387,10 +395,12 @@ jobs:
               rc=$arc
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
+                # /root/.cache writable for the licensing client (BLK-009).
                 cid=$(docker run -d -i --shm-size=4g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
                   -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
                   -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+                  -v "$RUNNER_TEMP/unity-cache:/root/.cache" \
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -399,7 +409,7 @@ jobs:
                   -e MODE="$mode" \
                   "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
                   bash -c '
-                    unity-editor -projectPath /github/workspace/client \
+                    unity-editor -batchmode -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile -
@@ -414,6 +424,7 @@ jobs:
                   rc=199
                 fi
                 tail -200 "$RUNNER_TEMP/unity-tests.log" 2>/dev/null || true
+                grep -E 'Licensing|license|Access token' "$RUNNER_TEMP/unity-tests.log" 2>/dev/null | tail -10 || true
               fi
               if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
                 && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
@@ -428,6 +439,9 @@ jobs:
               free -m
               tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
               find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+              for f in $(find "$RUNNER_TEMP/unity-lic" -type f \( -name '*.log' -o -name '*.log.*' \) 2>/dev/null | sort); do
+                echo "== licensing log $f"; tail -60 "$f" || true
+              done
               echo "unity $mode tests attempt $i failed (rc=$rc); retrying"
               sleep 20
             done
