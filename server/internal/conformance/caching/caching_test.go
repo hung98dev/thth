@@ -630,3 +630,23 @@ func TestUnityTestPassGatesOnCompletionLine(t *testing.T) {
 		t.Error("BLK-013 pass condition must still require a Passed results.xml alongside the completion line")
 	}
 }
+
+// BLK-014: when the watchdog killpg fires mid-run (before the completion
+// line), the exit-code gate never sees the verdict — the editor must run
+// under setsid so the kill only destroys the editor's own process group
+// and the wrapping shell (container PID 1) survives to exit 0 when a
+// Passed results.xml was already committed.
+func TestUnityEditorRunsUnderSetsid(t *testing.T) {
+	wf := workflowText(t)
+	if !strings.Contains(wf, "setsid -w unity-editor") {
+		t.Error("verify.yml -runTests must wrap unity-editor in setsid so killpg cannot take down the container entrypoint (BLK-014)")
+	}
+	idx := strings.Index(wf, "setsid -w unity-editor")
+	if idx < 0 {
+		return
+	}
+	tail := wf[idx:]
+	if !strings.Contains(tail, `result="Passed"`) || !strings.Contains(tail, "exit 0") {
+		t.Error("setsid wrapper must exit 0 when a Passed results.xml exists (post-verdict kill is not a failure)")
+	}
+}
