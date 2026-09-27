@@ -533,13 +533,13 @@ id: IMP-064
 status: IN_PROGRESS
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-064-localization"
-claimed_at: "2026-09-27T20:35:00Z"
+claimed_at: "2026-09-27T22:10:00Z"
 blocked_by: ""
 
 specs: [`../04_architecture/client_localization.md`, `../06_data/text.md`, `repository_layout.md`]
 adrs: [`0015-unity-localization.md`, `0068-implementation-packet-readiness-corrections.md`, `0065-data-schema-completion-and-erasure-retention.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0074-localization-addressables-group-integration.md`]
-depends_on: [IMP-000]
-owned_paths: [`client/Assets/Localization/Settings/`, `client/Assets/Localization/Tables/Core/`, `client/Assets/Scripts/Core/Localization/`, `client/Assets/Tests/EditMode/LocalizationValidation/`]
+depends_on: [IMP-000, IMP-063]
+owned_paths: [`client/Assets/Localization/Settings/`, `client/Assets/Localization/Tables/Core/`, `client/Assets/Scripts/Core/Localization/`, `client/Assets/Tests/EditMode/LocalizationValidation/`, `client/Assets/AddressableAssetsData/AddressableAssetSettings.asset`, `client/Assets/AddressableAssetsData/AssetGroups/localization.locales.asset`, `client/Assets/AddressableAssetsData/AssetGroups/localization.shared.asset`, `client/Assets/AddressableAssetsData/AssetGroups/localization.strings.vi_vn.asset`, `client/Assets/AddressableAssetsData/AssetGroups/localization.strings.en_us.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.locales_BundledAssetGroupSchema.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.locales_ContentUpdateGroupSchema.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.shared_BundledAssetGroupSchema.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.shared_ContentUpdateGroupSchema.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.strings.vi_vn_BundledAssetGroupSchema.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.strings.vi_vn_ContentUpdateGroupSchema.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.strings.en_us_BundledAssetGroupSchema.asset`, `client/Assets/AddressableAssetsData/AssetGroups/Schemas/localization.strings.en_us_ContentUpdateGroupSchema.asset`]
 forbidden_paths: [`server/`]
 contract_inputs: [stable localization keys, vi-VN/en-US text, typed Smart String arguments]
 contract_outputs: [bilingual string/asset tables, locale validation report]
@@ -559,6 +559,7 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 ## Tests
 - `client/Assets/Tests/EditMode/LocalizationValidation/LocalizationValidationTests.cs`: TestBilingualKeyParity, TestNoMissingTranslations, TestSettingsAssetMatchesBaselineGuid.
 - `client/Assets/Tests/EditMode/AddressablesValidation/AssetKeyGroupTests.cs` (BLK-011): TestCanonicalGroupSetAndSingleMembership.
+- `server/internal/conformance/gates/gates_test.go` (BLK-012): TestImp064OwnedPathsCoverLocalizationRegistry.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
