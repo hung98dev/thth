@@ -424,9 +424,9 @@ jobs:
                       -logFile "/github/workspace/artifacts/unity-tests/$MODE-editor.log"
                     rc=$?
                     # A kill after the verdict was committed (results.xml Passed)
-                    # is not a failure — exit 0 in the editor's place. A mid-run
-                    # kill leaves no Passed XML and the real rc (137) passes
-                    # through so the outer retry loop still fires.
+                    # is not a failure — exit 0 on behalf of the killed editor.
+                    # A mid-run kill leaves no Passed XML and the real rc (137)
+                    # passes through so the outer retry loop still fires.
                     if [ "$rc" -ne 0 ] \
                       && [ -f "/github/workspace/artifacts/unity-tests/$MODE-results.xml" ] \
                       && grep -q "result=\"Passed\"" "/github/workspace/artifacts/unity-tests/$MODE-results.xml"; then
