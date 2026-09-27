@@ -1,0 +1,168 @@
+name: cache-warm
+
+# ADR-0073: actions/cache entries are scoped to the ref that saved them; a PR
+# can restore entries saved on main but not those of another PR. verify.yml
+# runs only on pull_request until the IMP-068 cutover, so this workflow
+# saves the pure-pin caches (native Windows Unity editor, Windows CLI tools,
+# EDB, Go) in the main scope. Keys and paths are byte-identical to
+# verify.yml (asserted by conformance/caching tests). No secret, no licence,
+# no gate: it only fills caches.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - 'docs/00_context/technology_versions.md'
+      - 'server/go.sum'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cache-warm
+  cancel-in-progress: false
+
+env:
+  GO_VERSION: '1.27.1'
+  UNITY_WINDOWS_EDITOR_URL: 'https://download.unity3d.com/download_unity/7efac9f6c10e/Windows64EditorInstaller/UnitySetup64-6000.6.1f1.exe'
+  UNITY_WINDOWS_EDITOR_SHA256: '8884daa489c8708c17da571c46a869839dd7bbf45f69048bd4db5c6d054d5e36'
+  EDB_ZIP_SHA256: 'fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c'
+
+jobs:
+  warm-linux:
+    name: 'cache warm (Linux)'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Install Go (pinned)
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        with:
+          go-version: '1.27.1'
+          cache: false
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          lfs: false
+
+      - name: Cache Go modules + build (pinned)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: go-build-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('server/go.sum') }}
+          restore-keys: |
+            go-build-${{ runner.os }}-${{ env.GO_VERSION }}-
+
+      - name: Compile server + tests
+        shell: bash
+        run: go -C server test -count=1 -run '^$' ./...
+
+  warm-windows:
+    name: 'cache warm (Windows)'
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - name: Cache pinned CLI tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}\tools\cli
+          key: cli-tools-${{ runner.os }}-pwsh7.6.6-jq1.8.2-gh2.101.0-lfs3.8.0-02fe458b-a6fc67fe-bc6c8143-b62e7b8c
+
+      - name: Install pwsh + CLI tools (pinned)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          $T = "$env:RUNNER_TEMP\tools\cli"; New-Item -ItemType Directory -Force -Path "$T\bin" | Out-Null
+          $pins = 'pwsh7.6.6-jq1.8.2-gh2.101.0-lfs3.8.0-02fe458b-a6fc67fe-bc6c8143-b62e7b8c'
+          $marker = "$T\cli.pins"
+          "$T\pwsh" >> $env:GITHUB_PATH
+          if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $pins)) { Write-Host 'cli tools already cached'; exit 0 }
+          function Get-Pinned([string]$url, [string]$sha, [string]$out) {
+            Invoke-WebRequest -Uri $url -OutFile $out -UseBasicParsing
+            if ((Get-FileHash $out -Algorithm SHA256).Hash.ToLower() -ne $sha) {
+              throw "sha256 mismatch for $url"
+            }
+          }
+          Get-Pinned 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860' "$env:TEMP\pwsh.zip"
+          Expand-Archive "$env:TEMP\pwsh.zip" -DestinationPath "$T\pwsh" -Force
+          Get-Pinned 'https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe' 'a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627' "$T\bin\jq.exe"
+          Get-Pinned 'https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_windows_amd64.zip' 'bc6c814367b193cd8e713611d61e36013c0ef843b8f516458fe3eda039192794' "$env:TEMP\gh.zip"
+          Expand-Archive "$env:TEMP\gh.zip" -DestinationPath "$env:TEMP\ghx" -Force
+          Copy-Item "$env:TEMP\ghx\bin\gh.exe" "$T\bin\gh.exe"
+          Get-Pinned 'https://github.com/git-lfs/git-lfs/releases/download/v3.8.0/git-lfs-windows-amd64-v3.8.0.zip' 'b62e7b8ceddee635f691233d77de8eaa4b213e9209e0173811d8cfa77f7882c1' "$env:TEMP\lfs.zip"
+          Expand-Archive "$env:TEMP\lfs.zip" -DestinationPath "$env:TEMP\lfsx" -Force
+          Copy-Item "$env:TEMP\lfsx\git-lfs-3.8.0\git-lfs.exe" "$T\bin\git-lfs.exe"
+          Set-Content -Path $marker -Value $pins -NoNewline
+
+      - name: Install Go (pinned)
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        with:
+          go-version: '1.27.1'
+          cache: false
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          lfs: false
+
+      - name: Cache Go modules + build (pinned)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/AppData/Local/go-build
+          key: go-build-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('server/go.sum') }}
+          restore-keys: |
+            go-build-${{ runner.os }}-${{ env.GO_VERSION }}-
+
+      - name: Compile server + tests
+        shell: pwsh
+        run: go -C server test -count=1 -run '^$' ./...
+
+      - name: Cache PostgreSQL EDB binaries (pinned)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}\edb-cache
+          key: edb-${{ runner.os }}-18.6-${{ env.EDB_ZIP_SHA256 }}
+
+      - name: Fetch EDB binaries (pinned)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $cacheRoot = "$env:RUNNER_TEMP\edb-cache"
+          $marker = "$cacheRoot\edb.sha256"
+          if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $env:EDB_ZIP_SHA256)) { Write-Host 'edb already cached'; exit 0 }
+          $z = "$env:RUNNER_TEMP\edb.zip"
+          curl.exe -fSL -m 900 --retry 3 --retry-delay 10 'https://get.enterprisedb.com/postgresql/postgresql-18.6-1-windows-x64-binaries.zip' -o $z
+          if ($LASTEXITCODE -ne 0) { throw "edb download failed rc=$LASTEXITCODE" }
+          if ((Get-FileHash $z -Algorithm SHA256).Hash.ToLower() -ne $env:EDB_ZIP_SHA256) { throw 'edb sha256 mismatch' }
+          New-Item -ItemType Directory -Force -Path $cacheRoot | Out-Null
+          tar.exe -xf $z -C $cacheRoot
+          Set-Content -Path $marker -Value $env:EDB_ZIP_SHA256 -NoNewline
+
+      - name: Cache Unity editor (pinned)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}\unity-editor
+          key: unity-editor-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}
+
+      - name: Install Unity editor (pinned)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dir = "$env:RUNNER_TEMP\unity-editor"
+          $exe = "$dir\Editor\Unity.exe"
+          $marker = "$dir\installer.sha256"
+          if ((Test-Path $exe) -and (Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $env:UNITY_WINDOWS_EDITOR_SHA256)) { Write-Host 'unity editor already cached'; exit 0 }
+          if (Test-Path $dir) { Remove-Item $dir -Recurse -Force }
+          $setup = "$env:RUNNER_TEMP\UnitySetup64.exe"
+          curl.exe -fSL -m 1800 --retry 3 --retry-delay 10 $env:UNITY_WINDOWS_EDITOR_URL -o $setup
+          if ($LASTEXITCODE -ne 0) { throw "unity installer download failed rc=$LASTEXITCODE" }
+          if ((Get-FileHash $setup -Algorithm SHA256).Hash.ToLower() -ne $env:UNITY_WINDOWS_EDITOR_SHA256) { throw 'unity installer sha256 mismatch' }
+          $p = Start-Process -FilePath $setup -ArgumentList '/S', "/D=$dir" -PassThru -Wait
+          if ($p.ExitCode -ne 0 -or -not (Test-Path $exe)) { throw "unity install failed rc=$($p.ExitCode)" }
+          Remove-Item $setup -Force
+          Set-Content -Path $marker -Value $env:UNITY_WINDOWS_EDITOR_SHA256 -NoNewline

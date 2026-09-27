@@ -76,10 +76,13 @@ func CheckQ1(root string, e *Env) []Check {
 		checks = append(checks, Pass(id("staticcheck.version"), out))
 	}
 
-	// Unity editor presence: in CI the pinned docker image supplies it; a
-	// local run without a Unity install defers.
+	// Unity editor presence: in CI the pinned Linux image / native Windows
+	// install supplies it; a local run without a Unity install defers; a PR
+	// the workflow scoped out of Unity (ADR-0073, validated in Q3) skips.
 	if unityPath := os.Getenv("UNITY_EDITOR_PATH"); unityPath != "" {
 		checks = append(checks, Pass(id("unity.editor"), unityPath))
+	} else if os.Getenv("THINHTHAN_UNITY_SCOPE") == UnityScopeNoClientChange {
+		checks = append(checks, SkipNoClientChange(id("unity.editor")))
 	} else {
 		checks = append(checks, e.missingCheck(id("unity.editor"), "no local Unity editor (CI uses the pinned unityci image)"))
 	}
