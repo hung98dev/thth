@@ -11,6 +11,12 @@ namespace ThinhThan.Tests.EditMode.AddressablesValidation
     {
         private const string SettingsPath = "Assets/AddressableAssetsData/AddressableAssetSettings.asset";
 
+        [OneTimeSetUp]
+        public void ProvisionCatalog()
+        {
+            AddressablesProvisioner.Provision();
+        }
+
         private static AddressableAssetSettings LoadSettings()
         {
             return AssetDatabase.LoadAssetAtPath<AddressableAssetSettings>(SettingsPath);

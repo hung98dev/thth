@@ -36,6 +36,16 @@ namespace ThinhThan.Core.Assets.Editor
         [InitializeOnLoadMethod]
         private static void AutoProvision()
         {
+            // Provisioning inside the ReloadAssemblies window races the
+            // AssetDatabase importer (batchmode self-SIGKILL during
+            // "Registering precompiled unity dll's" on Linux). Defer to
+            // the first editor update: still before -quit exits and
+            // before the EditMode runner starts.
+            EditorApplication.delayCall += ProvisionSafely;
+        }
+
+        private static void ProvisionSafely()
+        {
             try
             {
                 Provision();

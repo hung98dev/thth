@@ -16,6 +16,14 @@ namespace ThinhThan.Tests.EditMode.AddressablesValidation
         private const string SettingsPath = "Assets/AddressableAssetsData/AddressableAssetSettings.asset";
         private const string PinnedSettingsGuid = "03d05df79b43898f254cff5dad608436";
 
+        [OneTimeSetUp]
+        public void ProvisionCatalog()
+        {
+            // Idempotent ensure: the catalog must be provisioned before
+            // assertions regardless of editor startup ordering.
+            AddressablesProvisioner.Provision();
+        }
+
         private static AddressableAssetSettings LoadSettings()
         {
             var settings = AssetDatabase.LoadAssetAtPath<AddressableAssetSettings>(SettingsPath);
