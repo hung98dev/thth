@@ -516,3 +516,18 @@ func jobOSMatches(verifyJob, warmJob string) bool {
 	return (verifyJob == "verify-linux" && warmJob == "warm-linux") ||
 		(verifyJob == "verify-windows" && warmJob == "warm-windows")
 }
+
+// BLK-008: every Unity editor invocation (materialization, licence probe,
+// EditMode/PlayMode test containers) keeps network egress — the licensing
+// client's access-token refresh needs license.unity3d.com, and a
+// --network=none container reproducibly self-SIGKILLed the editor during
+// early init. The workflow must never pass a --network flag to docker.
+func TestUnityContainersKeepNetworkEgress(t *testing.T) {
+	wf := workflowText(t)
+	if strings.Contains(wf, "--network") {
+		t.Error("verify.yml must not pass --network to any docker run — Unity licensing needs egress (BLK-008)")
+	}
+	if strings.Contains(wf, "TNET") || strings.Contains(wf, "NET=") {
+		t.Error("verify.yml still carries the NET/TNET offline conditional (BLK-008)")
+	}
+}
