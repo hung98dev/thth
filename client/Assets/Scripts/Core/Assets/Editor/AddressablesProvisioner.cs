@@ -347,9 +347,9 @@ namespace ThinhThan.Core.Assets.Editor
         private static bool RestoreEditorBuildSettingsSlot(AddressableAssetSettings settings)
         {
             var dirty = false;
-            var current = EditorBuildSettings.TryGetConfigObject<AddressableAssetSettings>(
-                "com.unity.addressableassets");
-            if (!ReferenceEquals(current, settings))
+            if (!EditorBuildSettings.TryGetConfigObject(
+                    "com.unity.addressableassets", out AddressableAssetSettings current)
+                || !ReferenceEquals(current, settings))
             {
                 EditorBuildSettings.AddConfigObject("com.unity.addressableassets", settings, true);
                 dirty = true;
