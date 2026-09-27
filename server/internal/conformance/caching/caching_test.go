@@ -608,3 +608,25 @@ func TestUnityTestRunsHeadless(t *testing.T) {
 		}
 	}
 }
+
+// BLK-013: the editor's watchdog SIGKILLs its own process group during
+// shutdown ~5s AFTER 'Test run completed. Exiting with code 0' — rc=137 is
+// not a test failure once the verdict was written. The Linux -runTests pass
+// condition must gate on the completion line in the real -logFile plus a
+// Passed results.xml, never on the container exit code alone.
+func TestUnityTestPassGatesOnCompletionLine(t *testing.T) {
+	wf := workflowText(t)
+	if !strings.Contains(wf, "Test run completed. Exiting with code 0") {
+		t.Error("verify.yml Linux test step must treat a post-completion rc=137 as PASS via the editor-log completion line (BLK-013)")
+	}
+	// the pass branch must still require a Passed results.xml — completion
+	// alone must not mask a real test failure that happened to print the line
+	idx := strings.Index(wf, "Test run completed. Exiting with code 0")
+	if idx < 0 {
+		return
+	}
+	tail := wf[idx:]
+	if !strings.Contains(tail, `result="Passed"`) || !strings.Contains(tail, "results.xml") {
+		t.Error("BLK-013 pass condition must still require a Passed results.xml alongside the completion line")
+	}
+}

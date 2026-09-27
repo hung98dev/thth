@@ -434,9 +434,17 @@ jobs:
                 echo "== artifacts/unity-tests/$mode-editor.log (tail 300) =="
                 tail -300 "artifacts/unity-tests/$mode-editor.log" 2>/dev/null || true
               fi
-              if [ -f "artifacts/unity-tests/$mode-results.xml" ] \
+              # BLK-013: the editor's watchdog SIGKILLs its own process group
+              # during shutdown ~5s AFTER 'Test run completed. Exiting with
+              # code 0' — the verdict was already written; rc=137 then does
+              # not mean failure. The PASS verdict requires the completion
+              # line in the real -logFile AND a Passed results.xml (both must
+              # have been committed before the kill could fire).
+              if grep -q 'Test run completed. Exiting with code 0' "artifacts/unity-tests/$mode-editor.log" 2>/dev/null \
+                && [ -f "artifacts/unity-tests/$mode-results.xml" ] \
                 && grep -q '<test-run .*result="Passed"' "artifacts/unity-tests/$mode-results.xml" \
                 && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-tests.log"; then
+                echo "unity $mode tests PASSED (rc=$rc — post-completion kill treated as pass)"
                 ok=1; break
               fi
               dead=$(docker ps -ql 2>/dev/null)
