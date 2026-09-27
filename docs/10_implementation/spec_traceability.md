@@ -229,6 +229,7 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `0071-client-presentation-contract-reconciliation.md` | IMP-000, IMP-004, IMP-013, IMP-015, IMP-018, IMP-019, IMP-021, IMP-022, IMP-023, IMP-024, IMP-032, IMP-033, IMP-040, IMP-041, IMP-042, IMP-048, IMP-055, IMP-061, IMP-062, IMP-063, IMP-065, IMP-066, IMP-067, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-078, IMP-079, IMP-083, IMP-088, IMP-089, IMP-095, IMP-096, IMP-099, IMP-101, IMP-103, IMP-104, IMP-105 |
 | `0072-executable-merge-pipeline-for-ai-agents.md` | IMP-000, IMP-001, IMP-048, IMP-061, IMP-063, IMP-064, IMP-065, IMP-067, IMP-068, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-079, IMP-081, IMP-083, IMP-088, IMP-095, IMP-096, IMP-098, IMP-101, IMP-104, IMP-105, IMP-106 |
 | `0073-ci-speed-native-unity-windows-and-path-scoped-unity-gates.md` | IMP-000, IMP-067, IMP-106 |
+| `0074-localization-addressables-group-integration.md` | IMP-063, IMP-064 |
 
 ## Requirement ID → Task
 

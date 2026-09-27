@@ -111,7 +111,7 @@ Authoring:
 Player-authored Unicode normalization remains owned by `../06_data/text.md`; localization tables are authored presentation data, not identity keys.
 
 # Assets
-Localized assets use Unity Localization + Addressables under `client_assets.md`.
+Localized assets use Unity Localization + Addressables under `client_assets.md`: locale assets and string-table collections live in the canonical `localization.*` groups (`localization.locales`, `localization.shared`, `localization.strings.<locale_key>`); their package-assigned addresses/labels (`Locale`, `Locale-<code>`, `<TableCollection>_<code>`) are the runtime resolution contract and are exempt from the `asset.*` grammar (ADR-0074).
 
 Rules:
 - do not duplicate large assets per locale unless presentation genuinely differs,

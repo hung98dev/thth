@@ -69,6 +69,8 @@ namespace ThinhThan.Core.Assets.Editor
             dirty |= EnsureCatalogFlags(settings);
             dirty |= EnsureProfiles(settings);
             dirty |= EnsureGroups(settings);
+            dirty |= RehomePackageGroups(settings);
+            dirty |= RestoreEditorBuildSettingsSlot(settings);
             dirty |= EnsureEntries(settings);
             if (dirty)
             {
@@ -267,6 +269,95 @@ namespace ThinhThan.Core.Assets.Editor
             if (update != null && update.StaticContent)
             {
                 update.StaticContent = false;
+                dirty = true;
+            }
+            return dirty;
+        }
+
+        // BLK-011 / ADR-0074: com.unity.localization creates
+        // `Localization-*` groups during OnPostprocessAllAssets, before
+        // this provisioner runs. Entries are moved into the canonical
+        // localization.* groups (labels/addresses preserved — the
+        // package resolves by them) and the empty package groups are
+        // removed, so committed settings contain canonical groups only.
+        private static bool RehomePackageGroups(AddressableAssetSettings settings)
+        {
+            var dirty = false;
+            var groups = new List<AddressableAssetGroup>(settings.groups);
+            foreach (var group in groups)
+            {
+                if (group == null || AddressableGroups.IsCanonical(group.Name))
+                {
+                    continue;
+                }
+                if (!group.Name.StartsWith("Localization-", System.StringComparison.Ordinal))
+                {
+                    continue;
+                }
+                var fallback = group.Name == "Localization-Locales"
+                    ? AddressableGroups.LocalizationLocales
+                    : AddressableGroups.LocalizationShared;
+                var entries = new List<AddressableAssetEntry>(group.entries);
+                foreach (var entry in entries)
+                {
+                    var targetName = fallback;
+                    if (group.Name.StartsWith("Localization-String-Tables-", System.StringComparison.Ordinal))
+                    {
+                        var localeKey = LocaleKeyOf(entry.address);
+                        targetName = localeKey == null
+                            ? AddressableGroups.LocalizationShared
+                            : AddressableGroups.LocalizationStringsGroup(localeKey);
+                    }
+                    var target = settings.FindGroup(targetName);
+                    if (target != null)
+                    {
+                        settings.MoveEntry(entry, target);
+                        dirty = true;
+                    }
+                }
+                if (group.entries.Count == 0)
+                {
+                    settings.RemoveGroup(group);
+                    dirty = true;
+                }
+            }
+            return dirty;
+        }
+
+        // String-table entry addresses end in _<locale code>
+        // (e.g. Core_vi-VN); the canonical key lowercases it and maps
+        // '-' to '_'.
+        private static string? LocaleKeyOf(string address)
+        {
+            var idx = address.LastIndexOf('_');
+            if (idx < 0 || idx == address.Length - 1)
+            {
+                return null;
+            }
+            var code = address.Substring(idx + 1).ToLowerInvariant().Replace('-', '_');
+            return System.Array.IndexOf(AddressableGroups.LocaleKeys, code) >= 0 ? code : null;
+        }
+
+        // BLK-011 / ADR-0074: the localization postprocessor calls
+        // GetSettings(true) before the injected slot exists, creating
+        // DefaultObject.asset and repointing the EBS config object at it.
+        // Converge back: the slot always references the canonical
+        // settings asset (its pinned path-derived GUID) and the rogue
+        // DefaultObject asset is deleted.
+        private static bool RestoreEditorBuildSettingsSlot(AddressableAssetSettings settings)
+        {
+            var dirty = false;
+            var current = EditorBuildSettings.TryGetConfigObject<AddressableAssetSettings>(
+                "com.unity.addressableassets");
+            if (!ReferenceEquals(current, settings))
+            {
+                EditorBuildSettings.AddConfigObject("com.unity.addressableassets", settings, true);
+                dirty = true;
+            }
+            if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(
+                    "Assets/AddressableAssetsData/DefaultObject.asset") != null)
+            {
+                AssetDatabase.DeleteAsset("Assets/AddressableAssetsData/DefaultObject.asset");
                 dirty = true;
             }
             return dirty;

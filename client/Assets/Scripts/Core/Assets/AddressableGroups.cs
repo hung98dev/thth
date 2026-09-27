@@ -16,6 +16,23 @@ namespace ThinhThan.Core.Assets
         public const string DungeonFinale = "dungeon.finale";
         public const string AudioBgmShared = "audio.bgm.shared";
 
+        // Localization (BLK-011 / ADR-0074): canonical homes for the
+        // entries com.unity.localization auto-creates under Localization-*
+        // groups at import. Entries inside these groups keep the package's
+        // addresses/labels (its runtime resolution contract) and are
+        // exempt from the asset.* key grammar.
+        public const string LocalizationLocales = "localization.locales";
+        public const string LocalizationShared = "localization.shared";
+        public const string LocalizationStringsPrefix = "localization.strings.";
+
+        // Canonical locale set (ADR-0015): vi-VN default, en-US;
+        // key form is the lowercase code with '-' -> '_'.
+        public static readonly string[] LocaleKeys =
+        {
+            "vi_vn",
+            "en_us",
+        };
+
         public const string RegionPrefix = "region.";
         public const string DungeonPrefix = "dungeon.";
         public const string AudioBgmPrefix = "audio.bgm.";
@@ -69,6 +86,19 @@ namespace ThinhThan.Core.Assets
             return AudioBgmPrefix + zoneKey;
         }
 
+        public static string LocalizationStringsGroup(string localeKey)
+        {
+            return LocalizationStringsPrefix + localeKey;
+        }
+
+        // True for the canonical localization group set.
+        public static bool IsLocalizationGroup(string group)
+        {
+            return group == LocalizationLocales
+                || group == LocalizationShared
+                || group.StartsWith(LocalizationStringsPrefix, System.StringComparison.Ordinal);
+        }
+
         public static bool IsZoneKey(string key)
         {
             for (var i = 0; i < ZoneKeys.Length; i++)
@@ -117,7 +147,7 @@ namespace ThinhThan.Core.Assets
             return null;
         }
 
-        // Full canonical group set (25), in deterministic order.
+        // Full canonical group set (29), in deterministic order.
         public static string[] CanonicalNames()
         {
             var names = new List<string>
@@ -130,6 +160,8 @@ namespace ThinhThan.Core.Assets
                 PvpShared,
                 DungeonFinale,
                 AudioBgmShared,
+                LocalizationLocales,
+                LocalizationShared,
             };
             foreach (var zone in ZoneKeys)
             {
@@ -142,6 +174,10 @@ namespace ThinhThan.Core.Assets
             foreach (var zone in ZoneKeys)
             {
                 names.Add(AudioBgmGroup(zone));
+            }
+            foreach (var locale in LocaleKeys)
+            {
+                names.Add(LocalizationStringsGroup(locale));
             }
             return names.ToArray();
         }
@@ -158,10 +194,12 @@ namespace ThinhThan.Core.Assets
             return false;
         }
 
-        // Groups that ship inside the player build (base install).
+        // Groups that ship inside the player build (base install) —
+        // localization stays local: login/error UI must render without
+        // any download (client_assets.md).
         public static bool IsLocal(string group)
         {
-            return group == BootstrapLocal || group == SharedLocal;
+            return group == BootstrapLocal || group == SharedLocal || IsLocalizationGroup(group);
         }
 
         // Only cosmetic.shared packs each asset separately (§ Grouping).
@@ -206,6 +244,14 @@ namespace ThinhThan.Core.Assets
             {
                 return 15;
             }
+            if (group == LocalizationLocales || group == LocalizationShared)
+            {
+                return 1;
+            }
+            if (group.StartsWith(LocalizationStringsPrefix, System.StringComparison.Ordinal))
+            {
+                return 4;
+            }
             return -1;
         }
 
@@ -247,6 +293,18 @@ namespace ThinhThan.Core.Assets
             {
                 return 4;
             }
+            if (group == LocalizationLocales)
+            {
+                return 2;
+            }
+            if (group == LocalizationShared)
+            {
+                return 4;
+            }
+            if (group.StartsWith(LocalizationStringsPrefix, System.StringComparison.Ordinal))
+            {
+                return 8;
+            }
             return -1;
         }
 
@@ -260,7 +318,8 @@ namespace ThinhThan.Core.Assets
                 || group == SharedLocal
                 || group == IconsShared
                 || group == BeastShared
-                || group == CosmeticShared;
+                || group == CosmeticShared
+                || IsLocalizationGroup(group);
         }
     }
 }
