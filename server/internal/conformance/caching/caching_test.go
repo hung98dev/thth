@@ -558,3 +558,23 @@ func TestUnityContainersMountLicensingDirs(t *testing.T) {
 		t.Error("verify.yml must mkdir the unity-cache runner dir before mounting it")
 	}
 }
+
+// BLK-009 (primary fix): every `unity-editor` invocation in the Linux job
+// runs with -batchmode. Without it the editor runs headed under Xvfb and
+// the auto-quit/fatal path issues killpg on its own process group —
+// deterministic SIGKILL ~15ms into assembly registration.
+func TestUnityRunsBatchmode(t *testing.T) {
+	wf := workflowText(t)
+	for _, line := range strings.Split(wf, "\n") {
+		s := strings.TrimSpace(line)
+		// covered below via the wrapped bash -c payloads too: match any
+		// `unity-editor` invocation that runs the editor (not just the
+		// wrapper's -version probe is exempt — it never opens the editor).
+		if strings.Contains(s, "unity-editor") &&
+			(strings.Contains(s, "-runTests") || strings.Contains(s, "-projectPath") ||
+				strings.Contains(s, "-serial") || strings.Contains(s, "-quit")) &&
+			!strings.Contains(s, "-batchmode") {
+			t.Errorf("unity-editor invocation missing -batchmode (headed under Xvfb → killpg, BLK-009): %s", s)
+		}
+	}
+}
