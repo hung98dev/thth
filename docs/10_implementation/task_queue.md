@@ -25,7 +25,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | ID | Title | Status | Dependencies | Specs |
 |---|---|---|---|---|
 | `IMP-000` | M0 Bootstrap Gate & Toolchain Harness | `DONE` | none | `../00_context/technology_versions.md`, `../00_context/constraints.md` |
-| `IMP-001` | Stable IDs / Revisions | `IN_PROGRESS` | IMP-000 | `../06_data/ids.md`, `../06_data/config.md` |
+| `IMP-001` | Stable IDs / Revisions | `DONE` | IMP-000 | `../06_data/ids.md`, `../06_data/config.md` |
 | `IMP-002` | Deterministic RNG Interface | `NOT_STARTED` | IMP-001 | `../04_architecture/concurrency.md`, `../06_data/config.md` |
 | `IMP-003` | Content Compiler | `NOT_STARTED` | IMP-001, IMP-002 | `../01_gameplay/skills.md`, `../06_data/config.md` |
 | `IMP-004` | Integration / Balance Activation Gate | `NOT_STARTED` | IMP-003 | `../01_gameplay/skills.md`, `../07_content/class_skill_catalog.md` |
@@ -85,7 +85,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-058` | Folk Fishing Runtime | `NOT_STARTED` | IMP-002, IMP-008, IMP-010, IMP-018 | `../02_world/world_rules.md`, `../07_content/economy_catalog.md` |
 | `IMP-059` | Hearth / Cooking / Bonfire Runtime | `NOT_STARTED` | IMP-003, IMP-007, IMP-008, IMP-018 | `../02_world/world_rules.md`, `../07_content/crafting_catalog.md` |
 | `IMP-060` | Atlas Journal Runtime | `NOT_STARTED` | IMP-005, IMP-010, IMP-011, IMP-018 | `../03_systems/atlas.md`, `../07_content/atlas_catalog.md` |
-| `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `BLOCKED` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
+| `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `DONE` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
 | `IMP-062` | Unity Geometry Exporter & Map Geometry Parity | `NOT_STARTED` | IMP-078, IMP-079 | `../01_gameplay/movement.md`, `../04_architecture/realtime_loop.md` |
 | `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `IN_PROGRESS` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
 | `IMP-064` | Unity Bilingual Localization Pipeline (vi-VN / en-US) | `NOT_STARTED` | IMP-000 | `../04_architecture/client_localization.md`, `../06_data/text.md` |
@@ -125,7 +125,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-098` | Observability Core | `NOT_STARTED` | IMP-001, IMP-068 | `../08_scale_ops/observability.md`, `../04_architecture/backend.md` |
 | `IMP-099` | Client Screens: Login, Queue, Loading, Settings, Credits | `NOT_STARTED` | IMP-064, IMP-065, IMP-066, IMP-095 | `../04_architecture/client_experience_contract.md`, `../04_architecture/client.md` |
 | `IMP-100` | Character Lifecycle | `NOT_STARTED` | IMP-006 | `../01_gameplay/character.md`, `../06_data/data_model.md` |
-| `IMP-101` | URP 2D Rendering & Lighting Setup | `NOT_STARTED` | IMP-000 | `../04_architecture/client.md`, `../04_architecture/client_assets.md` |
+| `IMP-101` | URP 2D Rendering & Lighting Setup | `BLOCKED` | IMP-000 | `../04_architecture/client.md`, `../04_architecture/client_assets.md` |
 | `IMP-102` | Entitlement Claims & Store Client | `NOT_STARTED` | IMP-010, IMP-053, IMP-066 | `../03_systems/account_storage.md`, `../03_systems/monetization.md` |
 | `IMP-103` | Account Deletion & Data Export API / Account UI | `NOT_STARTED` | IMP-056, IMP-066 | `../07_security/data_protection.md`, `../07_security/auth.md` |
 | `IMP-104` | Monster, Boss & Spirit Beast Art | `NOT_STARTED` | IMP-063, IMP-070 | `../07_content/presentation_asset_manifest.md`, `../07_content/monster_catalog.md` |
@@ -209,6 +209,7 @@ Materialize the ADR-0059 code-quality baseline: `client/Assets/csc.rsp`, root `.
 - `server/internal/conformance/gates/gates_test.go` (ADR-0072): TestBlockAndOpsPrFastPath, TestDoneWithoutManifestAllowedOnHead, TestMergedHeadRequiresManifest, TestTwoPhaseListIncludesImp083, TestLocalDeferMissingNeverInCi.
 - `server/internal/stackpin/versions_test.go` (ADR-0072): TestGoogleProtobufNupkgSha256, TestEdbZipSha256, TestDownloadArtifactAndGitLfsPins.
 - `server/internal/conformance/gates/gates_test.go` (BLK-001): TestImp000OwnedPathsCoverMaterializedAssets — IMP-000 `owned_paths` cover `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset` and their `.meta`.
+- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire — `server/go.mod` declares `require google.golang.org/protobuf v1.36.12` (the `GoModulePins` pin) so generated protocol code compiles without implementers editing lockfiles.
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware — bootstrap roots and generated-protocol files unblock once an owning packet is IN_PROGRESS/DONE and unowned paths never do; TestBlocksLineCaseInsensitive — open-blocker gating parses lowercase `blocks:` lines.
 
 generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
@@ -217,7 +218,7 @@ evidence_location: "docs/10_implementation/evidence/IMP-000/"
 
 ## `IMP-001` — Stable IDs / Revisions
 id: IMP-001
-status: IN_PROGRESS
+status: DONE
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-001-stable-ids"
 claimed_at: "2026-09-26T16:05:00Z"
@@ -359,11 +360,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-004/"
 
 ## `IMP-061` — Protocol Buffers Schema & Multi-Language Codegen Harness
 id: IMP-061
-status: BLOCKED
-claimed_by: "coordinator-wave1"
+status: DONE
+claimed_by: "devin-4d0bfd77f48743c28824118e7355557e"
 branch: "imp/IMP-061-proto-codegen"
-claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: "BLK-003"
+claimed_at: "2026-09-27T01:28:46Z"
+blocked_by: ""
 
 specs: [`../05_network/protocol.md`, `../05_network/messages.md`, `../05_network/errors.md`, `../05_network/protobuf_conventions.md`, `../05_network/synchronization.md`, `../05_network/versioning.md`, `repository_layout.md`]
 adrs: [`0008-client-network-transport-protocol.md`, `0038-discrete-movement-edge-input-message.md`, `0039-entity-capacity-model-and-ai-budget-classes.md`, `0050-windows-only-ci-and-auto-merge.md`, `0054-wire-message-completion.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0060-wire-and-durable-contract-completion.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0063-economy-contract-reconciliation.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
@@ -398,6 +399,7 @@ consumers_checked: [AGENTS.md, docs/05_network/messages.md, docs/05_network/prot
 - `client/Assets/Tests/EditMode/ProtocolParity/ProtocolParityTests.cs`: generated registry coverage and shared binary golden decode/encode parity.
 - `server/internal/testing/protocol/registry_test.go`: TestAdr0060MessagesRegistered, TestErrorEnumMatchesErrorsMd (ADR-0060), TestCodegenPreservesProtocolAsmdef, TestCodegenNeverWritesMeta (ADR-0072).
 - `server/internal/testing/protocol/wire_types_test.go`: TestNoOptionalRepeatedFields, TestErrorCodeFencedRowMajorOrder, TestOutcomeMessagesHaveNoOperationResult, TestAdr0069MessagesRegistered (ADR-0069).
+- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire.
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
 
 generated_artifacts: [`server/internal/protocol/v1/*.pb.go`, `client/Assets/Scripts/Protocol/*.cs`]
@@ -477,6 +479,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 - `client/Assets/Tests/EditMode/AddressablesValidation/AddressablesValidationTests.cs`: TestCatalogAssetKeyResolution, TestAddressableGroupBudgets, TestCanonicalSpriteImportProfiles, TestPlayableSceneKeyCoverage, TestSettingsAssetMatchesBaselineGuid.
 - `client/Assets/Tests/EditMode/AddressablesValidation/AssetKeyGroupTests.cs`: TestKeyDerivationRule, TestCanonicalGroupSetAndSingleMembership, TestPresentationAliasSingleHop, TestDeterministicGroupRamBudgets, TestResidentSteadyAndTransferPeak, TestMeshTypeRule, TestParallaxFarPpu50 (ADR-0071).
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
+- `server/internal/conformance/caching/caching_test.go` (BLK-005): TestLibraryCacheExactKeyOnly.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -484,11 +487,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-063/"
 
 ## `IMP-101` — URP 2D Rendering & Lighting Setup
 id: IMP-101
-status: NOT_STARTED
-claimed_by: ""
-branch: ""
-claimed_at: ""
-blocked_by: ""
+status: BLOCKED
+claimed_by: "devin-6a2f3d22a38e47c4858d46f1a30e1ad2"
+branch: "imp/IMP-101-urp-2d"
+claimed_at: "2026-09-27T05:09:04Z"
+blocked_by: "BLK-006"
 
 specs: [`../04_architecture/client.md`, `../04_architecture/client_assets.md`, `../04_architecture/client_performance.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`, `repository_layout.md`]
 adrs: [`0035-spawn-density-increase.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
@@ -660,19 +663,19 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - Add pinned `actions/cache` steps to `verify.yml` and extend `scripts/verify.ps1` so a warm PR run is measurably faster than a cold run without weakening any gate (`engineering_conventions.md` §6):
   - Go module and build caches (`~/go/pkg/mod`, `~/.cache/go-build`; Windows `%LOCALAPPDATA%\go-build`) keyed on OS + Go pin + `server/go.sum` hash (`actions/setup-go` stays `cache: false`; explicit `actions/cache` is the mechanism);
   - `docker save`/`docker load` through `actions/cache` for the pinned `docker pull` images (both `unityci/editor` digests), keyed on the exact digest string — a hit skips the pull; the `services:` postgres image is pulled before job steps and cannot be cached, so it either stays or converts to a step-managed container when the measured saving justifies it;
-  - Unity `client/Library/` build cache via `actions/cache` keyed on `client/Packages/manifest.json` + `client/ProjectSettings/` hash + the pinned editor image digest: `Library/` is gitignored build output, not §4b evidence, so it may be cached; the editor still opens the project and runs the full materialization + compile on every run, and every materialized file outside `Library/` is still uploaded via `unity-materialized-<os>` and committed byte-for-byte — a Library hit only skips regenerate work, never a check;
+  - Unity `client/Library/` build cache via `actions/cache` keyed on `client/Packages/manifest.json` + `client/Packages/packages-lock.json` + `client/ProjectSettings/` hash + `client/Assets/csc.rsp` + the pinned editor image digest: `Library/` is gitignored build output, not §4b evidence, so it may be cached; the editor still opens the project and runs the full materialization + compile on every run, and every materialized file outside `Library/` is still uploaded via `unity-materialized-<os>` and committed byte-for-byte — a Library hit only skips regenerate work, never a check. The step restores on the exact key only — no `restore-keys` fallback, because the payload is derived from the hashed inputs and a prefix hit is a silent wrong-content restore (BLK-005);
   - Windows PostgreSQL EDB binaries keyed on version + download SHA-256 — the extracted directory may be cached; the hash is still asserted before use on a hit;
   - licence paths are never cached: the Unity licence volume/directory and licence activation stay fresh per run (`audit_gates.md` § Unity materialization); no cache `key` or `restore-keys` may cover licence state.
 - Cache-key policy and restore rules documented in `.devin/scripts/` and enforced by the conformance tests below.
 
 ## Acceptance
-- every `actions/cache` step uses the pinned SHA from `technology_versions.md`; every `key` hashes all lockfile/pin/digest inputs, and `restore-keys` never substitute a different pinned version or OS (CI-001),
+- every `actions/cache` step uses the pinned SHA from `technology_versions.md`; every `key` hashes all lockfile/pin/digest inputs; `restore-keys` never substitute a different pinned version or OS, and content-derived caches (`unity-library`) set no `restore-keys` — exact key only (CI-001),
 - a cache hit never skips or weakens a Q gate, the fork guard, job preconditions, the §4b materialization commit, or licence activation (licence state is never cached) (CI-002),
 - `verify-report.json` records `hit|miss` and `wall_seconds` per cached step, and the task PR reports lower total Linux+Windows wall-time on a warm-cache run than its own cold run (CI-003),
 - cold and warm runs produce identical `source_tree_hash`, zero codegen drift and identical evidence manifests; no new secrets, runners or services (CI-004, ADR-0058).
 
 ## Tests
-- `server/internal/conformance/caching/caching_test.go` (CI-001): TestCacheActionPinnedSha, TestCacheKeysCoverPinInputs, TestRestoreKeysNeverCrossPinOrOs.
+- `server/internal/conformance/caching/caching_test.go` (CI-001): TestCacheActionPinnedSha, TestCacheKeysCoverPinInputs, TestRestoreKeysNeverCrossPinOrOs, TestLibraryCacheExactKeyOnly (BLK-005).
 - `server/internal/conformance/caching/caching_test.go` (CI-002): TestNoGateSkippedOnCacheHit, TestMaterializeCommitStillRequiredOnHit, TestLicenceStateNeverCached.
 - `server/internal/conformance/caching/caching_test.go` (CI-003, CI-004): TestWallTimeFieldsRecorded, TestEvidenceIdentityIndependentOfCache.
 

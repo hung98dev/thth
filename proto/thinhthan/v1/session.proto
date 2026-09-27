@@ -1,0 +1,183 @@
+// Connection / session family (message IDs 1..16).
+// Handshake order: HTTPS bootstrap -> wss -> C2S_HELLO -> S2C_HELLO_OK ->
+// attach -> realtime traffic (docs/05_network/protocol.md § Handshake).
+// Field lists: docs/05_network/messages.md § Connection / Session (ADR-0064,
+// ADR-0069).
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+
+// SessionPlatform — client platform declared at HELLO.
+enum SessionPlatform {
+  SESSION_PLATFORM_UNSPECIFIED = 0;
+  SESSION_PLATFORM_WINDOWS = 1;
+  SESSION_PLATFORM_ANDROID = 2;
+}
+
+// SessionReplacedReason — why a session was superseded (ADR-0030).
+enum SessionReplacedReason {
+  SESSION_REPLACED_REASON_UNSPECIFIED = 0;
+  SESSION_REPLACED_REASON_NEWER_SESSION = 1;
+  SESSION_REPLACED_REASON_REVOKED = 2;
+}
+
+// ServerDrainingReason — why the server is draining.
+enum ServerDrainingReason {
+  SERVER_DRAINING_REASON_UNSPECIFIED = 0;
+  SERVER_DRAINING_REASON_MAINTENANCE = 1;
+}
+
+// PlacementPendingReason — which placement is waiting for a forced-placement
+// slot (02_world/world_rules.md § Forced Placement).
+enum PlacementPendingReason {
+  PLACEMENT_PENDING_REASON_UNSPECIFIED = 0;
+  PLACEMENT_PENDING_REASON_RESPAWN = 1;
+  PLACEMENT_PENDING_REASON_INSTANCE_RETURN = 2;
+  PLACEMENT_PENDING_REASON_RECONNECT = 3;
+  PLACEMENT_PENDING_REASON_FIRST_LOGIN = 4;
+}
+
+// C2S_HELLO (1) declares the version tuple (envelope protocol_major/minor)
+// and presents a credential: the gameplay ticket from POST
+// /api/v1/gameplay/ticket, or the resume credential of a live session.
+// Envelope: session_epoch = 0, client_seq = 1.
+message C2S_HELLO {
+  oneof credential {
+    string gameplay_ticket = 1;     // short-lived ticket (07_security/auth.md)
+    string resume_credential = 2;   // sliding resume credential (S2C_HELLO_OK / 16)
+  }
+  string client_build = 3;          // client build identifier
+  SessionPlatform platform = 4;     // WINDOWS | ANDROID
+  string content_revision = 5;      // content catalog revision
+  bytes device_id = 6;              // 16 bytes (07_security/auth.md § Device ID)
+  string locale = 7;                // vi-VN | en-US
+}
+
+// S2C_HELLO_OK (2) returns the authoritative session epoch and connection
+// parameters accepted by the server.
+message S2C_HELLO_OK {
+  bytes session_id = 1;                 // UUID, 16 bytes
+  uint64 session_epoch = 2;
+  bytes account_id = 3;                 // UUID, 16 bytes
+  int64 server_time_ms = 4;             // Unix ms
+  uint32 heartbeat_interval_ms = 5;     // 5000
+  uint32 connection_timeout_ms = 6;     // 15000
+  string resume_credential = 7;         // sliding resume credential
+  int64 resume_expires_at_ms = 8;       // Unix ms
+  uint32 protocol_minor = 9;            // server protocol minor
+  string content_revision = 10;
+  bool pending_deletion = 11;           // ACCOUNT_PENDING_DELETION flow (07_security/data_protection.md)
+  bytes resumed_character_id = 12;      // 16 bytes; set when resume or superseding
+                                        // HELLO re-attached the account's live
+                                        // character (7 follows without a 6)
+  uint32 resume_rotate_interval_ms = 13; // 300000
+}
+
+// S2C_ERROR (3) is the typed protocol/session failure surface.
+// Envelope correlation_id = client_seq of the rejected frame (0 if none).
+message S2C_ERROR {
+  ErrorCode error_code = 1;
+  Retryability retryability = 2;
+  uint32 retry_after_ms = 3;
+  uint32 queue_position = 4;        // login queue only
+  string safe_message_key = 5;      // localization key; never internal text
+  bool close_after = 6;             // server closes the socket after sending
+}
+
+// C2S_HEARTBEAT (4) — application heartbeat; RTT sample = server receive time
+// - echo_server_ms when non-zero (protocol.md § Heartbeat).
+message C2S_HEARTBEAT {
+  uint64 client_mono_ms = 1;   // client monotonic ms, advisory only
+  uint64 echo_server_ms = 2;   // last S2C_HEARTBEAT.server_ms; 0 = none yet
+}
+
+// S2C_HEARTBEAT (5) acknowledges liveness with authoritative server time.
+message S2C_HEARTBEAT {
+  uint64 server_ms = 1;
+}
+
+// C2S_CHARACTER_ATTACH (6) attaches one character to this session.
+// Rejections use S2C_ERROR (CHARACTER_ALREADY_ACTIVE, NOT_OWNER,
+// ACCOUNT_PENDING_DELETION); a forced-placement wait answers with 15.
+message C2S_CHARACTER_ATTACH {
+  bytes character_id = 1;  // UUID, 16 bytes
+}
+
+// S2C_CHARACTER_ATTACH_OK (7) confirms the attach; realtime messages become
+// legal only after this point. Followed by S2C_WORLD_BASELINE (300) and every
+// state push (432..438, 515, 607, 616, 619, 628).
+message S2C_CHARACTER_ATTACH_OK {
+  bytes character_id = 1;            // UUID, 16 bytes
+  uint64 ownership_epoch = 2;
+  string map_id = 3;                 // content ID
+  uint32 channel_index = 4;
+  bytes instance_id = 5;             // 16 bytes; empty in the normal world
+  string content_revision = 6;
+}
+
+// S2C_SESSION_REPLACED (8) notifies the replaced side; the server closes the
+// socket after sending.
+message S2C_SESSION_REPLACED {
+  SessionReplacedReason reason = 1;  // NEWER_SESSION | REVOKED
+}
+
+// S2C_SERVER_DRAINING (9) announces a draining window; retryability RECONNECT.
+message S2C_SERVER_DRAINING {
+  ServerDrainingReason reason = 1;   // MAINTENANCE
+  int64 drain_deadline_ms = 2;       // absolute Unix ms
+  uint32 reconnect_after_ms = 3;
+}
+
+// C2S_CHARACTER_DETACH (10) returns the attached character to OFFLINE.
+message C2S_CHARACTER_DETACH {
+}
+
+// S2C_CHARACTER_DETACH_OK (11) confirms the detach; followed by 14.
+message S2C_CHARACTER_DETACH_OK {
+  bytes character_id = 1;  // UUID, 16 bytes
+}
+
+// C2S_CHARACTER_CREATE (12) creates a character; legal only while no
+// character is attached.
+message C2S_CHARACTER_CREATE {
+  bytes operation_id = 1;       // UUID, 16 bytes — idempotency key
+  string character_name = 2;    // 01_gameplay/character.md § Name; 06_data/text.md
+  string class_id = 3;          // class.kim | class.moc | class.thuy | class.hoa | class.tho
+}
+
+// S2C_CHARACTER_CREATE_RESULT (13) answers 12; followed by 14 on success.
+message S2C_CHARACTER_CREATE_RESULT {
+  OperationResult result = 1;        // CHARACTER_NAME_INVALID |
+                                     // CHARACTER_NAME_TAKEN |
+                                     // CHARACTER_SLOTS_FULL | TARGET_INVALID
+  CharacterSummary character = 2;
+}
+
+// S2C_CHARACTER_LIST (14) — REPLACEABLE_STATE snapshot; sent after 2 (when no
+// character was resumed), after 11, and after a successful 12.
+message S2C_CHARACTER_LIST {
+  repeated CharacterSummary characters = 1;
+  uint32 character_slots = 2;  // 3 (03_systems/monetization.md)
+}
+
+// S2C_PLACEMENT_PENDING (15) — a placement waits for a forced-placement slot;
+// the server keeps retrying and later sends 7 / 207 / 105. Never an error.
+message S2C_PLACEMENT_PENDING {
+  uint32 request_message_id = 1;         // 6 | 208 | 0 for server-initiated transfers
+  PlacementPendingReason reason = 2;
+  uint32 retry_after_ms = 3;             // 5000
+}
+
+// S2C_RESUME_CREDENTIAL (16) — AUTHORITATIVE_EVENT; sent every 300 s while the
+// session is live (sliding rotation, 07_security/session.md § Resume). The
+// previous credential stays valid until the new one is first presented or it
+// expires.
+message S2C_RESUME_CREDENTIAL {
+  string resume_credential = 1;
+  int64 resume_expires_at_ms = 2;  // Unix ms
+}

@@ -1,0 +1,272 @@
+// Input / movement / channel / dungeon-entry family (message IDs 100..117).
+// Field lists: docs/05_network/messages.md § Input / Movement and
+// § Dungeon Entry and Exit (ADR-0038, ADR-0060, ADR-0069).
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+
+// InteractKind — discrete interact intent kind. PORTAL never appears in a
+// C2S_INTERACT request; it appears only in S2C_INTERACT_RESULT answering
+// C2S_PORTAL_USE (104).
+enum InteractKind {
+  INTERACT_KIND_UNSPECIFIED = 0;
+  INTERACT_KIND_TALK = 1;
+  INTERACT_KIND_PICKUP = 2;
+  INTERACT_KIND_CHEST = 3;
+  INTERACT_KIND_CAST = 4;
+  INTERACT_KIND_HOOK = 5;
+  INTERACT_KIND_KINDLE = 6;
+  INTERACT_KIND_COOK = 7;
+  INTERACT_KIND_BONFIRE_REST = 8;
+  INTERACT_KIND_QUEST_OBJECT = 9;
+  INTERACT_KIND_NPC_SERVICE = 10;
+  INTERACT_KIND_PORTAL = 11;
+}
+
+// TransferReason — why S2C_TRANSFER_PREPARE was issued.
+enum TransferReason {
+  TRANSFER_REASON_UNSPECIFIED = 0;
+  TRANSFER_REASON_PORTAL = 1;
+  TRANSFER_REASON_TRAVEL = 2;
+  TRANSFER_REASON_CHANNEL_SWITCH = 3;
+  TRANSFER_REASON_DUNGEON_ENTER = 4;
+  TRANSFER_REASON_DUNGEON_LEAVE = 5;
+  TRANSFER_REASON_RESPAWN = 6;
+  TRANSFER_REASON_PVP = 7;
+  TRANSFER_REASON_RECONNECT = 8;
+  TRANSFER_REASON_FORCED = 9;
+}
+
+// MovementCorrectionReason — why the server overrides the predicted path
+// (ADR-0069); ordinary prediction error never sends 107.
+enum MovementCorrectionReason {
+  MOVEMENT_CORRECTION_REASON_UNSPECIFIED = 0;
+  MOVEMENT_CORRECTION_REASON_ILLEGAL_MOVE = 1;
+  MOVEMENT_CORRECTION_REASON_KNOCKBACK = 2;
+  MOVEMENT_CORRECTION_REASON_PORTAL = 3;
+  MOVEMENT_CORRECTION_REASON_RESPAWN = 4;
+  MOVEMENT_CORRECTION_REASON_FORCED = 5;
+}
+
+// EdgeType — movement-onset edge (ADR-0038); the sole wire signal for
+// direction press/release timing.
+enum EdgeType {
+  EDGE_TYPE_UNSPECIFIED = 0;
+  EDGE_TYPE_PRESS = 1;
+  EDGE_TYPE_RELEASE = 2;
+  EDGE_TYPE_FLIP = 3;
+}
+
+// Direction — horizontal direction of a movement edge.
+enum Direction {
+  DIRECTION_UNSPECIFIED = 0;
+  DIRECTION_LEFT = 1;
+  DIRECTION_RIGHT = 2;
+}
+
+// DungeonRunTag — dungeon run variant (07_content/dungeon_catalog.md).
+enum DungeonRunTag {
+  DUNGEON_RUN_TAG_UNSPECIFIED = 0;
+  DUNGEON_RUN_TAG_NORMAL = 1;
+  DUNGEON_RUN_TAG_ENDGAME_L60 = 2;
+}
+
+// DungeonEntryResponse — one prompted member's response inside 112.
+enum DungeonEntryResponse {
+  DUNGEON_ENTRY_RESPONSE_UNSPECIFIED = 0;
+  DUNGEON_ENTRY_RESPONSE_PENDING = 1;
+  DUNGEON_ENTRY_RESPONSE_ACCEPTED = 2;
+  DUNGEON_ENTRY_RESPONSE_DECLINED = 3;
+  DUNGEON_ENTRY_RESPONSE_INELIGIBLE = 4;
+}
+
+// DungeonEntryOutcome — pending-entry lifecycle outcome.
+enum DungeonEntryOutcome {
+  DUNGEON_ENTRY_OUTCOME_UNSPECIFIED = 0;
+  DUNGEON_ENTRY_OUTCOME_PENDING = 1;
+  DUNGEON_ENTRY_OUTCOME_CREATED = 2;
+  DUNGEON_ENTRY_OUTCOME_CANCELLED = 3;
+}
+
+// DungeonEntryDecision — answer to a dungeon-entry prompt (113).
+enum DungeonEntryDecision {
+  DUNGEON_ENTRY_DECISION_UNSPECIFIED = 0;
+  DUNGEON_ENTRY_DECISION_ACCEPT = 1;
+  DUNGEON_ENTRY_DECISION_DECLINE = 2;
+}
+
+// DungeonLeaveMode — 114 EXIT keeps re-entry; ABANDON forfeits it.
+enum DungeonLeaveMode {
+  DUNGEON_LEAVE_MODE_UNSPECIFIED = 0;
+  DUNGEON_LEAVE_MODE_EXIT = 1;
+  DUNGEON_LEAVE_MODE_ABANDON = 2;
+}
+
+// C2S_INPUT_STATE (100) — REPLACEABLE_STATE; held-state may coalesce.
+// sequence = envelope client_seq; payloads never repeat it.
+message C2S_INPUT_STATE {
+  uint32 input_flags = 1;      // bitmask of held directions/actions (movement.md)
+  uint64 client_mono_ms = 2;   // client monotonic ms, advisory only
+}
+
+// C2S_JUMP (101) — discrete; never merged.
+message C2S_JUMP {
+  uint64 client_mono_ms = 1;
+}
+
+// C2S_DROP_THROUGH (102) — discrete; never merged.
+message C2S_DROP_THROUGH {
+  uint64 client_mono_ms = 1;
+}
+
+// C2S_INTERACT (103) — DISCRETE_INTENT; validated individually.
+message C2S_INTERACT {
+  InteractKind interact_kind = 1;
+  string target_id = 2;                         // entity or interactive object ID
+  bytes operation_id = 3;                       // UUID, 16 bytes
+  string recipe_id = 4;                         // required when COOK; empty otherwise
+  bytes public_boss_spawn_generation_id = 5;    // UUID; CHEST on public-boss chest only
+  string service_id = 6;                        // NPC_SERVICE: set_checkpoint | travel
+  string service_param = 7;                     // travel: destination map_id;
+                                                // TALK: dialogue_option_id
+}
+
+// C2S_PORTAL_USE (104) — answered by exactly one 116 with
+// interact_kind = PORTAL; SUCCESS is followed by 105.
+message C2S_PORTAL_USE {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  string portal_id = 2;     // portal object ID (02_world/maps_zones.md)
+}
+
+// S2C_TRANSFER_PREPARE (105) — authorizes a map/channel/instance destination;
+// client replies 106 with the same transfer_id.
+message S2C_TRANSFER_PREPARE {
+  bytes transfer_id = 1;            // 16 bytes
+  TransferReason reason = 2;
+  string map_id = 3;                // content ID
+  uint32 channel_index = 4;         // 0 for instances
+  bytes instance_id = 5;            // 16 bytes; empty in the normal world
+  string content_revision = 6;
+  uint32 ready_deadline_ms = 7;     // TRANSFER_BUDGET_* (04_architecture/concurrency.md)
+}
+
+// C2S_PRESENTATION_READY (106) — client finished Addressables download.
+message C2S_PRESENTATION_READY {
+  bytes transfer_id = 1;  // 16 bytes
+}
+
+// S2C_MOVEMENT_CORRECTION (107) — authoritative override; the client
+// snaps/replays per synchronization.md § Local Reconciliation.
+message S2C_MOVEMENT_CORRECTION {
+  uint64 last_processed_client_seq = 1;
+  uint64 server_tick = 2;
+  sint32 x_mm = 3;
+  sint32 y_mm = 4;
+  sint32 vx_mm_s = 5;
+  sint32 vy_mm_s = 6;
+  Facing facing = 7;
+  MovementState movement_state = 8;
+  string platform_id = 9;                    // riding platform; empty = none
+  MovementCorrectionReason reason = 10;
+}
+
+// C2S_MOVEMENT_EDGE (108) — DISCRETE_INTENT; never coalesced or merged
+// (ADR-0038; Just Guard timing, 01_gameplay/combat.md).
+message C2S_MOVEMENT_EDGE {
+  EdgeType edge_type = 1;
+  Direction direction = 2;
+  uint64 client_mono_ms = 3;  // advisory only
+}
+
+// C2S_CHANNEL_SWITCH (109) — voluntary channel hop; 10 s cooldown after a
+// successful switch (02_world/world_rules.md).
+message C2S_CHANNEL_SWITCH {
+  bytes operation_id = 1;            // UUID, 16 bytes
+  uint32 target_channel_index = 2;
+}
+
+// S2C_CHANNEL_SWITCH_RESULT (110) — SUCCESS is followed by 105.
+message S2C_CHANNEL_SWITCH_RESULT {
+  OperationResult result = 1;        // MAP_CAPACITY_FULL | COOLDOWN_ACTIVE |
+                                     // IN_COMBAT | STATE_CONFLICT
+  uint32 target_channel_index = 2;
+  uint32 retry_after_ms = 3;
+}
+
+// C2S_DUNGEON_ENTER_REQUEST (111) — starts an instance or prompts party
+// members (02_world/dungeons.md § Entry / Membership).
+message C2S_DUNGEON_ENTER_REQUEST {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  string dungeon_id = 2;          // content ID
+  DungeonRunTag run_tag = 3;
+  string entrance_id = 4;         // entrance object ID
+}
+
+// DungeonEntryMember — one prompted party member inside 112.
+message DungeonEntryMember {
+  bytes character_id = 1;            // UUID, 16 bytes
+  string display_name = 2;
+  DungeonEntryResponse response = 3;
+  ErrorCode error_code = 4;          // set when response == INELIGIBLE
+}
+
+// S2C_DUNGEON_ENTRY_STATE (112) — pending-entry state to requester and every
+// prompted member on each change.
+message S2C_DUNGEON_ENTRY_STATE {
+  bytes entry_id = 1;                        // UUID, 16 bytes
+  bytes operation_id = 2;                    // recipient's own 111/113/117 answered
+                                             // by this message; empty otherwise
+  ResultStatus status = 3;
+  ErrorCode error_code = 4;                  // rejection of that request
+  string dungeon_id = 5;
+  DungeonRunTag run_tag = 6;
+  bytes requester_character_id = 7;          // UUID, 16 bytes
+  repeated DungeonEntryMember members = 8;
+  uint32 expires_in_ms = 9;                  // entry lifetime 30000
+  DungeonEntryOutcome outcome = 10;
+  ErrorCode cancel_reason_code = 11;         // set when outcome == CANCELLED
+}
+
+// C2S_DUNGEON_ENTRY_RESPOND (113) — prompted member answers the pending entry.
+message C2S_DUNGEON_ENTRY_RESPOND {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes entry_id = 2;      // UUID, 16 bytes
+  DungeonEntryDecision decision = 3;
+}
+
+// C2S_DUNGEON_LEAVE (114) — EXIT keeps re-entry before terminal lock;
+// ABANDON forfeits completion eligibility and re-entry.
+message C2S_DUNGEON_LEAVE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  DungeonLeaveMode mode = 2;
+}
+
+// S2C_DUNGEON_LEAVE_RESULT (115).
+message S2C_DUNGEON_LEAVE_RESULT {
+  OperationResult result = 1;  // IN_COMBAT (EXIT only)
+  DungeonLeaveMode mode = 2;
+}
+
+// S2C_INTERACT_RESULT (116) — exactly one per C2S_INTERACT (103) and
+// C2S_PORTAL_USE (104).
+message S2C_INTERACT_RESULT {
+  OperationResult result = 1;  // OUT_OF_RANGE | IN_COMBAT | INSUFFICIENT_CURRENCY
+                              // | INVENTORY_FULL | CHEST_ELIGIBILITY_INVALID |
+                              // NOT_DISCOVERED | LEVEL_TOO_LOW |
+                              // MAP_CAPACITY_FULL | STATE_CONFLICT | ...
+  InteractKind interact_kind = 2;
+  string target_id = 3;
+  repeated ItemQuantity granted = 4;        // pickup/chest/cook/fishing
+  repeated CurrencyDelta currency_delta = 5; // travel fee, rest
+}
+
+// C2S_DUNGEON_ENTRY_CANCEL (117) — requester cancels a pending entry.
+message C2S_DUNGEON_ENTRY_CANCEL {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes entry_id = 2;      // UUID, 16 bytes
+}

@@ -25,12 +25,22 @@ Applies to `.github/workflows/verify.yml`. Enforced by
   |-----------------|--------------------------------------|--------------|
   | `go-build`      | `env.GO_VERSION`                     | `hashFiles('server/go.sum')` |
   | `unity-image`   | `env.UNITY_<OS>_IMAGE_DIGEST`        | (digest is the pin) |
-  | `unity-library` | `env.UNITY_<OS>_IMAGE_DIGEST`        | `hashFiles(manifest.json, packages-lock.json, ProjectSettings/**)` |
+  | `unity-library` | `env.UNITY_<OS>_IMAGE_DIGEST`        | `hashFiles(manifest.json, packages-lock.json, ProjectSettings/**, Assets/csc.rsp)` |
   | `edb`           | `env.EDB_ZIP_SHA256` + version       | (sha is the pin) |
 - `restore-keys:` entries must keep `${{ runner.os }}` AND the pin segment —
   a fallback may only roll the content hash within the same OS + same pinned
   toolchain/image/digest. Bare prefixes (`go-build-`, `unity-image-`) that
   would substitute another pin or OS are forbidden (CI-001).
+- Content-derived caches — payloads produced *from* the hashed inputs
+  (`unity-library`: PackageCache/ScriptAssemblies = f(manifest, lock,
+  ProjectSettings, compiler flags)) — restore on the exact key only and set
+  no `restore-keys`: a prefix hit restores output built from different
+  inputs, a silent wrong-content restore (BLK-005: stale PackageCache/
+  ScriptAssemblies made Unity recompile `com.unity.ugui` under
+  `-nullable:enable` → CS86xx, and correlated with editor self-SIGKILL at
+  precompiled-dll registration). `restore-keys` remain legal on
+  content-addressed stores whose entries stay valid under a partial restore
+  (`go-build`) and on pure-pin payloads (`unity-image`, `edb`).
 - `UNITY_<OS>_IMAGE_DIGEST` env values must equal the `@sha256:` suffix of the
   matching `UNITY_<OS>_IMAGE` pin — the tests assert it, so the two env keys
   cannot drift.
