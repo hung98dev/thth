@@ -447,9 +447,9 @@ evidence_location: "docs/10_implementation/evidence/IMP-062/"
 ## `IMP-063` — Addressables Asset Pipeline & Catalog Delivery
 id: IMP-063
 status: IN_PROGRESS
-claimed_by: "coordinator-wave1"
+claimed_by: "devin-a0dc979c37fe463dbc1cbb55a542e778"
 branch: "imp/IMP-063-addressables"
-claimed_at: "2026-09-26T16:05:00Z"
+claimed_at: "2026-09-27T07:58:27Z"
 blocked_by: ""
 
 specs: [`../04_architecture/client_assets.md`, `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`, `repository_layout.md`, `../04_architecture/client_performance.md`]
