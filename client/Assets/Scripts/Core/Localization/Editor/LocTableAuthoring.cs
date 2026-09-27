@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Localization.Tables;
 
-namespace ThinhThan.Core.Localization.EditorTools
+namespace ThinhThan.Core.Localization.Editor
 {
     /// <summary>
     /// Editor-side ingestion + validation for the Core string table collection
@@ -133,9 +133,9 @@ namespace ThinhThan.Core.Localization.EditorTools
                 problems.Add("tables-not-loadable");
             }
             var sb = new StringBuilder();
-            sb.Append("{\"expected\":").Append(expected.Count)
-              .Append(",\"actual\":").Append(actual.Count)
-              .Append(",\"problems\":[");
+            sb.Append("{\"expected\":").Append(expected.Count);
+            sb.Append(",\"actual\":").Append(actual.Count);
+            sb.Append(",\"problems\":[");
             for (int i = 0; i < problems.Count; i++)
             {
                 if (i > 0) sb.Append(',');

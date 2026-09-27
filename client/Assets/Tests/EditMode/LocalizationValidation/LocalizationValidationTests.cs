@@ -8,7 +8,7 @@ using ThinhThan.Core.Localization;
 using UnityEditor;
 using UnityEngine.Localization.Tables;
 
-namespace ThinhThan.Tests.EditMode
+namespace ThinhThan.Tests.EditMode.LocalizationValidation
 {
     /// <summary>
     /// IMP-064 bilingual localization gate (client_localization.md):
