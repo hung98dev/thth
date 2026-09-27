@@ -206,6 +206,18 @@ func TestRestoreKeysNeverCrossPinOrOs(t *testing.T) {
 	}
 }
 
+// CI-001/BLK-005: unity-library stores content derived from the hashed inputs
+// (PackageCache/ScriptAssemblies are a function of manifest/lock/ProjectSettings/
+// compiler flags), so a restore-keys prefix hit is a silent wrong-content
+// restore — exact key only.
+func TestLibraryCacheExactKeyOnly(t *testing.T) {
+	for _, s := range cacheSteps(t) {
+		if strings.HasPrefix(s.Key, "unity-library-") && len(s.RestoreKeys) != 0 {
+			t.Errorf("%s/%s: unity-library must not set restore-keys (exact key only; a prefix restore returns a Library built from different inputs — BLK-005)", s.Job, s.Name)
+		}
+	}
+}
+
 // CI-002: no gate, precondition, materialization step or licence activation
 // may be conditioned on a cache outcome.
 func TestNoGateSkippedOnCacheHit(t *testing.T) {

@@ -87,7 +87,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-060` | Atlas Journal Runtime | `NOT_STARTED` | IMP-005, IMP-010, IMP-011, IMP-018 | `../03_systems/atlas.md`, `../07_content/atlas_catalog.md` |
 | `IMP-061` | Protocol Buffers Schema & Multi-Language Codegen Harness | `DONE` | IMP-000 | `../05_network/protocol.md`, `../05_network/messages.md` |
 | `IMP-062` | Unity Geometry Exporter & Map Geometry Parity | `NOT_STARTED` | IMP-078, IMP-079 | `../01_gameplay/movement.md`, `../04_architecture/realtime_loop.md` |
-| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `BLOCKED` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
+| `IMP-063` | Addressables Asset Pipeline & Catalog Delivery | `NOT_STARTED` | IMP-000 | `../04_architecture/client_assets.md`, `../04_architecture/client.md` |
 | `IMP-064` | Unity Bilingual Localization Pipeline (vi-VN / en-US) | `NOT_STARTED` | IMP-000 | `../04_architecture/client_localization.md`, `../06_data/text.md` |
 | `IMP-065` | Unity Client Bootstrap, Session State & Network Transport | `NOT_STARTED` | IMP-061, IMP-100 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
 | `IMP-066` | Unity Input Action Mapping & Core UI/HUD State Machine | `NOT_STARTED` | IMP-013, IMP-065 | `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md` |
@@ -446,11 +446,11 @@ evidence_location: "docs/10_implementation/evidence/IMP-062/"
 
 ## `IMP-063` — Addressables Asset Pipeline & Catalog Delivery
 id: IMP-063
-status: BLOCKED
+status: NOT_STARTED
 claimed_by: "coordinator-wave1"
 branch: "imp/IMP-063-addressables"
 claimed_at: "2026-09-26T16:05:00Z"
-blocked_by: "BLK-005"
+blocked_by: ""
 
 specs: [`../04_architecture/client_assets.md`, `../04_architecture/client.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../02_world/world_rules.md`, `repository_layout.md`, `../04_architecture/client_performance.md`]
 adrs: [`0014-unity-addressables-asset-delivery.md`, `0035-spawn-density-increase.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0062-world-and-systems-regression-fixes.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0071-client-presentation-contract-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
@@ -479,6 +479,7 @@ consumers_checked: [docs/04_architecture/client_assets.md, docs/04_architecture/
 - `client/Assets/Tests/EditMode/AddressablesValidation/AddressablesValidationTests.cs`: TestCatalogAssetKeyResolution, TestAddressableGroupBudgets, TestCanonicalSpriteImportProfiles, TestPlayableSceneKeyCoverage, TestSettingsAssetMatchesBaselineGuid.
 - `client/Assets/Tests/EditMode/AddressablesValidation/AssetKeyGroupTests.cs`: TestKeyDerivationRule, TestCanonicalGroupSetAndSingleMembership, TestPresentationAliasSingleHop, TestDeterministicGroupRamBudgets, TestResidentSteadyAndTransferPeak, TestMeshTypeRule, TestParallaxFarPpu50 (ADR-0071).
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware, TestBlocksLineCaseInsensitive.
+- `server/internal/conformance/caching/caching_test.go` (BLK-005): TestLibraryCacheExactKeyOnly.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
@@ -663,19 +664,19 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 - Add pinned `actions/cache` steps to `verify.yml` and extend `scripts/verify.ps1` so a warm PR run is measurably faster than a cold run without weakening any gate (`engineering_conventions.md` §6):
   - Go module and build caches (`~/go/pkg/mod`, `~/.cache/go-build`; Windows `%LOCALAPPDATA%\go-build`) keyed on OS + Go pin + `server/go.sum` hash (`actions/setup-go` stays `cache: false`; explicit `actions/cache` is the mechanism);
   - `docker save`/`docker load` through `actions/cache` for the pinned `docker pull` images (both `unityci/editor` digests), keyed on the exact digest string — a hit skips the pull; the `services:` postgres image is pulled before job steps and cannot be cached, so it either stays or converts to a step-managed container when the measured saving justifies it;
-  - Unity `client/Library/` build cache via `actions/cache` keyed on `client/Packages/manifest.json` + `client/ProjectSettings/` hash + the pinned editor image digest: `Library/` is gitignored build output, not §4b evidence, so it may be cached; the editor still opens the project and runs the full materialization + compile on every run, and every materialized file outside `Library/` is still uploaded via `unity-materialized-<os>` and committed byte-for-byte — a Library hit only skips regenerate work, never a check;
+  - Unity `client/Library/` build cache via `actions/cache` keyed on `client/Packages/manifest.json` + `client/Packages/packages-lock.json` + `client/ProjectSettings/` hash + `client/Assets/csc.rsp` + the pinned editor image digest: `Library/` is gitignored build output, not §4b evidence, so it may be cached; the editor still opens the project and runs the full materialization + compile on every run, and every materialized file outside `Library/` is still uploaded via `unity-materialized-<os>` and committed byte-for-byte — a Library hit only skips regenerate work, never a check. The step restores on the exact key only — no `restore-keys` fallback, because the payload is derived from the hashed inputs and a prefix hit is a silent wrong-content restore (BLK-005);
   - Windows PostgreSQL EDB binaries keyed on version + download SHA-256 — the extracted directory may be cached; the hash is still asserted before use on a hit;
   - licence paths are never cached: the Unity licence volume/directory and licence activation stay fresh per run (`audit_gates.md` § Unity materialization); no cache `key` or `restore-keys` may cover licence state.
 - Cache-key policy and restore rules documented in `.devin/scripts/` and enforced by the conformance tests below.
 
 ## Acceptance
-- every `actions/cache` step uses the pinned SHA from `technology_versions.md`; every `key` hashes all lockfile/pin/digest inputs, and `restore-keys` never substitute a different pinned version or OS (CI-001),
+- every `actions/cache` step uses the pinned SHA from `technology_versions.md`; every `key` hashes all lockfile/pin/digest inputs; `restore-keys` never substitute a different pinned version or OS, and content-derived caches (`unity-library`) set no `restore-keys` — exact key only (CI-001),
 - a cache hit never skips or weakens a Q gate, the fork guard, job preconditions, the §4b materialization commit, or licence activation (licence state is never cached) (CI-002),
 - `verify-report.json` records `hit|miss` and `wall_seconds` per cached step, and the task PR reports lower total Linux+Windows wall-time on a warm-cache run than its own cold run (CI-003),
 - cold and warm runs produce identical `source_tree_hash`, zero codegen drift and identical evidence manifests; no new secrets, runners or services (CI-004, ADR-0058).
 
 ## Tests
-- `server/internal/conformance/caching/caching_test.go` (CI-001): TestCacheActionPinnedSha, TestCacheKeysCoverPinInputs, TestRestoreKeysNeverCrossPinOrOs.
+- `server/internal/conformance/caching/caching_test.go` (CI-001): TestCacheActionPinnedSha, TestCacheKeysCoverPinInputs, TestRestoreKeysNeverCrossPinOrOs, TestLibraryCacheExactKeyOnly (BLK-005).
 - `server/internal/conformance/caching/caching_test.go` (CI-002): TestNoGateSkippedOnCacheHit, TestMaterializeCommitStillRequiredOnHit, TestLicenceStateNeverCached.
 - `server/internal/conformance/caching/caching_test.go` (CI-003, CI-004): TestWallTimeFieldsRecorded, TestEvidenceIdentityIndependentOfCache.
 
