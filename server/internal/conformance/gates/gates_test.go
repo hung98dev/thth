@@ -307,6 +307,57 @@ func TestImp000OwnedPathsCoverMaterializedAssets(t *testing.T) {
 	}
 }
 
+// TestImp064OwnedPathsCoverLocalizationRegistry (BLK-012): the
+// AddressableAssetsData files the ADR-0074 provisioner rewrites when
+// localization assets materialize (settings asset, the four canonical
+// localization.* groups and their schemas) must sit inside IMP-064's
+// owned_paths, else Q0.control.diff rejects the §4b-mandated commit.
+func TestImp064OwnedPathsCoverLocalizationRegistry(t *testing.T) {
+	root := repoRoot(t)
+	packets, _, err := ParseTaskQueue(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var imp064 *TaskPacket
+	for i := range packets {
+		if packets[i].ID == "IMP-064" {
+			imp064 = &packets[i]
+			break
+		}
+	}
+	if imp064 == nil {
+		t.Skip("IMP-064 packet not in queue")
+	}
+	groups := []string{"localization.locales", "localization.shared", "localization.strings.vi_vn", "localization.strings.en_us"}
+	files := []string{
+		"client/Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+		"client/Assets/AddressableAssetsData/AddressableAssetSettings.asset.meta",
+	}
+	for _, g := range groups {
+		files = append(files,
+			"client/Assets/AddressableAssetsData/AssetGroups/"+g+".asset",
+			"client/Assets/AddressableAssetsData/AssetGroups/"+g+".asset.meta",
+			"client/Assets/AddressableAssetsData/AssetGroups/Schemas/"+g+"_BundledAssetGroupSchema.asset",
+			"client/Assets/AddressableAssetsData/AssetGroups/Schemas/"+g+"_BundledAssetGroupSchema.asset.meta",
+			"client/Assets/AddressableAssetsData/AssetGroups/Schemas/"+g+"_ContentUpdateGroupSchema.asset",
+			"client/Assets/AddressableAssetsData/AssetGroups/Schemas/"+g+"_ContentUpdateGroupSchema.asset.meta")
+	}
+	for _, f := range files {
+		if !ownedFile(*imp064, f) {
+			t.Errorf("IMP-064 owned_paths do not cover localization registry %s", f)
+		}
+	}
+	// Other IMP-063-owned registry files must stay outside the grant.
+	for _, f := range []string{
+		"client/Assets/AddressableAssetsData/AssetGroups/bootstrap.local.asset",
+		"client/Assets/AddressableAssetsData/AssetGroups/Schemas/bootstrap.local_BundledAssetGroupSchema.asset",
+	} {
+		if ownedFile(*imp064, f) {
+			t.Errorf("IMP-064 owned_paths unexpectedly cover non-localization registry %s", f)
+		}
+	}
+}
+
 // queueFixture renders a minimal one-packet task_queue.md in the real format
 // (## `IMP-900` — heading, `key: value` fields, backticked summary row).
 func queueFixture(status string) string {
