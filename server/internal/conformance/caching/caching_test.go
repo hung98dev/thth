@@ -472,3 +472,47 @@ func TestEvidenceIdentityIndependentOfCache(t *testing.T) {
 		}
 	}
 }
+
+// ADR-0073: cache_warm.yml saves the pure-pin caches in the main scope; each
+// of its cache steps must be byte-identical (key + path) to a verify.yml cache
+// step, and it never touches secrets or licences.
+func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
+	root := repoRoot(t)
+	warm, err := ParseSteps(filepath.Join(root, ".github", "workflows", "cache_warm.yml"))
+	if err != nil {
+		t.Fatalf("parse cache_warm.yml: %v", err)
+	}
+	verify := cacheSteps(t)
+	warmCaches := CacheSteps(warm)
+	if len(warmCaches) == 0 {
+		t.Fatal("cache_warm.yml has no cache steps")
+	}
+	for _, w := range warmCaches {
+		if strings.HasPrefix(w.Key, "unity-library-") {
+			t.Errorf("%s: unity-library is content-derived and needs a licence; not warmed here", w.Name)
+		}
+		match := false
+		for _, v := range verify {
+			if v.Key == w.Key && reflect.DeepEqual(v.Path, w.Path) && jobOSMatches(v.Job, w.Job) {
+				match = true
+			}
+		}
+		if !match {
+			t.Errorf("cache_warm %s/%s (key %q) has no identical verify.yml cache step", w.Job, w.Name, w.Key)
+		}
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".github", "workflows", "cache_warm.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, bad := range []string{"secrets.", "UNITY_SERIAL", "Unity_lic"} {
+		if strings.Contains(string(data), bad) {
+			t.Errorf("cache_warm.yml must not reference %q", bad)
+		}
+	}
+}
+
+func jobOSMatches(verifyJob, warmJob string) bool {
+	return (verifyJob == "verify-linux" && warmJob == "warm-linux") ||
+		(verifyJob == "verify-windows" && warmJob == "warm-windows")
+}

@@ -80,3 +80,7 @@ The Linux `services:` postgres container cannot be cached and stays a service
 container — pulling `postgres:18.6` (~90 MB) is seconds; converting it to a
 step-managed container would only save that pull, not worth the lifecycle
 risk. The Windows EDB binaries ARE cached (large download, sha-asserted).
+
+## Main-scope warming (ADR-0073)
+
+Caches saved by a PR run are visible only to that PR. `.github/workflows/cache_warm.yml` saves the pure-pin caches (`unity-editor`, `cli-tools`, `edb`, `go-build`) on pushes to `main`; its cache steps must equal a `verify.yml` cache step byte-for-byte (key + path, `TestCacheWarmMirrorsVerifyCaches`). `unity-library` is never warmed there.

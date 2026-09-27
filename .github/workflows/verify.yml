@@ -29,10 +29,9 @@ env:
   # mirror by conformance/caching tests.
   UNITY_LINUX_IMAGE_DIGEST: 'sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d'
   # Windows runs the Unity editor natively (ADR-0073): pinned official
-  # installer, silent install into UNITY_WINDOWS_EDITOR_DIR, dir cached.
+  # installer, silent install into runner.temp/unity-editor, dir cached.
   UNITY_WINDOWS_EDITOR_URL: 'https://download.unity3d.com/download_unity/7efac9f6c10e/Windows64EditorInstaller/UnitySetup64-6000.6.1f1.exe'
   UNITY_WINDOWS_EDITOR_SHA256: '8884daa489c8708c17da571c46a869839dd7bbf45f69048bd4db5c6d054d5e36'
-  UNITY_WINDOWS_EDITOR_DIR: 'C:\unity\6000.6.1f1'
   EDB_ZIP_SHA256: 'fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c'
   POSTGRES_IMAGE: 'postgres:18.6@sha256:5a5a84b19854a9ffaa54082c166ff4ec27473a361e496e5ea167f298f2da9722'
 
@@ -860,7 +859,9 @@ jobs:
             if (Test-Path "$proj\Library\PackageCache") {
               Get-ChildItem -Recurse "$proj\Library\PackageCache" -Filter *.asmdef | ForEach-Object { Set-Content -Path (Join-Path $_.DirectoryName 'csc.rsp') -Value @('-nullable:disable', '-warnaserror-') }
             }
-            if ($i -lt 5) { Start-Sleep -Seconds 60 }
+            # Package compile errors are fixed by the injection above and are
+            # not licence/infra: retry at once; otherwise back off 60s.
+            if ($i -lt 5 -and $log -notmatch 'Scripts have compiler errors') { Start-Sleep -Seconds 60 }
           }
           Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds
           if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
@@ -907,8 +908,15 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         run: |
           if (-not $env:UNITY_EDITOR_PATH -or -not (Test-Path 'C:\ProgramData\Unity\Unity_lic.ulf')) { Write-Host 'no activated licence to return'; exit 0 }
-          $p = Start-Process -FilePath $env:UNITY_EDITOR_PATH -ArgumentList @('-batchmode', '-nographics', '-quit', '-returnlicense', '-username', "$env:UNITY_EMAIL", '-password', "$env:UNITY_PASSWORD", '-logFile', "$env:RUNNER_TEMP\unity-return.log") -PassThru -Wait -NoNewWindow
-          Write-Host "licence return rc=$($p.ExitCode)"
+          # Bounded: the editor lingers ~10 min after the return request on
+          # hosted runners; the runner VM is discarded anyway.
+          $p = Start-Process -FilePath $env:UNITY_EDITOR_PATH -ArgumentList @('-batchmode', '-nographics', '-quit', '-returnlicense', '-username', "$env:UNITY_EMAIL", '-password', "$env:UNITY_PASSWORD", '-logFile', "$env:RUNNER_TEMP\unity-return.log") -PassThru -NoNewWindow
+          if ($p.WaitForExit(90000)) { Write-Host "licence return rc=$($p.ExitCode)" }
+          else {
+            Get-Content "$env:RUNNER_TEMP\unity-return.log" -Tail 20 -ErrorAction SilentlyContinue
+            $p | Stop-Process -Force -ErrorAction SilentlyContinue
+            Write-Host 'licence return still running after 90s - stopped'
+          }
           exit 0
 
       - name: Unity materialized drift check
