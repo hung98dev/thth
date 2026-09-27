@@ -1,0 +1,246 @@
+// Quest / atlas / progression family (message IDs 500..515).
+// Field lists: docs/05_network/messages.md § Quest / Atlas
+// (ADR-0060, ADR-0069).
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+import "thinhthan/v1/durable.proto";
+
+// QuestState — quest lifecycle (02_world/quests.md):
+// LOCKED -> AVAILABLE -> ACTIVE -> READY_TO_COMPLETE -> COMPLETED, with
+// FAILED | EXPIRED terminal variants.
+enum QuestState {
+  QUEST_STATE_UNSPECIFIED = 0;
+  QUEST_STATE_LOCKED = 1;
+  QUEST_STATE_AVAILABLE = 2;
+  QUEST_STATE_ACTIVE = 3;
+  QUEST_STATE_READY_TO_COMPLETE = 4;
+  QUEST_STATE_COMPLETED = 5;
+  QUEST_STATE_FAILED = 6;
+  QUEST_STATE_EXPIRED = 7;
+}
+
+// QuestObjectiveView — one objective counter inside 503.
+message QuestObjectiveView {
+  uint32 objective_index = 1;
+  uint32 current = 2;
+  uint32 required = 3;
+}
+
+// ProgressionEventKind — progression event class (506).
+enum ProgressionEventKind {
+  PROGRESSION_EVENT_KIND_UNSPECIFIED = 0;
+  PROGRESSION_EVENT_KIND_EXP_GAINED = 1;
+  PROGRESSION_EVENT_KIND_LEVEL_UP = 2;
+  PROGRESSION_EVENT_KIND_SKILL_UNLOCKED = 3;
+  PROGRESSION_EVENT_KIND_POINTS_GRANTED = 4;
+  PROGRESSION_EVENT_KIND_FEAT_COMPLETED = 5;
+  PROGRESSION_EVENT_KIND_ATLAS_TIER = 6;
+  PROGRESSION_EVENT_KIND_STORY_FLAG_SET = 7;
+  PROGRESSION_EVENT_KIND_DISCOVERY = 8;
+}
+
+// ProgressionSourceKind — progression event source: the reward_claims.md
+// source_type values plus KILL and DISCOVERY.
+enum ProgressionSourceKind {
+  PROGRESSION_SOURCE_KIND_UNSPECIFIED = 0;
+  PROGRESSION_SOURCE_KIND_MONSTER = 1;
+  PROGRESSION_SOURCE_KIND_BOSS = 2;
+  PROGRESSION_SOURCE_KIND_BOSS_CHEST = 3;
+  PROGRESSION_SOURCE_KIND_DUNGEON = 4;
+  PROGRESSION_SOURCE_KIND_QUEST = 5;
+  PROGRESSION_SOURCE_KIND_WORLD_EVENT = 6;
+  PROGRESSION_SOURCE_KIND_ATLAS = 7;
+  PROGRESSION_SOURCE_KIND_FEAT = 8;
+  PROGRESSION_SOURCE_KIND_LEVEL_MILESTONE = 9;
+  PROGRESSION_SOURCE_KIND_PVP = 10;
+  PROGRESSION_SOURCE_KIND_GUILD_WAR = 11;
+  PROGRESSION_SOURCE_KIND_GUILD = 12;
+  PROGRESSION_SOURCE_KIND_AUCTION_ESCROW_EXPIRY = 13;
+  PROGRESSION_SOURCE_KIND_ADMIN_COMPENSATION = 14;
+  PROGRESSION_SOURCE_KIND_KILL = 15;
+  PROGRESSION_SOURCE_KIND_DISCOVERY = 16;
+}
+
+// AtlasGrant — one settled atlas_reward_bundle (03_systems/atlas.md): a
+// currency.special credit and/or presentation entitlements, all
+// character-scoped and immutable.
+message AtlasGrant {
+  repeated ItemGrant items = 1;
+  repeated CurrencyDelta currency_delta = 2;
+  repeated string cosmetic_ids = 3;
+}
+
+// RespecKind — respec target kind (513).
+enum RespecKind {
+  RESPEC_KIND_UNSPECIFIED = 0;
+  RESPEC_KIND_SKILL = 1;
+  RESPEC_KIND_POTENTIAL = 2;
+}
+
+// PotentialStats — the four potential attributes (01_gameplay/stats.md).
+message PotentialStats {
+  uint32 str = 1;
+  uint32 vit = 2;
+  uint32 int_ = 3;  // `int` escapes as int_ in generated code
+  uint32 agi = 4;
+}
+
+// SkillState — one learned skill inside 515.
+message SkillState {
+  string skill_id = 1;  // content ID
+  uint32 level = 2;
+}
+
+// C2S_QUEST_ACCEPT (500) — npc_id empty for DAILY board and auto-offered
+// quests; board_slot 1..6 for DAILY board quests, 0 otherwise.
+message C2S_QUEST_ACCEPT {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string quest_id = 2;     // content ID
+  string npc_id = 3;       // giver in range; empty allowed
+  uint32 board_slot = 4;
+}
+
+// S2C_QUEST_ACCEPT_RESULT (501).
+message S2C_QUEST_ACCEPT_RESULT {
+  OperationResult result = 1;  // LEVEL_TOO_LOW | CAPACITY_FULL |
+                               // DAILY_LIMIT_REACHED | OUT_OF_RANGE |
+                               // INVALID_STATE | ALREADY_OWNED
+  string quest_id = 2;
+}
+
+// C2S_QUEST_TURN_IN (502) — npc_id empty for AUTO completion mode.
+message C2S_QUEST_TURN_IN {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string quest_id = 2;
+  string npc_id = 3;       // turn-in NPC in range; empty for AUTO
+}
+
+// S2C_QUEST_UPDATE (503) — quest row sync; when answering 502 it also carries
+// the request's operation_id/status/error_code plus the grant; unsolicited
+// progress updates leave operation_id empty (AUTHORITATIVE_EVENT).
+message S2C_QUEST_UPDATE {
+  string quest_id = 1;
+  QuestState state = 2;
+  repeated QuestObjectiveView objectives = 3;
+  int64 expires_at_ms = 4;                    // DAILY/EVENT; 0 = none
+  bytes operation_id = 5;                     // UUID; set only when answering 502
+  ResultStatus status = 6;
+  ErrorCode error_code = 7;                   // INVENTORY_FULL | OUT_OF_RANGE |
+                                              // INVALID_STATE |
+                                              // DURABLE_BACKPRESSURE
+  int64 exp_gained = 8;
+  repeated ItemGrant granted = 9;
+  repeated CurrencyDelta currency_delta = 10;
+}
+
+// C2S_ATLAS_CLAIM (504) — acknowledge-only: tier rewards auto-settle at
+// promotion; the result returns the existing grant and sets acknowledged_at
+// once; it never grants. Do not reuse 408.
+message C2S_ATLAS_CLAIM {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  string atlas_page_id = 2; // content ID (atlas_catalog.md)
+  uint32 tier = 3;
+}
+
+// S2C_ATLAS_CLAIM_RESULT (505).
+message S2C_ATLAS_CLAIM_RESULT {
+  OperationResult result = 1;  // ATLAS_TIER_NOT_REACHED
+  string atlas_page_id = 2;
+  uint32 tier = 3;
+  AtlasGrant granted = 4;      // the settled grant
+}
+
+// S2C_PROGRESSION_EVENT (506) — AUTHORITATIVE_EVENT.
+message S2C_PROGRESSION_EVENT {
+  ProgressionEventKind event_kind = 1;
+  int64 amount = 2;
+  uint32 level_after = 3;
+  ProgressionSourceKind source_kind = 4;
+  string reference_id = 5;   // quest_id | skill_id | feat_id | atlas_page_id |
+                             // flag | map_id
+  int64 server_time_ms = 6;  // Unix ms
+}
+
+// C2S_QUEST_ABANDON (507) — SIDE, DAILY and abandonable EVENT quests only;
+// MAIN rejects INVALID_STATE (quests.md § Abandon).
+message C2S_QUEST_ABANDON {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string quest_id = 2;
+}
+
+// S2C_QUEST_ABANDON_RESULT (508); followed by S2C_QUEST_UPDATE.
+message S2C_QUEST_ABANDON_RESULT {
+  OperationResult result = 1;  // INVALID_STATE
+  string quest_id = 2;
+  repeated ItemQuantity removed_items = 3;
+}
+
+// C2S_STORY_BRANCH_CHOOSE (509) — permanent choice on the owning MAIN quest;
+// the option is one authored in quest_catalog.md.
+message C2S_STORY_BRANCH_CHOOSE {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  string branch_flag = 2;   // e.g. progression.story.a1.resolution
+  string option = 3;
+}
+
+// S2C_STORY_BRANCH_RESULT (510).
+message S2C_STORY_BRANCH_RESULT {
+  OperationResult result = 1;  // INVALID_STATE | ALREADY_OWNED | TARGET_INVALID
+  string branch_flag = 2;
+  string option = 3;
+}
+
+// C2S_SKILL_UPGRADE (511) — costs 1 unspent skill point
+// (progression.md § Skill Points).
+message C2S_SKILL_UPGRADE {
+  bytes operation_id = 1;        // UUID, 16 bytes
+  string skill_id = 2;           // content ID
+  uint32 expected_level = 3;     // current level; mismatch = STATE_CONFLICT
+}
+
+// C2S_POTENTIAL_ALLOCATE (512) — all-or-nothing against unspent points and
+// the 60% per-stat cap (stats.md); deltas sum >= 1.
+message C2S_POTENTIAL_ALLOCATE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  PotentialStats deltas = 2;
+}
+
+// C2S_RESPEC (513) — full reset of one kind at the progression.md § Respec
+// price; learned skills stay learned at base level.
+message C2S_RESPEC {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string npc_id = 2;       // NPC with SERVICE(respec) in range
+  RespecKind kind = 3;
+}
+
+// S2C_PROGRESSION_MUTATE_RESULT (514) — typed result for 511 | 512 | 513;
+// followed by S2C_PROGRESSION_STATE.
+message S2C_PROGRESSION_MUTATE_RESULT {
+  OperationResult result = 1;  // SKILL_NOT_LEARNED | SKILL_MAX_LEVEL |
+                               // SKILL_POINTS_INSUFFICIENT |
+                               // POTENTIAL_POINTS_INSUFFICIENT |
+                               // POTENTIAL_CAP_EXCEEDED |
+                               // INSUFFICIENT_CURRENCY | IN_COMBAT |
+                               // INVALID_STATE | OUT_OF_RANGE | STATE_CONFLICT
+  uint32 request_message_id = 2;  // 511 | 512 | 513
+}
+
+// S2C_PROGRESSION_STATE (515) — REPLACEABLE_STATE full snapshot after attach
+// and every change.
+message S2C_PROGRESSION_STATE {
+  uint32 level = 1;
+  uint32 current_exp = 2;
+  uint32 unspent_skill_points = 3;
+  uint32 unspent_potential_points = 4;
+  PotentialStats potential_allocated = 5;
+  uint32 potential_earned_total = 6;
+  repeated SkillState skills = 7;
+  SkillLoadout skill_loadout = 8;  // {basic_skill_id, active_slots[5]}
+  uint64 progression_revision = 9;
+}

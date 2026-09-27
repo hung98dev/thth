@@ -1,0 +1,604 @@
+// Social / party / friend / block / report / guild family (message IDs
+// 600..655). Field lists: docs/05_network/messages.md § Social / Guild
+// Payload Contracts (ADR-0049, ADR-0060, ADR-0065, ADR-0069).
+syntax = "proto3";
+
+package thinhthan.v1;
+
+option go_package = "thinhthan/internal/protocol/v1;protocolv1";
+option csharp_namespace = "ThinhThan.Protocol.V1";
+
+import "thinhthan/v1/common.proto";
+
+// ChatChannel — chat channels (03_systems/social.md).
+enum ChatChannel {
+  CHAT_CHANNEL_UNSPECIFIED = 0;
+  CHAT_CHANNEL_WORLD = 1;
+  CHAT_CHANNEL_LOCAL = 2;
+  CHAT_CHANNEL_PARTY = 3;
+  CHAT_CHANNEL_GUILD = 4;
+  CHAT_CHANNEL_WHISPER = 5;
+}
+
+// FriendActivity — friend presence activity class.
+enum FriendActivity {
+  FRIEND_ACTIVITY_UNSPECIFIED = 0;
+  FRIEND_ACTIVITY_WORLD = 1;
+  FRIEND_ACTIVITY_DUNGEON = 2;
+  FRIEND_ACTIVITY_PVP = 3;
+}
+
+// FriendEntryChange — upsert or removal inside 616 delta entries.
+enum FriendEntryChange {
+  FRIEND_ENTRY_CHANGE_UNSPECIFIED = 0;
+  FRIEND_ENTRY_CHANGE_UPSERT = 1;
+  FRIEND_ENTRY_CHANGE_REMOVED = 2;
+}
+
+// ReportReason — canonical report reasons (social.md § Reports).
+enum ReportReason {
+  REPORT_REASON_UNSPECIFIED = 0;
+  REPORT_REASON_SPAM = 1;
+  REPORT_REASON_HARASSMENT = 2;
+  REPORT_REASON_HATE_OR_ABUSE = 3;
+  REPORT_REASON_CHEATING = 4;
+  REPORT_REASON_SCAM = 5;
+  REPORT_REASON_INAPPROPRIATE_NAME = 6;
+  REPORT_REASON_OTHER = 7;
+}
+
+// GuildRecruitmentMode — guild recruitment setting (guild.md § Recruitment
+// Mode).
+enum GuildRecruitmentMode {
+  GUILD_RECRUITMENT_MODE_UNSPECIFIED = 0;
+  GUILD_RECRUITMENT_MODE_CLOSED = 1;
+  GUILD_RECRUITMENT_MODE_APPLICATIONS = 2;
+}
+
+// GuildStorageSection — shared Guild vault sections (guild_storage.md);
+// exactly COMMON and RESERVE. COMMON unlocks Lv1, RESERVE at guild level 10.
+enum GuildStorageSection {
+  GUILD_STORAGE_SECTION_UNSPECIFIED = 0;
+  GUILD_STORAGE_SECTION_COMMON = 1;
+  GUILD_STORAGE_SECTION_RESERVE = 2;
+}
+
+// GuildApplicationDecision — 640 decision on a pending application.
+enum GuildApplicationDecision {
+  GUILD_APPLICATION_DECISION_UNSPECIFIED = 0;
+  GUILD_APPLICATION_DECISION_ACCEPT = 1;
+  GUILD_APPLICATION_DECISION_REJECT = 2;
+}
+
+// GuildStorageClaimDecision — 646 decision on a Reserve claim
+// (guild_storage.md § Claims).
+enum GuildStorageClaimDecision {
+  GUILD_STORAGE_CLAIM_DECISION_UNSPECIFIED = 0;
+  GUILD_STORAGE_CLAIM_DECISION_APPROVE = 1;  // LEADER | VICE_LEADER
+  GUILD_STORAGE_CLAIM_DECISION_REJECT = 2;   // LEADER | VICE_LEADER
+  GUILD_STORAGE_CLAIM_DECISION_CANCEL = 3;   // requester | LEADER | VICE_LEADER
+  GUILD_STORAGE_CLAIM_DECISION_DELIVER = 4;  // requester only
+}
+
+// GuildStorageClaimState — Reserve claim lifecycle (guild_storage.md):
+// PENDING (72h) -> APPROVED (7d delivery window) -> COMPLETED; rejection,
+// cancellation and expiry variants.
+enum GuildStorageClaimState {
+  GUILD_STORAGE_CLAIM_STATE_UNSPECIFIED = 0;
+  GUILD_STORAGE_CLAIM_STATE_PENDING = 1;
+  GUILD_STORAGE_CLAIM_STATE_APPROVED = 2;
+  GUILD_STORAGE_CLAIM_STATE_REJECTED = 3;
+  GUILD_STORAGE_CLAIM_STATE_CANCELLED = 4;
+  GUILD_STORAGE_CLAIM_STATE_EXPIRED = 5;
+  GUILD_STORAGE_CLAIM_STATE_COMPLETED = 6;
+}
+
+// ------------------------- Chat (600..601, 655) -------------------------
+
+// C2S_CHAT_SEND (600) — per-channel rate limits in social.md § Rate Limits.
+message C2S_CHAT_SEND {
+  bytes operation_id = 1;            // UUID, 16 bytes
+  ChatChannel channel = 2;
+  bytes target_character_id = 3;     // UUID; required for WHISPER
+  string message_text = 4;           // 1..240 graphemes (social.md § Message
+                                     // Content)
+}
+
+// S2C_CHAT_MESSAGE (601) — fanout chat delivery.
+message S2C_CHAT_MESSAGE {
+  bytes chat_message_id = 1;         // UUID — chat_messages.message_id
+  ChatChannel channel = 2;
+  bytes sender_character_id = 3;     // UUID
+  string sender_name = 4;
+  string message_text = 5;
+  int64 sent_at_ms = 6;              // Unix ms
+}
+
+// S2C_CHAT_SEND_RESULT (655) — typed result for C2S_CHAT_SEND.
+message S2C_CHAT_SEND_RESULT {
+  OperationResult result = 1;  // RATE_LIMITED | TARGET_BLOCKED |
+                               // TARGET_INVALID | PERMISSION_DENIED |
+                               // CHAT_TEXT_INVALID
+  bytes chat_message_id = 2;   // UUID; SUCCESS
+}
+
+// ------------------------- Party (602..607, 620..622, 634..636, 653) ------
+
+// C2S_PARTY_INVITE (602) — 60 s TTL; a partyless sender's first invite
+// atomically creates a party with the sender as leader (party.md).
+message C2S_PARTY_INVITE {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// S2C_PARTY_INVITE (603) — invitation delivered to the target.
+message S2C_PARTY_INVITE {
+  bytes party_id = 1;               // UUID
+  bytes inviter_character_id = 2;   // UUID
+  string inviter_name = 3;
+  uint32 expires_in_seconds = 4;    // 60
+}
+
+// C2S_PARTY_ACCEPT (604) — capacity <= 5 validated at commit.
+message C2S_PARTY_ACCEPT {
+  bytes operation_id = 1;          // UUID, 16 bytes
+  bytes party_id = 2;              // UUID
+  bytes inviter_character_id = 3;  // UUID
+}
+
+// C2S_PARTY_LEAVE (605) — lowest join_sequence inherits leader; disbands if
+// last member.
+message C2S_PARTY_LEAVE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+}
+
+// C2S_PARTY_KICK (606) — sender must be leader.
+message C2S_PARTY_KICK {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// PartyMember — one roster row inside 607.
+message PartyMember {
+  bytes character_id = 1;  // UUID
+  string display_name = 2;
+  string class_id = 3;     // content ID
+  uint32 level = 4;
+  OnlineState online_state = 5;
+  string zone_id = 6;      // content ID
+}
+
+// S2C_PARTY_STATE (607) — REPLACEABLE_STATE roster sync.
+message S2C_PARTY_STATE {
+  bytes party_id = 1;            // UUID
+  uint64 party_revision = 2;
+  bytes leader_character_id = 3; // UUID
+  repeated PartyMember members = 4;
+}
+
+// C2S_PARTY_DECLINE (620).
+message C2S_PARTY_DECLINE {
+  bytes operation_id = 1;          // UUID, 16 bytes
+  bytes party_id = 2;              // UUID
+  bytes inviter_character_id = 3;  // UUID
+}
+
+// C2S_PARTY_INVITE_CANCEL (621) — cancel an outbound invite.
+message C2S_PARTY_INVITE_CANCEL {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// C2S_PARTY_LEADER_TRANSFER (622) — sender must be leader; target must be a
+// party member.
+message C2S_PARTY_LEADER_TRANSFER {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// C2S_PARTY_BOARD_POST (634) — safe-anchor LFG board; 120 s TTL, 30 s repost
+// cooldown; stationary required.
+message C2S_PARTY_BOARD_POST {
+  bytes operation_id = 1;      // UUID, 16 bytes
+  string dungeon_id = 2;       // content ID
+  uint32 desired_size = 3;     // 2..5
+  string note = 4;             // <= 40 chars
+}
+
+// C2S_PARTY_BOARD_CANCEL (635) — cancel own board post.
+message C2S_PARTY_BOARD_CANCEL {
+  bytes operation_id = 1;  // UUID, 16 bytes
+}
+
+// PartyBoardEntry — one LFG post inside 636.
+message PartyBoardEntry {
+  bytes post_id = 1;               // UUID
+  bytes poster_character_id = 2;   // UUID
+  string display_name = 3;
+  string class_id = 4;
+  uint32 level = 5;
+  string dungeon_id = 6;           // content ID
+  uint32 desired_size = 7;
+  uint32 expires_in_seconds = 8;
+}
+
+// S2C_PARTY_BOARD_STATE (636) — REPLACEABLE_STATE board sync.
+message S2C_PARTY_BOARD_STATE {
+  repeated PartyBoardEntry entries = 1;
+}
+
+// S2C_PARTY_RESULT (653) — typed result for every party request:
+// 602 | 604 | 605 | 606 | 620 | 621 | 622 | 634 | 635. Roster changes follow
+// as 607.
+message S2C_PARTY_RESULT {
+  OperationResult result = 1;      // PERMISSION_DENIED | TARGET_INVALID |
+                                   // TARGET_BLOCKED | CAPACITY_FULL |
+                                   // EXPIRED | NOT_IN_SAFE_ANCHOR |
+                                   // COOLDOWN_ACTIVE | RATE_LIMITED |
+                                   // STATE_CONFLICT
+  uint32 request_message_id = 2;
+  bytes party_id = 3;              // UUID; empty when none
+}
+
+// ------------------------- Guild (608..610, 623..631, 637..652) -----------
+
+// C2S_GUILD_INVITE (608) — caller role >= OFFICER; target level >= 10,
+// guildless, unblocked; 10-minute invite lifetime (guild.md § Invitations).
+message C2S_GUILD_INVITE {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// S2C_GUILD_INVITE (609) — invitation delivered to the target.
+message S2C_GUILD_INVITE {
+  bytes guild_id = 1;                // UUID
+  string guild_name = 2;
+  string inviter_name = 3;
+  uint32 expires_in_seconds = 4;     // 600
+}
+
+// C2S_GUILD_ACCEPT (610) — checks member capacity (30..60).
+message C2S_GUILD_ACCEPT {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes guild_id = 2;      // UUID
+}
+
+// C2S_GUILD_DECLINE (623).
+message C2S_GUILD_DECLINE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes guild_id = 2;      // UUID
+}
+
+// C2S_GUILD_LEAVE (624) — leader cannot leave without transfer or disband.
+message C2S_GUILD_LEAVE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+}
+
+// C2S_GUILD_KICK (625) — caller outranks target.
+message C2S_GUILD_KICK {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// C2S_GUILD_ROLE_UPDATE (626) — caller must be LEADER, or VICE_LEADER for
+// MEMBER->OFFICER and OFFICER->MEMBER (guild.md § Permissions).
+message C2S_GUILD_ROLE_UPDATE {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+  string new_role = 3;            // guild.role.vice_leader | guild.role.officer
+                                  // | guild.role.member
+}
+
+// C2S_GUILD_LEADER_TRANSFER (627) — caller must be LEADER.
+message C2S_GUILD_LEADER_TRANSFER {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// GuildMember — one roster row inside 628.
+message GuildMember {
+  bytes character_id = 1;   // UUID
+  string display_name = 2;
+  string class_id = 3;      // content ID
+  uint32 level = 4;
+  string role = 5;          // guild.role.* content ID
+  OnlineState online_state = 6;
+  int64 last_online_at = 7; // Unix ms rounded per guild.md § Presence UI;
+                            // offline only
+}
+
+// S2C_GUILD_STATE (628) — REPLACEABLE_STATE guild sync.
+message S2C_GUILD_STATE {
+  bytes guild_id = 1;       // UUID
+  uint64 guild_revision = 2;
+  string guild_name = 3;
+  string role = 4;          // receiver's role (guild.role.*)
+  uint32 level = 5;
+  uint32 members_count = 6;
+  uint32 max_members = 7;
+  string motd = 8;
+  GuildRecruitmentMode recruitment_mode = 9;
+  repeated GuildMember members = 10;
+}
+
+// C2S_GUILD_STORAGE_DEPOSIT (629) — UNBOUND item into a section the caller
+// may deposit into; durable-mutation rate limit.
+message C2S_GUILD_STORAGE_DEPOSIT {
+  bytes operation_id = 1;       // UUID, 16 bytes
+  bytes item_instance_id = 2;   // UUID
+  uint32 quantity = 3;          // stack units; full stack if 0
+  GuildStorageSection section = 4;
+}
+
+// C2S_GUILD_STORAGE_WITHDRAW (630) — RESERVE: Leader/Vice only; same-account
+// and 72 h membership checks (guild_storage.md).
+message C2S_GUILD_STORAGE_WITHDRAW {
+  bytes operation_id = 1;       // UUID, 16 bytes
+  bytes item_instance_id = 2;   // UUID
+  uint32 quantity = 3;
+  GuildStorageSection section = 4;
+}
+
+// GuildStorageItem — one stored item inside 631.
+message GuildStorageItem {
+  bytes item_instance_id = 1;     // UUID
+  string item_id = 2;             // content ID
+  uint32 quantity = 3;
+  GuildStorageSection section = 4;
+  bytes deposited_by = 5;         // depositor character UUID
+  int64 deposited_at = 6;         // Unix ms
+}
+
+// S2C_GUILD_STORAGE_STATE (631) — REPLACEABLE_STATE storage sync.
+message S2C_GUILD_STORAGE_STATE {
+  bytes guild_id = 1;            // UUID
+  uint64 storage_revision = 2;
+  repeated GuildStorageItem items = 3;
+}
+
+// C2S_GUILD_CREATE (637) — rules and cost in guild.md.
+message C2S_GUILD_CREATE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string guild_name = 2;   // text rules 06_data/text.md; GUILD_NAME_INVALID |
+                           // GUILD_NAME_TAKEN
+}
+
+// C2S_GUILD_DISBAND (638) — LEADER only; preconditions in guild.md.
+message C2S_GUILD_DISBAND {
+  bytes operation_id = 1;  // UUID, 16 bytes
+}
+
+// C2S_GUILD_APPLY (639) — guild must be in APPLICATIONS mode.
+message C2S_GUILD_APPLY {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes guild_id = 2;      // UUID
+}
+
+// C2S_GUILD_APPLICATION_DECIDE (640) — accept/reject an applicant.
+message C2S_GUILD_APPLICATION_DECIDE {
+  bytes operation_id = 1;              // UUID, 16 bytes
+  bytes applicant_character_id = 2;    // UUID
+  GuildApplicationDecision decision = 3;
+}
+
+// GuildApplication — one pending application inside 641.
+message GuildApplication {
+  bytes character_id = 1;   // UUID
+  string display_name = 2;
+  string class_id = 3;      // content ID
+  uint32 level = 4;
+  int64 applied_at = 5;     // Unix ms
+}
+
+// S2C_GUILD_APPLICATIONS (641) — pending applications list.
+message S2C_GUILD_APPLICATIONS {
+  bytes guild_id = 1;  // UUID
+  repeated GuildApplication applications = 2;
+}
+
+// C2S_GUILD_MOTD_SET (642) — motd text rules in 06_data/text.md.
+message C2S_GUILD_MOTD_SET {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  string motd = 2;
+}
+
+// C2S_GUILD_LEADERSHIP_CLAIM (643) — inactivity takeover (guild.md § Leader
+// Inactivity).
+message C2S_GUILD_LEADERSHIP_CLAIM {
+  bytes operation_id = 1;  // UUID, 16 bytes
+}
+
+// C2S_GUILD_STORAGE_MOVE (644) — Leader/Vice/Officer; COMMON <-> RESERVE.
+message C2S_GUILD_STORAGE_MOVE {
+  bytes operation_id = 1;        // UUID, 16 bytes
+  bytes item_instance_id = 2;    // UUID
+  GuildStorageSection to_section = 3;
+}
+
+// C2S_GUILD_STORAGE_CLAIM_REQUEST (645) — request a Reserve item.
+message C2S_GUILD_STORAGE_CLAIM_REQUEST {
+  bytes operation_id = 1;       // UUID, 16 bytes
+  bytes item_instance_id = 2;   // UUID
+  uint32 quantity = 3;
+}
+
+// C2S_GUILD_STORAGE_CLAIM_DECIDE (646) — DELIVER moves the APPROVED item into
+// the requester's inventory (INVENTORY_FULL keeps it APPROVED).
+message C2S_GUILD_STORAGE_CLAIM_DECIDE {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes claim_id = 2;      // UUID
+  GuildStorageClaimDecision decision = 3;
+}
+
+// GuildStorageClaim — one Reserve claim inside 647.
+message GuildStorageClaim {
+  bytes claim_id = 1;                  // UUID
+  bytes requester_character_id = 2;    // UUID
+  bytes item_instance_id = 3;          // UUID
+  uint32 quantity = 4;
+  GuildStorageClaimState state = 5;
+  int64 expires_at = 6;                // Unix ms
+}
+
+// S2C_GUILD_STORAGE_CLAIMS (647) — Reserve claim list.
+message S2C_GUILD_STORAGE_CLAIMS {
+  bytes guild_id = 1;            // UUID
+  uint64 storage_revision = 2;
+  repeated GuildStorageClaim claims = 3;
+}
+
+// C2S_GUILD_BLESSING_VOTE (648) — vote for a Blessing candidate
+// (guild_progression.md).
+message C2S_GUILD_BLESSING_VOTE {
+  bytes operation_id = 1;   // UUID, 16 bytes
+  string cycle_id = 2;      // content ID
+  string blessing_id = 3;   // content ID
+}
+
+// C2S_GUILD_SETTINGS_SET (650) — LEADER only; switching to CLOSED leaves
+// PENDING applications to be decided or expire.
+message C2S_GUILD_SETTINGS_SET {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  GuildRecruitmentMode recruitment_mode = 2;
+}
+
+// C2S_GUILD_INVITE_CANCEL (651) — original inviter, LEADER or VICE_LEADER;
+// invite -> CANCELLED.
+message C2S_GUILD_INVITE_CANCEL {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// C2S_GUILD_APPLICATION_CANCEL (652) — applicant only; application ->
+// CANCELLED.
+message C2S_GUILD_APPLICATION_CANCEL {
+  bytes operation_id = 1;  // UUID, 16 bytes
+  bytes guild_id = 2;      // UUID
+}
+
+// S2C_GUILD_RESULT (649) — typed result for every guild C2S request: 608,
+// 610, 623..627, 629, 630, 637..640, 642..646, 648, 650..652. State changes
+// follow as 628 / 631 / 641 / 647.
+message S2C_GUILD_RESULT {
+  OperationResult result = 1;      // errors.md domain list
+  uint32 request_message_id = 2;
+  bytes guild_id = 3;              // UUID; empty when none
+}
+
+// ------------------------- Friends & Blocks (611..619, 654) ---------------
+
+// C2S_FRIEND_REQUEST (611) — social-invite rate limit (10/60 s).
+message C2S_FRIEND_REQUEST {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// S2C_FRIEND_REQUEST (612) — request delivered to the target; mirrors the
+// invite delivery shape (603/609).
+message S2C_FRIEND_REQUEST {
+  bytes requester_character_id = 1;    // UUID
+  string requester_name = 2;
+  uint32 expires_in_seconds = 3;
+}
+
+// C2S_FRIEND_ACCEPT (613) — mutual friendship created in friends.
+message C2S_FRIEND_ACCEPT {
+  bytes operation_id = 1;             // UUID, 16 bytes
+  bytes requester_character_id = 2;   // UUID
+}
+
+// C2S_FRIEND_DECLINE (614).
+message C2S_FRIEND_DECLINE {
+  bytes operation_id = 1;             // UUID, 16 bytes
+  bytes requester_character_id = 2;   // UUID
+}
+
+// C2S_FRIEND_REMOVE (615) — friendship severed atomically.
+message C2S_FRIEND_REMOVE {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// FriendEntry — one changed friend row inside 616.
+message FriendEntry {
+  bytes friend_character_id = 1;  // UUID
+  string display_name = 2;
+  OnlineState online_state = 3;
+  string zone_id = 4;             // content ID
+  FriendActivity activity = 5;
+  FriendEntryChange change = 6;
+}
+
+// FriendRequestView — one pending request inside 616.
+message FriendRequestView {
+  bytes character_id = 1;      // requester (incoming) or target (outgoing)
+                               // UUID
+  string display_name = 2;
+  int64 expires_at_ms = 3;     // Unix ms
+}
+
+// S2C_FRIEND_STATE (616) — AUTHORITATIVE_EVENT (never superseded): after
+// attach full_snapshot = true (<= 100 friends); later messages carry only
+// changed entries plus the complete request lists. Applied in server_seq
+// order.
+message S2C_FRIEND_STATE {
+  bool full_snapshot = 1;
+  repeated FriendEntry entries = 2;
+  repeated FriendRequestView incoming_requests = 3;
+  repeated FriendRequestView outgoing_requests = 4;
+}
+
+// C2S_BLOCK_ADD (617) — inserts block, severs mutual friendship, cancels
+// pending requests; CAPACITY_FULL at 500.
+message C2S_BLOCK_ADD {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// C2S_BLOCK_REMOVE (618).
+message C2S_BLOCK_REMOVE {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+}
+
+// BlockedCharacter — one blocked row inside 619.
+message BlockedCharacter {
+  bytes blocked_character_id = 1;  // UUID
+  string display_name = 2;
+  int64 blocked_at_ms = 3;         // Unix ms
+}
+
+// S2C_BLOCK_STATE (619) — REPLACEABLE_STATE full snapshot after attach and
+// every change.
+message S2C_BLOCK_STATE {
+  repeated BlockedCharacter blocked = 1;
+}
+
+// S2C_SOCIAL_RESULT (654) — typed result for every friend/block request:
+// 611 | 613 | 614 | 615 | 617 | 618.
+message S2C_SOCIAL_RESULT {
+  OperationResult result = 1;      // FRIEND_LIMIT_REACHED | TARGET_BLOCKED |
+                                   // ALREADY_FRIENDS | PENDING_REQUEST_EXISTS |
+                                   // CAPACITY_FULL | TARGET_INVALID |
+                                   // RATE_LIMITED
+  uint32 request_message_id = 2;
+  bytes target_character_id = 3;   // UUID; empty when none
+}
+
+// ------------------------- Player Report (632..633) -----------------------
+
+// C2S_REPORT_PLAYER (632) — 10 submissions / 24 h per account.
+message C2S_REPORT_PLAYER {
+  bytes operation_id = 1;         // UUID, 16 bytes
+  bytes target_character_id = 2;  // UUID
+  ReportReason reason = 3;
+  bytes chat_message_id = 4;      // UUID; optional
+  string reporter_notes = 5;      // <= 200 graphemes
+}
+
+// S2C_REPORT_PLAYER_RESULT (633).
+message S2C_REPORT_PLAYER_RESULT {
+  OperationResult result = 1;  // RATE_LIMITED | TARGET_INVALID |
+                               // ITEM_NOT_FOUND (unknown chat_message_id)
+  bytes report_id = 2;         // UUID; SUCCESS
+}
