@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: pvp.shared
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: pvp.shared
+  m_GUID: 486d6570012706f6e9d3a882bbe16e8a
+  m_SerializeEntries:
+  - m_GUID: 3291f28492283b6d7857d453b5521939
+    m_Address: asset.map.pvp.duel_court.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84040959ecf793823a20260bd67d1cc2
+    m_Address: asset.map.guild_war.five_seal_conflict.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9860d73fa3271606b92530e4d1e46ab9
+    m_Address: asset.map.pvp.five_element_arena.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a1004873f3db7bef4af067f00ac774dc
+    m_Address: asset.map.guild_war.five_seal_conflict.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d885bd825421a227eba3c6bfb97bead6
+    m_Address: asset.map.pvp.five_element_arena.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ffe227eae3b504b3c9bfdef241d60501
+    m_Address: asset.map.pvp.duel_court.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1d7ac9943d1cca7fabfeac7d3d73d418, type: 2}
+    - {fileID: 11400000, guid: 588b19adeac59fceca7724d9283601dc, type: 2}

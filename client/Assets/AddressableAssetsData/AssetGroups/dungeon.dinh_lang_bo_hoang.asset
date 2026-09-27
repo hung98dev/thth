@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: dungeon.dinh_lang_bo_hoang
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: dungeon.dinh_lang_bo_hoang
+  m_GUID: 9aede27f331ff1cc48633fc1de32f04a
+  m_SerializeEntries:
+  - m_GUID: 1d800ac99e3b08b21b4c49811553df51
+    m_Address: asset.dungeon.dinh_lang_bo_hoang.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 789ea21fa39d8177b8905cd45158a872
+    m_Address: asset.dungeon.dinh_lang_bo_hoang.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ddc7423c38b913ddab06ff469c907aa8
+    m_Address: asset.boss.quy_nhap_trang.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 31ffcea8bb3099ff88c536c74f7df78c, type: 2}
+    - {fileID: 11400000, guid: ce4e861772c476857b5ceb1fc279aa67, type: 2}

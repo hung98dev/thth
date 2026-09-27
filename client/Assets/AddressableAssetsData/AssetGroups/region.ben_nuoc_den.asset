@@ -1,0 +1,153 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: region.ben_nuoc_den
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: region.ben_nuoc_den
+  m_GUID: e6ec4c2a133b2f7e4ae7b5fc5e022e80
+  m_SerializeEntries:
+  - m_GUID: 02bc31cc23e874ba48681989c43a0082
+    m_Address: asset.npc.ben_nuoc_den.nguoi_dan_duong.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 06a1d012c70acd0db86325d5645d5618
+    m_Address: asset.boss.ma_da_chua.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 081f76e9337d0d9a380b21452eea0024
+    m_Address: asset.map.ben_nuoc_den.ben_do_cu.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0ca0913d0409fc2eca599afd0e0e9940
+    m_Address: asset.npc.ben_nuoc_den.dem_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0f10e07abf938626287362311a4ec2fb
+    m_Address: asset.map.ben_nuoc_den.bai_lau.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2687977844038fbaab15003e1ca77568
+    m_Address: asset.map.ben_nuoc_den.duong_ngap.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26d2fd6d69887130ea2a1b2cf82a020f
+    m_Address: asset.npc.ben_nuoc_den.tho_nghe.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2ecac6ea0fc2e98a6a7e8af610b0d643
+    m_Address: asset.map.ben_nuoc_den.duong_ngap.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f04fca9fcc7d716b8f675ac41ea4515
+    m_Address: asset.monster.ben_nuoc_den.thuy_quai.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 305cc9a6c7f3d4476ac93d827140797f
+    m_Address: asset.monster.ben_nuoc_den.ca_tinh.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 345a7257e6dcac6c4a9780b80efdc027
+    m_Address: asset.map.ben_nuoc_den.cho_ben.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 40418a0b0050c5df6b853e57073303ad
+    m_Address: asset.monster.ben_nuoc_den.bong_nuoc_ma.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 57ce7ffc6d709286cb73f92aebd9696e
+    m_Address: asset.monster.ben_nuoc_den.quy_song_dem.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5901fc7438a802501a160d67ab0f4921
+    m_Address: asset.map.ben_nuoc_den.ben_do_cu.bgm
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b865353e8e610b07905e3a9c05843a1
+    m_Address: asset.monster.ben_nuoc_den.ma_da_gia.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f1ee59b36eacd78f8b390d2012eaccf
+    m_Address: asset.npc.ben_nuoc_den.dem_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 714c495a52feb82f385172243691791d
+    m_Address: asset.npc.ben_nuoc_den.cho_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d3bf1189d6b8280f988f9992bb687a9
+    m_Address: asset.npc.ben_nuoc_den.cho_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96ae4f9fe9674ad23afe32fb93a7023e
+    m_Address: asset.npc.ben_nuoc_den.hang_quan.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3491915ff1fe7d28abc376a0d11f01e
+    m_Address: asset.monster.ben_nuoc_den.hon_chet_duoi.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: baa1621c891879b6d81b6677ac4607a6
+    m_Address: asset.map.ben_nuoc_den.cho_ben.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7632c7ae0ea123539874f00af5d6b64
+    m_Address: asset.map.ben_nuoc_den.bai_lau.scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfb99e1a9b02b8c5b8591a80d4295dbb
+    m_Address: asset.monster.ben_nuoc_den.thuong_luong.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec7f3fc98ef09861ca31594202140dba
+    m_Address: asset.monster.ben_nuoc_den.ca_tinh_gia.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee638ae14296d2684b09e041f6267d2d
+    m_Address: asset.monster.ben_nuoc_den.nguoi_song_co.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee7daba35428c8c0283dc03e71cddccc
+    m_Address: asset.monster.ben_nuoc_den.ma_da.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 03d05df79b43898f254cff5dad608436, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 575e19237dd62ec1fb5a4b3e5a80e3a6, type: 2}
+    - {fileID: 11400000, guid: eafa244982b0adb0c9cf1e830a711f65, type: 2}
