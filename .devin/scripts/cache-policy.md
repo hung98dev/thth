@@ -13,7 +13,7 @@ Applies to `.github/workflows/verify.yml`. Enforced by
   only Go cache mechanism.
 - A cache step restores AND saves (post-job). Save-on-failure poisoning is
   prevented by writing payloads atomically (`.part`/`mv`) and by validating
-  content on restore (`docker load` + `docker image inspect`, EDB sha-256
+  content on restore (Windows editor installer sha-256 marker, CLI pin marker, EDB sha-256
   marker). An unloadable entry degrades to the uncached path, never to a
   failed gate.
 
@@ -24,12 +24,13 @@ Applies to `.github/workflows/verify.yml`. Enforced by
   | scope           | pin                                  | content hash |
   |-----------------|--------------------------------------|--------------|
   | `go-build`      | `env.GO_VERSION`                     | `hashFiles('server/go.sum')` |
-  | `unity-image`   | `env.UNITY_<OS>_IMAGE_DIGEST`        | (digest is the pin) |
-  | `unity-library` | `env.UNITY_<OS>_IMAGE_DIGEST`        | `hashFiles(manifest.json, packages-lock.json, ProjectSettings/**, Assets/csc.rsp)` |
+  | `unity-editor`  | `env.UNITY_WINDOWS_EDITOR_SHA256` (Windows only, ADR-0073) | (sha is the pin) |
+  | `cli-tools`     | pinned pwsh/jq/gh/git-lfs versions + sha prefixes (Windows only) | (pins only) |
+  | `unity-library` | Linux `env.UNITY_LINUX_IMAGE_DIGEST`, Windows `env.UNITY_WINDOWS_EDITOR_SHA256` | `hashFiles(manifest.json, packages-lock.json, ProjectSettings/**, Assets/csc.rsp)` |
   | `edb`           | `env.EDB_ZIP_SHA256` + version       | (sha is the pin) |
 - `restore-keys:` entries must keep `${{ runner.os }}` AND the pin segment —
   a fallback may only roll the content hash within the same OS + same pinned
-  toolchain/image/digest. Bare prefixes (`go-build-`, `unity-image-`) that
+  toolchain/image/digest. Bare prefixes (`go-build-`, `unity-editor-`) that
   would substitute another pin or OS are forbidden (CI-001).
 - Content-derived caches — payloads produced *from* the hashed inputs
   (`unity-library`: PackageCache/ScriptAssemblies = f(manifest, lock,
@@ -40,10 +41,11 @@ Applies to `.github/workflows/verify.yml`. Enforced by
   `-nullable:enable` → CS86xx, and correlated with editor self-SIGKILL at
   precompiled-dll registration). `restore-keys` remain legal on
   content-addressed stores whose entries stay valid under a partial restore
-  (`go-build`) and on pure-pin payloads (`unity-image`, `edb`).
-- `UNITY_<OS>_IMAGE_DIGEST` env values must equal the `@sha256:` suffix of the
-  matching `UNITY_<OS>_IMAGE` pin — the tests assert it, so the two env keys
-  cannot drift.
+  (`go-build`) and on pure-pin payloads (`unity-editor`, `cli-tools`, `edb`).
+- `UNITY_LINUX_IMAGE_DIGEST` must equal the `@sha256:` suffix of
+  `UNITY_LINUX_IMAGE`, and `UNITY_WINDOWS_EDITOR_URL`/`_SHA256` must equal
+  `stackpin.UnityWindowsInstallers["editor"]` — the tests assert both. No
+  Unity image is cached (ADR-0073).
 
 ## Never cached (CI-002)
 

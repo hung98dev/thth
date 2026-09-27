@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"thinhthan/internal/conformance/gates"
@@ -176,12 +177,37 @@ func run(root string, f cliFlags) int {
 	}
 	addGate("Q3", "Test suites (Go)", []string{"IMP-000"}, q3Go)
 
+	// ADR-0073: the workflow may skip Unity on a PR whose diff touches no
+	// Unity-relevant path; the verifier re-derives the diff and fails the
+	// Unity gates when the declared skip is not legitimate.
+	unitySkip, unityProblem := false, ""
+	if declared := os.Getenv("THINHTHAN_UNITY_SCOPE"); declared == gates.UnityScopeNoClientChange {
+		var files []string
+		var ferr error
+		if e.HasPRContext() {
+			files, ferr = gates.DiffFiles(root, e.BaseSHA, e.HeadSHA)
+		} else {
+			ferr = fmt.Errorf("PR context absent")
+		}
+		unitySkip, unityProblem = gates.ResolveUnityScope(e, declared, files, ferr)
+	}
+	unityChecks := func(suite string) []gates.Check {
+		id := "Q3.unity." + strings.ToLower(suite)
+		switch {
+		case unityProblem != "":
+			return []gates.Check{gates.Fail(id, unityProblem)}
+		case unitySkip:
+			return []gates.Check{gates.SkipNoClientChange(id)}
+		}
+		return gates.CheckUnityResults(e.UnityResultsDir, "Q3", suite, e)
+	}
+
 	var q3Edit, q3Play []gates.Check
 	if required("IMP-000") && !statusOnly {
-		q3Edit = gates.CheckUnityResults(e.UnityResultsDir, "Q3", "EditMode", e)
+		q3Edit = unityChecks("EditMode")
 	}
 	if required("IMP-065") && !statusOnly {
-		q3Play = gates.CheckUnityResults(e.UnityResultsDir, "Q3", "PlayMode", e)
+		q3Play = unityChecks("PlayMode")
 	}
 	addGate("Q3", "Test suites (Unity EditMode)", []string{"IMP-000"}, q3Edit)
 	addGate("Q3", "Test suites (Unity PlayMode)", []string{"IMP-065"}, q3Play)

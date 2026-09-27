@@ -1,0 +1,16 @@
+# ADR-0073: CI Speed — Native Unity on Windows and Path-Scoped Unity Gates
+status: ACCEPTED
+
+## Context
+Measured PR runs (2026-09-27): `Q0-Q6 verify (Linux)` ~12 min, `Q0-Q6 verify (Windows)` ~37 min. On Windows ~22–27 min per run went to the GameCI Windows image: a 16–17 min `docker pull` plus a 6–10 min cache save that never produced a hit, because the image (>10 GB) exceeds the 10 GB repository `actions/cache` budget and evicts the other caches. Unity also ran on PRs that touch no client code (server/docs-only), where it cannot change the result.
+
+## Decision
+1. **Native Unity on Windows**: the Windows job installs the official Unity `6000.6.1f1` (changeset `7efac9f6c10e`) Windows editor from the pinned installer URL + SHA-256 (`../00_context/technology_versions.md`, `server/internal/stackpin` `UnityWindowsInstallers`) into `${{ runner.temp }}\unity-editor` and caches that directory (`unity-editor-<os>-<installer sha256>`); a hit is honoured only after the installer-sha marker matches. No Docker and no GameCI image on Windows. Materialization and EditMode/PlayMode tests call `Unity.exe -batchmode -nographics` directly with the same licence activation (5 attempts, 60 s apart), result XML names (`artifacts/unity-tests/<Mode>-results.xml`) and artifacts; the licence is returned at job end. `IMP-067` builds the Windows IL2CPP player with the native editor plus the pinned Windows IL2CPP module installer.
+2. **No image cache**: the Linux job pulls its digest-pinned GameCI image directly (~2 min); no `unity-image-*` cache entry exists, keeping the 10 GB budget for the Windows editor, `client/Library` and Go caches. Pinned Windows CLI installs are cached (`cli-tools-*`, keyed by versions + SHA prefixes; marker re-asserted every run).
+3. **Path-scoped Unity**: a `Unity scope` step computes the PR diff (`base...head`). When no path matches `gates.UnityRelevantPattern` — `client/`, `proto/`, `scripts/codegen.*`, `scripts/verify.ps1`, `.github/workflows/`, `server/cmd/verify/`, `server/internal/conformance/`, `docs/00_context/technology_versions.md` — every Unity step is skipped and the Unity checks report `SKIP(no-client-change)`. The verifier re-derives the diff and fails the Unity gates if the skip is not legitimate. `SKIP(no-client-change)` is valid only on `pull_request*` events; `push` runs (post-merge guard), `imp/IMP-068-*` branches and every `*-done` branch always run Unity in full. A diff that cannot be computed runs Unity in full.
+
+## Consequences
+- `.github/workflows/verify.yml`, `server/cmd/verify`, `server/internal/conformance/{gates,caching}`, `server/internal/stackpin` and `.devin/scripts/cache-policy.md` implement items 1–3.
+- `../10_implementation/audit_gates.md` (§ Gate Activation, § Job Preconditions item 3, Owner Setup), `../09_testing/test_and_release_evidence.md`, `../00_context/technology_versions.md` and `../10_implementation/task_queue.md` (`IMP-000`, `IMP-067`) are updated.
+- Amends ADR-0058 (Windows Unity runs natively, not in a GameCI image) and ADR-0072 item 3 (materialization runs on every job whose PR touches Unity-relevant paths; always on `push`, `IMP-068` and `-done` runs).
+- Accepted risk: a Unity-only regression introduced by a server/docs-only diff is impossible by construction of the pattern; anything else still runs Unity on both OSes per PR.

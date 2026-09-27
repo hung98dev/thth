@@ -81,7 +81,7 @@ func TestCacheActionPinnedSha(t *testing.T) {
 	}
 	for _, need := range []string{
 		"verify-linux:go-build-", "verify-windows:go-build-",
-		"verify-linux:unity-image-", "verify-windows:unity-image-",
+		"verify-windows:unity-editor-", "verify-windows:cli-tools-",
 		"verify-linux:unity-library-", "verify-windows:unity-library-",
 		"verify-windows:edb-",
 	} {
@@ -102,12 +102,25 @@ func TestCacheActionPinnedSha(t *testing.T) {
 // image pins they mirror.
 func TestCacheKeysCoverPinInputs(t *testing.T) {
 	text := workflowText(t)
+	// ADR-0073: no image cache; the Windows editor is a native install pinned
+	// by the stackpin installer URL + sha256.
+	if strings.Contains(text, "unity-image-") || strings.Contains(text, "UNITY_WINDOWS_IMAGE") {
+		t.Error("verify.yml must not cache unity images or reference a Windows unityci image (ADR-0073)")
+	}
+	ed := stackpin.UnityWindowsInstallers["editor"]
+	for _, need := range []string{
+		"UNITY_WINDOWS_EDITOR_URL: '" + ed.URL + "'",
+		"UNITY_WINDOWS_EDITOR_SHA256: '" + ed.SHA256 + "'",
+	} {
+		if !strings.Contains(text, need) {
+			t.Errorf("verify.yml env must pin %s (stackpin.UnityWindowsInstallers)", need)
+		}
+	}
 	// Digest env vars must equal the @sha256: suffix of the image env pins,
 	// and *_IMAGE_TAG must equal the image's repo:tag prefix — docker run
-	// resolves tag refs after docker load, digest refs are not round-tripped.
+	// resolves tag refs after pull+tag, digest refs are not used by run.
 	for _, pair := range [][2]string{
 		{"UNITY_LINUX_IMAGE", "UNITY_LINUX_IMAGE_DIGEST"},
-		{"UNITY_WINDOWS_IMAGE", "UNITY_WINDOWS_IMAGE_DIGEST"},
 	} {
 		imgRe := regexp.MustCompile(pair[0] + `:\s*'([^'@]+)@sha256:([0-9a-f]{64})'`)
 		digRe := regexp.MustCompile(pair[1] + `:\s*'(sha256:[0-9a-f]{64}|[0-9a-f]{64})'`)
@@ -128,7 +141,7 @@ func TestCacheKeysCoverPinInputs(t *testing.T) {
 	// RepoDigests); the digest ref may only feed the pull path via the
 	// `UNITY_IMAGE:` step-env mapping in the load/pull steps.
 	for _, line := range strings.Split(text, "\n") {
-		for _, img := range []string{"UNITY_LINUX_IMAGE", "UNITY_WINDOWS_IMAGE"} {
+		for _, img := range []string{"UNITY_LINUX_IMAGE"} {
 			if strings.Contains(line, "${{ env."+img+" }}") && !strings.Contains(line, "UNITY_IMAGE: ${{") {
 				t.Errorf("digest image ref outside pull mapping — use %s_TAG (docker load drops digest refs): %s", img, strings.TrimSpace(line))
 			}
@@ -150,15 +163,35 @@ func TestCacheKeysCoverPinInputs(t *testing.T) {
 					t.Errorf("%s: go-build key %q missing %q", s.Job, s.Key, need)
 				}
 			}
-		case strings.HasPrefix(s.Key, "unity-image-"):
-			want := "env.UNITY_" + strings.ToUpper(jobOS(t, s.Job)) + "_IMAGE_DIGEST"
-			if !strings.Contains(s.Key, want) {
-				t.Errorf("%s: unity-image key %q missing %q", s.Job, s.Key, want)
+		case strings.HasPrefix(s.Key, "unity-editor-"):
+			if s.Job != "verify-windows" || !strings.Contains(s.Key, "env.UNITY_WINDOWS_EDITOR_SHA256") {
+				t.Errorf("%s: unity-editor cache is Windows-only and keyed by env.UNITY_WINDOWS_EDITOR_SHA256, got %q", s.Job, s.Key)
+			}
+		case strings.HasPrefix(s.Key, "cli-tools-"):
+			if s.Job != "verify-windows" {
+				t.Errorf("cli-tools cache must not exist on %s", s.Job)
+			}
+			for _, a := range []stackpin.CliAsset{
+				stackpin.CliAssets["pwsh-windows"], stackpin.CliAssets["jq-windows"],
+				stackpin.CliAssets["gh-windows"], stackpin.CliAssets["git-lfs-windows"],
+			} {
+				if !strings.Contains(s.Key, a.SHA256[:8]) {
+					t.Errorf("cli-tools key %q missing pin sha prefix %s", s.Key, a.SHA256[:8])
+				}
+			}
+			for _, v := range []string{stackpin.Pwsh, stackpin.Jq, stackpin.GhCli, stackpin.GitLfs} {
+				if !strings.Contains(s.Key, v) {
+					t.Errorf("cli-tools key %q missing version pin %s", s.Key, v)
+				}
 			}
 		case strings.HasPrefix(s.Key, "unity-library-"):
-			want := "env.UNITY_" + strings.ToUpper(jobOS(t, s.Job)) + "_IMAGE_DIGEST"
+			// Editor pin per OS: Linux image digest, Windows native installer.
+			want := "env.UNITY_LINUX_IMAGE_DIGEST"
+			if jobOS(t, s.Job) == "Windows" {
+				want = "env.UNITY_WINDOWS_EDITOR_SHA256"
+			}
 			if !strings.Contains(s.Key, want) {
-				t.Errorf("%s: unity-library key %q missing image digest pin %q", s.Job, s.Key, want)
+				t.Errorf("%s: unity-library key %q missing editor pin %q", s.Job, s.Key, want)
 			}
 			if !strings.Contains(s.Key, "hashFiles(") ||
 				!strings.Contains(s.Key, "manifest.json") ||
