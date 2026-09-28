@@ -57,21 +57,33 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
                             : new Color32(150, 150, 160, 255);
                         continue;
                     }
+                    // Each interior tier is split into left/right halves whose
+                    // tones differ by more than DeltaE00 2 so no single flat
+                    // region exceeds 20% of the silhouette.
+                    var right = x >= 32;
                     if (y <= 22)
                     {
-                        px[i] = new Color32(60, 60, 65, 255);
+                        px[i] = right
+                            ? new Color32(75, 72, 68, 255)
+                            : new Color32(60, 60, 65, 255);
                     }
                     else if (y <= 33)
                     {
-                        px[i] = new Color32(95, 95, 100, 255);
+                        px[i] = right
+                            ? new Color32(110, 108, 103, 255)
+                            : new Color32(95, 95, 100, 255);
                     }
                     else if (y <= 43)
                     {
-                        px[i] = new Color32(135, 128, 120, 255);
+                        px[i] = right
+                            ? new Color32(150, 144, 136, 255)
+                            : new Color32(135, 128, 120, 255);
                     }
                     else
                     {
-                        px[i] = new Color32(175, 168, 160, 255);
+                        px[i] = right
+                            ? new Color32(190, 184, 176, 255)
+                            : new Color32(175, 168, 160, 255);
                     }
                 }
             }
@@ -325,23 +337,26 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
         [Test]
         public void TestEdgeBandDefinition()
         {
+            // A 20x20 block gives Chebyshev distances 1..10 at the centre.
             var mask = new bool[32 * 32];
-            for (var y = 10; y <= 21; y++)
+            for (var y = 6; y <= 25; y++)
             {
-                for (var x = 10; x <= 21; x++)
+                for (var x = 6; x <= 25; x++)
                 {
                     mask[y * 32 + x] = true;
                 }
             }
             VolumeDepthGateImpl.ComputeBandAndCore(mask, 32, 32, out var band, out var core);
-            // Distances are Chebyshev to outside-S measured on a 12x12 block.
-            Assert.IsTrue(band[13 * 32 + 10], "dist 3 -> in B");
-            Assert.IsTrue(band[13 * 32 + 12], "dist 2 -> in B");
-            Assert.IsTrue(band[13 * 32 + 13], "dist 1 -> in B");
-            Assert.IsTrue(band[13 * 32 + 14] == false, "dist 4 -> not in B");
-            Assert.IsTrue(core[13 * 32 + 15], "dist 5 -> in K");
-            Assert.IsTrue(core[13 * 32 + 18], "dist 8 -> in K");
-            Assert.IsTrue(core[13 * 32 + 19] == false, "dist 9 -> not in K");
+            const int row = 15 * 32;
+            Assert.IsTrue(band[row + 6], "dist 1 -> in B");
+            Assert.IsTrue(band[row + 7], "dist 2 -> in B");
+            Assert.IsTrue(band[row + 8], "dist 3 -> in B");
+            Assert.IsTrue(band[row + 9] == false, "dist 4 -> not in B");
+            Assert.IsTrue(core[row + 10], "dist 5 -> in K");
+            Assert.IsTrue(core[row + 13], "dist 8 -> in K");
+            Assert.IsTrue(core[row + 14] == false, "dist 9 -> not in K");
+            Assert.IsTrue(band[row + 15] == false && core[row + 15] == false,
+                "dist 10 -> in neither");
         }
 
         [Test]

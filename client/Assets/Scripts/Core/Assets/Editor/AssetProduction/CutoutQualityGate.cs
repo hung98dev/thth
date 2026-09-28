@@ -172,7 +172,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             List<GateViolation> violations)
         {
             var opaque = AlphaTopology.AlphaMask(pixels, OpaqueAlpha, 255);
-            var dist = DistanceToMask(opaque, width, height);
+            var dist = AlphaTopology.DistanceToMask(opaque, width, height);
             for (var i = 0; i < pixels.Length; i++)
             {
                 var a = pixels[i].a;
@@ -260,7 +260,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
         {
             var any = AlphaTopology.AlphaMask(pixels, 1, 255);
             var opaque = AlphaTopology.AlphaMask(pixels, OpaqueAlpha, 255);
-            var dist = DistanceToMask(any, width, height);
+            var dist = AlphaTopology.DistanceToMask(any, width, height);
             for (var y = 0; y < height; y++)
             {
                 for (var x = 0; x < width; x++)
@@ -530,24 +530,6 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                     RuleBodyHeight,
                     "character body height " + bodyH + " px (need 176..192)"));
             }
-        }
-
-        // Chebyshev distance to the nearest mask pixel; pixels inside mask
-        // get 0. DistanceToOutside measures from a pixel to outside-mask, so
-        // running it on the negated mask yields distance-to-mask.
-        private static int[] DistanceToMask(bool[] mask, int width, int height)
-        {
-            return AlphaTopology.DistanceToOutside(Negate(mask), width, height);
-        }
-
-        private static bool[] Negate(bool[] mask)
-        {
-            var r = new bool[mask.Length];
-            for (var i = 0; i < mask.Length; i++)
-            {
-                r[i] = !mask[i];
-            }
-            return r;
         }
 
         private static bool Touches(bool[] mask, int width, int height, int x, int y)

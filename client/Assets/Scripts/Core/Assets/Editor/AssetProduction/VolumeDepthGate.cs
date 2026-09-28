@@ -442,6 +442,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
         {
             var violations = new List<GateViolation>();
             var distOut = AlphaTopology.DistanceToOutside(actorMask, width, height);
+            var distToActor = AlphaTopology.DistanceToMask(actorMask, width, height);
             var bandL = new List<float>();
             var ringL = new List<float>();
             for (var i = 0; i < actorMask.Length; i++)
@@ -451,7 +452,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 {
                     bandL.Add(lab);
                 }
-                else if (!actorMask[i] && distOut[i] >= 4 && distOut[i] <= 12)
+                else if (!actorMask[i] && distToActor[i] >= 4 && distToActor[i] <= 12)
                 {
                     ringL.Add(lab);
                 }

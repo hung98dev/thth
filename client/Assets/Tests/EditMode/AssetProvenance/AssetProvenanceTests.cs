@@ -55,7 +55,7 @@ namespace ThinhThan.Tests.EditMode.AssetProvenance
         {
             return new AssetSourceRow
             {
-                asset_key = "asset.prop.example.world",
+                asset_key = "asset.prop.example.sprite",
                 file_path = path,
                 content_id = null,
                 source_kind = AssetProvenanceValidator.SourceKindFree,

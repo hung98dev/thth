@@ -72,6 +72,23 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             return dist;
         }
 
+        // Chebyshev distance from a non-mask pixel to the nearest mask
+        // pixel; mask pixels get 0.
+        public static int[] DistanceToMask(bool[] mask, int width, int height)
+        {
+            return DistanceToOutside(Negate(mask), width, height);
+        }
+
+        public static bool[] Negate(bool[] mask)
+        {
+            var r = new bool[mask.Length];
+            for (var i = 0; i < mask.Length; i++)
+            {
+                r[i] = !mask[i];
+            }
+            return r;
+        }
+
         // 8-connected components over mask. Returns component index lists.
         public static List<int[]> Components8(bool[] mask, int width, int height)
         {
