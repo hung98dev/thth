@@ -4041,7 +4041,7 @@ status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "OPS-001"
+blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../01_gameplay/classes.md`, `../04_architecture/physics_geometry_contract.md`]
 adrs: [`0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
@@ -4079,7 +4079,7 @@ status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "OPS-001"
+blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/monster_catalog.md`, `../07_content/boss_catalog.md`, `../07_content/spirit_beast_catalog.md`, `../04_architecture/physics_geometry_contract.md`]
 adrs: [`0031-exp-scale-x100-and-corrected-act-budgets.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0068-implementation-packet-readiness-corrections.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
@@ -4117,7 +4117,7 @@ status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "OPS-001"
+blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/world_route_catalog.md`, `../02_world/maps_zones.md`, `../04_architecture/physics_geometry_contract.md`]
 adrs: [`0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
@@ -4157,7 +4157,7 @@ status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "OPS-001"
+blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/dungeon_catalog.md`, `../03_systems/pvp.md`, `../03_systems/guild_war.md`, `../04_architecture/physics_geometry_contract.md`]
 adrs: [`0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
@@ -4196,7 +4196,7 @@ status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "OPS-001"
+blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/class_skill_catalog.md`, `../07_content/item_catalog.md`, `../07_content/equipment_catalog.md`, `../04_architecture/client_localization.md`]
 adrs: [`0016-twelve-skill-pool-upgradeable-basics.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0063-economy-contract-reconciliation.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
@@ -4234,7 +4234,7 @@ status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "OPS-001"
+blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/cosmetic_catalog.md`, `../03_systems/cosmetics.md`]
 adrs: [`0053-durable-contract-reconciliation.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0063-economy-contract-reconciliation.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
@@ -4272,7 +4272,7 @@ status: NOT_STARTED
 claimed_by: ""
 branch: ""
 claimed_at: ""
-blocked_by: "OPS-001"
+blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md`, `../00_context/constraints.md`]
 adrs: [`0014-unity-addressables-asset-delivery.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
