@@ -371,7 +371,8 @@ jobs:
             f=open(p,O_RDONLY);if(f<0)return 0;
             {int n=(int)read(f,b,sizeof b-1);close(f);if(n<=0)return 0;b[n]=0;}
             char*s=strstr(b,"Tgid:");if(!s)return 0;
-            tg=strtol(s+5,0,10);
+            s+=5;while(*s==' '||*s=='\t')s++;
+            tg=0;while(*s>='0'&&*s<='9'){tg=tg*10+(*s-'0');s++;}
             return tg==(long)getpid();
           }
           static int block_note(const char*call,long a1,long a2){
