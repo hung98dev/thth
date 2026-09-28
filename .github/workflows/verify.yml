@@ -691,6 +691,11 @@ jobs:
             for lf in client/Temp/UnityLockfile $(find client/Library client/Temp -name '*lock*' -o -name 'UnityLockfile' 2>/dev/null); do
               [ -f "$lf" ] && sudo cp -a "$lf" "artifacts/unity-diag/mat-attempt$i/locks/" 2>/dev/null && sudo sh -c "xxd '$lf' | head -8 >> 'artifacts/unity-diag/mat-attempt$i/locks/'$(basename '$lf').hex" || true
             done
+            # DIAG: capture the stores a stale worker-pid could live in (ILPP runner
+            # state, uds.db, Temp). Post-hoc byte-scan for the kill-target value.
+            sudo cp -a client/Temp "artifacts/unity-diag/mat-attempt$i/Temp" 2>/dev/null || true
+            sudo find client/Library -size -4M \( -iname '*pid*' -o -iname '*ilpp*' -o -iname '*runner*' -o -name 'uds.db*' -o -name 'uds.lock' \) -exec cp --parents -a {} "artifacts/unity-diag/mat-attempt$i/" \; 2>/dev/null || true
+            sudo find client/Temp -size -4M -type f -exec sh -c 'for f; do grep -lE "pid|process" "$f" 2>/dev/null; done' _ {} + >> "artifacts/unity-diag/mat-attempt$i/pidfiles.list" 2>/dev/null || true
             sudo chmod -R a+r "artifacts/unity-diag/mat-attempt$i" 2>/dev/null || true
             if grep -q 'Exiting batchmode successfully' "$RUNNER_TEMP/unity-materialize.log" && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-materialize.log"; then
               cache_telemetry_emit unity-library "$libhit" "$((SECONDS-start))"
