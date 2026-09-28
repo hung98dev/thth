@@ -1,0 +1,134 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Thinh Than asset source register",
+    "description": "One register row per packaged media file (presentation_asset_manifest.md section 6). IMP-070 owns the schema; IMP-071..075 write per-task fragments under fragments/; IMP-076 merges them.",
+    "type": "object",
+    "required": ["schema_version", "assets"],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "type": "integer",
+            "const": 1
+        },
+        "assets": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/asset_row" }
+        }
+    },
+    "definitions": {
+        "repo_path": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.\\-/]+$"
+        },
+        "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+        },
+        "iso8601_utc": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "http_uri": {
+            "type": "string",
+            "pattern": "^https?://"
+        },
+        "asset_row": {
+            "type": "object",
+            "required": [
+                "asset_key", "file_path", "content_id", "source_kind", "creator",
+                "source_uri", "license_id", "license_uri", "acquired_at_utc",
+                "source_sha256", "final_sha256", "changes", "attribution",
+                "generation_record", "inputs", "review_state"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "asset_key": {
+                    "type": "string",
+                    "description": "Stable Addressable key (client_assets.md Stable Asset Keys); a sub-file carries the parent asset key."
+                },
+                "file_path": { "$ref": "#/definitions/repo_path" },
+                "content_id": {
+                    "type": ["string", "null"],
+                    "description": "Catalog ID when the asset is catalog-backed; null for shared assets."
+                },
+                "source_kind": {
+                    "type": "string",
+                    "enum": ["AI_CREATED", "FREE_LICENSED"]
+                },
+                "creator": {
+                    "type": "string",
+                    "description": "Original author, or tool name plus producing agent."
+                },
+                "source_uri": {
+                    "type": ["string", "null"],
+                    "description": "Original source page URL; null for AI_CREATED. Never a search URL."
+                },
+                "license_id": {
+                    "type": "string",
+                    "enum": ["CC0-1.0", "CC-BY-4.0", "OFL-1.1", "AI_TOOL_TERMS"]
+                },
+                "license_uri": { "$ref": "#/definitions/http_uri" },
+                "acquired_at_utc": { "$ref": "#/definitions/iso8601_utc" },
+                "source_sha256": { "$ref": "#/definitions/sha256" },
+                "final_sha256": { "$ref": "#/definitions/sha256" },
+                "changes": {
+                    "type": "string",
+                    "description": "Transformation description; \"none\" implies source_sha256 == final_sha256."
+                },
+                "attribution": {
+                    "type": ["string", "null"],
+                    "description": "Released credit line; required for CC-BY-4.0 rows and the OFL-1.1 font notice."
+                },
+                "generation_record": {
+                    "anyOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/generation_record" }
+                    ]
+                },
+                "inputs": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/input_provenance" }
+                },
+                "review_state": {
+                    "type": "string",
+                    "enum": ["PENDING", "APPROVED", "REJECTED"]
+                }
+            }
+        },
+        "generation_record": {
+            "type": "object",
+            "required": ["tool", "version", "terms_uri", "prompt", "reference_uris"],
+            "additionalProperties": false,
+            "properties": {
+                "tool": { "type": "string" },
+                "version": { "type": "string" },
+                "terms_uri": {
+                    "type": "string",
+                    "description": "Terms of the AI tool at creation time; must permit commercial redistribution."
+                },
+                "prompt": { "type": "string" },
+                "reference_uris": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Every URI must also appear in inputs[].source_uri; a third-party input cannot be hidden."
+                }
+            }
+        },
+        "input_provenance": {
+            "type": "object",
+            "required": ["creator", "source_uri", "license_id", "license_uri", "acquired_at_utc", "sha256"],
+            "additionalProperties": false,
+            "properties": {
+                "creator": { "type": "string" },
+                "source_uri": { "$ref": "#/definitions/http_uri" },
+                "license_id": {
+                    "type": "string",
+                    "enum": ["CC0-1.0", "CC-BY-4.0", "OFL-1.1"]
+                },
+                "license_uri": { "$ref": "#/definitions/http_uri" },
+                "acquired_at_utc": { "$ref": "#/definitions/iso8601_utc" },
+                "sha256": { "$ref": "#/definitions/sha256" }
+            }
+        }
+    }
+}
