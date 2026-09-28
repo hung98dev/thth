@@ -76,14 +76,6 @@ func queueOf(blocks ...string) string {
 	return "# Task Queue\n\n" + strings.Join(blocks, "\n")
 }
 
-func byID(ps []gates.TaskPacket) map[string]gates.TaskPacket {
-	m := map[string]gates.TaskPacket{}
-	for _, p := range ps {
-		m[p.ID] = p
-	}
-	return m
-}
-
 // ---------- real-tree assertions ------------------------------------------
 
 func realPackets(t *testing.T) []gates.TaskPacket {
