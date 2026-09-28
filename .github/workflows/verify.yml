@@ -530,6 +530,16 @@ jobs:
         id: drift
         shell: pwsh
         run: |
+          # BLK-018: m_currentHash of the Addressables settings is an
+          # editor-derived cache field; a warm Library rewrites it on
+          # save. Drop the change only when that Hash line is the sole diff.
+          $aas = 'client/Assets/AddressableAssetsData/AddressableAssetSettings.asset'
+          $aasDiff = git -C $env:GITHUB_WORKSPACE diff -U0 -- $aas |
+            Where-Object { $_ -match '^[+-]' -and $_ -notmatch '^(\+\+\+|---) ' }
+          if ($aasDiff -and -not ($aasDiff | Where-Object { $_ -notmatch '^[+-]    Hash: [0-9a-f]{32}$' })) {
+            git -C $env:GITHUB_WORKSPACE checkout -- $aas
+            Write-Host "derived m_currentHash reset: $aas"
+          }
           $drift = git -C $env:GITHUB_WORKSPACE status --porcelain -- client/ |
             Where-Object { $_ -notmatch 'client/(Library|Temp|Logs|obj)/' }
           if ($drift) {
@@ -933,6 +943,16 @@ jobs:
         id: drift
         shell: pwsh
         run: |
+          # BLK-018: m_currentHash of the Addressables settings is an
+          # editor-derived cache field; a warm Library rewrites it on
+          # save. Drop the change only when that Hash line is the sole diff.
+          $aas = 'client/Assets/AddressableAssetsData/AddressableAssetSettings.asset'
+          $aasDiff = git -C $env:GITHUB_WORKSPACE diff -U0 -- $aas |
+            Where-Object { $_ -match '^[+-]' -and $_ -notmatch '^(\+\+\+|---) ' }
+          if ($aasDiff -and -not ($aasDiff | Where-Object { $_ -notmatch '^[+-]    Hash: [0-9a-f]{32}$' })) {
+            git -C $env:GITHUB_WORKSPACE checkout -- $aas
+            Write-Host "derived m_currentHash reset: $aas"
+          }
           $drift = git -C $env:GITHUB_WORKSPACE status --porcelain -- client/ |
             Where-Object { $_ -notmatch 'client/(Library|Temp|Logs|obj)/' }
           if ($drift) {

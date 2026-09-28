@@ -241,6 +241,30 @@ func TestMaterializedArtifactPerOsFailsJob(t *testing.T) {
 	}
 }
 
+// BLK-018: the drift gate may reset only the derived Addressables
+// m_currentHash line, and must do so before drift is computed.
+func TestDriftGateResetsOnlyAddressablesDerivedHash(t *testing.T) {
+	wf := verifyWf(t)
+	for _, name := range []string{"verify-linux", "verify-windows"} {
+		run := stepNamed(t, jobNamed(t, wf, name), "Unity materialized drift check").Run
+		for _, want := range []string{
+			"'client/Assets/AddressableAssetsData/AddressableAssetSettings.asset'",
+			"'^[+-]    Hash: [0-9a-f]{32}$'",
+			"checkout -- $aas",
+		} {
+			if !strings.Contains(run, want) {
+				t.Fatalf("job %q: drift step missing %q", name, want)
+			}
+		}
+		if strings.Count(run, "checkout --") != 1 {
+			t.Fatalf("job %q: drift step may restore exactly one file", name)
+		}
+		if strings.Index(run, "checkout -- $aas") > strings.Index(run, "status --porcelain") {
+			t.Fatalf("job %q: derived-hash reset must precede the drift computation", name)
+		}
+	}
+}
+
 func TestLicenceActivationRetriedFiveTimes(t *testing.T) {
 	wf := verifyWf(t)
 	bashLoop := regexp.MustCompile(`for\s+\w+\s+in\s+([0-9 ]+);`)
