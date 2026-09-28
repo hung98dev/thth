@@ -628,12 +628,23 @@ jobs:
           mat_snap="$RUNNER_TEMP/unity-lib-restored"
           sudo rm -rf "$mat_snap"
           [ -d client/Library ] && sudo cp -a client/Library "$mat_snap"
+          # DIAG: stale helper-process pids persist in the cached Library
+          # (Library/*.pid). Record what the editor will see at launch.
+          mkdir -p artifacts/unity-diag/prelaunch-pids
+          sudo find "$mat_snap" -name '*.pid' -type f | while read -r pf; do
+            echo "=== $pf: $(cat "$pf" 2>/dev/null)" >> artifacts/unity-diag/prelaunch-pids/list.txt
+          done
+          # DIAG V3: a stale helper-pid recorded in Library/*.pid (ilpp.pid,
+          # burst.pid) is consumed by the editor's managed Process.Kill at
+          # domain reload. Scrub them so no stale pid survives.
+          sudo find client/Library -name '*.pid' -type f -delete 2>/dev/null || true
           prev=
           for i in 1 2 3 4 5; do
             if [ "$i" -gt 1 ]; then
               if [ "$prev" = killed ] && [ "$i" -le 3 ] && [ -d "$mat_snap" ]; then
                 sudo rm -rf client/Library client/Temp
                 sudo cp -a "$mat_snap" client/Library
+                sudo find client/Library -name '*.pid' -type f -delete 2>/dev/null || true
                 echo "attempt $i: warm retry from the restored Library snapshot"
               else
                 # Cold retry: attempt 1 keeps a cache-restored Library
