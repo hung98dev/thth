@@ -494,7 +494,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             {
                 return;
             }
-            GameObject anchor = null;
+            GameObject? anchor = null;
             foreach (var root in scene.GetRootGameObjects())
             {
                 if (root.name == "ActorAnchor")

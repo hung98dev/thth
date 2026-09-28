@@ -3,6 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using CutoutGateImpl =
+    ThinhThan.Core.Assets.Editor.AssetProduction.CutoutQualityGate;
+using VolumeDepthGateImpl =
+    ThinhThan.Core.Assets.Editor.AssetProduction.VolumeDepthGate;
 using ThinhThan.Core.Assets;
 using ThinhThan.Core.Assets.Editor;
 using ThinhThan.Core.Assets.Editor.AssetProduction;
@@ -94,13 +98,13 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             }
             var input = PresentationSizing.ToCutoutInput(
                 null!, 0, 0, meta.AssetClass.Value, meta, null);
-            violations.AddRange(CutoutQualityGate.ValidateFile(abs, input));
+            violations.AddRange(CutoutGateImpl.ValidateFile(abs, input));
             if (input.Width > 0)
             {
                 var vinput = PresentationSizing.ToVolumeInput(
                     input.Pixels, input.Width, input.Height,
                     meta.AssetClass.Value, null);
-                violations.AddRange(VolumeDepthGate.ValidatePixels(vinput));
+                violations.AddRange(VolumeDepthGateImpl.ValidatePixels(vinput));
             }
             return violations;
         }
@@ -349,7 +353,9 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
                 Assert.NotNull(r.generation_record,
                     r.file_path + " AI_CREATED row needs generation_record");
                 var g = r.generation_record!;
-                Assert.IsTrue(g.tool.Contains(OwnerToolName),
+                Assert.IsNotNull(g.tool,
+                    r.file_path + " tool missing");
+                Assert.IsTrue(g.tool!.Contains(OwnerToolName),
                     r.file_path + " tool '" + g.tool + "' != owner tool");
                 Assert.AreEqual(OwnerToolModel, g.model_id,
                     r.file_path + " model mismatch");
