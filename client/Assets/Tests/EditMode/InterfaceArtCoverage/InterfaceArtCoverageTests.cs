@@ -395,7 +395,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                 Assert.IsTrue(cls.HasValue, rel + " has no asset_class");
                 try
                 {
-                    AssertGateClean(rel, cls.Value, meta);
+                    AssertGateClean(rel, cls ?? PresentationAssetClass.UiArt, meta);
                 }
                 catch (AssertionException e)
                 {
@@ -511,7 +511,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                 Assert.IsTrue(File.Exists(Abs(font)), "font missing: " + font);
                 var covered = ParseCmap(Abs(font));
                 var missing = RequiredGlyphs
-                    .Where(c => !covered.Contains((uint)c))
+                    .Where(c => !covered.ContainsKey((uint)c))
                     .Select(c => "U+" + ((int)c).ToString("X4"))
                     .ToList();
                 Assert.AreEqual(0, missing.Count,
@@ -584,7 +584,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                     "\n", errors.Select(e => e.Path + ": " + e.Message)));
             // every produced file under the owned roots has a row
             var rows = new HashSet<string>(
-                register.assets.Where(a => a.file_path != null).Select(a => a.file_path));
+                register.assets.Select(a => a.file_path).OfType<string>());
             foreach (var rel in EnumerateProduced())
             {
                 Assert.IsTrue(rows.Contains("client/" + rel),
