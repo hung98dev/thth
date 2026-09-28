@@ -24,6 +24,7 @@ type cliFlags struct {
 	mergeDir        string
 	printHash       bool
 	taskID          string
+	planUnity       bool
 }
 
 func main() {
@@ -34,6 +35,7 @@ func main() {
 	flag.StringVar(&f.mergeDir, "merge-reports", "", "merge linux+windows verify reports into a manifest")
 	flag.BoolVar(&f.printHash, "print-source-tree-hash", false, "print the ADR-0057 source tree hash and exit")
 	flag.StringVar(&f.taskID, "task", "", "task id for merge mode (e.g. IMP-000)")
+	flag.BoolVar(&f.planUnity, "plan-unity", false, "print the Unity test modes whose Q3 gate is active (GITHUB_OUTPUT lines) and exit")
 	flag.Parse()
 
 	cwd, err := os.Getwd()
@@ -52,6 +54,10 @@ func main() {
 			fatal(err)
 		}
 		fmt.Println(h)
+	case f.planUnity:
+		if err := planUnity(root); err != nil {
+			fatal(err)
+		}
 	case f.mergeDir != "":
 		if err := mergeMode(root, f); err != nil {
 			fatal(err)
@@ -110,15 +116,12 @@ func mergeMode(root string, f cliFlags) error {
 	return os.WriteFile(dest, append(out, '\n'), 0o644)
 }
 
-// run executes the gate set and writes verify-report.json.
-func run(root string, f cliFlags) int {
-	e := gates.LoadEnv(f.localDefer, f.unityResultsDir)
-	rep := &gates.RunReport{}
-
+// activation returns the gate-activation predicate (owner task DONE on main
+// or in the head) and whether the PR is status-only.
+func activation(root string, e *gates.Env) (func(string) bool, bool, error) {
 	packets, _, err := gates.ParseTaskQueue(root)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "verify: parse task queue: "+err.Error())
-		return 2
+		return nil, false, err
 	}
 	headStatus := map[string]string{}
 	for _, p := range packets {
@@ -144,6 +147,30 @@ func run(root string, f cliFlags) int {
 		if cl, err := gates.ClassifyPR(root, e); err == nil {
 			statusOnly = cl.StatusOnly
 		}
+	}
+	return required, statusOnly, nil
+}
+
+// planUnity prints the Unity test modes whose Q3 gate is active as
+// GITHUB_OUTPUT lines (ADR-0074).
+func planUnity(root string) error {
+	required, statusOnly, err := activation(root, gates.LoadEnv(false, ""))
+	if err != nil {
+		return fmt.Errorf("parse task queue: %w", err)
+	}
+	fmt.Print(gates.PlanUnityModes(required, statusOnly).GithubOutput())
+	return nil
+}
+
+// run executes the gate set and writes verify-report.json.
+func run(root string, f cliFlags) int {
+	e := gates.LoadEnv(f.localDefer, f.unityResultsDir)
+	rep := &gates.RunReport{}
+
+	required, statusOnly, err := activation(root, e)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "verify: parse task queue: "+err.Error())
+		return 2
 	}
 
 	var gs []gates.Gate
@@ -203,14 +230,14 @@ func run(root string, f cliFlags) int {
 	}
 
 	var q3Edit, q3Play []gates.Check
-	if required("IMP-000") && !statusOnly {
+	if required(gates.UnityEditModeOwner) && !statusOnly {
 		q3Edit = unityChecks("EditMode")
 	}
-	if required("IMP-065") && !statusOnly {
+	if required(gates.UnityPlayModeOwner) && !statusOnly {
 		q3Play = unityChecks("PlayMode")
 	}
-	addGate("Q3", "Test suites (Unity EditMode)", []string{"IMP-000"}, q3Edit)
-	addGate("Q3", "Test suites (Unity PlayMode)", []string{"IMP-065"}, q3Play)
+	addGate("Q3", "Test suites (Unity EditMode)", []string{gates.UnityEditModeOwner}, q3Edit)
+	addGate("Q3", "Test suites (Unity PlayMode)", []string{gates.UnityPlayModeOwner}, q3Play)
 
 	var q4Base, q4Client []gates.Check
 	if required("IMP-000") && !statusOnly {

@@ -230,6 +230,9 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `0072-executable-merge-pipeline-for-ai-agents.md` | IMP-000, IMP-001, IMP-048, IMP-061, IMP-063, IMP-064, IMP-065, IMP-067, IMP-068, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-079, IMP-081, IMP-083, IMP-088, IMP-095, IMP-096, IMP-098, IMP-101, IMP-104, IMP-105, IMP-106 |
 | `0073-ci-speed-native-unity-windows-and-path-scoped-unity-gates.md` | IMP-000, IMP-067, IMP-106 |
 | `0074-localization-addressables-group-integration.md` | IMP-063, IMP-064 |
+| `0075-parallel-unity-jobs-planned-modes-and-pro-concurrency.md` | IMP-000 |
+| `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md` | IMP-067, IMP-070, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-076, IMP-104, IMP-105 |
+
 
 ## Requirement ID → Task
 
@@ -272,6 +275,18 @@ All tasks consume `../README.md`, all files in `../00_context/`, accepted ADRs w
 | `HOT-001` | `08_scale_ops/capacity.md` | IMP-079 |
 | `HOT-002` | `08_scale_ops/capacity.md` | IMP-079 |
 | `HOT-003` | `08_scale_ops/capacity.md` | IMP-081 |
+| `ART-001` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-002` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-003` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-004` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-005` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-006` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-007` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-008` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-009` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-010` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-011` | `07_content/presentation_asset_manifest.md` | IMP-070 |
+| `ART-012` | `07_content/presentation_asset_manifest.md` | IMP-070 |
 
 ## Coverage Gate
 Q0 must fail when:
