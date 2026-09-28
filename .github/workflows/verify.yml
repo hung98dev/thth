@@ -1442,6 +1442,11 @@ jobs:
               $run = 'false'; $scope = 'no-client-change'
             }
           }
+          # DIAG: on the investigation branch the Windows side is always
+          # out of scope — job stays (conformance), Unity steps all skip.
+          if ($env:HEAD_REF -eq 'diag/unity-self-kill') {
+            $run = 'false'; $scope = 'diag-linux-only'
+          }
           Write-Host "unity scope: $scope"
           "run=$run" >> $env:GITHUB_OUTPUT
           "THINHTHAN_UNITY_SCOPE=$scope" >> $env:GITHUB_ENV
@@ -1696,7 +1701,6 @@ jobs:
 
 
   verify-windows:
-    if: false  # DIAG: Linux-only experiments on diag/unity-self-kill (never merged)
     name: 'Q0-Q6 verify (Windows)'
     runs-on: windows-2022
     timeout-minutes: 120
@@ -1892,6 +1896,11 @@ jobs:
               $run = 'false'; $scope = 'no-client-change'
             }
           }
+          # DIAG: on the investigation branch the Windows side is always
+          # out of scope — job stays (conformance), Unity steps all skip.
+          if ($env:HEAD_REF -eq 'diag/unity-self-kill') {
+            $run = 'false'; $scope = 'diag-linux-only'
+          }
           Write-Host "unity scope: $scope"
           "run=$run" >> $env:GITHUB_OUTPUT
           "THINHTHAN_UNITY_SCOPE=$scope" >> $env:GITHUB_ENV
@@ -1915,7 +1924,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           THINHTHAN_CACHE_HIT_GO: ${{ steps.cache-go.outputs.cache-hit }}
-        run: pwsh -NoProfile -File scripts/verify.ps1 -Phase pre-unity -ReportOut "$env:RUNNER_TEMP/verify-pre-unity.json"
+        run: |
+          # DIAG: on the investigation branch the verifier is stubbed — the
+          # job still exists for conformance but stays under a minute.
+          if ("${{ github.head_ref }}" -eq 'diag/unity-self-kill') {
+            '{"skipped":"diag/unity-self-kill"}' | Out-File -Encoding utf8 "$env:RUNNER_TEMP/verify-pre-unity.json"
+          } else {
+            pwsh -NoProfile -File scripts/verify.ps1 -Phase pre-unity -ReportOut "$env:RUNNER_TEMP/verify-pre-unity.json"
+          }
 
       - name: Wait for Unity job
         id: unity-wait
@@ -1952,7 +1968,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           THINHTHAN_CACHE_HIT_GO: ${{ steps.cache-go.outputs.cache-hit }}
-        run: pwsh -NoProfile -File scripts/verify.ps1 -Phase unity -PreReport "$env:RUNNER_TEMP/verify-pre-unity.json" -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
+        run: |
+          # DIAG: stub the unity-phase verifier on the investigation branch;
+          # still emits verify-report.json so downstream steps behave.
+          if ("${{ github.head_ref }}" -eq 'diag/unity-self-kill') {
+            '{"skipped":"diag/unity-self-kill","phase":"unity"}' | Out-File -Encoding utf8 'verify-report.json'
+          } else {
+            pwsh -NoProfile -File scripts/verify.ps1 -Phase unity -PreReport "$env:RUNNER_TEMP/verify-pre-unity.json" -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
+          }
 
       - name: Unity job result
         if: ${{ !cancelled() && steps.unity-scope.outputs.run == 'true' }}
