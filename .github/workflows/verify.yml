@@ -489,6 +489,27 @@ jobs:
           EOF
           chmod +x "$RUNNER_TEMP/diag/watch.sh"
           (sudo env RUNNER_TEMP="$RUNNER_TEMP" bash "$RUNNER_TEMP/diag/watch.sh" "$RUNNER_TEMP/diag-run" > "$RUNNER_TEMP/diag-run/watch.log" 2>&1 & echo $! > "$RUNNER_TEMP/diag-watch.pid")
+          cat > "$RUNNER_TEMP/diag/liccfg.sh" <<'EOF'
+          #!/bin/bash
+          # DIAG V1: stop the editor-spawned licensing client from auto-exiting
+          # when its IPC session count hits zero (suspected dead-pipe ->
+          # "IPC channel ... aborting" -> killpg race at domain reload).
+          PJ=/root/.config/unity3d/Unity/config/production.json
+          mkdir -p "$(dirname "$PJ")"
+          python3 - "$PJ" <<'PY'
+          import json, os, sys
+          p = sys.argv[1]
+          d = {}
+          if os.path.exists(p) and os.path.getsize(p):
+              try:
+                  d = json.load(open(p))
+              except Exception:
+                  d = {}
+          d["autoShutdownDelaySeconds"] = 86400
+          json.dump(d, open(p, "w"), indent=2)
+          PY
+          EOF
+          chmod +x "$RUNNER_TEMP/diag/liccfg.sh"
           echo "diag probes armed"
 
       - name: Inspect unity image internals (investigation-only)
@@ -513,7 +534,8 @@ jobs:
             echo "== licensing client dll.config =="
             find /opt/unity -name "Unity.Licensing.Client.dll.config" -exec cat {} + 2>/dev/null
             echo "== licensing client help =="
-            find /opt/unity -name "Unity.Licensing.Client" -type f | head -1 |  head -70; done| head -70; done
+            c=$(find /opt/unity -name "Unity.Licensing.Client" -type f | head -1)
+            [ -n "$c" ] && timeout -k 5 30 "$c" --help 2>&1 | head -70
             echo "== Tools binary self-tests =="
             for t in UnityAutoQuitter Unity.DataStore; do
               f=/opt/unity/Editor/Data/Tools/$t
@@ -527,7 +549,7 @@ jobs:
             echo "=== UNITY_* env toggles ==="
             grep -aoE "UNITY_[A-Z0-9_]+" /opt/unity/Editor/Unity | sort -u | head -140
             echo "=== licensing client dlls: timer/session/exit strings ==="
-            for c in $(find /opt/unity/Editor/Data/Resources/Licensing -type f 2>/dev/null | head -40) /opt/unity/Editor/Data/Tools/UnityAutoQuitter /opt/unity/Editor/Data/Tools/Unity.DataStore; do
+            for c in $(find /opt/unity -name "Unity.Licensing.*.dll" -o -name "Unity.Licensing.Client" -type f 2>/dev/null) /opt/unity/Editor/Data/Tools/UnityAutoQuitter /opt/unity/Editor/Data/Tools/Unity.DataStore; do
               [ -f "$c" ] || continue
               echo "---- $c"
               timeout -k 5 60 grep -aoE "[ -~]{10,}" "$c" 2>/dev/null | grep -iE "exit.?timer|idle|shut ?down|session|channel|pipe|handshake|relaunch|respawn" | sort -u | head -45
@@ -609,6 +631,7 @@ jobs:
               -e LD_PRELOAD=/diag/killshim.so -e DIAG_OUT=/diag-out \
               "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
               bash -c '
+                bash /diag/liccfg.sh || true
                 EXTRA=""
                 if [ ! -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then
                   rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
@@ -727,7 +750,7 @@ jobs:
                 -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
                 -e LD_PRELOAD=/diag/killshim.so -e DIAG_OUT=/diag-out \
                 "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
-                bash -c 'if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -batchmode -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
+                bash -c 'bash /diag/liccfg.sh || true; if [ -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then exit 0; fi; timeout -k 15 300 unity-editor -batchmode -serial "$UNITY_SERIAL" -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -quit -logFile -') || lcid=
               if [ -n "$lcid" ]; then arc=$(docker wait "$lcid"); else arc=199; fi
               if [ "$arc" -eq 198 ]; then
                 echo "unity licence activation failed deterministically (rc=$arc) - not retrying" >&2
@@ -764,6 +787,7 @@ jobs:
                   -e LD_PRELOAD=/diag/killshim.so -e DIAG_OUT=/diag-out \
                   "${{ env.UNITY_LINUX_IMAGE_TAG }}" \
                   bash -c '
+                    bash /diag/liccfg.sh || true
                     # BLK-014: setsid puts the editor in its own process group, so
                     # the watchdog killpg kills only that group — this wrapper is the
                     # container PID 1 and survives to pick the exit code itself.
