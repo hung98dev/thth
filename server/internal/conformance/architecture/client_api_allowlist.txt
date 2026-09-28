@@ -3,4 +3,3 @@
 # An entry must name a real file under client/Assets/Scripts/ and a real rule id;
 # a reasonless or misspelt entry fails Q4 (a dead exemption is a silent gap).
 client/Assets/Scripts/Core/Runtime/FrameLoop.cs:update_outside_frameloop  FrameLoop is the single allowed site of the Unity Update/FixedUpdate/LateUpdate/OnGUI callbacks; it is the composition root's frame driver that calls IFrameSystem.Tick (PERF-020, engineering_conventions.md §2.5).
-client/Assets/Scripts/Core/Rendering/ContactShadow.cs:update_outside_frameloop  Awake builds the shared contact-shadow quad mesh once at actor load (ADR-0056); a lifecycle init hook, not a per-frame frame callback.
