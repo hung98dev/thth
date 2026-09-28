@@ -668,7 +668,7 @@ func TestUnityTestContainersStartFromFreshState(t *testing.T) {
 	}
 	block := wf[start:idx]
 	for _, want := range []string{
-		`sudo rm -rf "$att" client/Temp`,
+		`sudo rm -rf "$att" client/Temp client/Library/DataStore client/Library/ArtifactDB-lock client/Library/SourceAssetDB-lock`,
 		`cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"`,
 		`-v "$att/unity-lic:/root/.local/share/unity3d"`,
 		`-v "$att/unity-cfg:/root/.config/unity3d"`,
@@ -677,5 +677,17 @@ func TestUnityTestContainersStartFromFreshState(t *testing.T) {
 		if !strings.Contains(block, want) {
 			t.Errorf("test container setup missing %q (BLK-017)", want)
 		}
+	}
+}
+
+// BLK-017: container writes are root-owned; a non-sudo retry wipe fails
+// silently and every retry reuses the poisoned Library.
+func TestUnityRetryWipeUsesSudo(t *testing.T) {
+	wf := workflowText(t)
+	if strings.Contains(wf, "find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null") {
+		t.Error("Library retry wipe must not silence permission errors (BLK-017)")
+	}
+	if strings.Count(wf, "sudo find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} +") < 2 {
+		t.Error("Linux materialization and test retries must wipe the root-owned Library with sudo (BLK-017)")
 	}
 }
