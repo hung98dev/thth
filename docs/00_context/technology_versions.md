@@ -157,6 +157,7 @@ CI runs only on GitHub-hosted `ubuntu-24.04` and `windows-2022` runners; each jo
 | Component | Canonical version | Rule |
 |---|---|---|
 | Art/audio generation tool | owner-provided | Required only by final-art tasks (`IMP-071`, `IMP-072`, `IMP-073`, `IMP-074`, `IMP-075`, `IMP-104`, `IMP-105`). The owner records tool name, exact version/model, access method and commercial terms here and in Owner Setup (`../10_implementation/audit_gates.md`). Until then those tasks are not ready; the first claim attempt opens a scoped `OPS-xxx` that blocks only them. Other tasks use the placeholder regime of `../07_content/presentation_asset_manifest.md` §4 until the art-final milestone (M10). |
+| Art tool selection criteria (ADR-0076) | owner-provided tool must satisfy all | reference-image or style-adapter input; reproducible seed; PNG output with alpha; terms permitting commercial distribution; exact model/version identifiable. Style is locked by Style Packs (`../07_content/presentation_asset_manifest.md` §3.8); no LoRA training at launch. Animation uses the pinned PSD Importer 15.0.0 + 2D Animation 16.0.0 (skeletal) or frame-by-frame per §3.7; no normal/mask maps at launch. |
 
 # Production Operations (ADR-0066)
 

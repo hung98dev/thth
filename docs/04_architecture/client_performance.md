@@ -109,7 +109,7 @@ Canonical runtime architecture that keeps frames smooth without GPU timing in CI
 5. **No first-use hitch** (`PERF-018`): map load pre-sizes that map's pools (actors, projectiles, VFX, floating text, UI rows) from content counts. On the loading screen it warms shader variants (`ShaderVariantCollection.WarmUp`, plus `GraphicsStateCollection` warm-up where the graphics API supports it) and loads the map's Addressables group before the screen closes.
 6. **Rendering discipline** (`PERF-021`):
    - Materials and shaders are SRP-Batcher compatible.
-   - One SpriteAtlas per region/actor group.
+   - One SpriteAtlas per region/actor group, `Padding >= 4` texture px; the asset validator re-checks edge fringe on the decompressed ASTC/BC7 result (`../07_content/presentation_asset_manifest.md` §3.11).
    - No runtime material instances: no `.material` getter and no `new Material` in gameplay; per-renderer tint goes through `SpriteRenderer.color`.
    - Y-sorting uses the 2D renderer's custom transparency sort axis `(0, 1, 0)` and never per-frame script sorting.
    - Sprites whose longer texture side is >= 256 texture px and that have transparent margins use mesh type `Tight`; all others use `Full Rect` (`../07_content/presentation_asset_manifest.md` §3).
