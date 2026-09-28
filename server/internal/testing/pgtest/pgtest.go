@@ -125,10 +125,22 @@ func StartEDB(t testing.TB, binDir string) string {
 	}
 
 	port := freePort(t)
-	out, err = exec.Command(exePath(binDir, "pg_ctl"),
-		"-D", dataDir, "-o", "-p "+strconv.Itoa(port),
-		"-l", logFile, "-w", "-t", "120", "start").CombinedOutput()
+	// pg_ctl's output goes to a file, not a pipe: the postgres daemon it
+	// launches inherits its std handles, so a pipe captured by
+	// CombinedOutput would never reach EOF and Run would hang.
+	ctlLog := filepath.Join(dir, "pg_ctl.log")
+	ctlOut, err := os.Create(ctlLog)
 	if err != nil {
+		t.Fatalf("pgtest: create pg_ctl log: %v", err)
+	}
+	defer ctlOut.Close()
+	cmd := exec.Command(exePath(binDir, "pg_ctl"),
+		"-D", dataDir, "-o", "-p "+strconv.Itoa(port),
+		"-l", logFile, "-w", "-t", "120", "start")
+	cmd.Stdout = ctlOut
+	cmd.Stderr = ctlOut
+	if err := cmd.Run(); err != nil {
+		out, _ := os.ReadFile(ctlLog)
 		t.Fatalf("pgtest: pg_ctl start: %v\n%s", err, out)
 	}
 	t.Cleanup(func() {
