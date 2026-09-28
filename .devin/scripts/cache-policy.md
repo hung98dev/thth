@@ -71,10 +71,13 @@ the `commit unity-materialized` drift check, or the licence activation.
 - Evidence manifests (`gates.MergeReports`) decode reports into the fixed
   `VerifyReport` struct, so `cached_steps` is dropped before the manifest —
   evidence identity is cache-independent (CI-004).
-- The evidence-manifest job's `verify.ps1 -MergeReports -Task` early-exit on
-  branches whose head ref has no `IMP-\d+` (claim//ops//spec/status PRs) is
-  the same contract: it skips *report generation* only, never a verify job.
-  The job produces no manifest on those branches by design — not a failure.
+- The Linux required job's evidence step (`verify.ps1 -MergeReports -Task`,
+  ADR-0075) early-exits on branches whose head ref has no `IMP-\d+`
+  (claim/ops/spec/status PRs): it skips *manifest generation* only, never a
+  gate. No manifest on those branches is by design — not a failure.
+- The `Unity (<os>)` job ships its `cache-telemetry.jsonl` inside
+  `unity-test-results-<os>`; the required job appends it to its own telemetry
+  before the verifier folds `cached_steps` (ADR-0075).
 
 ## Postgres service container
 
@@ -85,4 +88,4 @@ risk. The Windows EDB binaries ARE cached (large download, sha-asserted).
 
 ## Main-scope warming (ADR-0073)
 
-Caches saved by a PR run are visible only to that PR. `.github/workflows/cache_warm.yml` saves the pure-pin caches (`unity-editor`, `cli-tools`, `edb`, `go-build`) on pushes to `main`; its cache steps must equal a `verify.yml` cache step byte-for-byte (key + path, `TestCacheWarmMirrorsVerifyCaches`). `unity-library` is never warmed there.
+Caches saved by a PR run are visible only to that PR. `.github/workflows/cache_warm.yml` saves the pure-pin caches (`unity-editor`, `cli-tools`, `edb`, `go-build`) on pushes to `main`; its cache steps must equal a `verify.yml` cache step byte-for-byte (key + path, `TestCacheWarmMirrorsVerifyCaches`). `unity-library` is warmed only by its `warm-library-*` jobs: exact key (no `restore-keys`, BLK-005), `lookup-only` so a hit downloads nothing, materialization identical to `verify.yml` on a miss; they alone read the Unity licence secrets, safe because the workflow never runs on `pull_request`. Keep-alive: `cache_warm.yml` also runs every 5 days (`schedule`, default branch only) and fully restores every main-scope cache (Library included: `lookup-only` is false on `schedule`) so the 7-day unused-cache eviction never fires; missing entries are re-created. `.github/workflows/cache_prune.yml` (push to `main` + hourly) deletes `refs/pull/<n>/merge` caches of closed PRs so closed-PR entries never crowd the repository cache budget: 10 GB is free; above that saves are billed and, with the configured spending budget, the cache turns read-only (observed 2026-09-28 at 10.8 GB: `Cache reservation failed: You have reached your configured budget`).
