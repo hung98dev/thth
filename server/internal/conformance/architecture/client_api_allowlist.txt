@@ -1,0 +1,5 @@
+# Client API fence allowlist — CODE-005 / PERF-020 (engineering_conventions.md §2.5).
+# Format: <repo-relative .cs path>:<rule-id>  <reason>   (two+ spaces before the reason).
+# An entry must name a real file under client/Assets/Scripts/ and a real rule id;
+# a reasonless or misspelt entry fails Q4 (a dead exemption is a silent gap).
+client/Assets/Scripts/Core/Runtime/FrameLoop.cs:update_outside_frameloop  FrameLoop is the single allowed site of the Unity Update/FixedUpdate/LateUpdate/OnGUI callbacks; it is the composition root's frame driver that calls IFrameSystem.Tick (PERF-020, engineering_conventions.md §2.5).
