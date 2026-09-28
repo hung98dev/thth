@@ -405,7 +405,8 @@ jobs:
                 # container then self-kills at its first domain reload. Only the
                 # activated licence file carries over.
                 att="$RUNNER_TEMP/unity-att"
-                rm -rf "$att" client/Temp
+                # container writes are root-owned: remove with sudo
+                sudo rm -rf "$att" client/Temp
                 mkdir -p "$att/unity-lic/Unity" "$att/unity-cfg" "$att/unity-cache"
                 cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"
                 # /root/.cache writable for the licensing client (BLK-009).

@@ -668,7 +668,7 @@ func TestUnityTestContainersStartFromFreshState(t *testing.T) {
 	}
 	block := wf[start:idx]
 	for _, want := range []string{
-		`rm -rf "$att" client/Temp`,
+		`sudo rm -rf "$att" client/Temp`,
 		`cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"`,
 		`-v "$att/unity-lic:/root/.local/share/unity3d"`,
 		`-v "$att/unity-cfg:/root/.config/unity3d"`,
