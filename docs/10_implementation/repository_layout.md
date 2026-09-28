@@ -95,7 +95,8 @@ client/
 ├── Assets/
 │   ├── AddressableAssetsData/         # IMP-063 (shared registry, see Ownership Rules)
 │   ├── Art/
-│   │   ├── Provenance/                # register + schema IMP-070, merged by IMP-076; fragments/<name>.json one per art packet; cultural_review.md IMP-074
+│   │   ├── Provenance/                # register + schema IMP-070, merged by IMP-076; fragments/<name>.json one per art packet; cultural_review.md IMP-074; terms/<fragment>/ per art packet (ADR-0076)
+│   │   ├── StyleRef/<fragment>/        # Style Packs, LFS, not in build; one dir per art packet (ADR-0076)
 │   │   ├── Actors/Players/            # IMP-071
 │   │   ├── Actors/Creatures/          # IMP-104
 │   │   ├── World/                     # IMP-072
@@ -262,6 +263,19 @@ Generated from `task_queue.md` `owned_paths`.
 | `client/Assets/Art/Provenance/fragments/interface.json` | IMP-073 |
 | `client/Assets/Art/Provenance/fragments/world.json` | IMP-072 |
 | `client/Assets/Art/Provenance/register.schema.json` | IMP-070 |
+| `client/Assets/Art/Provenance/terms/actors_creatures/` | IMP-104 |
+| `client/Assets/Art/Provenance/terms/actors_players/` | IMP-071 |
+| `client/Assets/Art/Provenance/terms/audio/` | IMP-075 |
+| `client/Assets/Art/Provenance/terms/cosmetics/` | IMP-074 |
+| `client/Assets/Art/Provenance/terms/instances/` | IMP-105 |
+| `client/Assets/Art/Provenance/terms/interface/` | IMP-073 |
+| `client/Assets/Art/Provenance/terms/world/` | IMP-072 |
+| `client/Assets/Art/StyleRef/actors_creatures/` | IMP-104 |
+| `client/Assets/Art/StyleRef/actors_players/` | IMP-071 |
+| `client/Assets/Art/StyleRef/cosmetics/` | IMP-074 |
+| `client/Assets/Art/StyleRef/instances/` | IMP-105 |
+| `client/Assets/Art/StyleRef/interface/` | IMP-073 |
+| `client/Assets/Art/StyleRef/world/` | IMP-072 |
 | `client/Assets/Art/UI/` | IMP-073 |
 | `client/Assets/Art/VFX/` | IMP-073 |
 | `client/Assets/Art/World/` | IMP-072 |

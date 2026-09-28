@@ -3953,7 +3953,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../04_architecture/client.md`, `../04_architecture/client_assets.md`, `../04_architecture/client_localization.md`, `../04_architecture/client_experience_contract.md`, `../04_architecture/physics_geometry_contract.md`, `../07_content/presentation_asset_manifest.md`, `../07_content/world_route_catalog.md`, `../07_content/dungeon_catalog.md`, `../03_systems/pvp.md`, `../03_systems/guild_war.md`, `../05_network/versioning.md`, `../08_scale_ops/deployment.md`, `../00_context/technology_versions.md`, `../04_architecture/client_performance.md`]
-adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0068-implementation-packet-readiness-corrections.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0073-ci-speed-native-unity-windows-and-path-scoped-unity-gates.md`]
+adrs: [`0006-unity-go-postgresql-stack.md`, `0010-exact-technology-version-pinning.md`, `0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0052-single-launch-world.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0059-client-smoothness-by-construction-and-machine-enforced-code-quality.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0068-implementation-packet-readiness-corrections.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0073-ci-speed-native-unity-windows-and-path-scoped-unity-gates.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-020, IMP-024, IMP-025, IMP-028, IMP-041, IMP-042, IMP-076, IMP-084, IMP-085, IMP-086, IMP-087, IMP-088, IMP-089, IMP-090, IMP-093, IMP-099, IMP-103]
 owned_paths: [`client/BuildProfiles/`, `client/Assets/Scenes/Bootstrap/`, `client/Assets/Scripts/App/`, `client/Assets/Tests/PlayMode/AppComposition/`, `scripts/verify_client_build.ps1`]
 forbidden_paths: [`server/`]
@@ -3978,11 +3978,13 @@ consumers_checked: [docs/02_world/maps_zones.md, docs/02_world/dungeons.md, docs
 - PERF-007 (desktop): PlayMode tests in category `Performance` on the Linux job (llvmpipe, ADR-0058), Addressables play mode `Use Existing Build`, median of 3 repetitions, markers per `../04_architecture/client_performance.md` § Load and Transfer Times (ADR-0066): login to in-world <= 8 s, same-region transfer <= 3 s, new-region transfer <= 6 s, reconnect resume <= 5 s; desktop cold start is not CI-gated (Android cold start is IMP-096),
 - no build output or cache is committed; `git status` is clean after the build.
 
+- ADR-0076: the release checklist includes platform AI-content disclosure (Steam pre-generated AI content disclosure; other stores per their current policy) derived from `AI_CREATED` rows of the register.
 ## Tests
 - `scripts/verify_client_build.ps1`: clean IL2CPP Windows (Windows job) and Android (Linux job) smoke builds and package verification (ADR-0058).
 - `client/Assets/Tests/PlayMode/AppComposition/AppCompositionTests.cs`: production bootstrap, reference viewport/camera, 33 playable-scene registrations, feature-registration coverage, and TestSingleFrameLoopComposition.
 - `client/Assets/Tests/PlayMode/AppComposition/LoadTimeTests.cs`: TestLoginToWorld, TestMapTransferTimes, TestReconnectResumeTime, TestLoadTimeMarkers (PERF-007).
 
+- TestReleaseChecklistAiDisclosure (ADR-0076) in the packet's release test file.
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
 evidence_location: "docs/10_implementation/evidence/IMP-067/"
@@ -3998,7 +4000,7 @@ claimed_at: "2026-09-28T00:00:00Z"
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md`, `../04_architecture/physics_geometry_contract.md`, `repository_layout.md`]
-adrs: [`0014-unity-addressables-asset-delivery.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0068-implementation-packet-readiness-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0014-unity-addressables-asset-delivery.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0050-windows-only-ci-and-auto-merge.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0068-implementation-packet-readiness-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-063, IMP-101]
 owned_paths: [`client/Assets/Art/Provenance/asset_source_register.json`, `client/Assets/Art/Provenance/register.schema.json`, `client/Assets/Scripts/Core/Assets/Editor/AssetProduction/`, `client/Assets/Scenes/Review/`, `client/Assets/Tests/EditMode/AssetProvenance/`, `client/Assets/Tests/EditMode/CutoutQualityGate/`, `client/Assets/Tests/EditMode/VolumeDepthGate/`]
 forbidden_paths: [`server/`, `proto/`]
@@ -4019,11 +4021,15 @@ consumers_checked: [docs/07_content/presentation_asset_manifest.md, docs/04_arch
 - Validator uses pinned Unity/project tooling only; no new runtime/package dependency.
 - `client/Assets/Scenes/Review/` hosts the Visual Review scenes (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%); the Linux CI job renders them under xvfb + Mesa llvmpipe (`renderer=llvmpipe`, ADR-0058) and uploads artifact `visual-review`; screenshots are review artifacts referenced by the evidence manifest, never committed or used as evidence.
 
+- ADR-0076: implement `ART-001` (corner rule scoped by asset_class), `ART-002` (flat regions via Lab bins), `ART-003` (top light per hue cluster), `ART-004` (animation contract: clips, frames/fps, frame consistency, pivot), `ART-005` (Style Pack presence + palette gate), `ART-007` (tile seam, 9-slice border, VFX flipbook/blend/max_instances), `ART-008` (hitbox–silhouette alignment), `ART-009` (atlas padding >= 4 px, fringe re-check on decompressed ASTC/BC7) and `ART-012` (upscale rule; extended `generation_record`, `terms_snapshot_sha256`, `folklore_card` in the register schema) in the Editor validator with the §3.6 fixtures (`gradient_smooth_pass`, `flat_fill_fail`, `dark_hair_toplit_pass`, `bottom_lit_fail`, `tile_solid_edge_pass`); the Review scenes add the `960x540` LOW render with a 2 s motion clip (`ART-006`) and a contact sheet beside Style Pack anchors plus the 0/1/2 rubric template (`ART-011`); `folklore_card` is required for cultural entities (`ART-010`).
 ## Tests
 - `client/Assets/Tests/EditMode/CutoutQualityGate/CutoutQualityGateTests.cs`: one passing clean sprite and one failing fixture per §3.2 rule.
 - `client/Assets/Tests/EditMode/VolumeDepthGate/VolumeDepthGateTests.cs`: one passing sprite/layer set and one failing fixture per §3.6 rule; asset_class scoping per §3.1a; TestKMeansDeterministicInit, TestEdgeBandDefinition, TestTranslucentMaskScope, TestSpiritBeastAndCellRefSizes (ADR-0071).
 - `client/Assets/Tests/EditMode/AssetProvenance/AssetProvenanceTests.cs`: valid AI/CC0/CC-BY/OFL rows, missing row, duplicate path or invalid key, changed file hash, disallowed license, pending/rejected record, missing attribution/font notice and generated-input provenance.
 
+- `client/Assets/Tests/EditMode/VolumeDepthGate/VolumeDepthGateTests.cs`: TestFlatRegionLabBinsGradientPasses, TestTopLightPerHueClusterDarkHairPasses, TestPaletteGateAgainstStylePack, TestFrameConsistencyAndPivot, TestTileSeam, TestNineSliceBorder, TestVfxFlipbookLimits, TestHitboxSilhouetteAlignment, TestReviewLowProfileMotionAndRubric (ART-002, ART-003, ART-004, ART-005, ART-006, ART-007, ART-008, ART-011).
+- `client/Assets/Tests/EditMode/CutoutQualityGate/CutoutQualityGateTests.cs`: TestCornerRuleScopedByAssetClass, TestAtlasPaddingAndPostCompressionFringe (ART-001, ART-009).
+- `client/Assets/Tests/EditMode/AssetProvenance/AssetProvenanceTests.cs`: TestExtendedGenerationRecordAndTermsSnapshot, TestUpscaleRecordedInChanges, TestFolkloreCardRequiredForCulturalEntities (ART-010, ART-012).
 generated_artifacts: []
 cleanup_obligations: [Remove test-only asset imports and temporary credits output.]
 evidence_location: "docs/10_implementation/evidence/IMP-070/"
@@ -4037,9 +4043,9 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../01_gameplay/classes.md`, `../04_architecture/physics_geometry_contract.md`]
-adrs: [`0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-063, IMP-070]
-owned_paths: [`client/Assets/Art/Actors/Players/`, `client/Assets/Tests/EditMode/PlayerArtCoverage/`, `client/Assets/Art/Provenance/fragments/actors_players.json`]
+owned_paths: [`client/Assets/Art/Actors/Players/`, `client/Assets/Tests/EditMode/PlayerArtCoverage/`, `client/Assets/Art/Provenance/fragments/actors_players.json`, `client/Assets/Art/StyleRef/actors_players/`, `client/Assets/Art/Provenance/terms/actors_players/`]
 forbidden_paths: [`server/`, `proto/`]
 contract_inputs: [five class identities, launch monster/boss/beast rosters, canonical size profiles and source policy]
 contract_outputs: [production actor sprites/animations, Addressable mappings, approved provenance rows]
@@ -4051,15 +4057,17 @@ consumers_checked: [docs/07_content/monster_catalog.md, docs/07_content/boss_cat
 
 ## Acceptance
 - final-art task (ADR-0072): claimed only after the owner-provided art/audio generation tool is recorded in `../00_context/technology_versions.md` § Content production tools and Owner Setup; every `AI_CREATED` provenance record names exactly that tool and version,
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate per its `asset_class` scope (§3.1a) with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every class/player actor ID resolves to an intentional visual (including explicit shared variants); no placeholder/default-tool sprite remains.
 - Idle/move/attack/hit/defeat and other states required by the owning runtime/UI contract are present; animation timing does not assert server gameplay results.
 - Class skill silhouettes remain legible at `1280x720` and mobile layout; Vietnamese folklore silhouette/identity is reviewed.
 
+- ADR-0076: skeletal rig per §3.7 (fixed PSB layer names, one shared skeleton for five classes, Sprite Library categories for cosmetics) with every `CHARACTER` clip; Style Pack under `client/Assets/Art/StyleRef/actors_players/` with class turnarounds approved before sprite production; palette gate, hitbox–silhouette alignment, 960x540 review and rubric pass; each class carries a `folklore_card`.
 ## Tests
 - `client/Assets/Tests/EditMode/PlayerArtCoverage/PlayerArtCoverageTests.cs`: class-to-key coverage, required clips, import scale/cell/pivot, provenance/hash and no-placeholder checks.
 
 - `client/Assets/Tests/EditMode/PlayerArtCoverage/PlayerArtCoverageTests.cs`: TestAiCreatedToolMatchesOwnerSetup (ADR-0072).
+- `client/Assets/Tests/EditMode/PlayerArtCoverage/PlayerArtCoverageTests.cs`: TestSkeletalRigLayersAndClips, TestStylePackAndPaletteGate, TestHitboxSilhouetteAlignment, TestFolkloreCards (ADR-0076).
 generated_artifacts: []
 cleanup_obligations: [Remove unused source imports and superseded placeholders from release groups.]
 evidence_location: "docs/10_implementation/evidence/IMP-071/"
@@ -4073,9 +4081,9 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/monster_catalog.md`, `../07_content/boss_catalog.md`, `../07_content/spirit_beast_catalog.md`, `../04_architecture/physics_geometry_contract.md`]
-adrs: [`0031-exp-scale-x100-and-corrected-act-budgets.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0068-implementation-packet-readiness-corrections.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0031-exp-scale-x100-and-corrected-act-budgets.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0068-implementation-packet-readiness-corrections.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-063, IMP-070]
-owned_paths: [`client/Assets/Art/Actors/Creatures/`, `client/Assets/Tests/EditMode/CreatureArtCoverage/`, `client/Assets/Art/Provenance/fragments/actors_creatures.json`]
+owned_paths: [`client/Assets/Art/Actors/Creatures/`, `client/Assets/Tests/EditMode/CreatureArtCoverage/`, `client/Assets/Art/Provenance/fragments/actors_creatures.json`, `client/Assets/Art/StyleRef/actors_creatures/`, `client/Assets/Art/Provenance/terms/actors_creatures/`]
 forbidden_paths: [`server/`, `proto/`]
 contract_inputs: [monster/boss/Spirit Beast rosters, size profiles, art direction]
 contract_outputs: [final creature sheets/animations, Addressable keys, provenance fragment]
@@ -4087,15 +4095,17 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 
 ## Acceptance
 - final-art task (ADR-0072): claimed only after the owner-provided art/audio generation tool is recorded in `../00_context/technology_versions.md` § Content production tools and Owner Setup; every `AI_CREATED` provenance record names exactly that tool and version,
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate per its `asset_class` scope (§3.1a) with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every monster, boss and Spirit Beast ID resolves to an intentional visual (including explicit shared variants); no placeholder sprite remains.
 - Idle/move/attack/hit/defeat states required by the runtime/UI contract are present; animation timing does not assert server results.
 - Boss/elite telegraphs remain legible at `1280x720` and mobile layout; Vietnamese folklore silhouette/identity is reviewed.
 
+- ADR-0076: skeletal rigs for `MONSTER_MEDIUM`+ and bosses (incl. `phase_transition` clips), frame-by-frame for `MONSTER_SMALL`/`SPIRIT_BEAST` per §3.7; Style Packs under `client/Assets/Art/StyleRef/actors_creatures/` (boss turnarounds approved first); palette gate, hitbox–silhouette alignment and frame-consistency pass; every monster/boss/beast carries a `folklore_card` with no forbidden motif.
 ## Tests
 - `client/Assets/Tests/EditMode/CreatureArtCoverage/CreatureArtCoverageTests.cs`: roster-to-key coverage, required clips, import scale/cell/pivot, shared-variant mapping, provenance/hash and no-placeholder checks.
 
 - `client/Assets/Tests/EditMode/CreatureArtCoverage/CreatureArtCoverageTests.cs`: TestAiCreatedToolMatchesOwnerSetup (ADR-0072).
+- `client/Assets/Tests/EditMode/CreatureArtCoverage/CreatureArtCoverageTests.cs`: TestAnimationTechniqueAndClipsPerSizeProfile, TestStylePackAndPaletteGate, TestFrameConsistency, TestFolkloreCardsNoForbiddenMotif (ADR-0076).
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
 evidence_location: "docs/10_implementation/evidence/IMP-104/"
@@ -4109,9 +4119,9 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/world_route_catalog.md`, `../02_world/maps_zones.md`, `../04_architecture/physics_geometry_contract.md`]
-adrs: [`0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-062, IMP-063, IMP-070]
-owned_paths: [`client/Assets/Art/World/`, `client/Assets/Scenes/World/`, `client/Assets/Tests/EditMode/WorldArtCoverage/`, `client/Assets/Art/Provenance/fragments/world.json`]
+owned_paths: [`client/Assets/Art/World/`, `client/Assets/Scenes/World/`, `client/Assets/Tests/EditMode/WorldArtCoverage/`, `client/Assets/Art/Provenance/fragments/world.json`, `client/Assets/Art/StyleRef/world/`, `client/Assets/Art/Provenance/terms/world/`]
 forbidden_paths: [`server/internal/sim/spatial/maps/`, `client/Assets/Scenes/Collision/`, `proto/`]
 contract_inputs: [locked scene roster/topology, exported geometry, size/viewport contract, source policy]
 contract_outputs: [authored production scenes, tile/prop/parallax sets, approved provenance rows]
@@ -4124,16 +4134,18 @@ consumers_checked: [docs/07_content/world_route_catalog.md, docs/07_content/dung
 
 ## Acceptance
 - final-art task (ADR-0072): claimed only after the owner-provided art/audio generation tool is recorded in `../00_context/technology_versions.md` § Content production tools and Owner Setup; every `AI_CREATED` provenance record names exactly that tool and version,
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate per its `asset_class` scope (§3.1a) with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every scene has a unique stable Addressable key and visual identity; different map shape/size/branches/vertical tiers match catalogs and exported geometry.
 - Foreground/parallax and telegraph contrast remain readable; atlas/bundle size and region unload budgets pass.
 - Visual editing does not silently alter canonical collision, spawn anchors or server geometry. Any needed geometry change returns to its owning spec/task.
 - every visual scene matches the bounds, anchors and walkable layout of its IMP-062 collision scene and carries no `ServerGeometry` collider.
 
+- ADR-0076: one Style Pack per region under `client/Assets/Art/StyleRef/world/`; `TILE` seam rule and palette gate pass; every map carries a `folklore_card`.
 ## Tests
 - `client/Assets/Tests/EditMode/WorldArtCoverage/WorldArtCoverageTests.cs`: 24-scene roster, Addressable keys, dimensions/topology/geometry consistency, no single-bitmap substitutes, bundle budget and provenance checks.
 
 - `client/Assets/Tests/EditMode/WorldArtCoverage/WorldArtCoverageTests.cs`: TestAiCreatedToolMatchesOwnerSetup (ADR-0072).
+- TestRegionStylePacksAndTileSeams, TestMapFolkloreCards (ADR-0076) in the packet's coverage test file.
 generated_artifacts: []
 cleanup_obligations: [Remove scene placeholder layers and unused imported art.]
 evidence_location: "docs/10_implementation/evidence/IMP-072/"
@@ -4147,9 +4159,9 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/dungeon_catalog.md`, `../03_systems/pvp.md`, `../03_systems/guild_war.md`, `../04_architecture/physics_geometry_contract.md`]
-adrs: [`0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0036-seasons-as-launch-infrastructure.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0068-implementation-packet-readiness-corrections.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-062, IMP-063, IMP-070]
-owned_paths: [`client/Assets/Art/Instances/`, `client/Assets/Scenes/Dungeons/`, `client/Assets/Scenes/Finale/`, `client/Assets/Scenes/Competitive/`, `client/Assets/Tests/EditMode/InstanceArtCoverage/`, `client/Assets/Art/Provenance/fragments/instances.json`]
+owned_paths: [`client/Assets/Art/Instances/`, `client/Assets/Scenes/Dungeons/`, `client/Assets/Scenes/Finale/`, `client/Assets/Scenes/Competitive/`, `client/Assets/Tests/EditMode/InstanceArtCoverage/`, `client/Assets/Art/Provenance/fragments/instances.json`, `client/Assets/Art/StyleRef/instances/`, `client/Assets/Art/Provenance/terms/instances/`]
 forbidden_paths: [`server/internal/sim/spatial/maps/`, `client/Assets/Scenes/Collision/`, `proto/`]
 contract_inputs: [dungeon/finale/competitive space profiles, exported geometry]
 contract_outputs: [final instance scenes, Addressable keys, provenance fragment]
@@ -4162,15 +4174,17 @@ consumers_checked: [docs/10_implementation/milestones.md, docs/10_implementation
 
 ## Acceptance
 - final-art task (ADR-0072): claimed only after the owner-provided art/audio generation tool is recorded in `../00_context/technology_versions.md` § Content production tools and Owner Setup; every `AI_CREATED` provenance record names exactly that tool and version,
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate per its `asset_class` scope (§3.1a) with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every instance scene has a unique stable Addressable key; shape/size/branches/vertical tiers match catalogs and exported geometry; competitive scenes keep mirror parity.
 - Telegraph contrast remains readable; atlas/bundle size budgets pass; visual editing never alters collision, anchors or server geometry.
 - every visual scene matches the bounds, anchors and walkable layout of its IMP-062 collision scene and carries no `ServerGeometry` collider.
 
+- ADR-0076: Style Packs for dungeons/finale/PvP spaces under `client/Assets/Art/StyleRef/instances/`; `TILE` seam rule and palette gate pass; every instance space carries a `folklore_card`.
 ## Tests
 - `client/Assets/Tests/EditMode/InstanceArtCoverage/InstanceArtCoverageTests.cs`: nine-scene roster, Addressable keys, geometry consistency, mirror parity, bundle budget and provenance checks.
 
 - `client/Assets/Tests/EditMode/InstanceArtCoverage/InstanceArtCoverageTests.cs`: TestAiCreatedToolMatchesOwnerSetup (ADR-0072).
+- TestInstanceStylePacksAndTileSeams, TestInstanceFolkloreCards (ADR-0076) in the packet's coverage test file.
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
 evidence_location: "docs/10_implementation/evidence/IMP-105/"
@@ -4184,9 +4198,9 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/class_skill_catalog.md`, `../07_content/item_catalog.md`, `../07_content/equipment_catalog.md`, `../04_architecture/client_localization.md`]
-adrs: [`0016-twelve-skill-pool-upgradeable-basics.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0063-economy-contract-reconciliation.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0016-twelve-skill-pool-upgradeable-basics.md`, `0037-reflect-lifesteal-absorb-heal-reduction-stats.md`, `0046-reference-viewport-entity-scale-and-map-geometry.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0063-economy-contract-reconciliation.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-063, IMP-070]
-owned_paths: [`client/Assets/Art/UI/`, `client/Assets/Art/Items/`, `client/Assets/Art/VFX/`, `client/Assets/Tests/EditMode/InterfaceArtCoverage/`, `client/Assets/Art/Provenance/fragments/interface.json`]
+owned_paths: [`client/Assets/Art/UI/`, `client/Assets/Art/Items/`, `client/Assets/Art/VFX/`, `client/Assets/Tests/EditMode/InterfaceArtCoverage/`, `client/Assets/Art/Provenance/fragments/interface.json`, `client/Assets/Art/StyleRef/interface/`, `client/Assets/Art/Provenance/terms/interface/`]
 forbidden_paths: [`server/`, `proto/`]
 contract_inputs: [release UI states, skill/item/equipment IDs, presentation size budgets, source policy]
 contract_outputs: [production UI/font/icon art and skill telegraphs/VFX, approved provenance rows]
@@ -4198,15 +4212,17 @@ consumers_checked: [docs/07_content/class_skill_catalog.md, docs/07_content/item
 
 ## Acceptance
 - final-art task (ADR-0072): claimed only after the owner-provided art/audio generation tool is recorded in `../00_context/technology_versions.md` § Content production tools and Owner Setup; every `AI_CREATED` provenance record names exactly that tool and version,
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate per its `asset_class` scope (§3.1a) with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every release UI control/state and relevant item/equipment/skill ID resolves; no tofu, unlabelled placeholder icon or missing telegraph.
 - VFX shape/timing visually communicates the canonical skill geometry but cannot change hitboxes, duration or target selection.
 - Small-screen contrast/readability and color-independent dangerous telegraphs pass visual review.
 
+- ADR-0076: gates apply per `asset_class` scope (§3.1a), not uniformly; 9-slice borders declared and stretch bands meet §3.9; VFX flipbooks meet §3.9 (<= 16 frames, <= 1024x1024, 12/24 fps, declared blend and max_instances); font chain covers the Vietnamese glyph set, text is NFC and stacked diacritics do not clip (`../04_architecture/client_localization.md` § Fonts); Style Pack under `client/Assets/Art/StyleRef/interface/`.
 ## Tests
 - `client/Assets/Tests/EditMode/InterfaceArtCoverage/InterfaceArtCoverageTests.cs`: catalog/UI-to-key coverage, font glyph coverage, VFX mapping, mobile readability fixtures, import/bundle budgets and provenance checks.
 
 - `client/Assets/Tests/EditMode/InterfaceArtCoverage/InterfaceArtCoverageTests.cs`: TestAiCreatedToolMatchesOwnerSetup (ADR-0072).
+- TestAssetClassGateScope, TestNineSliceBordersDeclared, TestVfxFlipbookLimits, TestVietnameseGlyphSetNfc, TestStackedDiacriticsDoNotClip (ADR-0076) in the packet's coverage test file.
 generated_artifacts: []
 cleanup_obligations: [Remove temporary icons, fonts and unused VFX materials.]
 evidence_location: "docs/10_implementation/evidence/IMP-073/"
@@ -4220,9 +4236,9 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../07_content/cosmetic_catalog.md`, `../03_systems/cosmetics.md`]
-adrs: [`0053-durable-contract-reconciliation.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0063-economy-contract-reconciliation.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0053-durable-contract-reconciliation.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0063-economy-contract-reconciliation.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-063, IMP-070]
-owned_paths: [`client/Assets/Art/Cosmetics/`, `client/Assets/Tests/EditMode/CosmeticArtCoverage/`, `client/Assets/Art/Provenance/fragments/cosmetics.json`, `client/Assets/Art/Provenance/cultural_review.md`]
+owned_paths: [`client/Assets/Art/Cosmetics/`, `client/Assets/Tests/EditMode/CosmeticArtCoverage/`, `client/Assets/Art/Provenance/fragments/cosmetics.json`, `client/Assets/Art/Provenance/cultural_review.md`, `client/Assets/Art/StyleRef/cosmetics/`, `client/Assets/Art/Provenance/terms/cosmetics/`]
 forbidden_paths: [`server/`, `proto/`]
 contract_inputs: [launch cosmetic entitlements and equip slots, cultural-review rule, source policy]
 contract_outputs: [production cosmetic visuals or explicit text/shared-art mappings, approved provenance rows]
@@ -4234,15 +4250,17 @@ consumers_checked: [docs/07_content/cosmetic_catalog.md, docs/03_systems/cosmeti
 
 ## Acceptance
 - final-art task (ADR-0072): claimed only after the owner-provided art/audio generation tool is recorded in `../00_context/technology_versions.md` § Content production tools and Owner Setup; every `AI_CREATED` provenance record names exactly that tool and version,
-- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
+- Every shipped texture is finished at its exact 2x size, passes the Cutout Quality Gate and the Volume & Depth Gate per its `asset_class` scope (§3.1a) with zero violations, follows the art direction in `presentation_asset_manifest.md` §3.5, and has Visual Review screenshots (1280x720, 1920x1080, 2400x1080; day/night; 100%/200%) approved by a different agent; screenshots are captured in the `client/Assets/Scenes/Review/` scenes (IMP-070) on the Linux CI job (llvmpipe) and attached as review artifacts, never committed or used as evidence (`presentation_asset_manifest.md` §3.1–3.3).
 - Every cosmetic ID renders the correct entitlement presentation and never changes gameplay collider/stats/equipment identity.
 - Culturally sensitive concepts have review evidence before production acceptance; no recognizable borrowed trademark, religious insignia or unlicensed reference.
 - No placeholder cosmetic ships; free-license/AI-tool rights and attribution are complete.
 
+- ADR-0076: cosmetic appearances bind to the shared character skeleton through Sprite Library categories using the fixed PSB layer names (§3.7); Style Pack under `client/Assets/Art/StyleRef/cosmetics/`; palette gate passes; each cosmetic of cultural origin carries a `folklore_card`.
 ## Tests
 - `client/Assets/Tests/EditMode/CosmeticArtCoverage/CosmeticArtCoverageTests.cs`: full ID-to-key/text/shared mapping, equip-slot preview, non-power invariant, cultural-review evidence and provenance coverage.
 
 - `client/Assets/Tests/EditMode/CosmeticArtCoverage/CosmeticArtCoverageTests.cs`: TestAiCreatedToolMatchesOwnerSetup (ADR-0072).
+- TestCosmeticSpriteLibraryBinding, TestCosmeticStylePackAndPalette, TestCosmeticFolkloreCards (ADR-0076) in the packet's coverage test file.
 generated_artifacts: []
 cleanup_obligations: [Remove rejected designs and superseded previews from release groups.]
 evidence_location: "docs/10_implementation/evidence/IMP-074/"
@@ -4256,9 +4274,9 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md`, `../00_context/constraints.md`]
-adrs: [`0014-unity-addressables-asset-delivery.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0014-unity-addressables-asset-delivery.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0066-measurable-client-gates-forced-cap-worst-case-drain-and-ops-stack.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-063, IMP-070]
-owned_paths: [`client/Assets/Audio/`, `client/Assets/Tests/EditMode/AudioAssetCoverage/`, `client/Assets/Art/Provenance/fragments/audio.json`]
+owned_paths: [`client/Assets/Audio/`, `client/Assets/Tests/EditMode/AudioAssetCoverage/`, `client/Assets/Art/Provenance/fragments/audio.json`, `client/Assets/Art/Provenance/terms/audio/`]
 forbidden_paths: [`server/`, `proto/`]
 contract_inputs: [release map/action/UI cue inventory, audio group budgets, source policy]
 contract_outputs: [production SFX/BGM and cue mappings, approved provenance rows]
@@ -4273,10 +4291,12 @@ consumers_checked: [docs/07_content/presentation_asset_manifest.md, docs/04_arch
 - All release map BGM and action/UI feedback cues resolve; BGM loops cleanly and streams under group budget, SFX do not clip or mask critical combat feedback.
 - No unlicensed recording, placeholder beep or generic borrowed soundtrack ships; attribution is complete where required.
 
+- ADR-0076: every `AI_CREATED` audio row records the extended `generation_record` and `terms_snapshot_sha256` with the snapshot stored under `client/Assets/Art/Provenance/terms/audio/`.
 ## Tests
 - `client/Assets/Tests/EditMode/AudioAssetCoverage/AudioAssetCoverageTests.cs`: cue/key coverage, loop and clip import settings, bundle/streaming budgets, source hash/license and no-placeholder checks.
 
 - `client/Assets/Tests/EditMode/AudioAssetCoverage/AudioAssetCoverageTests.cs`: TestAiCreatedToolMatchesOwnerSetup (ADR-0072).
+- TestAudioGenerationRecordAndTermsSnapshot (ADR-0076) in the packet's coverage test file.
 generated_artifacts: []
 cleanup_obligations: [Remove raw trial recordings and unused audio exports from release groups.]
 evidence_location: "docs/10_implementation/evidence/IMP-075/"
@@ -4290,7 +4310,7 @@ claimed_at: ""
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md`, `definition_of_done.md`]
-adrs: [`0014-unity-addressables-asset-delivery.md`, `0045-ci-evidence-without-self-referential-sha.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`]
+adrs: [`0014-unity-addressables-asset-delivery.md`, `0045-ci-evidence-without-self-referential-sha.md`, `0055-2x-texture-authoring-and-cutout-quality-gate.md`, `0056-volumetric-art-direction-and-2d-lighting.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0071-client-presentation-contract-reconciliation.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0076-ai-art-pipeline-consistency-animation-and-gate-corrections.md`]
 depends_on: [IMP-004, IMP-064, IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-104, IMP-105]
 owned_paths: [`client/Assets/Scripts/Core/Assets/Editor/AssetProduction/ReleaseAssetAudit.cs`, `client/Assets/Tests/EditMode/ReleaseAssetAudit/`, `client/Assets/Notices/THIRD_PARTY_ASSETS.txt`, `client/Assets/Art/Provenance/asset_source_register.json`, `client/Assets/Art/Provenance/asset_rights_review.md`]
 forbidden_paths: [`server/`, `proto/`]
@@ -4308,9 +4328,11 @@ consumers_checked: [docs/07_content/presentation_asset_manifest.md, docs/04_arch
 - All 33 playable scenes, actors, cosmetics, skills, UI, items and audio required by release scope resolve; no shortcut suppresses missing coverage.
 - `THIRD_PARTY_ASSETS.txt` has stable Core-UI Addressable key `asset.ui.credits.third_party_assets`, is included in the player package and accessible through the credits UI wired by IMP-067. Any failed rights or asset gate blocks IMP-067 and M10.
 
+- ADR-0076: the release audit re-runs every `ART-*` gate over the release scope and confirms each approved row has a rubric-passing review record, a Style Pack reference (images) and a `folklore_card` where required.
 ## Tests
 - `client/Assets/Tests/EditMode/ReleaseAssetAudit/ReleaseAssetAuditTests.cs`: full release walk, negative missing-key/placeholder/hash/rights/credits/budget cases and deterministic notice output.
 
+- TestReleaseScopeArtGatesAndReviewRecords (ADR-0076) in the packet's audit test file.
 generated_artifacts: [`client/Assets/Notices/THIRD_PARTY_ASSETS.txt`]
 cleanup_obligations: [Commit the deterministic notice, remove temporary audit outputs, and confirm no rejected files remain in build groups.]
 evidence_location: "docs/10_implementation/evidence/IMP-076/"
