@@ -241,6 +241,30 @@ func TestMaterializedArtifactPerOsFailsJob(t *testing.T) {
 	}
 }
 
+// BLK-018: the drift gate may reset only the derived Addressables
+// m_currentHash line, and must do so before drift is computed.
+func TestDriftGateResetsOnlyAddressablesDerivedHash(t *testing.T) {
+	wf := verifyWf(t)
+	for _, name := range []string{"verify-linux", "verify-windows"} {
+		run := stepNamed(t, jobNamed(t, wf, name), "Unity materialized drift check").Run
+		for _, want := range []string{
+			"'client/Assets/AddressableAssetsData/AddressableAssetSettings.asset'",
+			"'^[+-]    Hash: [0-9a-f]{32}$'",
+			"checkout -- $aas",
+		} {
+			if !strings.Contains(run, want) {
+				t.Fatalf("job %q: drift step missing %q", name, want)
+			}
+		}
+		if strings.Count(run, "checkout --") != 1 {
+			t.Fatalf("job %q: drift step may restore exactly one file", name)
+		}
+		if strings.Index(run, "checkout -- $aas") > strings.Index(run, "status --porcelain") {
+			t.Fatalf("job %q: derived-hash reset must precede the drift computation", name)
+		}
+	}
+}
+
 func TestLicenceActivationRetriedFiveTimes(t *testing.T) {
 	wf := verifyWf(t)
 	bashLoop := regexp.MustCompile(`for\s+\w+\s+in\s+([0-9 ]+);`)
@@ -326,5 +350,19 @@ func TestEvidenceJobUsesPinnedDownloadArtifact(t *testing.T) {
 	}
 	if !found {
 		t.Fatal("evidence job must download reports via pinned actions/download-artifact v4.3.0")
+	}
+}
+
+// BLK-017: the verifier runs whenever the tree was checked out, so a failed
+// Unity step yields a report with a Q3 FAIL instead of a missing
+// verify-report.json that cascades into the evidence job.
+func TestVerifierRunsAfterEarlierStepFailure(t *testing.T) {
+	wf := verifyWf(t)
+	for _, name := range []string{"verify-linux", "verify-windows"} {
+		j := jobNamed(t, wf, name)
+		ver := stepNamed(t, j, "Run Q0-Q6 verifier")
+		if !strings.Contains(ver.If, "!cancelled()") || !strings.Contains(ver.If, "steps.checkout.outcome == 'success'") {
+			t.Fatalf("job %q: verifier must run after earlier failures once checkout succeeded, got if=%q", name, ver.If)
+		}
 	}
 }

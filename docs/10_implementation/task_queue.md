@@ -29,7 +29,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-002` | Deterministic RNG Interface | `DONE` | IMP-001 | `../04_architecture/concurrency.md`, `../06_data/config.md` |
 | `IMP-003` | Content Compiler | `NOT_STARTED` | IMP-001, IMP-002 | `../01_gameplay/skills.md`, `../06_data/config.md` |
 | `IMP-004` | Integration / Balance Activation Gate | `NOT_STARTED` | IMP-003 | `../01_gameplay/skills.md`, `../07_content/class_skill_catalog.md` |
-| `IMP-005` | Operation Idempotency Primitive | `BLOCKED` | IMP-001 | `../06_data/database.md`, `../06_data/save_rules.md` |
+| `IMP-005` | Operation Idempotency Primitive | `IN_PROGRESS` | IMP-001 | `../06_data/database.md`, `../06_data/save_rules.md` |
 | `IMP-006` | Account Auth, Session & Login Queue | `NOT_STARTED` | IMP-005, IMP-068, IMP-081, IMP-082, IMP-097 | `../04_architecture/authority.md`, `../06_data/data_model.md` |
 | `IMP-007` | Currency Primitive | `NOT_STARTED` | IMP-005, IMP-068, IMP-082, IMP-097 | `../03_systems/README.md`, `../03_systems/economy.md` |
 | `IMP-008` | Item Ownership Primitive | `NOT_STARTED` | IMP-005, IMP-068, IMP-082, IMP-097 | `../03_systems/items.md`, `../06_data/data_model.md` |
@@ -210,7 +210,7 @@ Materialize the ADR-0059 code-quality baseline: an asmdef-scoped `csc.rsp` (`-wa
 - `server/internal/conformance/gates/gates_test.go` (ADR-0072): TestBlockAndOpsPrFastPath, TestDoneWithoutManifestAllowedOnHead, TestMergedHeadRequiresManifest, TestTwoPhaseListIncludesImp083, TestLocalDeferMissingNeverInCi.
 - `server/internal/stackpin/versions_test.go` (ADR-0072): TestGoogleProtobufNupkgSha256, TestEdbZipSha256, TestDownloadArtifactAndGitLfsPins.
 - `server/internal/conformance/gates/gates_test.go` (BLK-001): TestImp000OwnedPathsCoverMaterializedAssets — IMP-000 `owned_paths` cover `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset` and their `.meta`.
-- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire — `server/go.mod` declares `require google.golang.org/protobuf v1.36.12` (the `GoModulePins` pin) so generated protocol code compiles without implementers editing lockfiles.
+- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire — `server/go.mod` declares `require google.golang.org/protobuf v1.36.12` (the `GoModulePins` pin) so generated protocol code compiles without implementers editing lockfiles. Amended by BLK-015: accepts both the single-line `require google.golang.org/protobuf v1.36.12` and a `require ( ... )` block entry, since `go mod tidy` may rewrite the file into block form.
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware — bootstrap roots and generated-protocol files unblock once an owning packet is IN_PROGRESS/DONE and unowned paths never do; TestBlocksLineCaseInsensitive — open-blocker gating parses lowercase `blocks:` lines.
 
 generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
@@ -954,16 +954,16 @@ evidence_location: "docs/10_implementation/evidence/IMP-078/"
 
 ## `IMP-005` — Operation Idempotency Primitive
 id: IMP-005
-status: BLOCKED
+status: IN_PROGRESS
 claimed_by: "coordinator-wave2"
 branch: "imp/IMP-005-idempotency"
 claimed_at: "2026-09-28T00:00:00Z"
-blocked_by: "BLK-015"
+blocked_by: ""
 
 specs: [`../06_data/database.md`, `../06_data/save_rules.md`, `../06_data/data_model.md`, `../06_data/migrations.md`, `../06_data/physical_schema_contract.md`]
 adrs: [`0011-postgresql-relational-persistence.md`, `0040-world-consequence-durable-aggregate.md`, `0048-character-update-timestamp.md`, `0053-durable-contract-reconciliation.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0060-wire-and-durable-contract-completion.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0063-economy-contract-reconciliation.md`, `0065-data-schema-completion-and-erasure-retention.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`]
 depends_on: [IMP-001]
-owned_paths: [`server/internal/durable/idempotency/`, `server/internal/durable/db/`, `server/internal/durable/schema/`, `server/migrations/`, `server/cmd/migrate/`, `server/internal/testing/pgtest/`]
+owned_paths: [`server/internal/durable/idempotency/`, `server/internal/durable/db/`, `server/internal/durable/schema/`, `server/migrations/`, `server/cmd/migrate/`, `server/internal/testing/pgtest/`, `server/go.mod`, `server/go.sum`]
 forbidden_paths: [`server/internal/sim/`, `client/Assets/Scripts/`]
 contract_inputs: [operation ID, canonical payload hash, transaction callback, schema contract]
 contract_outputs: [single committed operation record, replayable result, baseline migrations]
@@ -996,6 +996,7 @@ IMP-005 is the only migration owner. No other packet adds a migration; a later s
 - `server/internal/testing/pgtest/pgtest_test.go`: TestUsesPresetDsn, TestStartsEdbBinariesWhenDsnUnset.
 - `server/internal/durable/schema/schema_snapshot_test.go`: TestBaselineAdr0060Tables, TestNoStoredRefundScore (ADR-0060), TestBaselinePublicBossSchedules (ADR-0061).
 - `server/internal/durable/schema/adr0070_schema_test.go`: `TestPendingErasureLedgerTable`, `TestRelicTypedColumnsAndIndexes`, `TestRewardClaimLineKindCheck`, `TestAuctionEndedAtCheck`, `TestGuildStorageAuditChecks` (ADR-0070).
+- `server/internal/conformance/gates/gates_test.go` (BLK-015): `TestImp005OwnedPathsCoverModuleLockfiles` — `owned_paths` include `server/go.mod`/`server/go.sum` so adding the pinned `pgx/v5` + `golang-migrate` module requirements is in-scope; `TestSchemaSnapshotFileExemptFromNumberedMigrationGate` — the delta gate exempts the contract-mandated `server/migrations/schema_snapshot.sql` from the `NNNNNN_*.{up,down}.sql` filename check.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]
