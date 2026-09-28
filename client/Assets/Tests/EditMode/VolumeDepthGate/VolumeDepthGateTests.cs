@@ -526,10 +526,18 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
         {
             // ART-005: >= 85% of S within DeltaE00 <= 8 of the nearest
             // palette colour of the declared style_pack_id.
+            // The pack palette carries the actor's full tone ramp.
             var palette = new List<Vector3>
             {
                 CieLab.ToLab(new Color32(60, 60, 65, 255)),
+                CieLab.ToLab(new Color32(75, 72, 68, 255)),
+                CieLab.ToLab(new Color32(95, 95, 100, 255)),
+                CieLab.ToLab(new Color32(110, 108, 103, 255)),
+                CieLab.ToLab(new Color32(135, 128, 120, 255)),
                 CieLab.ToLab(new Color32(150, 150, 160, 255)),
+                CieLab.ToLab(new Color32(150, 144, 136, 255)),
+                CieLab.ToLab(new Color32(175, 168, 160, 255)),
+                CieLab.ToLab(new Color32(190, 184, 176, 255)),
                 CieLab.ToLab(new Color32(215, 220, 235, 255)),
             };
             var px = CleanActor();
@@ -557,10 +565,11 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
                 idle0, frame, W, H, "idle");
             Assert.AreEqual(0, ok.Count, "identical frame must pass");
 
-            // A widened bbox beyond 8 px fails (attack clips allow 32).
+            // A widened bbox beyond 8 px fails (attack clips allow 32):
+            // +12 tex px puts the diff over 8 but under 32.
             for (var y = 8; y <= 55; y++)
             {
-                for (var x = 56; x <= 60; x++)
+                for (var x = 56; x <= 67; x++)
                 {
                     frame[y * W + x] = new Color32(150, 150, 160, 255);
                 }
@@ -600,12 +609,11 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
         public void TestTileSeam()
         {
             // ART-007: |mean DeltaE00| of wrapping edges <= 2.
+            // A wrapping tile has identical edge columns and rows.
             var px = Blank(W, H);
             for (var i = 0; i < px.Length; i++)
             {
-                var x = i % W;
-                var y = i / W;
-                px[i] = new Color32((byte)(100 + x / 4), 80, 60, 255);
+                px[i] = new Color32(110, 90, 70, 255);
             }
             Assert.AreEqual(0, TileVfxGate.CheckTileSeam(px, W, H).Count);
             var seam = new Color32(255, 255, 255, 255);
@@ -636,11 +644,14 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
                 0,
                 TileVfxGate.CheckNineSlice(px, W, H, 8, 8, 8, 8, "Stretched").Count,
                 "uniform centre may stretch");
+            // Grey ramp across the centre: L* moves enough to smear when
+            // stretched (stddev ~14 > 2), so it must draw Tiled.
             for (var y = 8; y < H - 8; y++)
             {
                 for (var x = 8; x < W - 8; x++)
                 {
-                    px[y * W + x] = new Color32((byte)(60 + x), 120, 130, 255);
+                    var v = (byte)(60 + x * 3);
+                    px[y * W + x] = new Color32(v, v, v, 255);
                 }
             }
             var stretched = TileVfxGate.CheckNineSlice(

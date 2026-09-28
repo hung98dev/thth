@@ -399,8 +399,9 @@ namespace ThinhThan.Tests.EditMode.CutoutQualityGate
                 0,
                 CutoutGateImpl.CheckPostCompressionFringe(px, W, H).Count,
                 "clean decompressed pixels must pass");
-            // Magenta key colour surviving in a decompressed a=255 edge.
-            px[25 * W + 25] = new Color32(255, 0, 255, 255);
+            // Magenta key colour surviving in a decompressed semi-transparent
+            // edge pixel (1 <= a <= 254 next to an opaque pixel is a fringe).
+            px[10 * W + 25] = new Color32(255, 0, 255, 128);
             var fringe = CutoutGateImpl.CheckPostCompressionFringe(px, W, H);
             Assert.IsTrue(fringe.Exists(v => v.Rule == "post_compression_fringe"),
                 "fringe on the decompressed texture must fail");
