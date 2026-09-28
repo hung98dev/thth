@@ -566,12 +566,13 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
             Assert.AreEqual(0, ok.Count, "identical frame must pass");
 
             // A widened bbox beyond 8 px fails (attack clips allow 32):
-            // +12 tex px puts the diff over 8 but under 32.
-            for (var y = 8; y <= 55; y++)
+            // +12 tex px on five rows keeps the diff over 8 but under 32
+            // while copying the rim colours so no hue cluster drifts.
+            for (var y = 30; y <= 34; y++)
             {
                 for (var x = 56; x <= 67; x++)
                 {
-                    frame[y * W + x] = new Color32(150, 150, 160, 255);
+                    frame[y * W + x] = frame[y * W + 55];
                 }
             }
             var wide = AnimationContract.CheckFrameConsistency(
