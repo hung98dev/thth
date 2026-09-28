@@ -984,6 +984,8 @@ jobs:
           sudo kill "$(cat "$RUNNER_TEMP/diag-watch.pid" 2>/dev/null)" 2>/dev/null || true
           sudo pkill -f 'diag/watch.sh' 2>/dev/null || true
           mkdir -p artifacts/unity-diag
+          # DIAG: strace execve lines carry the license argv — redact creds before upload
+          sudo find "$RUNNER_TEMP/diag-run" -name 'strace.txt' -exec sed -i -E 's/(-serial|-username|-password)", "[^"]*/\1", "REDACTED/g' {} + 2>/dev/null || true
           sudo cp -a "$RUNNER_TEMP/diag-run" artifacts/unity-diag/diag-run 2>/dev/null || true
           sudo cp -a "$RUNNER_TEMP/diag-out" artifacts/unity-diag/diag-out 2>/dev/null || true
           sudo chmod -R a+r artifacts/unity-diag 2>/dev/null || true
