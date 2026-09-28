@@ -27,6 +27,16 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 None. IDs start at `BLK-001` and `OPS-001`.
 
+### `BLK-015` — IMP-005 implementation requires pinned `require` lines in `server/go.mod`/`go.sum` (co-ownable per BLK-003 but absent from the IMP-005 `owned_paths`), and `verify_delta.sh` rejects the contract-mandated `server/migrations/schema_snapshot.sql`
+opened_by: implementer/IMP-005   opened_at: 2026-09-28T01:55Z
+evidence: `task_queue.md` IMP-005 `owned_paths` (`server/internal/durable/{idempotency,db,schema}/`, `server/migrations/`, `server/cmd/migrate/`, `server/internal/testing/pgtest/`) lacks `server/go.mod`/`server/go.sum`, while the implementation imports `github.com/jackc/pgx/v5` v5.11.0 + `github.com/golang-migrate/migrate/v4` v4.20.1 (pins in `docs/00_context/technology_versions.md`); without committed require lines/go.sum the branch cannot build in CI (`go build ./...` fails at `import` resolution). Separate conflict: `physical_schema_contract.md` (§ Baseline, lines ~34 + ~105) mandates the snapshot at exactly `server/migrations/schema_snapshot.sql`, but `.devin/scripts/verify_delta.sh` `invalid_mig` fails any `server/migrations/` file not matching `NNNNNN_name.{up,down}.sql` — observed locally: `FAIL invalid migration filename(s): server/migrations/schema_snapshot.sql`. Canonical Q0-Q6 (`verify.ps1`, CI) is unaffected, so the contract artifact can still ship; only the local delta gate disagrees. Additional detail for the fix: `go mod tidy` rewrites the single-line `require google.golang.org/protobuf v1.36.12` into a `require ( … )` block, which trips `TestGoModDeclaresProtobufRequire` (greps the single-line directive) — the landed go.mod must keep protobuf as a single-line `require` (or the gate must be updated).
+owning spec / system: `docs/10_implementation/task_queue.md` IMP-005 `owned_paths`; `docs/10_implementation/repository_layout.md` § Ownership Rules (go.mod/go.sum co-ownable per BLK-003 resolution); `.devin/scripts/verify_delta.sh` `invalid_mig` vs `docs/06_data/physical_schema_contract.md` § Baseline snapshot path.
+options:
+  1. amend IMP-005 `owned_paths` to add `server/go.mod` + `server/go.sum` (BLK-003 already made them co-ownable) AND exempt `schema_snapshot.sql` in `verify_delta.sh` `invalid_mig` — smallest spec+tooling diff, follows precedent;
+  2. spec-owner lands the two `require` lines + `go.sum` itself in the spec-change PR (IMP-005 keeps its owned_paths unchanged) — also unblocks part (a), but part (b) still needs the `verify_delta.sh` exemption or a contract path change;
+  3. move the snapshot outside `server/migrations/` — contradicts the contract's stated CI `pg_dump` diff design; largest spec churn.
+blocks: IMP-005 — draft PR https://github.com/hung98dev/thth/pull/56 cannot satisfy Q0/build without the lockfile entries.
+
 
 ## Resolved Blockers
 
