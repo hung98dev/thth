@@ -32,6 +32,8 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
         private static readonly Color DayLight = new Color(1.00f, 0.96f, 0.88f);
         private static readonly Color NightLight = new Color(0.56f, 0.66f, 0.82f);
 
+        private static readonly List<string> _diag = new List<string>();
+
         [InitializeOnLoadMethod]
         private static void Install()
         {
@@ -40,16 +42,32 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
 
         private static void BatchHook()
         {
-            if (!Application.isBatchMode
-                || SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null
-                || Application.platform != RuntimePlatform.LinuxEditor
-                || System.Environment.CommandLine.Contains("-runTests"))
+            if (!Application.isBatchMode || Application.platform != RuntimePlatform.LinuxEditor)
+            {
+                return;
+            }
+            // The marker file makes the artifact upload non-empty even when a
+            // gate rejects the run, so the captured gate values are visible in
+            // the visual-review artifact rather than only the editor log.
+            var outRoot = OutputRoot();
+            var runTests = System.Environment.CommandLine.Contains("-runTests");
+            Directory.CreateDirectory(outRoot);
+            File.WriteAllText(
+                Path.Combine(outRoot, "_hook.txt"),
+                "batch=" + Application.isBatchMode
+                    + " gfx=" + SystemInfo.graphicsDeviceType + "/" + SystemInfo.graphicsDeviceName
+                    + " platform=" + Application.platform
+                    + " runTests=" + runTests + "\n");
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null || runTests)
             {
                 return;
             }
             try
             {
-                RenderAll(OutputRoot());
+                var written = RenderAll(outRoot);
+                File.AppendAllText(
+                    Path.Combine(outRoot, "_hook.txt"),
+                    "rendered=" + written.Count + " diag=[" + string.Join("; ", _diag) + "]\n");
             }
             catch (System.Exception e)
             {
@@ -75,6 +93,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 // not the project root in CI (docker workdir is the repo
                 // root), so existence must go through the AssetDatabase.
                 var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+                _diag.Add(scenePath + " -> " + (sceneAsset == null ? "missing" : "found"));
                 if (sceneAsset == null)
                 {
                     Debug.LogWarning("visual-review: scene missing " + scenePath);
@@ -92,6 +111,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             var camera = FindCamera();
             if (camera == null)
             {
+                _diag.Add(scenePath + " -> no " + CameraName);
                 Debug.LogError("visual-review: no " + CameraName + " in " + scenePath);
                 return;
             }
