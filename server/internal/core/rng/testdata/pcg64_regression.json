@@ -1,0 +1,176 @@
+{
+  "basis_points": 2500,
+  "content_revision": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "purpose": "Pinned deterministic RNG regression vectors (IMP-002): fixed content_revision + server seed + typed context -> fixed PCG-64 draws. Immutable; changing derivation breaks this fixture loudly (docs/09_testing/gameplay.md \u00a7 Regression Seeds).",
+  "schema": "thinhthan/rng-regression/1",
+  "server_seed_hex": "9e1f2c3b4a5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f7",
+  "vectors": [
+    {
+      "name": "combat_roll",
+      "kind": "combat",
+      "subject": "combat_event.tick.42.actor.7",
+      "uint64_hex": [
+        "64e4c11062e1b396",
+        "b2b1bcea24f10ba0",
+        "4041b55a55bace20",
+        "ec766e2c69992a5f",
+        "20dedd586756397b",
+        "20e5eb3355e9aee0",
+        "1e125c081c86e3e4",
+        "04f8271266156333"
+      ],
+      "float64_0_1_bits_hex": [
+        "3fe059999528f8e6",
+        "3fedcaa082831ac1",
+        "3fed7d569047266c",
+        "3fa246eaa465be90"
+      ],
+      "weighted_index": 0,
+      "basis_points_hit": false
+    },
+    {
+      "name": "enhancement_edge",
+      "kind": "enhancement",
+      "subject": "item_instance.550e8400-e29b-41d4-a716-446655440000.plus.15.to.16",
+      "uint64_hex": [
+        "1734ec8d5f017313",
+        "a533c70df4854cfb",
+        "35a149d704897b3e",
+        "cd1c07a725c96d96",
+        "164aa1ac6451f249",
+        "37c25368a8dc61ba",
+        "02edc588e6a07f58",
+        "2d8c8e313ccdd987"
+      ],
+      "float64_0_1_bits_hex": [
+        "3fee0abb02059e63",
+        "3fe81c7082c3c2da",
+        "3fb5c659ee7648a8",
+        "3fd71144a18172bc"
+      ],
+      "weighted_index": 0,
+      "basis_points_hit": false
+    },
+    {
+      "name": "item_secondary_roll",
+      "kind": "item_secondary",
+      "subject": "item_instance.550e8400-e29b-41d4-a716-446655440001",
+      "uint64_hex": [
+        "9c77ece97fdee677",
+        "720b10e4f098c96d",
+        "eab10399cd159b8c",
+        "2c0cb53cf9071b5e",
+        "c6313244ea5ddfd6",
+        "3ef62f0f169f948a",
+        "e213c82ebdca4569",
+        "8455aa9e99c18497"
+      ],
+      "float64_0_1_bits_hex": [
+        "3fef26c0768a0f19",
+        "3fb41b3ab65c9630",
+        "3fe11b4a257e74cf",
+        "3fe44797e76dc0d9"
+      ],
+      "weighted_index": 3,
+      "basis_points_hit": true
+    },
+    {
+      "name": "spawn_pool_choice",
+      "kind": "spawn_pool",
+      "subject": "zone.rung_u_minh.group.3",
+      "uint64_hex": [
+        "4d78fe8dd3247d84",
+        "31b52bcbfc77cc3a",
+        "0da5fca5d1fd9db2",
+        "e5fb42979f38e290",
+        "8f90c0b4631bed2c",
+        "d8fe27b32f24a93d",
+        "317c56823c0847b1",
+        "e15fa3f9fbac7c03"
+      ],
+      "float64_0_1_bits_hex": [
+        "3fc44e03c3b48278",
+        "3fd0e57cb7e57720",
+        "3fd0683241902b7c",
+        "3fe123b5c28e274d"
+      ],
+      "weighted_index": 2,
+      "basis_points_hit": true
+    },
+    {
+      "name": "drop_table_choice",
+      "kind": "drop_table",
+      "subject": "drop.rung_u_minh.elite",
+      "uint64_hex": [
+        "7dd794ff64364d0d",
+        "4aa58460a36839e3",
+        "f4a9defd2db5e3e6",
+        "7bd8781b1d4b25f2",
+        "7c14dcc56d2fe319",
+        "c1b96fa81f5047b5",
+        "5f71d8d52806707f",
+        "07e0d413b28ce4a3"
+      ],
+      "float64_0_1_bits_hex": [
+        "3fedf5dac9242e50",
+        "3fdbb6a7fb8c2d08",
+        "3fdb82277fe1ce28",
+        "3fe143d29acc266d"
+      ],
+      "weighted_index": 3,
+      "basis_points_hit": false
+    },
+    {
+      "name": "boss_scaling_resample",
+      "kind": "boss_scaling",
+      "subject": "boss.rung_u_minh.t1",
+      "uint64_hex": [
+        "8fafdbc0ec85b09e",
+        "b4ca45c9107d6c5d",
+        "2fdbbdf24d7c865f",
+        "5b99ad81e4fab80a",
+        "9cbe9e1a402ae7fc",
+        "f4b0f086082a9004",
+        "415a5f4a4f07c344",
+        "7f3f4b8a052cadde"
+      ],
+      "float64_0_1_bits_hex": [
+        "3fe7250c717135e1",
+        "3fa1240dab19dfa0",
+        "3fe3d8d244c38337",
+        "3fec4b18466176f9"
+      ],
+      "weighted_index": 3,
+      "basis_points_hit": false
+    },
+    {
+      "name": "fishing_catch_default",
+      "kind": "fishing_catch",
+      "subject": "fishing.550e8400-e29b-41d4-a716-446655440002.2026-09-28.1",
+      "uint64_hex": [
+        "bcc5c468c98d226d",
+        "bee08e0485f15653",
+        "b4ab840ebcc897a0",
+        "07c1d109a573ab3a",
+        "6cc3544caaf63eff",
+        "9fd18860442bacc0",
+        "2133125bfce5be32",
+        "fe9e2a1af179dd2f"
+      ],
+      "float64_0_1_bits_hex": [
+        "3fcd555733972008",
+        "3fd64a6c97c0ecbe",
+        "3fc5742732a6d008",
+        "3fb304f00b114030"
+      ],
+      "weighted_index": 3,
+      "basis_points_hit": false
+    }
+  ],
+  "weights": [
+    3,
+    1,
+    2,
+    4
+  ]
+}
