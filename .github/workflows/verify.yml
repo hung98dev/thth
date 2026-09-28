@@ -489,21 +489,22 @@ jobs:
               [ -f "$f" ] && { echo "---- $t --help"; timeout 10 "$f" --help 2>&1 | head -30 || echo "(timeout/err rc=$?)"; }
             done
           ' 2>&1 | tee artifacts/unity-diag/image-layout.txt || true
-          cid=$(docker create "$IMG")
-          for p in /opt/unity/Editor/Unity /usr/bin/unity-editor /opt/unity/Editor/Data/Resources/Licensing /opt/unity/Editor/Data/Tools; do
-            docker cp "$cid:$p" "$BIN/" 2>/dev/null || echo "cp failed: $p"
-          done
-          docker rm "$cid" >/dev/null 2>&1 || true
-          find "$BIN" -maxdepth 3 -type f | head -80
-          { echo "=== abort/licensing strings in Unity binary ==="
-            strings -a "$BIN/Unity" 2>/dev/null | grep -iE "ipc channel|licensing|license|aborting|fatal|killpg|watchdog|auto.?quit|datastore|entitlement|kill.*group|SIGKILL" | sort -u | head -160
+          timeout 300 docker run --rm "$IMG" bash -c '
+            s() { grep -aoE "[ -~]{$2,}" "$1" 2>/dev/null; }
+            echo "=== abort/licensing strings in Unity binary ==="
+            s /opt/unity/Editor/Unity 10 | grep -iE "ipc channel|licensing|license|aborting|fatal|killpg|watchdog|auto.?quit|datastore|entitlement" | sort -u | head -160
             echo "=== UNITY_* env toggles ==="
-            strings -a "$BIN/Unity" 2>/dev/null | grep -oE "UNITY_[A-Z0-9_]+" | sort -u | head -140
+            grep -aoE "UNITY_[A-Z0-9_]+" /opt/unity/Editor/Unity | sort -u | head -140
             echo "=== licensing client dlls: timer/session/exit strings ==="
-            find "$BIN" -name "*.dll" -o -name "Unity.Licensing.Client" -o -name "UnityAutoQuitter" -o -name "Unity.DataStore" | while read c; do
+            for c in $(find /opt/unity/Editor/Data/Resources/Licensing -type f 2>/dev/null | head -40) /opt/unity/Editor/Data/Tools/UnityAutoQuitter /opt/unity/Editor/Data/Tools/Unity.DataStore; do
+              [ -f "$c" ] || continue
               echo "---- $c"
-              strings -a "$c" 2>/dev/null | grep -iE "exit.?timer|idle|shut ?down|session.*(end|start|open|close|count)|last.*session|channel|pipe|handshake|kill|abort" | sort -u | head -50
-            done } 2>&1 | tee artifacts/unity-diag/image-strings.txt || true
+              timeout 60 grep -aoE "[ -~]{10,}" "$c" 2>/dev/null | grep -iE "exit.?timer|idle|shut ?down|session|channel|pipe|handshake|relaunch|respawn" | sort -u | head -45
+            done
+            echo "=== licensing ipc/abort strings in Unity binary (wide) ==="
+            s /opt/unity/Editor/Unity 10 | grep -iE "channel.*(exist|lost|connect)|named.?pipe|session.*(end|drop|timeout)|exit.*(timer|code)|signal|abort" | sort -u | head -120
+          ' 2>&1 | tee artifacts/unity-diag/image-strings.txt || true
+          echo "inspect done"
 
       - name: Unity materialization (licence retry <=5)
         if: steps.unity-scope.outputs.run == 'true'
