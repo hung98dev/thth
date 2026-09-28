@@ -19,8 +19,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"thinhthan/internal/durable/db"
 )
 
 // DSNEnv is the environment variable carrying the test DSN.
@@ -176,16 +175,11 @@ func ScratchDSN(ctx context.Context, baseDSN, prefix string) (string, func(), er
 	adminURL := *u
 	adminURL.Path = "/postgres"
 
-	admin, err := pgxpool.New(ctx, adminURL.String())
-	if err != nil {
-		return "", nil, fmt.Errorf("pgtest: admin pool: %w", err)
-	}
-	defer admin.Close()
-	qname := pgx.Identifier{name}.Sanitize()
-	if _, err := admin.Exec(ctx, `DROP DATABASE IF EXISTS `+qname); err != nil {
+	admin := adminURL.String()
+	if err := db.DropDatabase(ctx, admin, name); err != nil {
 		return "", nil, fmt.Errorf("pgtest: drop stale %s: %w", name, err)
 	}
-	if _, err := admin.Exec(ctx, `CREATE DATABASE `+qname); err != nil {
+	if err := db.CreateDatabase(ctx, admin, name); err != nil {
 		return "", nil, fmt.Errorf("pgtest: create %s: %w", name, err)
 	}
 
@@ -194,12 +188,7 @@ func ScratchDSN(ctx context.Context, baseDSN, prefix string) (string, func(), er
 	drop := func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		a, err := pgxpool.New(ctx, adminURL.String())
-		if err != nil {
-			return
-		}
-		defer a.Close()
-		_, _ = a.Exec(ctx, `DROP DATABASE IF EXISTS `+qname+` WITH (FORCE)`)
+		_ = db.DropDatabase(ctx, admin, name)
 	}
 	return dsn, drop, nil
 }

@@ -6,8 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jackc/pgx/v5"
-
+	"thinhthan/internal/durable/db"
 	"thinhthan/internal/testing/pgtest"
 )
 
@@ -42,13 +41,13 @@ func TestStartsEdbBinariesWhenDsnUnset(t *testing.T) {
 	dsn := pgtest.StartEDB(t, binDir)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	conn, err := pgx.Connect(ctx, dsn)
+	pool, err := db.Open(ctx, dsn, 1)
 	if err != nil {
 		t.Fatalf("started postgres not reachable: %v", err)
 	}
-	defer conn.Close(ctx)
+	defer pool.Close()
 	var one int
-	if err := conn.QueryRow(ctx, "SELECT 1").Scan(&one); err != nil || one != 1 {
+	if err := pool.QueryRow(ctx, "SELECT 1").Scan(&one); err != nil || one != 1 {
 		t.Fatalf("SELECT 1 = %d, %v", one, err)
 	}
 }
