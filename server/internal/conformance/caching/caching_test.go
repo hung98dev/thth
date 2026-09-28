@@ -53,9 +53,9 @@ func workflowText(t *testing.T) string {
 func jobOS(t *testing.T, job string) string {
 	t.Helper()
 	switch job {
-	case "verify-linux":
+	case "verify-linux", "unity-linux":
 		return "Linux"
-	case "verify-windows":
+	case "verify-windows", "unity-windows":
 		return "Windows"
 	default:
 		t.Fatalf("unexpected job %q carries a cache step", job)
@@ -81,8 +81,8 @@ func TestCacheActionPinnedSha(t *testing.T) {
 	}
 	for _, need := range []string{
 		"verify-linux:go-build-", "verify-windows:go-build-",
-		"verify-windows:unity-editor-", "verify-windows:cli-tools-",
-		"verify-linux:unity-library-", "verify-windows:unity-library-",
+		"unity-windows:unity-editor-", "verify-windows:cli-tools-", "unity-windows:cli-tools-",
+		"unity-linux:unity-library-", "unity-windows:unity-library-",
 		"verify-windows:edb-",
 	} {
 		ok := false
@@ -164,11 +164,11 @@ func TestCacheKeysCoverPinInputs(t *testing.T) {
 				}
 			}
 		case strings.HasPrefix(s.Key, "unity-editor-"):
-			if s.Job != "verify-windows" || !strings.Contains(s.Key, "env.UNITY_WINDOWS_EDITOR_SHA256") {
+			if s.Job != "unity-windows" || !strings.Contains(s.Key, "env.UNITY_WINDOWS_EDITOR_SHA256") {
 				t.Errorf("%s: unity-editor cache is Windows-only and keyed by env.UNITY_WINDOWS_EDITOR_SHA256, got %q", s.Job, s.Key)
 			}
 		case strings.HasPrefix(s.Key, "cli-tools-"):
-			if s.Job != "verify-windows" {
+			if jobOS(t, s.Job) != "Windows" {
 				t.Errorf("cli-tools cache must not exist on %s", s.Job)
 			}
 			for _, a := range []stackpin.CliAsset{
@@ -259,14 +259,16 @@ func TestNoGateSkippedOnCacheHit(t *testing.T) {
 			t.Errorf("%s/%s: step gated on cache-hit (%q)", s.Job, s.Name, s.If)
 		}
 	}
-	required := []string{
-		"Fork guard", "Merge freeze guard",
-		"Unity materialization (licence retry <=5)",
-		"Unity materialized drift check", "Run Q0-Q6 verifier",
+	// ADR-0075: Unity runs in its own job per OS; the required job joins it.
+	required := map[string][]string{
+		"verify-linux":   {"Fork guard", "Merge freeze guard", "Run Q0-Q6 verifier", "Unity job result"},
+		"verify-windows": {"Fork guard", "Merge freeze guard", "Run Q0-Q6 verifier", "Unity job result"},
+		"unity-linux":    {"Fork guard", "Merge freeze guard", "Unity materialization (licence retry <=5)", "Unity materialized drift check"},
+		"unity-windows":  {"Fork guard", "Merge freeze guard", "Unity materialization (licence retry <=5)", "Unity materialized drift check"},
 	}
 	steps := workflowSteps(t)
-	for _, job := range []string{"verify-linux", "verify-windows"} {
-		for _, name := range required {
+	for job, names := range required {
+		for _, name := range names {
 			found := false
 			for _, s := range steps {
 				if s.Job == job && s.Name == name {
@@ -291,7 +293,7 @@ func TestNoGateSkippedOnCacheHit(t *testing.T) {
 // drift step + unconditional upload of unity-materialized-<os>.
 func TestMaterializeCommitStillRequiredOnHit(t *testing.T) {
 	steps := workflowSteps(t)
-	for _, job := range []string{"verify-linux", "verify-windows"} {
+	for _, job := range []string{"unity-linux", "unity-windows"} {
 		var drift, upload bool
 		for _, s := range steps {
 			if s.Job != job {
@@ -488,8 +490,8 @@ func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
 		t.Fatal("cache_warm.yml has no cache steps")
 	}
 	for _, w := range warmCaches {
-		if strings.HasPrefix(w.Key, "unity-library-") {
-			t.Errorf("%s: unity-library is content-derived and needs a licence; not warmed here", w.Name)
+		if strings.HasPrefix(w.Key, "unity-library-") && !strings.HasPrefix(w.Job, "warm-library-") {
+			t.Errorf("%s/%s: unity-library needs a licence; only warm-library-* jobs may warm it", w.Job, w.Name)
 		}
 		match := false
 		for _, v := range verify {
@@ -505,16 +507,52 @@ func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, bad := range []string{"secrets.", "UNITY_SERIAL", "Unity_lic"} {
-		if strings.Contains(string(data), bad) {
-			t.Errorf("cache_warm.yml must not reference %q", bad)
+	text := string(data)
+	if regexp.MustCompile(`(?m)^\s*pull_request(_target)?:`).MatchString(text) {
+		t.Error("cache_warm.yml reads Unity licence secrets; it must never run on pull_request")
+	}
+	// Secrets and licence state appear only inside the warm-library-* jobs.
+	job := ""
+	for _, line := range strings.Split(text, "\n") {
+		if m := jobHeaderRe.FindStringSubmatch(strings.TrimRight(line, "\r")); m != nil {
+			job = m[1]
 		}
+		if strings.HasPrefix(job, "warm-library-") {
+			continue
+		}
+		for _, bad := range []string{"secrets.", "UNITY_SERIAL", "Unity_lic"} {
+			if strings.Contains(line, bad) {
+				t.Errorf("cache_warm.yml job %q must not reference %q", job, bad)
+			}
+		}
+	}
+	// A main-scope Library is restored by PRs on exact key only; the warm
+	// jobs look it up without downloading and materialize only on a miss.
+	for _, w := range warmCaches {
+		if strings.HasPrefix(w.Key, "unity-library-") && len(w.RestoreKeys) > 0 {
+			t.Errorf("%s/%s: unity-library warm must not use restore-keys (BLK-005)", w.Job, w.Name)
+		}
+	}
+	// lookup-only on push; a full restore on schedule refreshes last-access
+	// (7-day eviction keep-alive).
+	if n := strings.Count(text, "lookup-only: ${{ github.event_name != 'schedule' }}"); n != 2 {
+		t.Errorf("cache_warm.yml: want schedule-aware lookup-only on both Library warm steps, got %d", n)
+	}
+	// BLK-017: the saved Library must come from a clean -quit
+	// materialization, never from an editor that ran -runTests.
+	if strings.Contains(text, "-runTests") {
+		t.Error("cache_warm.yml must not run -runTests; it saves only a clean -quit materialized Library (BLK-017)")
+	}
+	if !regexp.MustCompile(`(?m)^\s*schedule:`).MatchString(text) {
+		t.Error("cache_warm.yml needs a schedule keep-alive trigger (7-day cache eviction)")
 	}
 }
 
+var jobHeaderRe = regexp.MustCompile(`^  ([A-Za-z0-9_-]+):\s*$`)
+
 func jobOSMatches(verifyJob, warmJob string) bool {
-	return (verifyJob == "verify-linux" && warmJob == "warm-linux") ||
-		(verifyJob == "verify-windows" && warmJob == "warm-windows")
+	return ((verifyJob == "verify-linux" || verifyJob == "unity-linux") && (warmJob == "warm-linux" || warmJob == "warm-library-linux")) ||
+		((verifyJob == "verify-windows" || verifyJob == "unity-windows") && (warmJob == "warm-windows" || warmJob == "warm-library-windows"))
 }
 
 // BLK-008: every Unity editor invocation (materialization, licence probe,
@@ -648,5 +686,51 @@ func TestUnityEditorRunsUnderSetsid(t *testing.T) {
 	tail := wf[idx:]
 	if !strings.Contains(tail, `result="Passed"`) || !strings.Contains(tail, "exit 0") {
 		t.Error("setsid wrapper must exit 0 when a Passed results.xml exists (post-verdict kill is not a failure)")
+	}
+}
+
+// BLK-017: a Linux test container must not inherit editor state left by a
+// previous editor that ended in its SIGKILL exit (user config, analytics and
+// metrics DBs, client/Temp). Each -runTests container mounts per-attempt
+// licensing/config/cache dirs seeded only with the activated licence file.
+func TestUnityTestContainersStartFromFreshState(t *testing.T) {
+	wf := workflowText(t)
+	idx := strings.Index(wf, "setsid -w unity-editor")
+	if idx < 0 {
+		t.Fatal("test container invocation not found")
+	}
+	head := wf[:idx]
+	start := strings.LastIndex(head, `att="$RUNNER_TEMP/unity-att"`)
+	if start < 0 {
+		t.Fatal("test containers must use a per-attempt state dir (BLK-017)")
+	}
+	block := wf[start:idx]
+	for _, want := range []string{
+		`sudo rm -rf "$att" client/Temp`,
+		`cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"`,
+		`-v "$att/unity-lic:/root/.local/share/unity3d"`,
+		`-v "$att/unity-cfg:/root/.config/unity3d"`,
+		`-v "$att/unity-cache:/root/.cache"`,
+	} {
+		if !strings.Contains(block, want) {
+			t.Errorf("test container setup missing %q (BLK-017)", want)
+		}
+	}
+}
+
+// BLK-017: container writes are root-owned; a non-sudo retry wipe fails
+// silently and every retry reuses the poisoned Library.
+func TestUnityRetryWipeUsesSudo(t *testing.T) {
+	wf := workflowText(t)
+	if strings.Contains(wf, "find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null") {
+		t.Error("Library retry wipe must not silence permission errors (BLK-017)")
+	}
+	if !strings.Contains(wf, "sudo find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} +") {
+		t.Error("Linux materialization retries must wipe the root-owned Library with sudo (BLK-017)")
+	}
+	// tests: every attempt restores the Library snapshot taken after the
+	// clean materialization exit, and the step ends on that snapshot.
+	if !strings.Contains(wf, `sudo cp -a client/Library "$lib_snap"`) || strings.Count(wf, `sudo cp -a "$lib_snap" client/Library`) < 2 {
+		t.Error("Linux test containers must start from, and the step must end on, the clean Library snapshot (BLK-017)")
 	}
 }

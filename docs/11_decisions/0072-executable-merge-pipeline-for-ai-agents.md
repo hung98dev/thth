@@ -25,3 +25,6 @@ A round-3 dry run of waves 0–5 on an empty public repository found that the pi
 
 ## Amendment (ADR-0073)
 Item 3: Unity materialization runs on every job whose PR diff touches `gates.UnityRelevantPattern`, and always on `push`, `imp/IMP-068-*` and `*-done` runs; otherwise the Unity steps are skipped and the Unity checks report `SKIP(no-client-change)`. On Windows the editor is the native pinned install, not a GameCI image.
+
+## Amendment (ADR-0075)
+Item 13: the concurrency limit is 8 tasks (GitHub Pro), still at most 2 with `client/` owned paths.
