@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using ThinhThan.Core.Assets;
 using ThinhThan.Core.Assets.Editor;
 using ThinhThan.Core.Assets.Editor.AssetProduction;
@@ -77,7 +75,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
                 return true;
             }
             return path.StartsWith(
-                StyleRefRoot + "/players/turnarounds/",
+                StyleRefRoot + "/turnarounds/",
                 System.StringComparison.Ordinal);
         }
 
@@ -313,7 +311,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             ("defeat", false, DefeatCurves),
         };
 
-        private static Object EnsureSkeleton()
+        private static Object? EnsureSkeleton()
         {
             var existing = AssetDatabase.LoadAssetAtPath<Object>(SkeletonPath);
             if (existing != null)
@@ -364,7 +362,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             return changed;
         }
 
-        private static AnimatorController EnsureController()
+        private static AnimatorController? EnsureController()
         {
             var existing =
                 AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
@@ -377,7 +375,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             var controller = AnimatorController.CreateAnimatorControllerAtPath(
                 ControllerPath);
             var sm = controller.layers[0].stateMachine;
-            AnimatorState defaultState = null;
+            AnimatorState? defaultState = null;
             foreach (var clipName in required)
             {
                 var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(
@@ -401,7 +399,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             return controller;
         }
 
-        private static bool EnsurePrefabs(AnimatorController controller)
+        private static bool EnsurePrefabs(AnimatorController? controller)
         {
             var changed = false;
             foreach (var id in ClassIds)
@@ -418,7 +416,12 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
                 {
                     continue;
                 }
-                var instance = (GameObject)PrefabUtility.InstantiatePrefab(psb);
+                var instance = PrefabUtility.InstantiatePrefab(psb)
+                    as GameObject;
+                if (instance == null)
+                {
+                    continue;
+                }
                 try
                 {
                     var animator = instance.GetComponent<Animator>();
@@ -464,7 +467,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             return true;
         }
 
-        private static Sprite FindLayerSprite(string classId, string layerName)
+        private static Sprite? FindLayerSprite(string classId, string layerName)
         {
             var psbPath =
                 GeneratedDir + "/" + classId + "/asset.class." + classId + ".psb";

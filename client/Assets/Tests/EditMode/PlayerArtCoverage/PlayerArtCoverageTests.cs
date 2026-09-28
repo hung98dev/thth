@@ -26,7 +26,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
 
         private const string ActorsRoot = "Assets/Art/Actors/Players";
         private const string StylePackRel =
-            "Assets/Art/StyleRef/actors_players/players";
+            "Assets/Art/StyleRef/actors_players";
         private const string AnimRel = ActorsRoot + "/anim";
         private const string FragmentRel =
             "client/Assets/Art/Provenance/fragments/actors_players.json";
@@ -401,7 +401,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
         public void TestStylePackAndPaletteGate()
         {
             var packAbs = Path.Combine(Application.dataPath, "Art",
-                "StyleRef", "actors_players", "players");
+                "StyleRef", "actors_players");
             var packViolations = StylePackGate.CheckPackDir(packAbs);
             Assert.IsEmpty(packViolations,
                 "style pack violations: "
