@@ -667,7 +667,7 @@ blocked_by: ""
 specs: [`audit_gates.md`, `agent_execution_protocol.md`, `engineering_conventions.md`, `../00_context/technology_versions.md`, `../09_testing/test_and_release_evidence.md`]
 adrs: [`0010-exact-technology-version-pinning.md`, `0050-windows-only-ci-and-auto-merge.md`, `0057-bootstrap-trusted-ci-evidence-identity-and-merge-mechanics.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0068-implementation-packet-readiness-corrections.md`, `0072-executable-merge-pipeline-for-ai-agents.md`, `0073-ci-speed-native-unity-windows-and-path-scoped-unity-gates.md`]
 depends_on: [IMP-000]
-owned_paths: [`.github/workflows/verify.yml`, `.github/workflows/cache_warm.yml`, `scripts/verify.ps1`, `.devin/scripts/`, `server/internal/conformance/caching/`]
+owned_paths: [`.github/workflows/verify.yml`, `.github/workflows/cache_warm.yml`, `.github/workflows/cache_prune.yml`, `scripts/verify.ps1`, `.devin/scripts/`, `server/internal/conformance/caching/`]
 forbidden_paths: [`server/cmd/server/`, `.github/workflows/post_merge_guard.yml`, `client/`]
 contract_inputs: [pinned version matrix, verify job topology, materialized artifact contract]
 contract_outputs: [pinned cache steps in verify.yml, `.devin/scripts/` cache helpers + cache-key policy doc, cache hit/miss + wall-time fields in `verify-report.json`]
