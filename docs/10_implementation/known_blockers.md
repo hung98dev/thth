@@ -25,7 +25,13 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
-None. IDs start at `BLK-001` and `OPS-001`.
+### `OPS-001` — owner-provided art/audio generation tool not yet recorded; final-art tasks cannot run
+opened_by: coordinator   opened_at: 2026-09-28T15:55Z
+evidence: `docs/00_context/technology_versions.md` § Content production tools — "Art/audio generation tool | owner-provided" placeholder row; `docs/10_implementation/task_queue.md` header marks IMP-071/072/073/074/075/104/105 as final-art tasks requiring that tool; wave-3 claim attempt per `technology_versions.md` § Content production tools ("the first claim attempt opens a scoped OPS-xxx").
+owning spec / system: `docs/00_context/technology_versions.md` § Content production tools (ADR-0072, ADR-0076 selection criteria); `docs/10_implementation/audit_gates.md` § Owner Setup.
+blocks: IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-104, IMP-105
+issue: https://github.com/hung98dev/thth/issues/82
+
 
 ## Resolved Blockers
 
