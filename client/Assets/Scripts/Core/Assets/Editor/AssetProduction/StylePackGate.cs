@@ -25,11 +25,19 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             ".png", ".jpg", ".jpeg", ".webp",
         };
 
-        // palette.json shape: {"colors": [[L*, a*, b*], ...]}.
+        // palette.json shape: {"colors": [{"c": [L*, a*, b*]}, ...]} — a
+        // wrapper object per colour because Unity serialization rejects
+        // jagged primitive arrays (UAC1009).
+        [Serializable]
+        private sealed class PaletteColor
+        {
+            public float[] c = new float[0];
+        }
+
         [Serializable]
         private sealed class PaletteJson
         {
-            public float[][] colors = new float[0][];
+            public List<PaletteColor> colors = new List<PaletteColor>();
         }
 
         public static List<Vector3>? ParsePaletteJson(string json)
@@ -43,18 +51,18 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             {
                 return null;
             }
-            if (parsed == null || parsed.colors == null || parsed.colors.Length == 0)
+            if (parsed == null || parsed.colors == null || parsed.colors.Count == 0)
             {
                 return null;
             }
-            var result = new List<Vector3>(parsed.colors.Length);
-            foreach (var c in parsed.colors)
+            var result = new List<Vector3>(parsed.colors.Count);
+            foreach (var entry in parsed.colors)
             {
-                if (c == null || c.Length < 3)
+                if (entry == null || entry.c == null || entry.c.Length < 3)
                 {
                     return null;
                 }
-                result.Add(new Vector3(c[0], c[1], c[2]));
+                result.Add(new Vector3(entry.c[0], entry.c[1], entry.c[2]));
             }
             return result.Count == 0 ? null : result;
         }
