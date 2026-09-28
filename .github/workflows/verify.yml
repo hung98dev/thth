@@ -112,6 +112,7 @@ jobs:
           cache: false
 
       - name: Checkout (LFS)
+        id: checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           lfs: true
@@ -283,7 +284,7 @@ jobs:
           for i in 1 2 3 4 5; do
             # Retry-only wipe: attempt 1 keeps a cache-restored Library
             # (CI-002); a retry still starts from a clean Library.
-            [ "$i" -gt 1 ] && find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
+            [ "$i" -gt 1 ] && sudo find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + || true
             # Every Unity editor invocation keeps network egress — the licensing
             # client's access-token refresh needs it (BLK-008).
             getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
@@ -368,6 +369,14 @@ jobs:
           systemctl is-active systemd-oomd 2>/dev/null || true
           busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache"
+          # BLK-017: snapshot the Library the materialization editor left on its clean
+          # -quit exit; every test container (first attempt and retries) starts from
+          # this snapshot, never from a Library last written by an editor that ended
+          # in its SIGKILL exit (that state makes the next editor self-kill at its
+          # first domain reload). Container output is root-owned: sudo.
+          lib_snap="$RUNNER_TEMP/unity-lib-snap"
+          sudo rm -rf "$lib_snap"
+          sudo cp -a client/Library "$lib_snap"
           for mode in EditMode PlayMode; do
             ok=
             # BLK-014: PlayMode gets a wider budget — the mid-run watchdog
@@ -376,9 +385,8 @@ jobs:
             for i in $(seq 1 "$max"); do
               free -m
               arc=0
-              # Retry-only wipe: attempt 1 keeps a cache-restored Library
-              # (CI-002); a retry still starts from a clean Library.
-              [ "$i" -gt 1 ] && find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
+              sudo rm -rf client/Library
+              sudo cp -a "$lib_snap" client/Library
               getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
               curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
               # /root/.cache writable for the licensing client (BLK-009).
@@ -398,6 +406,14 @@ jobs:
               rc=$arc
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
+                # BLK-017: every test container also starts with fresh editor state
+                # outside Library (user config/licensing dirs, client/Temp): only the
+                # activated licence file carries over.
+                att="$RUNNER_TEMP/unity-att"
+                # container writes are root-owned: remove with sudo
+                sudo rm -rf "$att" client/Temp
+                mkdir -p "$att/unity-lic/Unity" "$att/unity-cfg" "$att/unity-cache"
+                cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"
                 # /root/.cache writable for the licensing client (BLK-009).
                 # -nographics: no GL device, no Xvfb/llvmpipe path — removes the GfxDevice
                 # init surface where the editor's abort path fired (BLK-010).
@@ -405,9 +421,9 @@ jobs:
                 # longer drops the buffered tail containing the fatal line.
                 cid=$(docker run -d -i --shm-size=4g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
-                  -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
-                  -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
-                  -v "$RUNNER_TEMP/unity-cache:/root/.cache" \
+                  -v "$att/unity-lic:/root/.local/share/unity3d" \
+                  -v "$att/unity-cfg:/root/.config/unity3d" \
+                  -v "$att/unity-cache:/root/.cache" \
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -470,9 +486,9 @@ jobs:
               sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
               sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
               free -m
-              tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
-              find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
-              for f in $(find "$RUNNER_TEMP/unity-lic" -type f \( -name '*.log' -o -name '*.log.*' \) 2>/dev/null | sort); do
+              tail -100 "$RUNNER_TEMP/unity-att/unity-cfg/Editor.log" 2>/dev/null || true
+              find "$RUNNER_TEMP/unity-att/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+              for f in $(find "$RUNNER_TEMP/unity-att/unity-lic" -type f \( -name '*.log' -o -name '*.log.*' \) 2>/dev/null | sort); do
                 echo "== licensing log $f"; tail -60 "$f" || true
               done
               echo "unity $mode tests attempt $i failed (rc=$rc); retrying"
@@ -483,6 +499,10 @@ jobs:
               exit 1
             fi
           done
+          # leave the clean snapshot for the Library cache save, not the state of
+          # the last (SIGKILL-ended) test editor (BLK-017)
+          sudo rm -rf client/Library
+          sudo cp -a "$lib_snap" client/Library
 
       - name: Dump kill-probe diagnostics
         if: always() && steps.unity-scope.outputs.run == 'true'
@@ -551,6 +571,9 @@ jobs:
           'changed=false' >> $env:GITHUB_OUTPUT
 
       - name: Run Q0-Q6 verifier
+        # BLK-017: always produce verify-report.json once the tree is checked out
+        # (a failed Unity step is recorded as a Q3 FAIL, never a missing report).
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -663,6 +686,7 @@ jobs:
           cache: false
 
       - name: Checkout (LFS)
+        id: checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           lfs: true
@@ -954,6 +978,9 @@ jobs:
           'changed=false' >> $env:GITHUB_OUTPUT
 
       - name: Run Q0-Q6 verifier
+        # BLK-017: always produce verify-report.json once the tree is checked out
+        # (a failed Unity step is recorded as a Q3 FAIL, never a missing report).
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -328,3 +328,17 @@ func TestEvidenceJobUsesPinnedDownloadArtifact(t *testing.T) {
 		t.Fatal("evidence job must download reports via pinned actions/download-artifact v4.3.0")
 	}
 }
+
+// BLK-017: the verifier runs whenever the tree was checked out, so a failed
+// Unity step yields a report with a Q3 FAIL instead of a missing
+// verify-report.json that cascades into the evidence job.
+func TestVerifierRunsAfterEarlierStepFailure(t *testing.T) {
+	wf := verifyWf(t)
+	for _, name := range []string{"verify-linux", "verify-windows"} {
+		j := jobNamed(t, wf, name)
+		ver := stepNamed(t, j, "Run Q0-Q6 verifier")
+		if !strings.Contains(ver.If, "!cancelled()") || !strings.Contains(ver.If, "steps.checkout.outcome == 'success'") {
+			t.Fatalf("job %q: verifier must run after earlier failures once checkout succeeded, got if=%q", name, ver.If)
+		}
+	}
+}
