@@ -210,7 +210,7 @@ Materialize the ADR-0059 code-quality baseline: an asmdef-scoped `csc.rsp` (`-wa
 - `server/internal/conformance/gates/gates_test.go` (ADR-0072): TestBlockAndOpsPrFastPath, TestDoneWithoutManifestAllowedOnHead, TestMergedHeadRequiresManifest, TestTwoPhaseListIncludesImp083, TestLocalDeferMissingNeverInCi.
 - `server/internal/stackpin/versions_test.go` (ADR-0072): TestGoogleProtobufNupkgSha256, TestEdbZipSha256, TestDownloadArtifactAndGitLfsPins.
 - `server/internal/conformance/gates/gates_test.go` (BLK-001): TestImp000OwnedPathsCoverMaterializedAssets — IMP-000 `owned_paths` cover `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset` and their `.meta`.
-- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire — `server/go.mod` declares `require google.golang.org/protobuf v1.36.12` (the `GoModulePins` pin) so generated protocol code compiles without implementers editing lockfiles.
+- `server/internal/conformance/gates/gates_test.go` (BLK-003): TestGoModDeclaresProtobufRequire — `server/go.mod` declares `require google.golang.org/protobuf v1.36.12` (the `GoModulePins` pin) so generated protocol code compiles without implementers editing lockfiles. Amended by BLK-015: accepts both the single-line `require google.golang.org/protobuf v1.36.12` and a `require ( ... )` block entry, since `go mod tidy` may rewrite the file into block form.
 - `server/internal/conformance/gates/gates_test.go` (BLK-002): TestBootstrapAbsentPathsOwnerAware — bootstrap roots and generated-protocol files unblock once an owning packet is IN_PROGRESS/DONE and unowned paths never do; TestBlocksLineCaseInsensitive — open-blocker gating parses lowercase `blocks:` lines.
 
 generated_artifacts: [editor-materialized `client/Packages/packages-lock.json`, `client/ProjectSettings/*.asset`, `client/Assets/DefaultVolumeProfile.asset`, `client/Assets/UniversalRenderPipelineGlobalSettings.asset`, `.meta` files (committed from `unity-materialized-<os>`)]
@@ -963,7 +963,7 @@ blocked_by: ""
 specs: [`../06_data/database.md`, `../06_data/save_rules.md`, `../06_data/data_model.md`, `../06_data/migrations.md`, `../06_data/physical_schema_contract.md`]
 adrs: [`0011-postgresql-relational-persistence.md`, `0040-world-consequence-durable-aggregate.md`, `0048-character-update-timestamp.md`, `0053-durable-contract-reconciliation.md`, `0058-public-repo-github-hosted-linux-and-windows-runners.md`, `0060-wire-and-durable-contract-completion.md`, `0061-world-lifecycle-and-content-reconciliation.md`, `0063-economy-contract-reconciliation.md`, `0065-data-schema-completion-and-erasure-retention.md`, `0064-session-handshake-wire-types-and-result-contract.md`, `0070-durable-restart-relic-expiry-erasure-ledger-and-entity-budgets.md`, `0069-session-continuity-auth-hardening-and-wire-corrections.md`]
 depends_on: [IMP-001]
-owned_paths: [`server/internal/durable/idempotency/`, `server/internal/durable/db/`, `server/internal/durable/schema/`, `server/migrations/`, `server/cmd/migrate/`, `server/internal/testing/pgtest/`]
+owned_paths: [`server/internal/durable/idempotency/`, `server/internal/durable/db/`, `server/internal/durable/schema/`, `server/migrations/`, `server/cmd/migrate/`, `server/internal/testing/pgtest/`, `server/go.mod`, `server/go.sum`]
 forbidden_paths: [`server/internal/sim/`, `client/Assets/Scripts/`]
 contract_inputs: [operation ID, canonical payload hash, transaction callback, schema contract]
 contract_outputs: [single committed operation record, replayable result, baseline migrations]
@@ -996,6 +996,7 @@ IMP-005 is the only migration owner. No other packet adds a migration; a later s
 - `server/internal/testing/pgtest/pgtest_test.go`: TestUsesPresetDsn, TestStartsEdbBinariesWhenDsnUnset.
 - `server/internal/durable/schema/schema_snapshot_test.go`: TestBaselineAdr0060Tables, TestNoStoredRefundScore (ADR-0060), TestBaselinePublicBossSchedules (ADR-0061).
 - `server/internal/durable/schema/adr0070_schema_test.go`: `TestPendingErasureLedgerTable`, `TestRelicTypedColumnsAndIndexes`, `TestRewardClaimLineKindCheck`, `TestAuctionEndedAtCheck`, `TestGuildStorageAuditChecks` (ADR-0070).
+- `server/internal/conformance/gates/gates_test.go` (BLK-015): `TestImp005OwnedPathsCoverModuleLockfiles` — `owned_paths` include `server/go.mod`/`server/go.sum` so adding the pinned `pgx/v5` + `golang-migrate` module requirements is in-scope; `TestSchemaSnapshotFileExemptFromNumberedMigrationGate` — the delta gate exempts the contract-mandated `server/migrations/schema_snapshot.sql` from the `NNNNNN_*.{up,down}.sql` filename check.
 
 generated_artifacts: []
 cleanup_obligations: [Ensure zero orphaned files or test fixtures.]

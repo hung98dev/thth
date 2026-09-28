@@ -48,6 +48,7 @@ Mục tiêu: Đảm bảo mọi AI agent khi sinh code đều tuân thủ cùng 
 - **Migrations:**
   - Sử dụng `golang-migrate/migrate/v4 v4.20.1`.
   - Planned repository path is `server/migrations/` with `000001_baseline_schema.up.sql` / `000001_baseline_schema.down.sql`; `IMP-005` owns materializing it.
+  - Snapshot hợp đồng `server/migrations/schema_snapshot.sql` không phải numbered migration — file duy nhất exempt khỏi quy ước tên trong thư mục đó.
   - Không sửa file migration cũ đã merge; mọi sửa đổi schema phải là migration mới tăng dần.
 
 ### 1.7 Hot-Path Allocation & Benchmarks
