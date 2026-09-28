@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -15,6 +16,19 @@ import (
 	"time"
 
 	"thinhthan/internal/conformance/gates"
+)
+
+// Verifier phases (ADR-0077). The default runs every gate at once. CI splits
+// the run so the Unity-independent gates execute while the parallel Unity job
+// is still running: `pre-unity` writes those gates to an intermediate file,
+// `unity` adds the Unity gates and writes the final verify-report.json, which
+// is identical in content to a single full run.
+const (
+	phaseFull     = ""
+	phasePreUnity = "pre-unity"
+	phaseUnity    = "unity"
+
+	preUnitySchema = "verify-pre-unity-v1"
 )
 
 type cliFlags struct {
@@ -25,6 +39,8 @@ type cliFlags struct {
 	printHash       bool
 	taskID          string
 	planUnity       bool
+	phase           string
+	preReport       string
 }
 
 func main() {
@@ -36,7 +52,15 @@ func main() {
 	flag.BoolVar(&f.printHash, "print-source-tree-hash", false, "print the ADR-0057 source tree hash and exit")
 	flag.StringVar(&f.taskID, "task", "", "task id for merge mode (e.g. IMP-000)")
 	flag.BoolVar(&f.planUnity, "plan-unity", false, "print the Unity test modes whose Q3 gate is active (GITHUB_OUTPUT lines) and exit")
+	flag.StringVar(&f.phase, "phase", phaseFull, "verifier phase: empty (all gates), pre-unity or unity (ADR-0077)")
+	flag.StringVar(&f.preReport, "pre-report", "", "pre-unity phase output consumed by -phase unity")
 	flag.Parse()
+
+	switch f.phase {
+	case phaseFull, phasePreUnity, phaseUnity:
+	default:
+		fatal(fmt.Errorf("unknown -phase %q (want empty, %s or %s)", f.phase, phasePreUnity, phaseUnity))
+	}
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -162,47 +186,60 @@ func planUnity(root string) error {
 	return nil
 }
 
-// run executes the gate set and writes verify-report.json.
-func run(root string, f cliFlags) int {
-	e := gates.LoadEnv(f.localDefer, f.unityResultsDir)
-	rep := &gates.RunReport{}
+// gateSet accumulates gates under the shared activation rules: a gate whose
+// owner task is not DONE reports SKIP(owner-not-done), and a status-only PR
+// runs Q0 only.
+type gateSet struct {
+	required   func(string) bool
+	statusOnly bool
+	list       []gates.Gate
+}
 
-	required, statusOnly, err := activation(root, e)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "verify: parse task queue: "+err.Error())
-		return 2
+func (s *gateSet) add(id, title string, owners []string, checks []gates.Check) {
+	if owner := gates.FirstUnmetOwner(owners, s.required); owner != "" && id != "Q0" {
+		checks = []gates.Check{gates.SkipOwnerNotDone(id, owner)}
 	}
-
-	var gs []gates.Gate
-	addGate := func(id, title string, owners []string, checks []gates.Check) {
-		if owner := gates.FirstUnmetOwner(owners, required); owner != "" && id != "Q0" {
-			checks = []gates.Check{gates.SkipOwnerNotDone(id, owner)}
-		}
-		if statusOnly && id != "Q0" {
-			checks = []gates.Check{gates.SkipStatusOnly(id)}
-		}
-		gs = append(gs, gates.Gate{ID: id, Title: title, Checks: checks})
+	if s.statusOnly && id != "Q0" {
+		checks = []gates.Check{gates.SkipStatusOnly(id)}
 	}
+	s.list = append(s.list, gates.Gate{ID: id, Title: title, Checks: checks})
+}
 
-	addGate("Q0", "Task/spec integrity", []string{"IMP-000"}, gates.CheckQ0(root, e))
+// active reports whether a gate owned by owner executes (not skipped).
+func (s *gateSet) active(owner string) bool {
+	return s.required(owner) && !s.statusOnly
+}
+
+// gatesBeforeUnity returns Q0, Q1, Q2 and Q3 (Go) — the gates reported ahead
+// of the Unity gates. None of them reads Unity results.
+func gatesBeforeUnity(root string, e *gates.Env, required func(string) bool, statusOnly bool, rep *gates.RunReport) []gates.Gate {
+	s := &gateSet{required: required, statusOnly: statusOnly}
+	s.add("Q0", "Task/spec integrity", []string{"IMP-000"}, gates.CheckQ0(root, e))
 
 	var q1 []gates.Check
-	if required("IMP-000") && !statusOnly {
+	if s.active("IMP-000") {
 		q1 = gates.CheckQ1(root, e)
 	}
-	addGate("Q1", "Version reproducibility", []string{"IMP-000"}, q1)
+	s.add("Q1", "Version reproducibility", []string{"IMP-000"}, q1)
 
 	var q2 []gates.Check
-	if required("IMP-061") && !statusOnly {
+	if s.active("IMP-061") {
 		q2 = gates.CheckQ2(root, e, "")
 	}
-	addGate("Q2", "Code generation drift", []string{"IMP-061"}, q2)
+	s.add("Q2", "Code generation drift", []string{"IMP-061"}, q2)
 
 	var q3Go []gates.Check
-	if required("IMP-000") && !statusOnly {
+	if s.active("IMP-000") {
 		q3Go = gates.CheckQ3Go(root, e, "", e.RunnerOS == "Linux", rep)
 	}
-	addGate("Q3", "Test suites (Go)", []string{"IMP-000"}, q3Go)
+	s.add("Q3", "Test suites (Go)", []string{"IMP-000"}, q3Go)
+	return s.list
+}
+
+// unityGates returns the Q3 Unity EditMode/PlayMode gates, the only gates
+// that read the Unity job's results.
+func unityGates(root string, e *gates.Env, required func(string) bool, statusOnly bool) []gates.Gate {
+	s := &gateSet{required: required, statusOnly: statusOnly}
 
 	// ADR-0073: the workflow may skip Unity on a PR whose diff touches no
 	// Unity-relevant path; the verifier re-derives the diff and fails the
@@ -230,24 +267,31 @@ func run(root string, f cliFlags) int {
 	}
 
 	var q3Edit, q3Play []gates.Check
-	if required(gates.UnityEditModeOwner) && !statusOnly {
+	if s.active(gates.UnityEditModeOwner) {
 		q3Edit = unityChecks("EditMode")
 	}
-	if required(gates.UnityPlayModeOwner) && !statusOnly {
+	if s.active(gates.UnityPlayModeOwner) {
 		q3Play = unityChecks("PlayMode")
 	}
-	addGate("Q3", "Test suites (Unity EditMode)", []string{gates.UnityEditModeOwner}, q3Edit)
-	addGate("Q3", "Test suites (Unity PlayMode)", []string{gates.UnityPlayModeOwner}, q3Play)
+	s.add("Q3", "Test suites (Unity EditMode)", []string{gates.UnityEditModeOwner}, q3Edit)
+	s.add("Q3", "Test suites (Unity PlayMode)", []string{gates.UnityPlayModeOwner}, q3Play)
+	return s.list
+}
+
+// gatesAfterUnity returns Q4, Q5 and Q6 — reported after the Unity gates.
+// None of them reads Unity results.
+func gatesAfterUnity(root string, e *gates.Env, required func(string) bool, statusOnly bool) []gates.Gate {
+	s := &gateSet{required: required, statusOnly: statusOnly}
 
 	var q4Base, q4Client []gates.Check
-	if required("IMP-000") && !statusOnly {
+	if s.active("IMP-000") {
 		q4Base = gates.CheckQ4(root, e)
 	}
-	if required("IMP-083") && !statusOnly {
+	if s.active("IMP-083") {
 		q4Client = gates.CheckQ4Client(root, e)
 	}
-	addGate("Q4", "Architecture conformance (base)", []string{"IMP-000"}, q4Base)
-	addGate("Q4", "Architecture conformance (client API fence)", []string{"IMP-083"}, q4Client)
+	s.add("Q4", "Architecture conformance (base)", []string{"IMP-000"}, q4Base)
+	s.add("Q4", "Architecture conformance (client API fence)", []string{"IMP-083"}, q4Client)
 
 	q5Owners := []string{"IMP-005", "IMP-003", "IMP-004"}
 	q5Any := false
@@ -260,13 +304,103 @@ func run(root string, f cliFlags) int {
 	if q5Any && !statusOnly {
 		q5 = gates.CheckQ5(root, e, "")
 	}
-	addGate("Q5", "Data/content integrity", q5Owners, q5)
+	s.add("Q5", "Data/content integrity", q5Owners, q5)
 
 	var q6 []gates.Check
-	if required("IMP-000") && !statusOnly {
+	if s.active("IMP-000") {
 		q6 = gates.CheckQ6(root, e)
 	}
-	addGate("Q6", "Evidence/cleanliness", []string{"IMP-000"}, q6)
+	s.add("Q6", "Evidence/cleanliness", []string{"IMP-000"}, q6)
+	return s.list
+}
+
+// spliceGates returns the canonical report order: gates before Unity, the
+// Unity gates, then the gates after Unity.
+func spliceGates(before, unity, after []gates.Gate) []gates.Gate {
+	out := make([]gates.Gate, 0, len(before)+len(unity)+len(after))
+	out = append(out, before...)
+	out = append(out, unity...)
+	return append(out, after...)
+}
+
+// preUnityReport is the intermediate file written by -phase pre-unity and
+// consumed by -phase unity. It never leaves the runner (RUNNER_TEMP).
+type preUnityReport struct {
+	Schema      string       `json:"schema"`
+	Head        string       `json:"head"`
+	Commands    []string     `json:"commands"`
+	BeforeUnity []gates.Gate `json:"before_unity"`
+	AfterUnity  []gates.Gate `json:"after_unity"`
+}
+
+// readPreReport loads a pre-unity phase file and rejects one that was not
+// produced by this verifier for the same checked-out commit.
+func readPreReport(path, head string) (*preUnityReport, error) {
+	if path == "" {
+		return nil, fmt.Errorf("no -pre-report given")
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var p preUnityReport
+	if err := json.Unmarshal(data, &p); err != nil {
+		return nil, fmt.Errorf("parse %s: %w", path, err)
+	}
+	if p.Schema != preUnitySchema {
+		return nil, fmt.Errorf("%s: schema %q != %q", path, p.Schema, preUnitySchema)
+	}
+	if head == "" || p.Head != head {
+		return nil, fmt.Errorf("%s: produced for HEAD %q, checkout is %q", path, p.Head, head)
+	}
+	if len(p.BeforeUnity) == 0 || len(p.AfterUnity) == 0 {
+		return nil, fmt.Errorf("%s: incomplete gate set", path)
+	}
+	return &p, nil
+}
+
+// headCommit returns the checked-out commit; a pre-unity file is only valid
+// for the tree it was computed on.
+func headCommit(root string) string {
+	out, err := exec.Command("git", "-C", root, "rev-parse", "HEAD").Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(out))
+}
+
+// run executes the gate set of the requested phase and writes its report.
+func run(root string, f cliFlags) int {
+	e := gates.LoadEnv(f.localDefer, f.unityResultsDir)
+	rep := &gates.RunReport{}
+
+	required, statusOnly, err := activation(root, e)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "verify: parse task queue: "+err.Error())
+		return 2
+	}
+
+	if f.phase == phasePreUnity {
+		return writePreUnity(root, f, e, required, statusOnly, rep)
+	}
+
+	var before, after []gates.Gate
+	commands := []string(nil)
+	if f.phase == phaseUnity {
+		if p, perr := readPreReport(f.preReport, headCommit(root)); perr == nil {
+			before, after, commands = p.BeforeUnity, p.AfterUnity, p.Commands
+		} else {
+			// A missing or unusable pre-unity file never weakens the
+			// verdict: the phase falls back to running every gate.
+			fmt.Fprintf(os.Stderr, "verify: pre-unity report unusable (%v); running the full gate set\n", perr)
+		}
+	}
+	if before == nil {
+		before = gatesBeforeUnity(root, e, required, statusOnly, rep)
+		after = gatesAfterUnity(root, e, required, statusOnly)
+		commands = rep.Commands
+	}
+	gs := spliceGates(before, unityGates(root, e, required, statusOnly), after)
 
 	failed := false
 	for _, g := range gs {
@@ -285,7 +419,7 @@ func run(root string, f cliFlags) int {
 		Go:       os.Getenv("THINHTHAN_GO_VERSION"),
 		RanAt:    time.Now().UTC().Format(time.RFC3339),
 		OS:       runnerOS(e),
-		Commands: rep.Commands,
+		Commands: commands,
 		Gates:    gs,
 	}
 	out, _ := json.MarshalIndent(report, "", "  ")
@@ -298,6 +432,40 @@ func run(root string, f cliFlags) int {
 		return 2
 	}
 
+	printGates(gs)
+	fmt.Printf("verify: %s (report %s)\n", result, dest)
+	if failed {
+		return 1
+	}
+	return 0
+}
+
+// writePreUnity runs the Unity-independent gates and writes the intermediate
+// file. It exits 0 whenever the file was written: the verdict belongs to the
+// final `-phase unity` run, which folds these results in.
+func writePreUnity(root string, f cliFlags, e *gates.Env, required func(string) bool, statusOnly bool, rep *gates.RunReport) int {
+	if f.reportOut == "" {
+		fmt.Fprintln(os.Stderr, "verify: -phase pre-unity requires -report-out")
+		return 2
+	}
+	p := preUnityReport{
+		Schema:      preUnitySchema,
+		Head:        headCommit(root),
+		BeforeUnity: gatesBeforeUnity(root, e, required, statusOnly, rep),
+		AfterUnity:  gatesAfterUnity(root, e, required, statusOnly),
+	}
+	p.Commands = rep.Commands
+	out, _ := json.MarshalIndent(p, "", "  ")
+	if err := os.WriteFile(f.reportOut, append(out, '\n'), 0o644); err != nil {
+		fmt.Fprintln(os.Stderr, "verify: write pre-unity report: "+err.Error())
+		return 2
+	}
+	printGates(spliceGates(p.BeforeUnity, nil, p.AfterUnity))
+	fmt.Printf("verify: pre-unity phase done (%s); the final verdict comes from -phase unity\n", f.reportOut)
+	return 0
+}
+
+func printGates(gs []gates.Gate) {
 	for _, g := range gs {
 		fmt.Printf("== %s %s: %s\n", g.ID, g.Title, g.Status())
 		for _, c := range g.Checks {
@@ -308,11 +476,6 @@ func run(root string, f cliFlags) int {
 			fmt.Printf("   %-6s %s%s\n", c.Status, c.ID, detail)
 		}
 	}
-	fmt.Printf("verify: %s (report %s)\n", result, dest)
-	if failed {
-		return 1
-	}
-	return 0
 }
 
 func runnerOS(e *gates.Env) string {

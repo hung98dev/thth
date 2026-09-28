@@ -264,7 +264,7 @@ func TestNoGateSkippedOnCacheHit(t *testing.T) {
 		"verify-linux":   {"Fork guard", "Merge freeze guard", "Run Q0-Q6 verifier", "Unity job result"},
 		"verify-windows": {"Fork guard", "Merge freeze guard", "Run Q0-Q6 verifier", "Unity job result"},
 		"unity-linux":    {"Fork guard", "Merge freeze guard", "Unity materialization (licence retry <=5)", "Unity materialized drift check"},
-		"unity-windows":  {"Fork guard", "Merge freeze guard", "Unity materialization (licence retry <=5)", "Unity materialized drift check"},
+		"unity-windows":  {"Fork guard", "Merge freeze guard", "Start Unity materialization (background)", "Join Unity materialization", "Unity materialized drift check"},
 	}
 	steps := workflowSteps(t)
 	for job, names := range required {

@@ -67,6 +67,22 @@ jobs:
             exit 1
           fi
 
+      # ADR-0077: the digest-pinned image pull (~80-100 s) runs in the
+      # background while the toolchain, checkout and caches are set up;
+      # `Pull Unity image (pinned)` joins it. No secret is involved.
+      - name: Start Unity image pull (background)
+        shell: bash
+        env:
+          UNITY_IMAGE: ${{ env.UNITY_LINUX_IMAGE }}
+        run: |
+          set -euo pipefail
+          rm -f "$RUNNER_TEMP/unity-docker-pull.rc"
+          nohup bash -c 'docker pull "$1" > "$2" 2>&1; echo $? > "$3"' _ \
+            "$UNITY_IMAGE" "$RUNNER_TEMP/unity-docker-pull.log" "$RUNNER_TEMP/unity-docker-pull.rc" \
+            > /dev/null 2>&1 < /dev/null &
+          echo $! > "$RUNNER_TEMP/unity-docker-pull.pid"
+          echo "background pull started (pid $(cat "$RUNNER_TEMP/unity-docker-pull.pid"))"
+
       # -- Toolchain bootstrap (pinned release assets, SHA-256 verified; the
       #    runner's preinstalled tools are never used) ---------------------
       - name: Install pwsh (pinned)
@@ -164,24 +180,6 @@ jobs:
           # verifier computes the plan from the same activation it gates with.
           go -C server run ./cmd/verify -plan-unity | tee -a "$GITHUB_OUTPUT"
 
-      - name: Pull Unity image (pinned)
-        if: steps.unity-scope.outputs.run == 'true'
-        shell: bash
-        env:
-          UNITY_IMAGE: ${{ env.UNITY_LINUX_IMAGE }}
-          UNITY_IMAGE_TAG: ${{ env.UNITY_LINUX_IMAGE_TAG }}
-        run: |
-          set -euo pipefail
-          source .devin/scripts/cache_telemetry.sh
-          start=$SECONDS
-          # ADR-0073: no actions/cache for the image — a docker pull on the
-          # hosted Linux runner is ~2 min and the tar would eat the 10 GB
-          # repository cache budget the Windows editor cache needs.
-          docker pull "$UNITY_IMAGE"
-          docker tag "$(docker image inspect -f '{{.Id}}' "$UNITY_IMAGE")" "$UNITY_IMAGE_TAG"
-          docker image inspect "$UNITY_IMAGE_TAG" >/dev/null
-          cache_telemetry_emit unity-editor-image miss "$((SECONDS-start))"
-
       - name: Cache Unity client/Library (pinned)
         id: cache-unity-library
         if: steps.unity-scope.outputs.run == 'true'
@@ -193,8 +191,41 @@ jobs:
           path: client/Library
           key: unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
 
-      - name: Arm kill-probe (SIGKILL sender diagnostic)
+      - name: Pull Unity image (pinned)
         if: steps.unity-scope.outputs.run == 'true'
+        timeout-minutes: 20
+        shell: bash
+        env:
+          UNITY_IMAGE: ${{ env.UNITY_LINUX_IMAGE }}
+          UNITY_IMAGE_TAG: ${{ env.UNITY_LINUX_IMAGE_TAG }}
+        run: |
+          set -euo pipefail
+          source .devin/scripts/cache_telemetry.sh
+          start=$SECONDS
+          # ADR-0073: no actions/cache for the image — a docker pull on the
+          # hosted Linux runner is ~2 min and the tar would eat the 10 GB
+          # repository cache budget the Windows editor cache needs.
+          # ADR-0077: join the background pull; any failure of it falls back
+          # to a foreground pull of the same digest.
+          pid=$(cat "$RUNNER_TEMP/unity-docker-pull.pid" 2>/dev/null || true)
+          if [ -n "$pid" ]; then
+            while kill -0 "$pid" 2>/dev/null; do sleep 1; done
+          fi
+          rc=$(cat "$RUNNER_TEMP/unity-docker-pull.rc" 2>/dev/null || echo missing)
+          tail -5 "$RUNNER_TEMP/unity-docker-pull.log" 2>/dev/null || true
+          if [ "$rc" != 0 ]; then
+            echo "background pull rc=$rc - pulling in the foreground"
+            docker pull "$UNITY_IMAGE"
+          fi
+          docker tag "$(docker image inspect -f '{{.Id}}' "$UNITY_IMAGE")" "$UNITY_IMAGE_TAG"
+          docker image inspect "$UNITY_IMAGE_TAG" >/dev/null
+          cache_telemetry_emit unity-editor-image miss "$((SECONDS-start))"
+
+      # ADR-0077: the kill-probe is an investigation tool (BLK-008..017), not a
+      # gate; it runs only while the repository variable UNITY_KILL_PROBE is
+      # 'true'.
+      - name: Arm kill-probe (SIGKILL sender diagnostic)
+        if: steps.unity-scope.outputs.run == 'true' && vars.UNITY_KILL_PROBE == 'true'
         shell: bash
         run: |
           if ! command -v auditctl >/dev/null 2>&1; then
@@ -242,6 +273,7 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           CACHE_HIT_LIBRARY: ${{ steps.cache-unity-library.outputs.cache-hit }}
+          UNITY_KILL_PROBE: ${{ vars.UNITY_KILL_PROBE }}
         run: |
           set -uo pipefail
           source .devin/scripts/cache_telemetry.sh
@@ -251,16 +283,36 @@ jobs:
           sudo systemctl mask --runtime systemd-oomd.service 2>/dev/null || true
           systemctl is-active systemd-oomd 2>/dev/null || true
           busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
-          mkdir -p "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache"
-          docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE_TAG }}" unity-editor -version
-          for i in 1 2 3 4; do
-            docker run --rm --shm-size=4g "${{ env.UNITY_LINUX_IMAGE_TAG }}" bash -c '/opt/unity/Editor/Unity -batchmode -nographics -version -logFile -' >/dev/null 2>&1
-            echo "direct-version probe $i rc=$?"
-          done
+          mkdir -p "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache" "$RUNNER_TEMP/unity-cfg"
+          if [ "${UNITY_KILL_PROBE:-}" = "true" ]; then
+            # ADR-0077: editor version probes belong to the opt-in kill-probe.
+            docker run --rm --shm-size=2g "${{ env.UNITY_LINUX_IMAGE_TAG }}" unity-editor -version
+            for i in 1 2 3 4; do
+              docker run --rm --shm-size=4g "${{ env.UNITY_LINUX_IMAGE_TAG }}" bash -c '/opt/unity/Editor/Unity -batchmode -nographics -version -logFile -' >/dev/null 2>&1
+              echo "direct-version probe $i rc=$?"
+            done
+          fi
+          # ADR-0077: snapshot the cache-restored Library before any editor opens
+          # it. A retry after an editor self-kill (rc=137) restarts warm from
+          # this snapshot; the Library a killed editor wrote is never reused
+          # (BLK-017). Container output is root-owned: sudo.
+          mat_snap="$RUNNER_TEMP/unity-lib-restored"
+          sudo rm -rf "$mat_snap"
+          [ -d client/Library ] && sudo cp -a client/Library "$mat_snap"
+          prev=
           for i in 1 2 3 4 5; do
-            # Retry-only wipe: attempt 1 keeps a cache-restored Library
-            # (CI-002); a retry still starts from a clean Library.
-            [ "$i" -gt 1 ] && sudo find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + || true
+            if [ "$i" -gt 1 ]; then
+              if [ "$prev" = killed ] && [ "$i" -le 3 ] && [ -d "$mat_snap" ]; then
+                sudo rm -rf client/Library client/Temp
+                sudo cp -a "$mat_snap" client/Library
+                echo "attempt $i: warm retry from the restored Library snapshot"
+              else
+                # Cold retry: attempt 1 keeps a cache-restored Library
+                # (CI-002); this retry starts from a clean Library.
+                sudo find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + || true
+                echo "attempt $i: cold retry from a clean Library"
+              fi
+            fi
             # Every Unity editor invocation keeps network egress — the licensing
             # client's access-token refresh needs it (BLK-008).
             getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
@@ -309,7 +361,22 @@ jobs:
               echo "unity licence activation failed deterministically (rc=$rc) - not retrying. Fix UNITY_SERIAL/licence secrets." >&2
               exit 1
             fi
-            echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
+            # ADR-0077: only a licence/infra failure waits 60 s. An editor kill
+            # retries at once (warm); compiler errors retry at once on a clean
+            # Library (ADR-0073 item 5) and stop when they repeat.
+            if grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-materialize.log"; then
+              if [ "$prev" = compile ]; then
+                cache_telemetry_emit unity-library "$libhit" "$((SECONDS-start))"
+                echo "unity materialization: compiler errors on two consecutive attempts - deterministic, not retrying" >&2
+                exit 1
+              fi
+              prev=compile; why="compiler errors; retrying now on a clean Library"
+            elif [ "$rc" -eq 137 ]; then
+              prev=killed; why="editor killed; retrying now"
+            else
+              prev=other; why="retrying after 60s"
+            fi
+            echo "unity materialization attempt $i failed (rc=$rc); $why"
             sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
             sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
             free -m
@@ -318,7 +385,7 @@ jobs:
             for f in $(find "$RUNNER_TEMP/unity-lic" -type f \( -name '*.log' -o -name '*.log.*' \) 2>/dev/null | sort); do
               echo "== licensing log $f"; tail -60 "$f" || true
             done
-            [ "$i" -lt 5 ] && sleep 60
+            [ "$i" -lt 5 ] && [ "$prev" = other ] && sleep 60
           done
           cache_telemetry_emit unity-library "$libhit" "$((SECONDS-start))"
           echo "unity materialization failed after 5 attempts (licence/infra)" >&2
@@ -354,6 +421,7 @@ jobs:
           lib_snap="$RUNNER_TEMP/unity-lib-snap"
           sudo rm -rf "$lib_snap"
           sudo cp -a client/Library "$lib_snap"
+          verdict_failed=
           for mode in $UNITY_MODES; do
             ok=
             # BLK-014: PlayMode gets a wider budget — the mid-run watchdog
@@ -457,6 +525,16 @@ jobs:
                 echo "unity $mode tests PASSED (rc=$rc — post-completion kill treated as pass)"
                 ok=1; break
               fi
+              # ADR-0077: a completed run with a results XML that is not Passed
+              # is a real test verdict — final, never retried (retries exist for
+              # editor kills, which leave no verdict). The other planned modes
+              # still run; the step fails at the end and the verifier reports Q3.
+              if grep -q 'Test run completed. Exiting with code' "artifacts/unity-tests/$mode-editor.log" 2>/dev/null \
+                && [ -f "artifacts/unity-tests/$mode-results.xml" ]; then
+                echo "unity $mode tests completed with a failing verdict (rc=$rc) - final, not retried" >&2
+                verdict_failed="$verdict_failed $mode"
+                ok=final; break
+              fi
               dead=$(docker ps -ql 2>/dev/null)
               docker inspect "$dead" --format 'container-state: OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' 2>/dev/null || true
               docker rm -f "$dead" >/dev/null 2>&1 || true
@@ -480,9 +558,13 @@ jobs:
           # the last (SIGKILL-ended) test editor (BLK-017)
           sudo rm -rf client/Library
           sudo cp -a "$lib_snap" client/Library
+          if [ -n "$verdict_failed" ]; then
+            echo "unity tests failed:$verdict_failed (results uploaded; the verifier reports the Q3 failure)" >&2
+            exit 1
+          fi
 
       - name: Dump kill-probe diagnostics
-        if: always() && steps.unity-scope.outputs.run == 'true'
+        if: always() && steps.unity-scope.outputs.run == 'true' && vars.UNITY_KILL_PROBE == 'true'
         shell: bash
         run: |
           echo '=== audit kill/tgkill events (sender pid/comm/exe) ==='
@@ -743,6 +825,19 @@ jobs:
             echo "THINHTHAN_TEST_PG_DSN=postgres://postgres:postgres@localhost:5432/thinhthan_test?sslmode=disable"
           } >> "$GITHUB_ENV"
 
+      # ADR-0077: the Unity-independent gates run while the Unity job is still
+      # running; `Run Q0-Q6 verifier` adds the Unity gates to this file and
+      # writes the report (a missing/unusable file makes it run every gate).
+      - name: Q0-Q6 verifier (pre-Unity phase)
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
+        continue-on-error: true
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UNITY_EDITOR_PATH: '/opt/unity/Editor/Unity'
+          THINHTHAN_CACHE_HIT_GO: ${{ steps.cache-go.outputs.cache-hit }}
+        run: pwsh -NoProfile -File scripts/verify.ps1 -Phase pre-unity -ReportOut "$env:RUNNER_TEMP/verify-pre-unity.json"
+
       - name: Wait for Unity job
         id: unity-wait
         if: steps.unity-scope.outputs.run == 'true'
@@ -776,7 +871,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UNITY_EDITOR_PATH: '/opt/unity/Editor/Unity'
           THINHTHAN_CACHE_HIT_GO: ${{ steps.cache-go.outputs.cache-hit }}
-        run: pwsh -NoProfile -File scripts/verify.ps1 -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
+        run: pwsh -NoProfile -File scripts/verify.ps1 -Phase unity -PreReport "$env:RUNNER_TEMP/verify-pre-unity.json" -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
 
       - name: Unity job result
         if: ${{ !cancelled() && steps.unity-scope.outputs.run == 'true' }}
@@ -915,12 +1010,6 @@ jobs:
           "$T\bin" >> $env:GITHUB_PATH
           & "$T\bin\git-lfs.exe" install --skip-repo | Out-Null
 
-      - name: Install Go (pinned)
-        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
-        with:
-          go-version: '1.27.1'
-          cache: false
-
       - name: Checkout (LFS)
         id: checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -933,17 +1022,6 @@ jobs:
       # may only roll the hash on content-addressed stores. Caches whose
       # payload derives from the hashed inputs restore on exact key only
       # (CI-001, BLK-005). Licence state is never cached (CI-002).
-      - name: Cache Go modules + build (pinned)
-        id: cache-go
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/AppData/Local/go-build
-          key: go-build-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('server/go.sum') }}
-          restore-keys: |
-            go-build-${{ runner.os }}-${{ env.GO_VERSION }}-
-
       - name: Unity scope
         id: unity-scope
         shell: pwsh
@@ -972,21 +1050,6 @@ jobs:
       # ADR-0073: the Windows job runs the editor natively. The GameCI Windows
       # image (>10 GB) never fit the repository cache, so every run paid a
       # 16-17 min pull plus a failed 6-10 min cache save.
-      - name: Unity mode plan
-        id: unity-plan
-        if: steps.unity-scope.outputs.run == 'true'
-        shell: pwsh
-        env:
-          THINHTHAN_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          THINHTHAN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          $ErrorActionPreference = 'Stop'
-          # ADR-0075: launch only the Unity test modes whose Q3 gate is active.
-          $plan = go -C server run ./cmd/verify -plan-unity
-          if ($LASTEXITCODE -ne 0) { throw "unity mode plan failed rc=$LASTEXITCODE" }
-          $plan | Out-Host
-          $plan >> $env:GITHUB_OUTPUT
-
       - name: Cache Unity editor (pinned)
         id: cache-unity-editor
         if: steps.unity-scope.outputs.run == 'true'
@@ -1040,7 +1103,61 @@ jobs:
           path: client/Library
           key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
 
-      - name: Unity materialization (licence retry <=5)
+      # ADR-0077: materialization runs detached right after the Library
+      # restore (it reads/writes client/Library and needs UNITY_EDITOR_PATH +
+      # the licence env); the foreground's Go install, Go cache restore and
+      # mode plan then overlap it. Steps in one job are sequential, so the
+      # background unit is a detached pwsh process running
+      # .devin/scripts/unity_materialize.ps1; completion is signalled only by
+      # the exitcode.txt sentinel the join step reads.
+      - name: Start Unity materialization (background)
+        if: steps.unity-scope.outputs.run == 'true'
+        shell: pwsh
+        env:
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          CACHE_HIT_LIBRARY: ${{ steps.cache-unity-library.outputs.cache-hit }}
+        run: |
+          $state = "$env:RUNNER_TEMP\unity-materialize-state"
+          New-Item -ItemType Directory -Force -Path $state | Out-Null
+          Remove-Item "$state\exitcode.txt" -Force -ErrorAction SilentlyContinue
+          $p = Start-Process -FilePath 'pwsh' -ArgumentList '-NoProfile', '-File', "$env:GITHUB_WORKSPACE\.devin\scripts\unity_materialize.ps1" -WorkingDirectory $env:GITHUB_WORKSPACE -RedirectStandardOutput "$state\materialize.out.log" -RedirectStandardError "$state\materialize.err.log" -PassThru -NoNewWindow
+          Set-Content "$state\pid.txt" -Value "$($p.Id)" -NoNewline
+          Write-Host "unity materialization started in background (pid $($p.Id))"
+      - name: Install Go (pinned)
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        with:
+          go-version: '1.27.1'
+          cache: false
+
+      - name: Cache Go modules + build (pinned)
+        id: cache-go
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/AppData/Local/go-build
+          key: go-build-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('server/go.sum') }}
+          restore-keys: |
+            go-build-${{ runner.os }}-${{ env.GO_VERSION }}-
+
+      - name: Unity mode plan
+        id: unity-plan
+        if: steps.unity-scope.outputs.run == 'true'
+        shell: pwsh
+        env:
+          THINHTHAN_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          THINHTHAN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          # ADR-0075: launch only the Unity test modes whose Q3 gate is active.
+          $plan = go -C server run ./cmd/verify -plan-unity
+          if ($LASTEXITCODE -ne 0) { throw "unity mode plan failed rc=$LASTEXITCODE" }
+          $plan | Out-Host
+          $plan >> $env:GITHUB_OUTPUT
+
+      - name: Join Unity materialization
         if: steps.unity-scope.outputs.run == 'true'
         timeout-minutes: 30
         shell: pwsh
@@ -1050,35 +1167,27 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           CACHE_HIT_LIBRARY: ${{ steps.cache-unity-library.outputs.cache-hit }}
         run: |
-          . .\.devin\scripts\cache_telemetry.ps1
-          $sw = [System.Diagnostics.Stopwatch]::StartNew()
-          $libHit = if ($env:CACHE_HIT_LIBRARY -eq 'true') { 'hit' } else { 'miss' }
-          $ulf = 'C:\ProgramData\Unity\Unity_lic.ulf'
-          $logPath = "$env:RUNNER_TEMP\unity-materialize.log"
-          $proj = "$env:GITHUB_WORKSPACE\client"
-          $ok = $false
-          foreach ($i in 1..5) {
-            Remove-Item $logPath -Force -ErrorAction SilentlyContinue
-            $uargs = @('-batchmode', '-nographics', '-projectPath', $proj, '-quit', '-logFile', $logPath)
-            if (-not (Test-Path $ulf)) {
-              $uargs += @('-serial', "$env:UNITY_SERIAL", '-username', "$env:UNITY_EMAIL", '-password', "$env:UNITY_PASSWORD")
-            }
-            $p = Start-Process -FilePath $env:UNITY_EDITOR_PATH -ArgumentList $uargs -PassThru -Wait -NoNewWindow
-            $rc = $p.ExitCode
-            $log = ''
-            if (Test-Path $logPath) {
-              $log = Get-Content $logPath -Raw
-              Get-Content $logPath -Tail 60
-            }
-            if ($log -match 'Exiting batchmode successfully' -and $log -notmatch 'Scripts have compiler errors' -and (Test-Path "$proj\Library\PackageCache")) { $ok = $true; break }
-            if ($log -match 'license|licence' -and $log -match 'fail|error|invalid') { Remove-Item $ulf -Force -ErrorAction SilentlyContinue }
-            if ($rc -eq 198) { Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds; Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
-            Write-Host "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
-            if ($i -lt 5 -and $log -notmatch 'Scripts have compiler errors') { Start-Sleep -Seconds 60 }
+          $ErrorActionPreference = 'Stop'
+          $state = "$env:RUNNER_TEMP\unity-materialize-state"
+          $sentinel = "$state\exitcode.txt"
+          $deadline = (Get-Date).AddMinutes(28)
+          # ADR-0077: join the detached materialization. A missing sentinel
+          # means the launcher itself failed (not a Unity failure — the script
+          # always writes one), so run one synchronous materialization instead
+          # of failing blind; a real rc!=0 is final, the detached run already
+          # carries the full licence retry (no double retry).
+          while (-not (Test-Path $sentinel) -and (Get-Date) -lt $deadline) {
+            Start-Sleep -Seconds 5
           }
-          Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds
-          if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
-
+          if (-not (Test-Path $sentinel)) {
+            Write-Host 'background materialization produced no sentinel - running it in the foreground'
+            pwsh -NoProfile -File "$env:GITHUB_WORKSPACE\.devin\scripts\unity_materialize.ps1"
+          }
+          if (Test-Path "$state\materialize.out.log") { Get-Content "$state\materialize.out.log" -Tail 80 }
+          if (Test-Path "$state\materialize.err.log") { Get-Content "$state\materialize.err.log" -Tail 40 }
+          if (-not (Test-Path $sentinel)) { throw 'unity materialization produced no exit code' }
+          $rc = [int]((Get-Content $sentinel -Raw).Trim())
+          if ($rc -ne 0) { throw "unity materialization failed rc=$rc" }
       - name: Unity EditMode+PlayMode tests
         if: steps.unity-scope.outputs.run == 'true' && steps.unity-plan.outputs.modes != ''
         timeout-minutes: 30
@@ -1396,6 +1505,18 @@ jobs:
         # verifier's Q1 records the pinned path.
         run: '"UNITY_EDITOR_PATH=$env:RUNNER_TEMP\unity-editor\Editor\Unity.exe" >> $env:GITHUB_ENV'
 
+      # ADR-0077: the Unity-independent gates run while the Unity job is still
+      # running; `Run Q0-Q6 verifier` adds the Unity gates to this file and
+      # writes the report (a missing/unusable file makes it run every gate).
+      - name: Q0-Q6 verifier (pre-Unity phase)
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
+        continue-on-error: true
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          THINHTHAN_CACHE_HIT_GO: ${{ steps.cache-go.outputs.cache-hit }}
+        run: pwsh -NoProfile -File scripts/verify.ps1 -Phase pre-unity -ReportOut "$env:RUNNER_TEMP/verify-pre-unity.json"
+
       - name: Wait for Unity job
         id: unity-wait
         if: steps.unity-scope.outputs.run == 'true'
@@ -1431,7 +1552,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           THINHTHAN_CACHE_HIT_GO: ${{ steps.cache-go.outputs.cache-hit }}
-        run: pwsh -NoProfile -File scripts/verify.ps1 -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
+        run: pwsh -NoProfile -File scripts/verify.ps1 -Phase unity -PreReport "$env:RUNNER_TEMP/verify-pre-unity.json" -UnityResultsDir artifacts/unity-tests -ReportOut verify-report.json
 
       - name: Unity job result
         if: ${{ !cancelled() && steps.unity-scope.outputs.run == 'true' }}
