@@ -299,12 +299,18 @@ jobs:
           mat_snap="$RUNNER_TEMP/unity-lib-restored"
           sudo rm -rf "$mat_snap"
           [ -d client/Library ] && sudo cp -a client/Library "$mat_snap"
+          # Library/*.pid holds pid values of editor helper processes
+          # (ilpp.pid, burst.pid) recorded by a previous session. The pids are
+          # stale after a cache restore and Unity regenerates them per session;
+          # scrub them so no stale value survives.
+          sudo find client/Library -name '*.pid' -type f -delete 2>/dev/null || true
           prev=
           for i in 1 2 3 4 5; do
             if [ "$i" -gt 1 ]; then
               if [ "$prev" = killed ] && [ "$i" -le 3 ] && [ -d "$mat_snap" ]; then
                 sudo rm -rf client/Library client/Temp
                 sudo cp -a "$mat_snap" client/Library
+                sudo find client/Library -name '*.pid' -type f -delete 2>/dev/null || true
                 echo "attempt $i: warm retry from the restored Library snapshot"
               else
                 # Cold retry: attempt 1 keeps a cache-restored Library
