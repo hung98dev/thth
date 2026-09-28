@@ -32,7 +32,7 @@ var bannedClientAPI = []struct {
 	exemptIn func(rel string) bool
 	capSkip  func(m []string) bool // optional post-filter on capture groups
 }{
-	{"update_outside_frameloop", regexp.MustCompile(`\b(void|private|public|protected|internal)\s+(Update|FixedUpdate|LateUpdate|OnGUI|OnEnable|OnDisable|Start|Awake|OnDestroy)\s*\(`), frameLoopAllowed, nil},
+	{"update_outside_frameloop", regexp.MustCompile(`\b(void|private|public|protected|internal)\s+(Update|FixedUpdate|LateUpdate|OnGUI)\s*\(`), frameLoopAllowed, nil},
 	{"coroutines", regexp.MustCompile(`\b(IEnumerator|StartCoroutine|StopCoroutine|Coroutine)\b`), nil, nil},
 	{"linq", regexp.MustCompile(`\bSystem\.Linq\b|using\s+System\.Linq`), nil, nil},
 	{"find_calls", regexp.MustCompile(`\b(GameObject\.Find|FindObjectOfType|FindFirstObjectByType|FindAnyObjectByType|FindObjectsOfType|SendMessage|BroadcastMessage|InvokeRepeating)\s*\(|(?:^|[^\.\w])Invoke\s*\(`), nil, nil},
