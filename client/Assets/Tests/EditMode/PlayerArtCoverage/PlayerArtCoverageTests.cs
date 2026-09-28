@@ -151,7 +151,7 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             {
                 pos += 16; // rect top/left/bottom/right
                 var channels = ReadU16(data, ref pos);
-                pos += channels * 4 + 4 + 4 + 4; // channel lens + blendsig + blendmode + opacity/clip/flags/filler
+                pos += channels * 6 + 8 + 4; // channel (id,len) pairs + blend sig/key + opacity/clip/flags/filler
                 var extraLen = ReadU32(data, ref pos);
                 var extraEnd = pos + extraLen;
                 var maskDataLen = ReadU32(data, ref pos);
