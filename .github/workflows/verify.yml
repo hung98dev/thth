@@ -468,11 +468,12 @@ jobs:
             echo "pid1=$pid1" >> "$d/meta.txt"
             [ -n "$pid1" ] && [ "$pid1" != "0" ] || continue
             ( strace -f -tt -T -yy -s 120 \
-                -e trace=kill,tkill,tgkill,pidfd_send_signal,exit,exit_group,execve,execveat \
+                -e trace=kill,tkill,tgkill,pidfd_send_signal,exit,exit_group,execve,execveat,%process \
                 -o "$d/strace.txt" -p "$pid1" >>"$d/strace-meta.log" 2>&1 & ) 
             ( while docker inspect -f '{{.State.Running}}' "$cid" 2>/dev/null | grep -q '^true$'; do
                 ts=$(date +%s.%3N)
                 { echo "=== t=$ts"; docker top "$cid" -eo pid,ppid,comm,etimes 2>/dev/null; } >> "$d/procs.txt"
+                { echo "=== t=$ts"; docker exec "$cid" sh -c 'ps -eLf -o pid,lwp,comm 2>/dev/null | tail -n +2' 2>/dev/null; } >> "$d/cprocs.txt"
                 upid=$(docker top "$cid" -eo pid,comm 2>/dev/null | awk '$2=="Unity"{print $1; exit}')
                 if [ -n "$upid" ]; then
                   { echo "=== t=$ts upid=$upid"; ls -l /proc/$upid/fd 2>/dev/null | sed -n 's/^.* \([0-9]*\) -> \(.*\)$/fd \1 -> \2/p';
@@ -1299,6 +1300,7 @@ jobs:
   # Go/PostgreSQL work of `Q0-Q6 verify (Windows)`, which waits for it.
   unity-windows:
     name: 'Unity (Windows)'
+    if: false  # DIAG: Linux-only experiments on diag/unity-self-kill (never merged)
     runs-on: windows-2022
     timeout-minutes: 120
     steps:
@@ -1650,6 +1652,7 @@ jobs:
 
 
   verify-windows:
+    if: false  # DIAG: Linux-only experiments on diag/unity-self-kill (never merged)
     name: 'Q0-Q6 verify (Windows)'
     runs-on: windows-2022
     timeout-minutes: 120
