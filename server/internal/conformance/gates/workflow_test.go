@@ -585,6 +585,18 @@ func TestMaterializationWarmRetry(t *testing.T) {
 			t.Fatalf("linux materialization missing %q", want)
 		}
 	}
+	// Stale helper-process pids recorded in Library/*.pid (ilpp.pid,
+	// burst.pid) must be scrubbed after the cache-restored snapshot and again
+	// after every warm-retry restore: the editor's managed cleanup kills the
+	// recorded pid, and a recycled pid in the container pidns can be the
+	// editor itself.
+	scrub := `sudo find client/Library -name '*.pid' -type f -delete`
+	first := strings.Index(run, scrub)
+	last := strings.LastIndex(run, scrub)
+	warm := strings.Index(run, `sudo cp -a "$mat_snap" client/Library`)
+	if first < snap || first > loop || last < warm {
+		t.Fatal("Library/*.pid must be scrubbed after the snapshot and inside the warm-retry restore")
+	}
 	winData, err := os.ReadFile(filepath.Join(repoRoot(t), ".devin/scripts/unity_materialize.ps1"))
 	if err != nil {
 		t.Fatalf("read unity_materialize.ps1: %v", err)
