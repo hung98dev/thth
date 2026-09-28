@@ -26,3 +26,6 @@ ADR-0050 and ADR-0057 required a self-hosted cloud Windows VM (with a hardware G
 
 ## Amendment (ADR-0073)
 The Windows job runs the Unity editor natively from the pinned official installer (cached per installer SHA-256); no GameCI Windows image is used. Unity steps are path-scoped on pull requests (`SKIP(no-client-change)`).
+
+## Amendment (ADR-0075)
+Item 2: there is no third `evidence manifest` job; each required job is joined with a parallel `Unity (<os>)` job and `Q0-Q6 verify (Linux)` merges both reports into the `evidence` artifact. Item 11: on GitHub Pro (40 concurrent hosted jobs) the coordinator limit is 8 `IN_PROGRESS` tasks (4 jobs per PR run).
