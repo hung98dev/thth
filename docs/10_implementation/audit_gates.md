@@ -40,8 +40,9 @@ secrets/vars       UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD (or UNITY_SERIAL),
 agent tokens       fine-grained, this repository only: Contents RW, Pull requests RW, Workflows RW, Actions RW,
                    Issues RW, Variables R, Administration R, Secrets R (names only), Metadata R; one token per role
                    session (coordinator, implementers, spec-owner, reviewer); never an Actions secret
-art tool           owner-provided art/audio generation tool (name, exact version/model, access, commercial terms),
-                   recorded here and in ../00_context/technology_versions.md § Content production tools; needed only
+art tool           Stability AI Platform API — the canonical models/endpoints are recorded in
+                   ../00_context/technology_versions.md § Content production tools; the owner provisions the
+                   Stability AI account/credits and the `STABILITY_API_KEY` personal-scope secret; needed only
                    before the first final-art task is claimed (ADR-0072)
 backup storage     one S3-compatible bucket for the pgBackRest 2.59.1 repo1 and the `erasure-ledger/` prefix, configured
                    exactly per ../08_scale_ops/backup_recovery.md § Backup Storage Configuration: world host
