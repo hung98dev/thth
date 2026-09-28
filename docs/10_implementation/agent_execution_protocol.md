@@ -37,7 +37,7 @@ If a box fails, the task stays `NOT_STARTED` or becomes `BLOCKED` (§6). Agents 
 
 ## 3. Claiming (coordinator)
 
-1. Select the lowest topological index (`task_queue.md` § Topological Execution Order) among ready tasks; keep the number of `IN_PROGRESS` tasks ≤ 5 (ADR-0058: 20 concurrent hosted jobs, 2 verify jobs + 1 evidence job per PR), of which at most 2 have `client/` in `owned_paths` (bounds concurrent Unity licence activations, ADR-0072). A final-art task (`../00_context/technology_versions.md` § Content production tools) is not ready while no art tool is recorded; the first such claim attempt instead opens a scoped `OPS-xxx` (`blocks:` the final-art tasks) through an `ops/` PR.
+1. Select the lowest topological index (`task_queue.md` § Topological Execution Order) among ready tasks; keep the number of `IN_PROGRESS` tasks ≤ 8 (ADR-0075: GitHub Pro allows 40 concurrent hosted jobs; a PR run uses 4 — two required verify jobs and two parallel Unity jobs), of which at most 2 have `client/` in `owned_paths` (bounds concurrent Unity licence activations, ADR-0072). A final-art task (`../00_context/technology_versions.md` § Content production tools) is not ready while no art tool is recorded; the first such claim attempt instead opens a scoped `OPS-xxx` (`blocks:` the final-art tasks) through an `ops/` PR.
 2. Open a status-only claim PR on branch `claim/<yyyymmdd>-<n>` setting `status: IN_PROGRESS`, `claimed_by`, `branch: imp/IMP-XXX-<slug>`, `claimed_at` in the packet and the summary-row status. Status-only diffs take the Q0-only fast path (`audit_gates.md` § Protected Paths); the reviewer still posts `policy-review`; the claim PR merges through the merge slot (§5a).
 3. After the claim merges, hand the task to exactly one implementer (one task per implementer, its own worktree/clone and isolated DB port, Unity cache and temp dirs).
 4. A claim with no PR activity for 24 h is returned to `NOT_STARTED` by a new claim PR (clear claim fields).
@@ -82,7 +82,7 @@ Cleanup verification
 
 Canonical schema: `../09_testing/test_and_release_evidence.md`; identity rules: ADR-0057.
 
-- CI (`verify.yml`) checks out the PR head SHA, computes `source_tree_hash`, runs Q0-Q6 in the Linux and Windows jobs, and the `evidence manifest` job downloads both reports (`actions/download-artifact`), merges them and uploads the manifest as artifact `evidence`.
+- CI (`verify.yml`) checks out the PR head SHA, computes `source_tree_hash`, runs Q0-Q6 in the Linux and Windows jobs (each joined with its parallel Unity job), and `Q0-Q6 verify (Linux)` downloads the Windows report (`actions/download-artifact`), merges both and uploads the manifest as artifact `evidence` (ADR-0075).
 - The implementer runs `gh run download <run_id> -n evidence -D docs/10_implementation/evidence/IMP-XXX/` and commits it byte-for-byte. It never edits manifest content.
 - Q6 re-verifies only manifests added in the PR: hash equals the head tree hash; `ci_run_id` + `run_attempt` exist, belong to `verify.yml` and concluded `success`.
 - FAILED runs are never committed. Chat logs, local runs and screenshots are not evidence; screenshots may be attached as review artifacts referenced by the manifest.

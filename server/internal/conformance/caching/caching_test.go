@@ -53,9 +53,9 @@ func workflowText(t *testing.T) string {
 func jobOS(t *testing.T, job string) string {
 	t.Helper()
 	switch job {
-	case "verify-linux":
+	case "verify-linux", "unity-linux":
 		return "Linux"
-	case "verify-windows":
+	case "verify-windows", "unity-windows":
 		return "Windows"
 	default:
 		t.Fatalf("unexpected job %q carries a cache step", job)
@@ -81,8 +81,8 @@ func TestCacheActionPinnedSha(t *testing.T) {
 	}
 	for _, need := range []string{
 		"verify-linux:go-build-", "verify-windows:go-build-",
-		"verify-windows:unity-editor-", "verify-windows:cli-tools-",
-		"verify-linux:unity-library-", "verify-windows:unity-library-",
+		"unity-windows:unity-editor-", "verify-windows:cli-tools-", "unity-windows:cli-tools-",
+		"unity-linux:unity-library-", "unity-windows:unity-library-",
 		"verify-windows:edb-",
 	} {
 		ok := false
@@ -164,11 +164,11 @@ func TestCacheKeysCoverPinInputs(t *testing.T) {
 				}
 			}
 		case strings.HasPrefix(s.Key, "unity-editor-"):
-			if s.Job != "verify-windows" || !strings.Contains(s.Key, "env.UNITY_WINDOWS_EDITOR_SHA256") {
+			if s.Job != "unity-windows" || !strings.Contains(s.Key, "env.UNITY_WINDOWS_EDITOR_SHA256") {
 				t.Errorf("%s: unity-editor cache is Windows-only and keyed by env.UNITY_WINDOWS_EDITOR_SHA256, got %q", s.Job, s.Key)
 			}
 		case strings.HasPrefix(s.Key, "cli-tools-"):
-			if s.Job != "verify-windows" {
+			if jobOS(t, s.Job) != "Windows" {
 				t.Errorf("cli-tools cache must not exist on %s", s.Job)
 			}
 			for _, a := range []stackpin.CliAsset{
@@ -259,14 +259,16 @@ func TestNoGateSkippedOnCacheHit(t *testing.T) {
 			t.Errorf("%s/%s: step gated on cache-hit (%q)", s.Job, s.Name, s.If)
 		}
 	}
-	required := []string{
-		"Fork guard", "Merge freeze guard",
-		"Unity materialization (licence retry <=5)",
-		"Unity materialized drift check", "Run Q0-Q6 verifier",
+	// ADR-0075: Unity runs in its own job per OS; the required job joins it.
+	required := map[string][]string{
+		"verify-linux":   {"Fork guard", "Merge freeze guard", "Run Q0-Q6 verifier", "Unity job result"},
+		"verify-windows": {"Fork guard", "Merge freeze guard", "Run Q0-Q6 verifier", "Unity job result"},
+		"unity-linux":    {"Fork guard", "Merge freeze guard", "Unity materialization (licence retry <=5)", "Unity materialized drift check"},
+		"unity-windows":  {"Fork guard", "Merge freeze guard", "Unity materialization (licence retry <=5)", "Unity materialized drift check"},
 	}
 	steps := workflowSteps(t)
-	for _, job := range []string{"verify-linux", "verify-windows"} {
-		for _, name := range required {
+	for job, names := range required {
+		for _, name := range names {
 			found := false
 			for _, s := range steps {
 				if s.Job == job && s.Name == name {
@@ -291,7 +293,7 @@ func TestNoGateSkippedOnCacheHit(t *testing.T) {
 // drift step + unconditional upload of unity-materialized-<os>.
 func TestMaterializeCommitStillRequiredOnHit(t *testing.T) {
 	steps := workflowSteps(t)
-	for _, job := range []string{"verify-linux", "verify-windows"} {
+	for _, job := range []string{"unity-linux", "unity-windows"} {
 		var drift, upload bool
 		for _, s := range steps {
 			if s.Job != job {
@@ -549,8 +551,8 @@ func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
 var jobHeaderRe = regexp.MustCompile(`^  ([A-Za-z0-9_-]+):\s*$`)
 
 func jobOSMatches(verifyJob, warmJob string) bool {
-	return (verifyJob == "verify-linux" && (warmJob == "warm-linux" || warmJob == "warm-library-linux")) ||
-		(verifyJob == "verify-windows" && (warmJob == "warm-windows" || warmJob == "warm-library-windows"))
+	return ((verifyJob == "verify-linux" || verifyJob == "unity-linux") && (warmJob == "warm-linux" || warmJob == "warm-library-linux")) ||
+		((verifyJob == "verify-windows" || verifyJob == "unity-windows") && (warmJob == "warm-windows" || warmJob == "warm-library-windows"))
 }
 
 // BLK-008: every Unity editor invocation (materialization, licence probe,
