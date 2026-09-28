@@ -1,8 +1,8 @@
 name: cache-prune
 
-# ADR-0073 amendment: the repository cache budget is 10 GB and eviction is
-# LRU, so per-PR caches (client/Library ~0.6 GB per OS) of closed PRs would
-# push out the main-scope Windows editor cache. This workflow deletes every
+# ADR-0073 amendment: per-PR caches (client/Library ~0.6 GB per OS) of
+# closed PRs are never restored again but still count against the 50 GB
+# repository budget (LRU eviction). This workflow deletes every
 # refs/pull/<n>/merge cache whose PR is closed or merged. Open PRs keep
 # theirs. No checkout, no secret: only the job's GITHUB_TOKEN (actions:write).
 on:

@@ -1,0 +1,52 @@
+name: measure-image-cache
+
+# TEMPORARY (PR #61 measurement, removed before merge): does restoring the
+# digest-pinned Linux Unity image from actions/cache beat a plain docker pull?
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/measure_image_cache.yml'
+
+permissions:
+  contents: read
+
+env:
+  UNITY_LINUX_IMAGE: 'unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d'
+
+jobs:
+  save:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Pull (timed)
+        run: |
+          s=$SECONDS; docker pull "$UNITY_LINUX_IMAGE" >/dev/null; echo "PULL_SECONDS=$((SECONDS-s))"
+          docker image inspect -f 'image size {{.Size}}' "$UNITY_LINUX_IMAGE"
+      - name: Save + zstd (timed)
+        run: |
+          mkdir -p "$RUNNER_TEMP/img"; s=$SECONDS
+          docker save "$UNITY_LINUX_IMAGE" | zstd -T0 -3 -q -o "$RUNNER_TEMP/img/unity.tar.zst"
+          echo "SAVE_SECONDS=$((SECONDS-s))"; ls -l "$RUNNER_TEMP/img/unity.tar.zst"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/img
+          key: measure-unity-image-${{ github.run_id }}
+  restore:
+    needs: save
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Mark
+        run: echo "RESTORE_START=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/img
+          key: measure-unity-image-${{ github.run_id }}
+      - name: Load (timed)
+        run: |
+          echo "CACHE_RESTORE_SECONDS=$(( $(date +%s)-RESTORE_START ))"
+          s=$SECONDS; zstd -d -T0 -q -c "$RUNNER_TEMP/img/unity.tar.zst" | docker load >/dev/null
+          echo "LOAD_SECONDS=$((SECONDS-s))"; echo "TOTAL_CACHE_PATH_SECONDS=$(( $(date +%s)-RESTORE_START ))"
+      - name: Pull on a fresh runner (timed, for comparison)
+        run: |
+          docker rmi -f "$(docker images -q | head -1)" >/dev/null 2>&1 || true
+          docker system prune -af >/dev/null 2>&1 || true
+          s=$SECONDS; docker pull "$UNITY_LINUX_IMAGE" >/dev/null; echo "PULL2_SECONDS=$((SECONDS-s))"
