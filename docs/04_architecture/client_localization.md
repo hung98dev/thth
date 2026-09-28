@@ -141,8 +141,11 @@ Failure to persist the local preference does not affect gameplay authority.
 # Fonts / Glyph Coverage
 The shipping font/fallback chain must cover all required Vietnamese characters/diacritics and punctuation used by `vi-VN`.
 
+Required glyph set (ADR-0076): every Unicode code point in `U+0020-007E, U+00A0-00FF, U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB` has a glyph in the font/fallback chain. All localized strings and rendered player text are normalized to NFC before layout.
+
 Release validation includes:
 - glyph coverage scan over all required strings,
+- stacked-diacritic clipping test: the strings `Ẳ Ẵ Ổ Ỗ Ẫ Ấ Ỡ Ữ` rendered at every TextMeshPro style used by the UI, default line spacing, fit inside the line box (no pixel of a glyph above the text rect top or clipped by a mask),
 - no missing-glyph tofu for canonical launch content,
 - UI layout checks on target mobile resolutions.
 
@@ -174,4 +177,5 @@ gameplay ID/result never derived from localized text
 player-authored text is not translated
 missing required vi-VN or en-US = release failure
 Vietnamese glyph coverage = required
+Vietnamese glyph set = U+0020-007E, U+00A0-00FF, U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB; text NFC
 ```
