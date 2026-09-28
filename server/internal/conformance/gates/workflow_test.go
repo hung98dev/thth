@@ -433,3 +433,166 @@ func TestEvidenceBuiltInLinuxRequiredJob(t *testing.T) {
 		t.Fatal("verify-linux must wait for the Windows report before merging")
 	}
 }
+
+// stepBlock returns the raw YAML of the step named name inside job (keys the
+// structural parser does not model, e.g. continue-on-error, env).
+func stepBlock(t *testing.T, wf *WorkflowFile, job, name string) string {
+	t.Helper()
+	loc := regexp.MustCompile(`(?m)^  ` + regexp.QuoteMeta(job) + `:\s*$`).FindStringIndex(wf.Raw)
+	if loc == nil {
+		t.Fatalf("job %q not found", job)
+	}
+	rest := wf.Raw[loc[1]:]
+	if next := regexp.MustCompile(`(?m)^  [A-Za-z0-9_-]+:\s*$`).FindStringIndex(rest); next != nil {
+		rest = rest[:next[0]]
+	}
+	start := strings.Index(rest, "      - name: "+name+"\n")
+	if start < 0 {
+		t.Fatalf("job %q: step %q not found", job, name)
+	}
+	block := rest[start+1:]
+	if end := strings.Index(block, "\n      - name:"); end >= 0 {
+		block = block[:end]
+	}
+	return block
+}
+
+// ADR-0077: the digest-pinned Linux image pull runs in the background from
+// right after the preconditions and is joined before the first editor run,
+// with a foreground pull of the same digest as the fallback.
+func TestUnityImagePullOverlapsSetup(t *testing.T) {
+	wf := verifyWf(t)
+	j := jobNamed(t, wf, "unity-linux")
+	freeze := stepNamed(t, j, "Merge freeze guard")
+	start := stepNamed(t, j, "Start Unity image pull (background)")
+	if start.Index != freeze.Index+1 || start.If != "" {
+		t.Fatal("the background pull must start unconditionally right after the freeze guard")
+	}
+	block := stepBlock(t, wf, "unity-linux", "Start Unity image pull (background)")
+	if !strings.Contains(start.Run, "nohup") || !strings.Contains(start.Run, `docker pull "$1"`) || strings.Contains(block, "secrets.") {
+		t.Fatal("background pull must nohup a docker pull of the pinned image without secrets")
+	}
+	join := stepNamed(t, j, "Pull Unity image (pinned)")
+	lib := stepNamed(t, j, "Cache Unity client/Library (pinned)")
+	mat := stepNamed(t, j, "Unity materialization (licence retry <=5)")
+	if !(lib.Index < join.Index && join.Index < mat.Index) {
+		t.Fatal("the Library restore must overlap the pull; the join must precede materialization")
+	}
+	for _, want := range []string{`kill -0 "$pid"`, `docker pull "$UNITY_IMAGE"`, "docker image inspect"} {
+		if !strings.Contains(join.Run, want) {
+			t.Fatalf("pull join step missing %q", want)
+		}
+	}
+}
+
+// ADR-0077: the kill-probe (auditd/tracefs/bpftrace + editor version probes)
+// is an investigation tool, not a gate: it runs only when the repository
+// variable UNITY_KILL_PROBE is 'true'.
+func TestKillProbeOptIn(t *testing.T) {
+	wf := verifyWf(t)
+	j := jobNamed(t, wf, "unity-linux")
+	for _, name := range []string{"Arm kill-probe (SIGKILL sender diagnostic)", "Dump kill-probe diagnostics"} {
+		if s := stepNamed(t, j, name); !strings.Contains(s.If, "vars.UNITY_KILL_PROBE == 'true'") {
+			t.Fatalf("step %q must be opt-in via vars.UNITY_KILL_PROBE, got if=%q", name, s.If)
+		}
+	}
+	run := stepNamed(t, j, "Unity materialization (licence retry <=5)").Run
+	guard := strings.Index(run, `if [ "${UNITY_KILL_PROBE:-}" = "true" ]; then`)
+	probe := strings.Index(run, "unity-editor -version")
+	loop := strings.Index(run, "for i in 1 2 3 4 5; do")
+	if guard < 0 || probe < guard || loop < probe || strings.Count(run, "direct-version probe") != 1 {
+		t.Fatal("editor version probes must run only inside the UNITY_KILL_PROBE guard")
+	}
+}
+
+// ADR-0077: materialization snapshots the cache-restored Library; a retry
+// after an editor kill restarts warm from it (never from the killed editor's
+// Library, BLK-017), compiler errors stop when they repeat, and only other
+// (licence/infra) failures wait 60 s.
+func TestMaterializationWarmRetry(t *testing.T) {
+	wf := verifyWf(t)
+	run := stepNamed(t, jobNamed(t, wf, "unity-linux"), "Unity materialization (licence retry <=5)").Run
+	snap := strings.Index(run, `sudo cp -a client/Library "$mat_snap"`)
+	loop := strings.Index(run, "for i in 1 2 3 4 5; do")
+	if snap < 0 || snap > loop {
+		t.Fatal("the restored Library must be snapshotted before the first editor run")
+	}
+	for _, want := range []string{
+		`if [ "$prev" = killed ] && [ "$i" -le 3 ] && [ -d "$mat_snap" ]; then`,
+		`sudo rm -rf client/Library client/Temp`,
+		`sudo cp -a "$mat_snap" client/Library`,
+		`elif [ "$rc" -eq 137 ]; then`,
+		"compiler errors on two consecutive attempts",
+		`[ "$i" -lt 5 ] && [ "$prev" = other ] && sleep 60`,
+	} {
+		if !strings.Contains(run, want) {
+			t.Fatalf("linux materialization missing %q", want)
+		}
+	}
+	win := stepNamed(t, jobNamed(t, wf, "unity-windows"), "Unity materialization (licence retry <=5)").Run
+	if !strings.Contains(win, "$compile -and $prevCompile") || !strings.Contains(win, "-not $compile") {
+		t.Fatal("windows materialization must stop on repeated compiler errors and skip the 60 s wait for them")
+	}
+}
+
+// ADR-0077: a Linux -runTests attempt that completed with a non-Passed
+// results XML is a final verdict (no retry); retries are reserved for editor
+// kills. The step still restores the clean Library snapshot before failing.
+func TestLinuxTestFailedVerdictIsFinal(t *testing.T) {
+	wf := verifyWf(t)
+	run := stepNamed(t, jobNamed(t, wf, "unity-linux"), "Unity EditMode+PlayMode tests").Run
+	pass := strings.Index(run, "Test run completed. Exiting with code 0")
+	final := strings.Index(run, "ok=final; break")
+	retry := strings.Index(run, `tests attempt $i failed (rc=$rc); retrying`)
+	if pass < 0 || final < pass || retry < final {
+		t.Fatal("a completed failing verdict must be final and checked before the retry path")
+	}
+	restore := strings.LastIndex(run, `sudo cp -a "$lib_snap" client/Library`)
+	fail := strings.Index(run, `if [ -n "$verdict_failed" ]; then`)
+	if fail < restore {
+		t.Fatal("the step must restore the clean Library snapshot before failing on a verdict")
+	}
+}
+
+// ADR-0077: each required job runs the Unity-independent verifier phase
+// before joining its Unity job; the final verifier reuses that file and adds
+// the Unity gates. The pre phase never fails the job on its own.
+func TestRequiredJobsRunPreUnityPhase(t *testing.T) {
+	wf := verifyWf(t)
+	after := map[string][]string{
+		"verify-linux":   {"Verifier environment", "Unity scope", "Install protoc + Go tool binaries (pinned)"},
+		"verify-windows": {"Verifier environment", "Unity scope", "Unity editor path", "PostgreSQL test server (EDB pinned)", "Install protoc + Go tool binaries (pinned)"},
+	}
+	for job, deps := range after {
+		j := jobNamed(t, wf, job)
+		pre := stepNamed(t, j, "Q0-Q6 verifier (pre-Unity phase)")
+		wait := stepNamed(t, j, "Wait for Unity job")
+		ver := stepNamed(t, j, "Run Q0-Q6 verifier")
+		if pre.Index >= wait.Index {
+			t.Fatalf("job %q: the pre-Unity phase must run before the Unity join", job)
+		}
+		for _, d := range deps {
+			if stepNamed(t, j, d).Index >= pre.Index {
+				t.Fatalf("job %q: pre-Unity phase must follow %q", job, d)
+			}
+		}
+		if !strings.Contains(pre.Run, "-Phase pre-unity") || !strings.Contains(pre.Run, `-ReportOut "$env:RUNNER_TEMP/verify-pre-unity.json"`) {
+			t.Fatalf("job %q: pre-Unity phase must write RUNNER_TEMP/verify-pre-unity.json", job)
+		}
+		if !strings.Contains(ver.Run, "-Phase unity") || !strings.Contains(ver.Run, `-PreReport "$env:RUNNER_TEMP/verify-pre-unity.json"`) {
+			t.Fatalf("job %q: the final verifier must consume the pre-Unity file", job)
+		}
+		if !strings.Contains(pre.If, "!cancelled()") || !strings.Contains(stepBlock(t, wf, job, pre.Name), "continue-on-error: true") {
+			t.Fatalf("job %q: the pre-Unity phase must run after earlier failures and never fail the job itself", job)
+		}
+	}
+	ps, err := os.ReadFile(filepath.Join(repoRoot(t), "scripts", "verify.ps1"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{"'-phase', $Phase", "'-pre-report', $PreReport", "'verify-pre-unity'"} {
+		if !strings.Contains(string(ps), want) {
+			t.Fatalf("verify.ps1 missing %q", want)
+		}
+	}
+}
