@@ -29,6 +29,16 @@ None. IDs start at `BLK-001` and `OPS-001`.
 
 ## Resolved Blockers
 
+### `BLK-019` — Q4 client API fence regex banned every Unity lifecycle callback (`Update|FixedUpdate|LateUpdate|OnGUI|OnEnable|OnDisable|Start|Awake|OnDestroy`), diverging from `engineering_conventions.md` §2.5 and the `architecture/clientfence.go` token scanner (`unityCallbacks`), which ban only the first four; IMP-083's done PR was the first run where `CheckQ4Client` was active, and it flagged IMP-101's `ContactShadow.cs` `void Awake(` — a callback the spec does not ban
+opened_by: coordinator   opened_at: 2026-09-28T07:00Z   resolved_by: spec-owner   resolved_at: 2026-09-28
+evidence: `server/internal/conformance/gates/q4_client.go` `bannedClientAPI.update_outside_frameloop` over-matched vs §2.5; blast radius on main was exactly one file — `client/Assets/Scripts/Core/Rendering/ContactShadow.cs`.
+owning spec / system: `docs/10_implementation/engineering_conventions.md` §2.5 (CODE-005 client API fence table); `server/internal/conformance/gates/q4_client.go` `bannedClientAPI`; `server/internal/conformance/architecture/clientfence.go` `unityCallbacks`.
+options:
+  1. widen §2.5 to ban all lifecycle methods — a silent contract change without an ADR; rejected (the fence pins four frame-driven callbacks, the rest are legal);
+  2. narrow the gate regex to the §2.5 set — chosen.
+blocks: IMP-083 done PR https://github.com/hung98dev/thth/pull/70 — first activation of `CheckQ4Client` flagged `void Awake(` as the only failure.
+resolution: option 2 — `update_outside_frameloop` narrowed to `Update|FixedUpdate|LateUpdate|OnGUI`, matching §2.5 and `unityCallbacks`. Regression: `TestQ4FenceMatchesSection25Callbacks` asserts the gate regex's match set equals the scanner's keys over the full lifecycle catalog. IMP-083 done PR unblocked.
+
 ### `BLK-018` — Linux Unity job with a warm `client/Library` rewrites only `m_currentHash.Hash` in `AddressableAssetSettings.asset`; the drift gate fails every run whose cache state recomputes a different value with `commit unity-materialized`; committing either value only moves the failure to the other OS/cache state
 opened_by: spec-owner   opened_at: 2026-09-28T05:20Z   resolved_by: spec-owner   resolved_at: 2026-09-28
 evidence: PR #64 run https://github.com/hung98dev/thth/actions/runs/36378029974 (head `0f77067`) and PR #61's latest run: the Linux drift check lists only `client/Assets/AddressableAssetsData/AddressableAssetSettings.asset`, whose sole change is `Hash: 7a3c6e32f0f7f0cde5c79f6df51df0e6` -> `2b975957…` under `m_currentHash`; the rewrite happens in the PlayMode `-runTests` launch (`Importing 'GUID: 03d05df7… AddressableAssetSettings.asset'` at 04:38:19) after `Cache hit for: unity-library-Linux-…-f5fc9400…`. The same head's Windows job (Library cache hit) keeps main's value and passes. IMP-070 run https://github.com/hung98dev/thth/actions/runs/36372162272 on the identical Linux cache key but a cache MISS (cold import) produced no drift. So the value is not a content input: `m_currentHash` is Addressables' editor-side hash of in-memory settings/group state, recomputed and serialized whenever the settings object is saved (the IMP-063 provisioner `SaveAssets()` or the package's own play-mode build path), and its value depends on warm-Library editor state that differs per OS/cache — not on any committed input.
