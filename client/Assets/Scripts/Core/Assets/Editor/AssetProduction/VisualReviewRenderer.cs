@@ -71,7 +71,11 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             var written = new List<string>();
             foreach (var scenePath in VisualReviewMatrix.ScenePaths)
             {
-                if (!File.Exists(scenePath))
+                // Scene paths are project-relative; the editor process cwd is
+                // not the project root in CI (docker workdir is the repo
+                // root), so existence must go through the AssetDatabase.
+                var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+                if (sceneAsset == null)
                 {
                     Debug.LogWarning("visual-review: scene missing " + scenePath);
                     continue;
