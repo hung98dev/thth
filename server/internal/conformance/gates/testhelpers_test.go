@@ -23,6 +23,10 @@ func initRepo(t *testing.T, dir string) {
 	gitT(t, dir, "init", "-q", "-b", "main")
 	gitT(t, dir, "config", "user.email", "t@t")
 	gitT(t, dir, "config", "user.name", "t")
+	// No detached background gc/maintenance: it can still be writing
+	// .git/objects when t.TempDir's RemoveAll cleanup runs.
+	gitT(t, dir, "config", "gc.auto", "0")
+	gitT(t, dir, "config", "maintenance.auto", "false")
 	writeRepoFile(t, dir, "README.md", "init\n")
 	commitAll(t, dir)
 }
