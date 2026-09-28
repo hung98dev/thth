@@ -498,7 +498,7 @@ jobs:
           set -uo pipefail
           IMG="${{ env.UNITY_LINUX_IMAGE_TAG }}"
           BIN="$RUNNER_TEMP/imgbin"; mkdir -p "$BIN"
-          timeout 240 docker run --rm "$IMG" bash -c '
+          timeout -k 10 240 docker run --rm "$IMG" bash -c '
             echo "== unity-editor wrapper =="
             which unity-editor || true
             ls -lL /usr/bin/unity-editor /opt/unity/Editor/unity-editor 2>/dev/null || true
@@ -513,14 +513,14 @@ jobs:
             echo "== licensing client dll.config =="
             find /opt/unity -name "Unity.Licensing.Client.dll.config" -exec cat {} + 2>/dev/null
             echo "== licensing client help =="
-            find /opt/unity -name "Unity.Licensing.Client" -type f | head -1 | while read c; do "$c" --help 2>&1 | head -70; done
+            find /opt/unity -name "Unity.Licensing.Client" -type f | head -1 |  head -70; done| head -70; done
             echo "== Tools binary self-tests =="
             for t in UnityAutoQuitter Unity.DataStore; do
               f=/opt/unity/Editor/Data/Tools/$t
-              [ -f "$f" ] && { echo "---- $t --help"; timeout 10 "$f" --help 2>&1 | head -30 || echo "(timeout/err rc=$?)"; }
+              [ -f "$f" ] && { echo "---- $t --help"; timeout -k 5 10 "$f" --help 2>&1 | head -30 || echo "(timeout/err rc=$?)"; }
             done
           ' 2>&1 | tee artifacts/unity-diag/image-layout.txt || true
-          timeout 300 docker run --rm "$IMG" bash -c '
+          timeout -k 10 300 docker run --rm "$IMG" bash -c '
             s() { grep -aoE "[ -~]{$2,}" "$1" 2>/dev/null; }
             echo "=== abort/licensing strings in Unity binary ==="
             s /opt/unity/Editor/Unity 10 | grep -iE "ipc channel|licensing|license|aborting|fatal|killpg|watchdog|auto.?quit|datastore|entitlement" | sort -u | head -160
@@ -530,7 +530,7 @@ jobs:
             for c in $(find /opt/unity/Editor/Data/Resources/Licensing -type f 2>/dev/null | head -40) /opt/unity/Editor/Data/Tools/UnityAutoQuitter /opt/unity/Editor/Data/Tools/Unity.DataStore; do
               [ -f "$c" ] || continue
               echo "---- $c"
-              timeout 60 grep -aoE "[ -~]{10,}" "$c" 2>/dev/null | grep -iE "exit.?timer|idle|shut ?down|session|channel|pipe|handshake|relaunch|respawn" | sort -u | head -45
+              timeout -k 5 60 grep -aoE "[ -~]{10,}" "$c" 2>/dev/null | grep -iE "exit.?timer|idle|shut ?down|session|channel|pipe|handshake|relaunch|respawn" | sort -u | head -45
             done
             echo "=== licensing ipc/abort strings in Unity binary (wide) ==="
             s /opt/unity/Editor/Unity 10 | grep -iE "channel.*(exist|lost|connect)|named.?pipe|session.*(end|drop|timeout)|exit.*(timer|code)|signal|abort" | sort -u | head -120
