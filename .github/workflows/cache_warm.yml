@@ -20,6 +20,12 @@ on:
       - 'client/Packages/**'
       - 'client/ProjectSettings/**'
       - 'client/Assets/**/csc.rsp'
+  # Keep-alive: GitHub evicts caches not accessed for 7 days. Every 5 days
+  # each job restores its main-scope caches (refreshing last-access) and
+  # re-creates any that are missing. Schedule runs on the default branch
+  # only, so the licence secrets stay safe.
+  schedule:
+    - cron: '17 3 */5 * *'
 
 permissions:
   contents: read
@@ -207,7 +213,8 @@ jobs:
         with:
           path: client/Library
           key: unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
-          lookup-only: true
+          # schedule keep-alive: a full restore refreshes last-access (7-day eviction)
+          lookup-only: ${{ github.event_name != 'schedule' }}
 
       - name: Pull Unity image (pinned)
         if: steps.cache-unity-library.outputs.cache-hit != 'true'
@@ -311,7 +318,8 @@ jobs:
         with:
           path: client/Library
           key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
-          lookup-only: true
+          # schedule keep-alive: a full restore refreshes last-access (7-day eviction)
+          lookup-only: ${{ github.event_name != 'schedule' }}
 
       - name: Cache Unity editor (pinned)
         if: steps.cache-unity-library.outputs.cache-hit != 'true'

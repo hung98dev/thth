@@ -531,8 +531,13 @@ func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
 			t.Errorf("%s/%s: unity-library warm must not use restore-keys (BLK-005)", w.Job, w.Name)
 		}
 	}
-	if n := strings.Count(text, "lookup-only: true"); n != 2 {
-		t.Errorf("cache_warm.yml: want lookup-only on both Library warm steps, got %d", n)
+	// lookup-only on push; a full restore on schedule refreshes last-access
+	// (7-day eviction keep-alive).
+	if n := strings.Count(text, "lookup-only: ${{ github.event_name != 'schedule' }}"); n != 2 {
+		t.Errorf("cache_warm.yml: want schedule-aware lookup-only on both Library warm steps, got %d", n)
+	}
+	if !regexp.MustCompile(`(?m)^\s*schedule:`).MatchString(text) {
+		t.Error("cache_warm.yml needs a schedule keep-alive trigger (7-day cache eviction)")
 	}
 }
 
