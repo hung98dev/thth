@@ -241,6 +241,7 @@ Generated from `task_queue.md` `owned_paths`.
 | `.gitattributes` | IMP-000 |
 | `.github/pull_request_template.md` | IMP-000 |
 | `.github/workflows/cache_warm.yml` | IMP-106 |
+| `.github/workflows/cache_prune.yml` | IMP-106 |
 | `.github/workflows/device_perf.yml` | IMP-096 |
 | `.github/workflows/post_merge_guard.yml` | IMP-068 |
 | `.github/workflows/verify.yml` | IMP-000, IMP-068, IMP-106 |
