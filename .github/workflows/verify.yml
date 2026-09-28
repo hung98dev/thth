@@ -240,8 +240,8 @@ jobs:
         run: |
           set -uo pipefail
           mkdir -p "$RUNNER_TEMP/diag" "$RUNNER_TEMP/diag-out" "$RUNNER_TEMP/diag-run" artifacts/unity-diag
-          sudo apt-get install -y -qq strace build-essential >/dev/null 2>&1 || sudo apt-get update -qq >/dev/null 2>&1 && sudo apt-get install -y -qq strace build-essential >/dev/null 2>&1 || true
-          command -v strace; command -v gcc
+          sudo apt-get install -y -qq strace build-essential binutils >/dev/null 2>&1 || sudo apt-get update -qq >/dev/null 2>&1 && sudo apt-get install -y -qq strace build-essential binutils >/dev/null 2>&1 || true
+          command -v strace; command -v gcc; command -v strings
           cat > "$RUNNER_TEMP/diag/killshim.c" <<'EOF'
           #define _GNU_SOURCE
           #include <stdio.h>
@@ -427,7 +427,7 @@ jobs:
           cat > "$RUNNER_TEMP/diag/watch.sh" <<'EOF'
           #!/usr/bin/env bash
           OUT="$1"
-          docker events --since "$(date +%s)" --format '{{.ID}} {{.Status}} {{.Image}}' 2>/dev/null | \
+          docker events --since "$(date +%s)" --filter type=container --format '{{.ID}} {{.Status}} {{.From}}' 2>/dev/null | \
           while read -r cid st img; do
             [ "$st" = "start" ] || continue
             case "$img" in *unityci*|*editor*) ;; *) continue;; esac
@@ -464,28 +464,46 @@ jobs:
         if: steps.unity-scope.outputs.run == 'true'
         shell: bash
         run: |
-          docker run --rm "${{ env.UNITY_LINUX_IMAGE_TAG }}" bash -c '
+          set -uo pipefail
+          IMG="${{ env.UNITY_LINUX_IMAGE_TAG }}"
+          BIN="$RUNNER_TEMP/imgbin"; mkdir -p "$BIN"
+          docker run --rm "$IMG" bash -c '
             echo "== unity-editor wrapper =="
             which unity-editor || true
-            for w in $(command -v unity-editor 2>/dev/null) /opt/unity/Editor/unity-editor /usr/bin/unity-editor; do
-              [ -f "$w" ] && { echo "---- $w"; file "$w"; if file "$w" | grep -qE "text|script"; then head -160 "$w"; fi; }
+            ls -lL /usr/bin/unity-editor /opt/unity/Editor/unity-editor 2>/dev/null || true
+            for w in $(command -v unity-editor 2>/dev/null) /opt/unity/Editor/unity-editor; do
+              [ -f "$w" ] && { echo "---- $w"; head -c 8 "$w" | od -An -c | head -1; head -200 "$w" 2>/dev/null | head -160; }
             done
             echo "== Editor dir =="; ls -la /opt/unity/Editor | head -80
-            echo "== licensing/datastore/autoquit binaries =="
-            find /opt/unity /usr/lib -iname "*licens*" -o -iname "*autoquit*" -o -iname "*datastore*" -o -iname "*DataTools*" 2>/dev/null | head -40
+            echo "== Tools dir =="; ls -la /opt/unity/Editor/Data/Tools 2>/dev/null
+            echo "== Licensing client dir =="
+            find /opt/unity -type d -iname "*licens*" 2>/dev/null
+            find /opt/unity/Editor/Data/Resources/Licensing -maxdepth 3 2>/dev/null | head -60
+            echo "== licensing client dll.config =="
+            find /opt/unity -name "Unity.Licensing.Client.dll.config" -exec cat {} + 2>/dev/null
             echo "== licensing client help =="
-            find /opt/unity -name "Unity.Licensing.Client" -type f | head -1 | while read c; do "$c" --help 2>&1 | head -60; "$c" -h 2>&1 | head -20; done
-          ' 2>&1 | tee artifacts/unity-diag/image-layout.txt || true
-          docker run --rm "${{ env.UNITY_LINUX_IMAGE_TAG }}" bash -c '
-            echo "=== abort/licensing strings in Unity binary ==="
-            strings -a /opt/unity/Editor/Unity | grep -iE "ipc channel|licensing|license|aborting|fatal|killpg|watchdog|auto.?quit|datastore|entitlement" | sort -u | head -150
-            echo "=== UNITY_* env toggles ==="
-            strings -a /opt/unity/Editor/Unity | grep -oE "UNITY_[A-Z0-9_]+" | sort -u | head -120
-            echo "=== licensing client timer/session strings ==="
-            for c in $(find /opt/unity -iname "*licensing*" -type f | head -6); do
-              echo "---- $c"; strings -a "$c" 2>/dev/null | grep -iE "exit timer|idle|timeout|session.*(end|start|open|close)|channel|pipe|handshake" | sort -u | head -60
+            find /opt/unity -name "Unity.Licensing.Client" -type f | head -1 | while read c; do "$c" --help 2>&1 | head -70; done
+            echo "== Tools binary self-tests =="
+            for t in UnityAutoQuitter Unity.DataStore; do
+              f=/opt/unity/Editor/Data/Tools/$t
+              [ -f "$f" ] && { echo "---- $t --help"; "$f" --help 2>&1 | head -30 || true; }
             done
-          ' 2>&1 | tee artifacts/unity-diag/image-strings.txt || true
+          ' 2>&1 | tee artifacts/unity-diag/image-layout.txt || true
+          cid=$(docker create "$IMG")
+          for p in /opt/unity/Editor/Unity /usr/bin/unity-editor /opt/unity/Editor/Data/Resources/Licensing /opt/unity/Editor/Data/Tools; do
+            docker cp "$cid:$p" "$BIN/" 2>/dev/null || echo "cp failed: $p"
+          done
+          docker rm "$cid" >/dev/null 2>&1 || true
+          find "$BIN" -maxdepth 3 -type f | head -80
+          { echo "=== abort/licensing strings in Unity binary ==="
+            strings -a "$BIN/Unity" 2>/dev/null | grep -iE "ipc channel|licensing|license|aborting|fatal|killpg|watchdog|auto.?quit|datastore|entitlement|kill.*group|SIGKILL" | sort -u | head -160
+            echo "=== UNITY_* env toggles ==="
+            strings -a "$BIN/Unity" 2>/dev/null | grep -oE "UNITY_[A-Z0-9_]+" | sort -u | head -140
+            echo "=== licensing client dlls: timer/session/exit strings ==="
+            find "$BIN" -name "*.dll" -o -name "Unity.Licensing.Client" -o -name "UnityAutoQuitter" -o -name "Unity.DataStore" | while read c; do
+              echo "---- $c"
+              strings -a "$c" 2>/dev/null | grep -iE "exit.?timer|idle|shut ?down|session.*(end|start|open|close|count)|last.*session|channel|pipe|handshake|kill|abort" | sort -u | head -50
+            done } 2>&1 | tee artifacts/unity-diag/image-strings.txt || true
 
       - name: Unity materialization (licence retry <=5)
         if: steps.unity-scope.outputs.run == 'true'
