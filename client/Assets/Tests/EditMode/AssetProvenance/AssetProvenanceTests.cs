@@ -85,9 +85,18 @@ namespace ThinhThan.Tests.EditMode.AssetProvenance
             {
                 tool = "example-diffusion",
                 version = "1.2.3",
+                model_id = "example-model",
+                model_sha256 = null,
                 terms_uri = "https://example.com/tool-terms",
+                terms_snapshot_sha256 = Sha(new byte[] { 7 }),
                 prompt = "painted-volume chibi sprite, top-front light",
+                seed = 42,
+                parameters = "{\"cfg\":7}",
+                workflow_sha256 = null,
+                style_pack_id = null,
                 reference_uris = new List<string>(),
+                reference_sha256 = new List<string>(),
+                c2pa_present = false,
             };
             return row;
         }
@@ -345,6 +354,8 @@ namespace ThinhThan.Tests.EditMode.AssetProvenance
             var row = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
             row.generation_record!.reference_uris =
                 new List<string> { "https://example.com/ref.png" };
+            row.generation_record.reference_sha256 =
+                new List<string> { Sha(new byte[] { 42 }) };
             var errors = AssetProvenanceValidator.Validate(RegisterOf(row));
             Assert.IsTrue(HasError(errors, "cannot be hidden"),
                 "reference URIs without inputs[] rows must fail");
@@ -384,6 +395,93 @@ namespace ThinhThan.Tests.EditMode.AssetProvenance
             Assert.Less(
                 text1.IndexOf("A Author"), text1.IndexOf("B Author"),
                 "CC-BY rows emit in file_path order");
+        }
+
+        [Test]
+        public void TestExtendedGenerationRecordAndTermsSnapshot()
+        {
+            var row = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
+            var errors = AssetProvenanceValidator.Validate(RegisterOf(row));
+            Assert.AreEqual(0, errors.Count,
+                "full extended record must pass: "
+                    + (errors.Count > 0 ? errors[0].ToString() : ""));
+
+            // ART-012: the terms snapshot hash is mandatory once a
+            // generation_record is present.
+            row.generation_record!.terms_snapshot_sha256 = null;
+            errors = AssetProvenanceValidator.Validate(RegisterOf(row));
+            Assert.IsTrue(HasError(errors, "terms_snapshot_sha256"));
+
+            // model_id/seed/parameters are part of the extended record.
+            var row2 = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
+            row2.generation_record!.model_id = null;
+            errors = AssetProvenanceValidator.Validate(RegisterOf(row2));
+            Assert.IsTrue(HasError(errors, "model_id"));
+            var row3 = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
+            row3.generation_record!.seed = null;
+            errors = AssetProvenanceValidator.Validate(RegisterOf(row3));
+            Assert.IsTrue(HasError(errors, "seed"));
+
+            // reference_sha256 must stay parallel to reference_uris.
+            var row4 = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
+            row4.generation_record!.reference_uris =
+                new List<string> { "https://example.com/ref.png" };
+            errors = AssetProvenanceValidator.Validate(RegisterOf(row4));
+            Assert.IsTrue(HasError(errors, "reference_sha256"));
+        }
+
+        [Test]
+        public void TestUpscaleRecordedInChanges()
+        {
+            var row = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
+            row.changes = "upscale:4x";
+            var errors = AssetProvenanceValidator.Validate(RegisterOf(row));
+            Assert.IsTrue(HasError(errors, "downscale_to_2x"),
+                "upscale > 2x without the closing 2x downscale must fail");
+
+            row.changes = "upscale:4x;downscale_to_2x";
+            errors = AssetProvenanceValidator.Validate(RegisterOf(row));
+            Assert.AreEqual(0, errors.Count,
+                "recorded upscale + downscale_to_2x must pass: "
+                    + (errors.Count > 0 ? errors[0].ToString() : ""));
+
+            row.changes = "crop;upscale:1.5x";
+            errors = AssetProvenanceValidator.Validate(RegisterOf(row));
+            Assert.AreEqual(0, errors.Count,
+                "upscale <= 2x needs no closing downscale");
+        }
+
+        [Test]
+        public void TestFolkloreCardRequiredForCulturalEntities()
+        {
+            var row = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
+            row.cultural_entity = true;
+            var errors = AssetProvenanceValidator.Validate(RegisterOf(row));
+            Assert.IsTrue(HasError(errors, "folklore_card"),
+                "cultural entities without a folklore_card must fail (ART-010)");
+
+            row.folklore_card = new FolkloreCard
+            {
+                source_tales = new List<string> { "truyen co tich so 12" },
+                regional_variants = "northern river delta",
+                motifs_checked = new List<string> { "naga", "aureole" },
+            };
+            errors = AssetProvenanceValidator.Validate(RegisterOf(row));
+            Assert.AreEqual(0, errors.Count,
+                "a complete folklore_card must pass: "
+                    + (errors.Count > 0 ? errors[0].ToString() : ""));
+
+            var cardless = AiRow("client/Assets/Art/Prop/x.png", Sha(new byte[] { 1 }));
+            cardless.cultural_entity = false;
+            cardless.folklore_card = new FolkloreCard
+            {
+                source_tales = new List<string>(),
+                regional_variants = null,
+                motifs_checked = new List<string>(),
+            };
+            errors = AssetProvenanceValidator.Validate(RegisterOf(cardless));
+            Assert.IsTrue(HasError(errors, "folklore_card"),
+                "a present-but-empty folklore_card must fail its shape check");
         }
 
         [Test]

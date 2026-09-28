@@ -68,7 +68,9 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 }
             }
 
-            if (rules.HasFlag(CutoutRule.Format))
+            // ART-001: the corner probe is scoped to the cell-based classes;
+            // GateScope hands Corners only to those.
+            if (rules.HasFlag(CutoutRule.Corners))
             {
                 CheckCorners(pixels, width, height, violations);
             }
@@ -133,6 +135,46 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             input.Height = tex.height;
             Object.DestroyImmediate(tex);
             violations.AddRange(ValidatePixels(input));
+            return violations;
+        }
+
+        // ART-009 (section 3.11): every SpriteAtlas must pack with Padding
+        // >= 4 tex px so the mipmap and texture-compression fades cannot
+        // bleed neighbouring sprites together.
+        public const int AtlasMinPaddingPx = 4;
+
+        public static List<GateViolation> CheckAtlasPadding(int paddingPx)
+        {
+            var violations = new List<GateViolation>();
+            if (paddingPx < AtlasMinPaddingPx)
+            {
+                violations.Add(new GateViolation(
+                    "atlas_padding",
+                    "SpriteAtlas padding " + paddingPx + " < " + AtlasMinPaddingPx + " tex px"));
+            }
+            return violations;
+        }
+
+        // ART-009 (section 3.11): after import, the compressed texture is
+        // decompressed (ASTC 4x4/6x6, BC7) and the fringe rule of
+        // section 3.2 runs again on the decompressed pixels — compression
+        // can re-introduce key-colour and lightness fringes that the source
+        // pass removed.
+        public static List<GateViolation> CheckPostCompressionFringe(
+            Color32[] pixels,
+            int width,
+            int height)
+        {
+            var violations = new List<GateViolation>();
+            CheckFringe(pixels, width, height, violations);
+            for (var i = 0; i < violations.Count; i++)
+            {
+                var v = violations[i];
+                violations[i] = new GateViolation(
+                    "post_compression_fringe",
+                    v.X, v.Y,
+                    v.Detail + " (decompressed texture)");
+            }
             return violations;
         }
 

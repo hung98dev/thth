@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace ThinhThan.Core.Assets.Editor.AssetProduction
 {
-    // One register row = one packaged media file (section 6). Strings are
-    // nullable: a field that is semantically required but absent in JSON
-    // materializes as null and produces a path-specific validator error
-    // rather than a parse failure.
+    // One register row = one packaged media file (section 6, extended by
+    // ADR-0076 with folklore_card + cultural_entity). Strings are nullable:
+    // a field that is semantically required but absent in JSON materializes
+    // as null and produces a path-specific validator error rather than a
+    // parse failure.
     [Serializable]
     public sealed class AssetSourceRow
     {
@@ -24,6 +25,8 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
         public string? changes;
         public string? attribution;
         public GenerationRecord? generation_record;
+        public FolkloreCard? folklore_card;
+        public bool cultural_entity;
         public List<InputProvenance>? inputs;
         public string? review_state;
     }

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using ThinhThan.Core.Assets;
 using ThinhThan.Core.Assets.Editor.AssetProduction;
 using UnityEngine;
+using CutoutGateImpl = ThinhThan.Core.Assets.Editor.AssetProduction.CutoutQualityGate;
 
 namespace ThinhThan.Tests.EditMode.CutoutQualityGate
 {
@@ -347,6 +348,62 @@ namespace ThinhThan.Tests.EditMode.CutoutQualityGate
                 "fixture: visible mask must exceed 60% of silhouette");
             input.TranslucentMask = mask;
             AssertHasRule(input, "translucent_scope");
+        }
+
+        [Test]
+        public void TestCornerRuleScopedByAssetClass()
+        {
+            // ART-001 (section 3.2): the 4-corner alpha = 0 probe applies
+            // to the cell-based classes only — TILE, UI_ART, PARALLAX_FAR
+            // and VFX_SOFT may legitimately fill the cell corners.
+            var meta = new ImportMetadata { CellRefWidth = 32, CellRefHeight = 32 };
+            var tile = PresentationSizing.ToCutoutInput(
+                Blank(W, H, new Color32(120, 90, 60, 255)),
+                W, H, PresentationAssetClass.Tile, meta, null);
+            var tileRules = Rules(tile);
+            Assert.IsFalse(tileRules.Contains("format"),
+                "TILE with opaque corners must not trip the corner probe");
+            var solidUi = PresentationSizing.ToCutoutInput(
+                Blank(W, H, new Color32(120, 90, 60, 255)),
+                W, H, PresentationAssetClass.UiArt, meta, null);
+            Assert.IsFalse(Rules(solidUi).Contains("format"),
+                "UI_ART with opaque corners must not trip the corner probe");
+
+            var prop = PresentationSizing.ToCutoutInput(
+                Blank(W, H, new Color32(120, 90, 60, 255)),
+                W, H, PresentationAssetClass.Prop, meta, null);
+            AssertHasRule(prop, "format");
+        }
+
+        [Test]
+        public void TestAtlasPaddingAndPostCompressionFringe()
+        {
+            // ART-009 (section 3.11): atlas padding >= 4 tex px.
+            Assert.AreEqual(0, CutoutGateImpl.CheckAtlasPadding(4).Count);
+            Assert.AreEqual(0, CutoutGateImpl.CheckAtlasPadding(8).Count);
+            var pad = CutoutGateImpl.CheckAtlasPadding(2);
+            Assert.IsTrue(pad.Exists(v => v.Rule == "atlas_padding"),
+                "padding < 4 must fail");
+
+            // Post-compression fringe re-check: the fringe rule runs again
+            // on the decompressed texture.
+            var px = Blank(W, H, new Color32(200, 150, 80, 0));
+            for (var y = 10; y <= 50; y++)
+            {
+                for (var x = 10; x <= 50; x++)
+                {
+                    px[y * W + x] = new Color32(200, 150, 80, 255);
+                }
+            }
+            Assert.AreEqual(
+                0,
+                CutoutGateImpl.CheckPostCompressionFringe(px, W, H).Count,
+                "clean decompressed pixels must pass");
+            // Magenta key colour surviving in a decompressed a=255 edge.
+            px[25 * W + 25] = new Color32(255, 0, 255, 255);
+            var fringe = CutoutGateImpl.CheckPostCompressionFringe(px, W, H);
+            Assert.IsTrue(fringe.Exists(v => v.Rule == "post_compression_fringe"),
+                "fringe on the decompressed texture must fail");
         }
 
         [Test]

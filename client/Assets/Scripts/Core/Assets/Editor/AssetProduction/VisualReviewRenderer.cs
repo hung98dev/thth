@@ -101,6 +101,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 }
                 RenderScene(scenePath, outRoot, written);
             }
+            WriteReviewAids(outRoot, written);
             return written;
         }
 
@@ -145,11 +146,128 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 RenderEnvironmentLayers(
                     camera, baseOrtho, outRoot, sceneName, meta, written);
             }
+            if (sceneName == "ReviewActor")
+            {
+                RenderLowProfile(
+                    camera, baseOrtho, outRoot, sceneName, meta, written);
+            }
             meta.Append("]}");
             var metaPath = Path.Combine(outRoot, sceneName, "_run.json");
             Directory.CreateDirectory(Path.GetDirectoryName(metaPath)!);
             File.WriteAllText(metaPath, meta.ToString());
             written.Add(sceneName + "/_run.json");
+        }
+
+        // ART-006 (section 3.3): the LOW profile renders the actor scene at
+        // 960x540 through a 2 s horizontal motion clip — start, midpoint
+        // and end stills of the actor moved across the frame — so the
+        // reviewer can score shimmer against the LOW preset. ART-011 adds
+        // the contact sheet and the 0/1/2 rubric template next to it.
+        private static void RenderLowProfile(
+            Camera camera,
+            float baseOrtho,
+            string outRoot,
+            string sceneName,
+            StringBuilder meta,
+            List<string> written)
+        {
+            var actor = GameObject.Find(VisualReviewMatrix.LowMotionObject);
+            var startPos = actor != null ? actor.transform.position : Vector3.zero;
+            var combo = new VisualReviewCombo
+            {
+                Width = VisualReviewMatrix.LowResolution.Width,
+                Height = VisualReviewMatrix.LowResolution.Height,
+                Lighting = "day",
+                ZoomPercent = 100,
+            };
+            // 1 world unit of travel over the clip; sampled at t = 0/1/2 s.
+            var offsets = new[] { 0f, 0.5f, 1f };
+            foreach (var t in offsets)
+            {
+                if (actor != null)
+                {
+                    actor.transform.position = startPos + new Vector3(t, 0f, 0f);
+                }
+                var rel = sceneName + "/960x540/day/100/low_t" + (int)(t * 2) + ".png";
+                RenderCombo(camera, baseOrtho, combo, Path.Combine(outRoot, rel));
+                written.Add(rel);
+                meta.Append(",{\"file\":\"").Append(rel)
+                    .Append("\",\"profile\":\"low\",\"t\":").Append(t).Append('}');
+            }
+            if (actor != null)
+            {
+                actor.transform.position = startPos;
+            }
+        }
+
+        // ART-011 (section 3.3): the rubric template the reviewer fills
+        // per capture (0/1/2 per criterion; pass iff no 0 and total >= 80%
+        // of max) plus the contact sheet placed beside the Style Pack
+        // anchors. Written once per RenderAll run under _review/.
+        public static void WriteReviewAids(string outRoot, List<string> written)
+        {
+            var reviewDir = Path.Combine(outRoot, "_review");
+            Directory.CreateDirectory(reviewDir);
+            var rubric = new StringBuilder();
+            rubric.Append("{\n  \"criteria\": {\n");
+            var criteria = new[]
+            {
+                "cutout_clean", "silhouette_readable", "volume_toplit",
+                "value_tiers", "edge_separation", "palette_consistent",
+                "cultural_motif", "shimmer_low",
+            };
+            for (var i = 0; i < criteria.Length; i++)
+            {
+                if (i > 0)
+                {
+                    rubric.Append(",\n");
+                }
+                rubric.Append("    \"").Append(criteria[i])
+                    .Append("\": {\"score\": null, \"note\": \"\"}");
+            }
+            rubric.Append("\n  },\n  \"scores\": \"0|1|2 per criterion; PASS = no 0 and total >= 80% of max\",\n");
+            rubric.Append("  \"shimmer\": \"none|visible\",\n  \"verdict\": null\n}\n");
+            var rubricPath = Path.Combine(reviewDir, "rubric.json");
+            File.WriteAllText(rubricPath, rubric.ToString());
+            written.Add("_review/rubric.json");
+
+            var repoRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "..", ".."));
+            var styleRefRoot = Path.Combine(repoRoot, "client", "Assets", "Art", "StyleRef");
+            var sheet = new StringBuilder();
+            sheet.Append("# Visual Review contact sheet\n\n");
+            var packs = 0;
+            if (Directory.Exists(styleRefRoot))
+            {
+                foreach (var packDir in Directory.GetDirectories(styleRefRoot, "*", SearchOption.AllDirectories))
+                {
+                    var palette = Path.Combine(packDir, "palette.json");
+                    var styleMd = Path.Combine(packDir, "style.md");
+                    if (!File.Exists(palette) && !File.Exists(styleMd))
+                    {
+                        continue;
+                    }
+                    var rel = packDir.Substring(styleRefRoot.Length).Replace('\\', '/').TrimStart('/');
+                    var anchors = 0;
+                    foreach (var f in Directory.GetFiles(packDir))
+                    {
+                        var ext = Path.GetExtension(f).ToLowerInvariant();
+                        if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".webp")
+                        {
+                            anchors++;
+                        }
+                    }
+                    sheet.Append("- `").Append(rel).Append("` — ").Append(anchors)
+                        .Append(" anchors; place each reviewed asset beside these references.\n");
+                    packs++;
+                }
+            }
+            if (packs == 0)
+            {
+                sheet.Append("(no Style Packs under client/Assets/Art/StyleRef yet)\n");
+            }
+            var sheetPath = Path.Combine(reviewDir, "contact_sheet.md");
+            File.WriteAllText(sheetPath, sheet.ToString());
+            written.Add("_review/contact_sheet.md");
         }
 
         // Environment rule (section 3.6): isolated 1280x720 day captures of

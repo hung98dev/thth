@@ -14,6 +14,14 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             (2400, 1080),
         };
 
+        // ART-006 (section 3.3): the LOW profile renders each actor at
+        // 960x540 (= 1280x720 at render scale 0.75 of the preset LOW)
+        // through a 2 s horizontal motion clip; the reviewer scores
+        // shimmer = none|visible on it.
+        public static readonly (int Width, int Height) LowResolution = (960, 540);
+        public const float LowMotionSeconds = 2f;
+        public const string LowMotionObject = "ActorAnchor";
+
         public static readonly string[] Lightings = { "day", "night" };
         public static readonly int[] ZoomPercents = { 100, 200 };
 

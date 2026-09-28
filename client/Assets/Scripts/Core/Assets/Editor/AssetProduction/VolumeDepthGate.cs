@@ -28,14 +28,26 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
         private const int ValueTierClusters = 5;
         private const float ValueTierMinFraction = 0.05f;
         private const int ValueTierMinCount = 3;
-        private const float TopLitMinDelta = 6f;
+        // ART-003: area-weighted median of the per-hue-cluster
+        // top-third minus bottom-third L* must reach 4.
+        private const float TopLitMinDelta = 4f;
         private const float EdgeSeparationMinDeltaL = 12f;
         private const float EdgeSeparationMinFraction = 0.60f;
         private const float FlatRegionMaxFraction = 0.20f;
-        private const float FlatRegionMaxDeltaE = 2f;
+        private const float HueClusterMinFraction = 0.05f;
         private const float EnvironmentL4Fraction = 0.5f;
         private const float ActorBackgroundMinDeltaL = 20f;
         private const float TranslucentMaxFraction = 0.60f;
+
+        // ART-002 (section 3.6): the flat-region Lab bin — identical bins
+        // join 8-connected components; one bin may not exceed 20% of S.
+        public static Vector3Int LabBin(Vector3 lab)
+        {
+            return new Vector3Int(
+                (int)System.Math.Floor(lab.x / 3f),
+                (int)System.Math.Floor(lab.y / 6f),
+                (int)System.Math.Floor(lab.z / 6f));
+        }
 
         public static List<GateViolation> ValidatePixels(VolumeDepthInput input)
         {
@@ -150,8 +162,12 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             }
         }
 
-        // Top third of bbox(S) must be brighter than the bottom third by
-        // >= 6 L* — the top-front key light of section 3.5.
+        // ART-003 (section 3.6): the key light is judged per hue cluster,
+        // not globally. S is partitioned by 2-D (a*, b*) k-means k = 4
+        // seeded at the L* p12.5/p37.5/p62.5/p87.5 percentile pixels; for
+        // every cluster holding >= 5% of S, d(C) = mean L* of the top third
+        // of bbox(C) minus mean L* of the bottom third, and the
+        // area-weighted median of d(C) must be >= 4.
         private static void CheckTopLit(
             bool[] silhouette,
             Vector3[] lab,
@@ -159,31 +175,69 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             int height,
             List<GateViolation> violations)
         {
-            if (!AlphaTopology.Bounds(silhouette, width, height,
-                out _, out var minY, out _, out var maxY))
+            var seeds = KMeans2D.HueClusterSeeds(lab, silhouette);
+            var values = new List<Vector2>();
+            var index = new List<int>();
+            for (var i = 0; i < silhouette.Length; i++)
             {
-                return;
-            }
-            var thirdH = (maxY - minY + 1) / 3;
-            if (thirdH < 1)
-            {
-                return;
-            }
-            var topSum = 0f;
-            var bottomSum = 0f;
-            var topN = 0;
-            var bottomN = 0;
-            var topStart = maxY - thirdH + 1;
-            var bottomEnd = minY + thirdH - 1;
-            for (var y = 0; y < height; y++)
-            {
-                for (var x = 0; x < width; x++)
+                if (silhouette[i])
                 {
-                    var i = y * width + x;
-                    if (!silhouette[i])
+                    values.Add(new Vector2(lab[i].y, lab[i].z));
+                    index.Add(i);
+                }
+            }
+            if (index.Count == 0)
+            {
+                return;
+            }
+            var assign = KMeans2D.Cluster(
+                values.ToArray(), seeds, out _, out var counts);
+            var minCount = (int)System.Math.Ceiling(HueClusterMinFraction * index.Count);
+            var clusterD = new List<float>();
+            var clusterW = new List<int>();
+            for (var c = 0; c < counts.Length; c++)
+            {
+                if (counts[c] < minCount)
+                {
+                    continue;
+                }
+                var minX = int.MaxValue;
+                var maxX = int.MinValue;
+                var minY = int.MaxValue;
+                var maxY = int.MinValue;
+                for (var v = 0; v < index.Count; v++)
+                {
+                    if (assign[v] != c)
                     {
                         continue;
                     }
+                    var i = index[v];
+                    var x = i % width;
+                    var y = i / width;
+                    if (x < minX) { minX = x; }
+                    if (x > maxX) { maxX = x; }
+                    if (y < minY) { minY = y; }
+                    if (y > maxY) { maxY = y; }
+                }
+                var thirdH = (maxY - minY + 1) / 3;
+                if (thirdH < 1)
+                {
+                    continue;
+                }
+                var topSum = 0f;
+                var bottomSum = 0f;
+                var topN = 0;
+                var bottomN = 0;
+                var topStart = maxY - thirdH + 1;
+                var bottomEnd = minY + thirdH - 1;
+                for (var v = 0; v < index.Count; v++)
+                {
+                    if (assign[v] != c)
+                    {
+                        continue;
+                    }
+                    var i = index[v];
+                    var y = i / width;
                     if (y >= topStart)
                     {
                         topSum += lab[i].x;
@@ -195,18 +249,28 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                         bottomN++;
                     }
                 }
+                if (topN == 0 || bottomN == 0)
+                {
+                    continue;
+                }
+                clusterD.Add(topSum / topN - bottomSum / bottomN);
+                clusterW.Add(counts[c]);
             }
-            if (topN == 0 || bottomN == 0)
-            {
-                return;
-            }
-            var delta = topSum / topN - bottomSum / bottomN;
-            if (delta < TopLitMinDelta)
+            if (clusterD.Count == 0)
             {
                 violations.Add(new GateViolation(
                     RuleTopLit,
-                    "top-third minus bottom-third mean L* = " + delta + " (need >= 6; "
-                        + "bottom-lit or flat)"));
+                    "no hue cluster holds >= 5% of S (degenerate chroma)"));
+                return;
+            }
+            var median = KMeans2D.WeightedMedian(
+                clusterD.ToArray(), clusterW.ToArray());
+            if (median < TopLitMinDelta)
+            {
+                violations.Add(new GateViolation(
+                    RuleTopLit,
+                    "area-weighted median top-minus-bottom L* per hue cluster = "
+                        + median + " (need >= 4; bottom-lit or flat)"));
             }
         }
 
@@ -285,8 +349,9 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             }
         }
 
-        // No 8-connected flat region (adjacent pixels linked when
-        // Delta E00 < 2) may cover more than 20% of S.
+        // ART-002 (section 3.6): no 8-connected flat region — pixels
+        // sharing the identical Lab bin (floor(L*/3), floor(a*/6),
+        // floor(b*/6)) — may cover more than 20% of S.
         private static void CheckFlatRegions(
             bool[] silhouette,
             Vector3[] lab,
@@ -295,6 +360,16 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             int sCount,
             List<GateViolation> violations)
         {
+            var bins = new Dictionary<Vector3Int, int>();
+            for (var i = 0; i < silhouette.Length; i++)
+            {
+                if (!silhouette[i])
+                {
+                    continue;
+                }
+                var b = LabBin(lab[i]);
+                bins[b] = bins.TryGetValue(b, out var n) ? n + 1 : 1;
+            }
             var visited = new bool[silhouette.Length];
             var stack = new Stack<int>();
             var members = new List<int>();
@@ -305,6 +380,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 {
                     continue;
                 }
+                var bin = LabBin(lab[i]);
                 members.Clear();
                 stack.Push(i);
                 visited[i] = true;
@@ -333,7 +409,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                             {
                                 continue;
                             }
-                            if (CieLab.DeltaE00(lab[cur], lab[ni]) >= FlatRegionMaxDeltaE)
+                            if (!LabBin(lab[ni]).Equals(bin))
                             {
                                 continue;
                             }
@@ -348,7 +424,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                         RuleFlatRegion,
                         members[0] % width,
                         members[0] / width,
-                        "flat region of " + members.Count + " px > 20% of S ("
+                        "flat Lab-bin region of " + members.Count + " px > 20% of S ("
                             + sCount + " px)"));
                 }
             }

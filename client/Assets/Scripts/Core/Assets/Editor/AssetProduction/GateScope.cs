@@ -8,6 +8,26 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
     // gates consume it instead of duplicating the table.
     public static class GateScope
     {
+        // ART-001: the 4-corner alpha = 0 probe applies only to the
+        // cell-based classes of section 3.2; TILE (solid seams), UI_ART
+        // (9-slice borders), PARALLAX_FAR and VFX_SOFT may carry solid
+        // edges legitimately.
+        public static bool CornerRuleApplies(PresentationAssetClass assetClass)
+        {
+            switch (assetClass)
+            {
+                case PresentationAssetClass.Actor:
+                case PresentationAssetClass.CosmeticAppearance:
+                case PresentationAssetClass.Prop:
+                case PresentationAssetClass.ItemIcon:
+                case PresentationAssetClass.EquipmentIcon:
+                case PresentationAssetClass.ParallaxNear:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static CutoutRule CutoutRules(PresentationAssetClass assetClass)
         {
             switch (assetClass)

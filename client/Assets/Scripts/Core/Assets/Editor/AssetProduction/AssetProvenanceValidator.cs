@@ -447,6 +447,54 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 }
             }
 
+            // ART-010: entities of cultural origin must carry a
+            // folklore_card; a card without cultural origin is allowed but
+            // still has to satisfy the card shape.
+            if (row.cultural_entity && row.folklore_card == null)
+            {
+                Err("folklore_card required for cultural entities (ART-010)");
+            }
+            if (row.folklore_card != null)
+            {
+                ValidateFolkloreCard(row.folklore_card, path, errors);
+            }
+
+            // ART-012: every upscale > 2x recorded in changes needs the
+            // closing downscale-to-2x step (section 3.1); ops are the
+            // semicolon-separated upscale:<factor>x / downscale_to_2x
+            // tokens of the schema's changes convention.
+            if (row.changes != null)
+            {
+                var sawOver2xUpscale = false;
+                var sawDownscaleTo2x = false;
+                foreach (var raw in row.changes.Split(';'))
+                {
+                    var op = raw.Trim();
+                    if (op.StartsWith("upscale:"))
+                    {
+                        var f = op.Substring("upscale:".Length);
+                        if (f.EndsWith("x"))
+                        {
+                            f = f.Substring(0, f.Length - 1);
+                        }
+                        if (float.TryParse(f, System.Globalization.NumberStyles.Float,
+                                System.Globalization.CultureInfo.InvariantCulture, out var factor)
+                            && factor > 2f)
+                        {
+                            sawOver2xUpscale = true;
+                        }
+                    }
+                    else if (op == "downscale_to_2x")
+                    {
+                        sawDownscaleTo2x = true;
+                    }
+                }
+                if (sawOver2xUpscale && !sawDownscaleTo2x)
+                {
+                    Err("changes records upscale > 2x without a closing downscale_to_2x step (ART-012)");
+                }
+            }
+
             if (row.review_state != ReviewPending
                 && row.review_state != ReviewApproved
                 && row.review_state != ReviewRejected)
@@ -473,13 +521,47 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             {
                 Err("generation_record.version missing");
             }
+            if (string.IsNullOrEmpty(gen.model_id))
+            {
+                Err("generation_record.model_id missing (ART-012)");
+            }
+            if (gen.model_sha256 != null && !IsSha256(gen.model_sha256))
+            {
+                Err("generation_record.model_sha256 not 64 lowercase hex or null");
+            }
             if (string.IsNullOrEmpty(gen.terms_uri))
             {
                 Err("generation_record.terms_uri missing");
             }
+            else if (!IsHttpUri(gen.terms_uri))
+            {
+                Err("generation_record.terms_uri not http(s)");
+            }
+            // ART-012: the terms snapshot hash names the stored copy at
+            // client/Assets/Art/Provenance/terms/<fragment>/<sha256>.txt.
+            if (!IsSha256(gen.terms_snapshot_sha256))
+            {
+                Err("generation_record.terms_snapshot_sha256 missing or not 64 lowercase hex (ART-012)");
+            }
             if (string.IsNullOrEmpty(gen.prompt))
             {
                 Err("generation_record.prompt missing");
+            }
+            if (!gen.seed.HasValue)
+            {
+                Err("generation_record.seed missing (ART-012)");
+            }
+            if (gen.parameters == null)
+            {
+                Err("generation_record.parameters missing (ART-012)");
+            }
+            if (gen.workflow_sha256 != null && !IsSha256(gen.workflow_sha256))
+            {
+                Err("generation_record.workflow_sha256 not 64 lowercase hex or null");
+            }
+            if (gen.style_pack_id != null && gen.style_pack_id.Length == 0)
+            {
+                Err("generation_record.style_pack_id must be null or a non-empty pack id");
             }
             if (gen.reference_uris != null)
             {
@@ -502,6 +584,45 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                             + "' has no inputs[] row — a third-party input cannot be hidden");
                     }
                 }
+                if (gen.reference_sha256 == null
+                    || gen.reference_sha256.Count != gen.reference_uris.Count)
+                {
+                    Err("generation_record.reference_sha256 must have one hash per reference_uris entry");
+                }
+                else
+                {
+                    for (var i = 0; i < gen.reference_sha256.Count; i++)
+                    {
+                        if (!IsSha256(gen.reference_sha256[i]))
+                        {
+                            Err("generation_record.reference_sha256[" + i
+                                + "] not 64 lowercase hex");
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void ValidateFolkloreCard(
+            FolkloreCard card,
+            string path,
+            List<ProvenanceError> errors)
+        {
+            void Err(string message)
+            {
+                errors.Add(new ProvenanceError(path, message));
+            }
+            if (card.source_tales == null || card.source_tales.Count == 0)
+            {
+                Err("folklore_card.source_tales empty (ART-010)");
+            }
+            if (string.IsNullOrEmpty(card.regional_variants))
+            {
+                Err("folklore_card.regional_variants missing (ART-010)");
+            }
+            if (card.motifs_checked == null || card.motifs_checked.Count == 0)
+            {
+                Err("folklore_card.motifs_checked empty (ART-010)");
             }
         }
 

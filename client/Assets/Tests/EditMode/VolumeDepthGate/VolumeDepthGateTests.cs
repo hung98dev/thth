@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using ThinhThan.Core.Assets;
@@ -441,6 +442,301 @@ namespace ThinhThan.Tests.EditMode.VolumeDepthGate
             var scope = GateScope.VolumeRules(PresentationAssetClass.Prop);
             Assert.IsFalse(scope.HasFlag(VolumeRule.ActorOnBackground));
             Assert.IsTrue(scope.HasFlag(VolumeRule.ValueRange | VolumeRule.EdgeSeparation));
+        }
+
+        // ---- ADR-0076 fixtures and gates (ART-002..008, ART-006/011) ----
+
+        // Loads a committed PNG fixture through Unity's decoder, matching
+        // the runtime path the gates see.
+        private static Color32[] LoadFixture(string name, out int width, out int height)
+        {
+            var path = System.IO.Path.Combine(
+                Application.dataPath,
+                "Tests/EditMode/VolumeDepthGate/Fixtures/" + name);
+            Assert.IsTrue(System.IO.File.Exists(path), "fixture missing: " + path);
+            var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            Assert.IsTrue(
+                ImageConversion.LoadImage(tex, System.IO.File.ReadAllBytes(path)),
+                "fixture failed to decode: " + name);
+            width = tex.width;
+            height = tex.height;
+            var px = tex.GetPixels32();
+            Object.DestroyImmediate(tex);
+            return px;
+        }
+
+        [Test]
+        public void TestFlatRegionLabBinsGradientPasses()
+        {
+            // ART-002: a smooth gradient shares no identical Lab bin over
+            // more than 20% of S — the Lab-bin flat rule must not fire.
+            var px = LoadFixture("gradient_smooth_pass.png", out var w, out var h);
+            var input = PresentationSizing.ToVolumeInput(
+                px, w, h, PresentationAssetClass.Actor, null);
+            Assert.IsFalse(Rules(input).Contains("flat_region"),
+                "smooth gradient must not trip the Lab-bin flat rule");
+        }
+
+        [Test]
+        public void TestTopLightPerHueClusterDarkHairPasses()
+        {
+            // ART-003: dark hair + skin + torso, each lit from above, must
+            // satisfy the per-hue-cluster weighted median >= 4 even though
+            // the hair's L* stays low — the old global rule misread this
+            // as bottom-lit.
+            var px = LoadFixture("dark_hair_toplit_pass.png", out var w, out var h);
+            var input = PresentationSizing.ToVolumeInput(
+                px, w, h, PresentationAssetClass.Actor, null);
+            Assert.IsFalse(Rules(input).Contains("top_lit"),
+                "top-lit dark hair must not trip the per-cluster top light rule");
+        }
+
+        [Test]
+        public void TestFixtureFlatFillFails()
+        {
+            var px = LoadFixture("flat_fill_fail.png", out var w, out var h);
+            var input = PresentationSizing.ToVolumeInput(
+                px, w, h, PresentationAssetClass.Actor, null);
+            Assert.IsTrue(Rules(input).Contains("flat_region"),
+                "one identical colour over >20% of S must trip the Lab-bin rule");
+        }
+
+        [Test]
+        public void TestFixtureBottomLitFails()
+        {
+            var px = LoadFixture("bottom_lit_fail.png", out var w, out var h);
+            var input = PresentationSizing.ToVolumeInput(
+                px, w, h, PresentationAssetClass.Actor, null);
+            Assert.IsTrue(Rules(input).Contains("top_lit"),
+                "bottom-lit silhouette must fail top light");
+        }
+
+        [Test]
+        public void TestFixtureTileSolidEdgePasses()
+        {
+            var px = LoadFixture("tile_solid_edge_pass.png", out var w, out var h);
+            Assert.AreEqual(
+                0,
+                TileVfxGate.CheckTileSeam(px, w, h).Count,
+                "wrapping tile edges must pass the seam rule");
+        }
+
+        [Test]
+        public void TestPaletteGateAgainstStylePack()
+        {
+            // ART-005: >= 85% of S within DeltaE00 <= 8 of the nearest
+            // palette colour of the declared style_pack_id.
+            var palette = new List<Vector3>
+            {
+                CieLab.ToLab(new Color32(60, 60, 65, 255)),
+                CieLab.ToLab(new Color32(150, 150, 160, 255)),
+                CieLab.ToLab(new Color32(215, 220, 235, 255)),
+            };
+            var px = CleanActor();
+            Assert.AreEqual(
+                0,
+                StylePackGate.CheckPalette(px, W, H, null, palette).Count,
+                "actor colours inside the pack palette must pass");
+            var alien = new List<Vector3>
+            {
+                CieLab.ToLab(new Color32(0, 255, 0, 255)),
+            };
+            var fail = StylePackGate.CheckPalette(px, W, H, null, alien);
+            Assert.IsTrue(fail.Exists(v => v.Rule == "palette_gate"),
+                "colours outside the pack palette must fail");
+        }
+
+        [Test]
+        public void TestFrameConsistencyAndPivot()
+        {
+            // ART-004: frame-by-frame frames keep hue-cluster mean Lab
+            // within DeltaE00 3 and bbox width within 8 tex px of idle_0.
+            var idle0 = CleanActor();
+            var frame = (Color32[])idle0.Clone();
+            var ok = AnimationContract.CheckFrameConsistency(
+                idle0, frame, W, H, "idle");
+            Assert.AreEqual(0, ok.Count, "identical frame must pass");
+
+            // A widened bbox beyond 8 px fails (attack clips allow 32).
+            for (var y = 8; y <= 55; y++)
+            {
+                for (var x = 56; x <= 60; x++)
+                {
+                    frame[y * W + x] = new Color32(150, 150, 160, 255);
+                }
+            }
+            var wide = AnimationContract.CheckFrameConsistency(
+                idle0, frame, W, H, "idle");
+            Assert.IsTrue(wide.Exists(v => v.Rule == "animation_frame_consistency"),
+                "bbox widening > 8 px must fail");
+            var allowed = AnimationContract.CheckFrameConsistency(
+                idle0, frame, W, H, "attack_1");
+            Assert.AreEqual(0, allowed.Count,
+                "attack clips allow a 32 px bbox width diff");
+
+            // A hue drift beyond DeltaE00 3 fails.
+            for (var i = 0; i < frame.Length; i++)
+            {
+                if (frame[i].a >= 128)
+                {
+                    frame[i] = new Color32(255, 0, 200, frame[i].a);
+                }
+            }
+            var drift = AnimationContract.CheckFrameConsistency(
+                idle0, frame, W, H, "idle");
+            Assert.IsTrue(drift.Exists(v => v.Rule == "animation_frame_consistency"),
+                "hue drift > DeltaE00 3 must fail");
+
+            // Pivot Bottom Center.
+            Assert.AreEqual(
+                0,
+                AnimationContract.CheckPivot(new Vector2(0.5f, 0f)).Count);
+            Assert.AreEqual(
+                1,
+                AnimationContract.CheckPivot(new Vector2(0.5f, 0.5f)).Count);
+        }
+
+        [Test]
+        public void TestTileSeam()
+        {
+            // ART-007: |mean DeltaE00| of wrapping edges <= 2.
+            var px = Blank(W, H);
+            for (var i = 0; i < px.Length; i++)
+            {
+                var x = i % W;
+                var y = i / W;
+                px[i] = new Color32((byte)(100 + x / 4), 80, 60, 255);
+            }
+            Assert.AreEqual(0, TileVfxGate.CheckTileSeam(px, W, H).Count);
+            var seam = new Color32(255, 255, 255, 255);
+            for (var y = 0; y < H; y++)
+            {
+                px[y * W + W - 1] = seam;
+            }
+            var fail = TileVfxGate.CheckTileSeam(px, W, H);
+            Assert.IsTrue(fail.Exists(v => v.Rule == "tile_seam"),
+                "a visible wrapped edge must fail");
+        }
+
+        [Test]
+        public void TestNineSliceBorder()
+        {
+            // ART-007: 9-slice needs a declared border; a non-uniform
+            // centre band must draw Tiled, not Stretched.
+            var px = Blank(W, H);
+            for (var i = 0; i < px.Length; i++)
+            {
+                px[i] = new Color32(120, 120, 130, 255);
+            }
+            var undeclared = TileVfxGate.CheckNineSlice(
+                px, W, H, 0, 0, 0, 0, "Stretched");
+            Assert.IsTrue(undeclared.Exists(v => v.Rule == "nine_slice"),
+                "missing border must fail");
+            Assert.AreEqual(
+                0,
+                TileVfxGate.CheckNineSlice(px, W, H, 8, 8, 8, 8, "Stretched").Count,
+                "uniform centre may stretch");
+            for (var y = 8; y < H - 8; y++)
+            {
+                for (var x = 8; x < W - 8; x++)
+                {
+                    px[y * W + x] = new Color32((byte)(60 + x), 120, 130, 255);
+                }
+            }
+            var stretched = TileVfxGate.CheckNineSlice(
+                px, W, H, 8, 8, 8, 8, "Stretched");
+            Assert.IsTrue(stretched.Exists(v => v.Rule == "nine_slice"),
+                "gradient centre must not stretch");
+            Assert.AreEqual(
+                0,
+                TileVfxGate.CheckNineSlice(px, W, H, 8, 8, 8, 8, "Tiled").Count,
+                "gradient centre must draw Tiled");
+        }
+
+        [Test]
+        public void TestVfxFlipbookLimits()
+        {
+            // ART-007: <= 16 frames, sheet <= 1024x1024, 12|24 fps,
+            // ADDITIVE|ALPHA blend, declared max_instances.
+            Assert.AreEqual(
+                0,
+                TileVfxGate.CheckVfxFlipbook(8, 512, 512, 12, "ADDITIVE", 4).Count);
+            Assert.IsTrue(TileVfxGate.CheckVfxFlipbook(
+                17, 512, 512, 12, "ADDITIVE", 4).Exists(v => v.Rule == "vfx_flipbook"));
+            Assert.IsTrue(TileVfxGate.CheckVfxFlipbook(
+                8, 2048, 512, 12, "ADDITIVE", 4).Exists(v => v.Rule == "vfx_flipbook"));
+            Assert.IsTrue(TileVfxGate.CheckVfxFlipbook(
+                8, 512, 512, 30, "ADDITIVE", 4).Exists(v => v.Rule == "vfx_flipbook"));
+            Assert.IsTrue(TileVfxGate.CheckVfxFlipbook(
+                8, 512, 512, 12, "SCREEN", 4).Exists(v => v.Rule == "vfx_flipbook"));
+            Assert.IsTrue(TileVfxGate.CheckVfxFlipbook(
+                8, 512, 512, 12, "ALPHA", null).Exists(v => v.Rule == "vfx_flipbook"));
+        }
+
+        [Test]
+        public void TestHitboxSilhouetteAlignment()
+        {
+            // ART-008: idle_0 collider centre within +-4 ref px of the
+            // silhouette centre; width ratio in 0.5..0.9.
+            var px = Blank(W, H);
+            for (var y = 8; y <= 55; y++)
+            {
+                for (var x = 8; x <= 55; x++)
+                {
+                    px[y * W + x] = new Color32(180, 170, 160, 255);
+                }
+            }
+            // silhouette x 8..55 -> centre 31.5 tex = 15.75 ref; width 48/2 = 24 ref.
+            Assert.AreEqual(
+                0,
+                HitboxGate.CheckHitboxSilhouette(px, W, H, 16f, 18f).Count,
+                "centred collider inside the ratio band must pass");
+            Assert.IsTrue(HitboxGate.CheckHitboxSilhouette(
+                px, W, H, 24f, 18f).Exists(v => v.Rule == "hitbox"),
+                "centre off by > 4 ref px must fail");
+            Assert.IsTrue(HitboxGate.CheckHitboxSilhouette(
+                px, W, H, 16f, 8f).Exists(v => v.Rule == "hitbox"),
+                "ratio < 0.5 must fail");
+            Assert.IsTrue(HitboxGate.CheckHitboxSilhouette(
+                px, W, H, 16f, 22f).Exists(v => v.Rule == "hitbox"),
+                "ratio > 0.9 must fail");
+        }
+
+        [Test]
+        public void TestReviewLowProfileMotionAndRubric()
+        {
+            // ART-006: the LOW profile is pinned at 960x540 with a 2 s
+            // horizontal motion clip over the actor object.
+            Assert.AreEqual(960, VisualReviewMatrix.LowResolution.Width);
+            Assert.AreEqual(540, VisualReviewMatrix.LowResolution.Height);
+            Assert.AreEqual(2f, VisualReviewMatrix.LowMotionSeconds);
+
+            // ART-011: the run emits the 0/1/2 rubric template and the
+            // contact sheet beside the Style Pack anchors.
+            var dir = System.IO.Path.Combine(
+                System.IO.Path.GetTempPath(),
+                "imp070_review_" + System.Guid.NewGuid().ToString("N"));
+            try
+            {
+                var written = new List<string>();
+                VisualReviewRenderer.WriteReviewAids(dir, written);
+                var rubricPath = System.IO.Path.Combine(dir, "_review", "rubric.json");
+                var sheetPath = System.IO.Path.Combine(dir, "_review", "contact_sheet.md");
+                Assert.IsTrue(System.IO.File.Exists(rubricPath), "rubric.json missing");
+                Assert.IsTrue(System.IO.File.Exists(sheetPath), "contact_sheet.md missing");
+                var rubric = System.IO.File.ReadAllText(rubricPath);
+                StringAssert.Contains("shimmer", rubric);
+                StringAssert.Contains("0|1|2", rubric);
+                Assert.IsTrue(written.Contains("_review/rubric.json"));
+                Assert.IsTrue(written.Contains("_review/contact_sheet.md"));
+            }
+            finally
+            {
+                if (System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.Delete(dir, true);
+                }
+            }
         }
     }
 }
