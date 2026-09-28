@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using ThinhThan.Core.Assets;
 using ThinhThan.Core.Assets.Editor;
@@ -113,9 +115,26 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             ("icons/icon_lock", false),
         };
 
+        // Every non-NONE targeting_mode of class_skill_catalog resolves to
+        // exactly one shared decal; SELF maps to the self ring and
+        // DIRECTION_BOX/MELEE_BOX share the lane box.
         private static readonly string[] TelegraphModes =
         {
-            "direction", "projectile", "area_position", "area_self", "single_target",
+            "direction", "direction_box", "projectile", "area_position",
+            "area_self", "single_target",
+        };
+
+        private static readonly Dictionary<string, string> TelegraphByMode =
+            new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["DIRECTION"] = "direction",
+            ["DIRECTION_BOX"] = "direction_box",
+            ["MELEE_BOX"] = "direction_box",
+            ["PROJECTILE"] = "projectile",
+            ["AREA_POSITION"] = "area_position",
+            ["AREA_SELF"] = "area_self",
+            ["SELF"] = "area_self",
+            ["SINGLE_TARGET"] = "single_target",
         };
 
         private static string ProjectRoot
@@ -315,6 +334,23 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                 Assert.IsTrue(File.Exists(Abs(rel)), "telegraph missing: " + rel);
                 var decl = ReadDecl(rel);
                 Assert.AreEqual("VFX_SOFT", decl["asset_class"], rel);
+            }
+            // Every non-NONE targeting_mode declared by the catalog binds to
+            // exactly one shared decal on disk.
+            var modes = new HashSet<string>(StringComparer.Ordinal);
+            foreach (Match m in Regex.Matches(
+                         File.ReadAllText(Path.Combine(
+                             Path.GetFullPath(Path.Combine(ProjectRoot, "..")),
+                             "docs/07_content/class_skill_catalog.md")),
+                         @"\|\s*(DIRECTION_BOX|MELEE_BOX|DIRECTION|PROJECTILE|AREA_POSITION|AREA_SELF|SINGLE_TARGET|SELF|NONE)\s*\|"))
+            {
+                modes.Add(m.Groups[1].Value);
+            }
+            modes.Remove("NONE");
+            foreach (var mode in modes)
+            {
+                Assert.IsTrue(TelegraphByMode.ContainsKey(mode),
+                    "no telegraph decal bound for targeting mode " + mode);
             }
         }
 
@@ -597,7 +633,9 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
         {
             // ADR-0072: every AI_CREATED row names exactly the owner-provided
             // tool/version of technology_versions.md Content production tools:
-            // AI Horde (stablehorde.net API v2), model AlbedoBase XL 3.1.
+            // AI Horde (stablehorde.net API v2), SDXL-family model (the exact
+            // model name is recorded per generation — AlbedoBase XL (SDXL),
+            // matching the IMP-071 packet for cross-art consistency).
             var abs = Path.Combine(ProjectRoot, "..", FragmentRepoPath);
             var register = AssetSourceRegisterIO.LoadOrEmpty(abs);
             foreach (var row in register.assets)
@@ -610,7 +648,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                 Assert.IsNotNull(gen, row.file_path);
                 Assert.AreEqual("AI Horde", gen!.tool, row.file_path);
                 Assert.AreEqual("stablehorde.net API v2", gen.version, row.file_path);
-                Assert.AreEqual("AlbedoBase XL 3.1", gen.model_id, row.file_path);
+                Assert.AreEqual("AlbedoBase XL (SDXL)", gen.model_id, row.file_path);
                 Assert.IsTrue(AssetProvenanceValidator.IsSha256(gen.terms_snapshot_sha256),
                     row.file_path + " terms_snapshot_sha256");
                 Assert.IsTrue(
