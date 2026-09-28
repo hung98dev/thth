@@ -23,7 +23,7 @@ Evidence, verification commands and release acceptance for thinhthan. Every `DON
 
 ## 2. Evidence Manifest
 
-CI is the enforcement source. `verify.yml` checks out the PR head SHA, computes `source_tree_hash` and runs Q0-Q6 in the jobs `Q0-Q6 verify (Linux)` and `Q0-Q6 verify (Windows)`; the `evidence manifest` job downloads both reports of the same run (`actions/download-artifact`), merges them and uploads `manifest.json` as artifact `evidence`. The agent downloads it (`gh run download <id> -n evidence`) into `docs/10_implementation/evidence/<ID>/` and commits it unchanged. FAILED manifests are never committed.
+CI is the enforcement source. `verify.yml` checks out the PR head SHA, computes `source_tree_hash` and runs Q0-Q6 in the jobs `Q0-Q6 verify (Linux)` and `Q0-Q6 verify (Windows)`; `Q0-Q6 verify (Linux)` waits for the Windows job, downloads its report of the same run (`actions/download-artifact`), merges both and uploads `manifest.json` as artifact `evidence` (ADR-0075; no separate evidence job). The agent downloads it (`gh run download <id> -n evidence`) into `docs/10_implementation/evidence/<ID>/` and commits it unchanged. FAILED manifests are never committed.
 
 ```text
 source_tree_hash = SHA-256 over sorted lines "path NUL git-blob-sha LF" from `git ls-files`, excluding

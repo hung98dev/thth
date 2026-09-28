@@ -56,7 +56,7 @@ func TestLinuxAndWindowsJobsRequired(t *testing.T) {
 
 func TestForkGuardIsFirstStep(t *testing.T) {
 	wf := verifyWf(t)
-	for _, name := range []string{"verify-linux", "verify-windows", "evidence-manifest"} {
+	for _, name := range []string{"verify-linux", "verify-windows", "unity-linux", "unity-windows"} {
 		j := jobNamed(t, wf, name)
 		if len(j.Steps) == 0 || j.Steps[0].Name != "Fork guard" {
 			t.Fatalf("job %q: first step is %q, want Fork guard", name, j.Steps[0].Name)
@@ -76,7 +76,7 @@ func TestNoJobLevelIfOnRequiredJobs(t *testing.T) {
 
 func TestSecretsOnlyAfterForkGuard(t *testing.T) {
 	wf := verifyWf(t)
-	for _, name := range []string{"verify-linux", "verify-windows", "evidence-manifest"} {
+	for _, name := range []string{"verify-linux", "verify-windows", "unity-linux", "unity-windows"} {
 		j := jobNamed(t, wf, name)
 		seenFork := false
 		for _, s := range j.Steps {
@@ -124,7 +124,7 @@ func TestCliToolsFromPinnedReleaseAssets(t *testing.T) {
 
 func TestLinuxUnityRunsHeadless(t *testing.T) {
 	wf := verifyWf(t)
-	j := jobNamed(t, wf, "verify-linux")
+	j := jobNamed(t, wf, "unity-linux")
 	found := false
 	for i := range j.Steps {
 		run := j.Steps[i].Run
@@ -151,7 +151,7 @@ func TestLinuxUnityRunsHeadless(t *testing.T) {
 
 func TestVisualReviewArtifactUpload(t *testing.T) {
 	wf := verifyWf(t)
-	j := jobNamed(t, wf, "verify-linux")
+	j := jobNamed(t, wf, "unity-linux")
 	s := stepNamed(t, j, "Upload visual-review")
 	if !strings.Contains(s.Uses, "upload-artifact") {
 		t.Fatal("visual-review step must use actions/upload-artifact")
@@ -205,25 +205,26 @@ func TestFreezeFailsExceptRevertAndOps(t *testing.T) {
 
 func TestUnityMaterializeRunsWhenUnityGatesSkip(t *testing.T) {
 	wf := verifyWf(t)
-	for _, name := range []string{"verify-linux", "verify-windows"} {
-		j := jobNamed(t, wf, name)
-		s := stepNamed(t, j, "Unity materialization (licence retry <=5)")
+	for unity, name := range map[string]string{"unity-linux": "verify-linux", "unity-windows": "verify-windows"} {
+		s := stepNamed(t, jobNamed(t, wf, unity), "Unity materialization (licence retry <=5)")
 		// Never gated on gate activation (owner-not-done): its only condition
 		// is the ADR-0073 path scope, validated by the verifier.
 		if s.If != "steps.unity-scope.outputs.run == 'true'" {
 			t.Fatalf("job %q materialization may only be conditioned on the Unity scope, got %q", name, s.If)
 		}
-		// It must come before the verifier step.
+		// ADR-0075: the required job joins the Unity job before its verifier.
+		j := jobNamed(t, wf, name)
+		wait := stepNamed(t, j, "Wait for Unity job")
 		ver := stepNamed(t, j, "Run Q0-Q6 verifier")
-		if s.Index >= ver.Index {
-			t.Fatalf("job %q: materialization must precede the verifier", name)
+		if wait.Index >= ver.Index {
+			t.Fatalf("job %q: the Unity job must be joined before the verifier", name)
 		}
 	}
 }
 
 func TestMaterializedArtifactPerOsFailsJob(t *testing.T) {
 	wf := verifyWf(t)
-	for _, name := range []string{"verify-linux", "verify-windows"} {
+	for _, name := range []string{"unity-linux", "unity-windows"} {
 		j := jobNamed(t, wf, name)
 		drift := stepNamed(t, j, "Unity materialized drift check")
 		if !strings.Contains(drift.Run, "commit unity-materialized") {
@@ -245,7 +246,7 @@ func TestLicenceActivationRetriedFiveTimes(t *testing.T) {
 	wf := verifyWf(t)
 	bashLoop := regexp.MustCompile(`for\s+\w+\s+in\s+([0-9 ]+);`)
 	pwshLoop := regexp.MustCompile(`foreach\s*\(\$\w+\s+in\s+1\.\.(\d+)\)`)
-	for _, name := range []string{"verify-linux", "verify-windows"} {
+	for _, name := range []string{"unity-linux", "unity-windows"} {
 		s := stepNamed(t, jobNamed(t, wf, name), "Unity materialization (licence retry <=5)")
 		bounds := 0
 		for _, m := range bashLoop.FindAllStringSubmatch(s.Run, -1) {
@@ -274,7 +275,7 @@ func TestLicenceActivationRetriedFiveTimes(t *testing.T) {
 
 func TestCheckoutLfsAndPinnedGitLfs(t *testing.T) {
 	wf := verifyWf(t)
-	for _, name := range []string{"verify-linux", "verify-windows"} {
+	for _, name := range []string{"verify-linux", "verify-windows", "unity-linux", "unity-windows"} {
 		j := jobNamed(t, wf, name)
 		found := false
 		for _, s := range j.Steps {
@@ -287,7 +288,7 @@ func TestCheckoutLfsAndPinnedGitLfs(t *testing.T) {
 		}
 		// checkout uses lfs: true — the raw file carries it next to each uses.
 	}
-	if strings.Count(wf.Raw, "lfs: true") < 3 {
+	if strings.Count(wf.Raw, "lfs: true") < 4 {
 		t.Fatal("every checkout must set lfs: true")
 	}
 	if !strings.Contains(wf.Raw, "git-lfs-linux-amd64-v3.8.0") || !strings.Contains(wf.Raw, "git-lfs-windows-amd64-v3.8.0") {
@@ -299,10 +300,11 @@ func TestRaceOnLinuxJobOnly(t *testing.T) {
 	wf := verifyWf(t)
 	// The verifier enables -race when RUNNER_OS == Linux; assert the flag
 	// never appears on the Windows job.
-	win := jobNamed(t, wf, "verify-windows")
-	for _, s := range win.Steps {
-		if strings.Contains(s.Run, "-race") {
-			t.Fatalf("windows job step %q must not enable -race", s.Name)
+	for _, name := range []string{"verify-windows", "unity-windows"} {
+		for _, s := range jobNamed(t, wf, name).Steps {
+			if strings.Contains(s.Run, "-race") {
+				t.Fatalf("windows job %q step %q must not enable -race", name, s.Name)
+			}
 		}
 	}
 	// The wiring: cmd/verify gates -race on the runner OS.
@@ -317,7 +319,7 @@ func TestRaceOnLinuxJobOnly(t *testing.T) {
 
 func TestEvidenceJobUsesPinnedDownloadArtifact(t *testing.T) {
 	wf := verifyWf(t)
-	j := jobNamed(t, wf, "evidence-manifest")
+	j := jobNamed(t, wf, "verify-linux")
 	found := false
 	for _, s := range j.Steps {
 		if strings.Contains(s.Uses, "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093") {
@@ -325,7 +327,7 @@ func TestEvidenceJobUsesPinnedDownloadArtifact(t *testing.T) {
 		}
 	}
 	if !found {
-		t.Fatal("evidence job must download reports via pinned actions/download-artifact v4.3.0")
+		t.Fatal("the Linux job must download the Windows report via pinned actions/download-artifact v4.3.0")
 	}
 }
 
@@ -340,5 +342,70 @@ func TestVerifierRunsAfterEarlierStepFailure(t *testing.T) {
 		if !strings.Contains(ver.If, "!cancelled()") || !strings.Contains(ver.If, "steps.checkout.outcome == 'success'") {
 			t.Fatalf("job %q: verifier must run after earlier failures once checkout succeeded, got if=%q", name, ver.If)
 		}
+	}
+}
+
+// ADR-0075: Unity runs in a parallel job per OS; the required job joins it
+// (wait -> download results -> verifier -> Unity job result) so a failed Unity
+// job fails the required check even when every Unity gate is skipped.
+func TestRequiredJobsJoinUnityJobs(t *testing.T) {
+	wf := verifyWf(t)
+	for req, unity := range map[string]string{"verify-linux": "Unity (Linux)", "verify-windows": "Unity (Windows)"} {
+		j := jobNamed(t, wf, req)
+		if j.HasJobIf {
+			t.Fatalf("required job %q must not have a job-level if", req)
+		}
+		wait := stepNamed(t, j, "Wait for Unity job")
+		if !strings.Contains(wf.Raw, "WAIT_JOB: '"+unity+"'") || !strings.Contains(wait.Run, "wait_job.sh") {
+			t.Fatalf("job %q must wait for %q via wait_job.sh", req, unity)
+		}
+		dl := stepNamed(t, j, "Download Unity test results")
+		ver := stepNamed(t, j, "Run Q0-Q6 verifier")
+		res := stepNamed(t, j, "Unity job result")
+		if !(wait.Index < dl.Index && dl.Index < ver.Index && ver.Index < res.Index) {
+			t.Fatalf("job %q: order must be wait < download < verifier < Unity job result", req)
+		}
+		if !strings.Contains(res.Run, `"$CONCLUSION" != success`) || !strings.Contains(res.If, "!cancelled()") {
+			t.Fatalf("job %q: Unity job result must fail on any non-success conclusion", req)
+		}
+	}
+}
+
+// ADR-0075: the Unity job launches only the modes the verifier plans.
+func TestUnityTestModesFromVerifierPlan(t *testing.T) {
+	wf := verifyWf(t)
+	for _, name := range []string{"unity-linux", "unity-windows"} {
+		j := jobNamed(t, wf, name)
+		plan := stepNamed(t, j, "Unity mode plan")
+		if !strings.Contains(plan.Run, "./cmd/verify -plan-unity") {
+			t.Fatalf("job %q: the mode plan must come from the verifier", name)
+		}
+		tests := stepNamed(t, j, "Unity EditMode+PlayMode tests")
+		if plan.Index >= tests.Index || !strings.Contains(tests.If, "steps.unity-plan.outputs.modes != ''") {
+			t.Fatalf("job %q: tests must follow the plan and run only when modes are planned", name)
+		}
+		if !strings.Contains(tests.Run, "UNITY_MODES") || strings.Contains(tests.Run, "EditMode PlayMode;") || strings.Contains(tests.Run, "'EditMode', 'PlayMode'") {
+			t.Fatalf("job %q: tests must iterate the planned modes, not a fixed list", name)
+		}
+	}
+}
+
+// ADR-0075: no separate evidence job; the Linux required job merges both
+// reports into the `evidence` artifact.
+func TestEvidenceBuiltInLinuxRequiredJob(t *testing.T) {
+	wf := verifyWf(t)
+	for _, j := range wf.Jobs {
+		if j.Name == "evidence-manifest" {
+			t.Fatal("evidence-manifest job must not exist (ADR-0075)")
+		}
+	}
+	j := jobNamed(t, wf, "verify-linux")
+	build := stepNamed(t, j, "Build evidence manifest")
+	up := stepNamed(t, j, "Upload evidence manifest")
+	if !strings.Contains(build.Run, "-MergeReports") || build.Index >= up.Index {
+		t.Fatal("verify-linux must merge the reports before uploading the evidence artifact")
+	}
+	if !strings.Contains(wf.Raw, "WAIT_JOB: 'Q0-Q6 verify (Windows)'") {
+		t.Fatal("verify-linux must wait for the Windows report before merging")
 	}
 }
