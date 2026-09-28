@@ -119,8 +119,14 @@ func ClientFenceProblems(root string, files []string, allow map[string]map[strin
 }
 
 var (
+	// unityCallbacks covers every Unity lifecycle callback the wired Q4
+	// gate confines to FrameLoop (PERF-020): the §2.5 Update family plus
+	// OnEnable/OnDisable/Start/Awake/OnDestroy — kept identical to
+	// gates.CheckQ4Client's banned set so one allowlist serves both.
 	unityCallbacks = map[string]bool{
 		"Update": true, "FixedUpdate": true, "LateUpdate": true, "OnGUI": true,
+		"OnEnable": true, "OnDisable": true, "Start": true, "Awake": true,
+		"OnDestroy": true,
 	}
 	findAPIs = map[string]bool{
 		"FindObjectOfType": true, "FindObjectsOfType": true,
