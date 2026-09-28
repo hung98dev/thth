@@ -418,7 +418,12 @@ jobs:
                     # BLK-014: setsid puts the editor in its own process group, so
                     # the watchdog killpg kills only that group — this wrapper is the
                     # container PID 1 and survives to pick the exit code itself.
-                    setsid -w unity-editor -batchmode -nographics -projectPath /github/workspace/client \
+                    # BLK-017 diagnostic (temporary): syscall trace of the editor tree.
+                    ST=
+                    if (apt-get -qq update && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y strace) >/dev/null 2>&1; then
+                      ST="strace -f -tt -s 200 -e trace=process,kill,tgkill,openat,unlink,unlinkat,rename,connect,bind,flock -o /github/workspace/artifacts/unity-tests/$MODE-strace-$(date +%s).txt"
+                    fi
+                    $ST setsid -w unity-editor -batchmode -nographics -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile "/github/workspace/artifacts/unity-tests/$MODE-editor.log"
