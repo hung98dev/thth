@@ -26,10 +26,10 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 |---|---|---|---|---|
 | `IMP-000` | M0 Bootstrap Gate & Toolchain Harness | `DONE` | none | `../00_context/technology_versions.md`, `../00_context/constraints.md` |
 | `IMP-001` | Stable IDs / Revisions | `DONE` | IMP-000 | `../06_data/ids.md`, `../06_data/config.md` |
-| `IMP-002` | Deterministic RNG Interface | `NOT_STARTED` | IMP-001 | `../04_architecture/concurrency.md`, `../06_data/config.md` |
+| `IMP-002` | Deterministic RNG Interface | `IN_PROGRESS` | IMP-001 | `../04_architecture/concurrency.md`, `../06_data/config.md` |
 | `IMP-003` | Content Compiler | `NOT_STARTED` | IMP-001, IMP-002 | `../01_gameplay/skills.md`, `../06_data/config.md` |
 | `IMP-004` | Integration / Balance Activation Gate | `NOT_STARTED` | IMP-003 | `../01_gameplay/skills.md`, `../07_content/class_skill_catalog.md` |
-| `IMP-005` | Operation Idempotency Primitive | `NOT_STARTED` | IMP-001 | `../06_data/database.md`, `../06_data/save_rules.md` |
+| `IMP-005` | Operation Idempotency Primitive | `IN_PROGRESS` | IMP-001 | `../06_data/database.md`, `../06_data/save_rules.md` |
 | `IMP-006` | Account Auth, Session & Login Queue | `NOT_STARTED` | IMP-005, IMP-068, IMP-081, IMP-082, IMP-097 | `../04_architecture/authority.md`, `../06_data/data_model.md` |
 | `IMP-007` | Currency Primitive | `NOT_STARTED` | IMP-005, IMP-068, IMP-082, IMP-097 | `../03_systems/README.md`, `../03_systems/economy.md` |
 | `IMP-008` | Item Ownership Primitive | `NOT_STARTED` | IMP-005, IMP-068, IMP-082, IMP-097 | `../03_systems/items.md`, `../06_data/data_model.md` |
@@ -94,7 +94,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-067` | Unity IL2CPP Player Build (Windows, Android) & Release Packaging | `NOT_STARTED` | IMP-020, IMP-024, IMP-025, IMP-028, IMP-041, IMP-042, IMP-076, IMP-084, IMP-085, IMP-086, IMP-087, IMP-088, IMP-089, IMP-090, IMP-093, IMP-099, IMP-103 | `../04_architecture/client.md`, `../04_architecture/client_assets.md` |
 | `IMP-068` | Trusted CI, Post-Merge Guard & Foundation Exit | `NOT_STARTED` | IMP-004, IMP-005, IMP-061, IMP-063, IMP-064, IMP-083, IMP-106 | `audit_gates.md`, `agent_execution_protocol.md` |
 | `IMP-069` | Server Composition Root and Lifecycle Wiring | `NOT_STARTED` | IMP-020, IMP-024, IMP-025, IMP-028, IMP-041, IMP-042, IMP-049, IMP-050, IMP-051, IMP-054, IMP-055, IMP-062, IMP-077, IMP-084, IMP-085, IMP-086, IMP-087, IMP-089, IMP-090, IMP-092, IMP-093, IMP-103 | `../04_architecture/backend.md`, `../04_architecture/service_boundaries.md` |
-| `IMP-070` | Asset Provenance Register & Validator | `NOT_STARTED` | IMP-063, IMP-101 | `../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md` |
+| `IMP-070` | Asset Provenance Register & Validator | `IN_PROGRESS` | IMP-063, IMP-101 | `../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md` |
 | `IMP-071` | Player Character & Class Art | `NOT_STARTED` | IMP-063, IMP-070 | `../07_content/presentation_asset_manifest.md`, `../01_gameplay/classes.md` |
 | `IMP-072` | Normal-World Environment Art & Scenes | `NOT_STARTED` | IMP-062, IMP-063, IMP-070 | `../07_content/presentation_asset_manifest.md`, `../07_content/world_route_catalog.md` |
 | `IMP-073` | UI, Item, Equipment & Skill VFX Art | `NOT_STARTED` | IMP-063, IMP-070 | `../07_content/presentation_asset_manifest.md`, `../07_content/class_skill_catalog.md` |
@@ -107,7 +107,7 @@ Packets follow `../templates/task.md`; claim fields are written only by the coor
 | `IMP-080` | Global Runtime (In-Process Single Writer) | `NOT_STARTED` | IMP-068, IMP-082, IMP-098 | `../04_architecture/service_boundaries.md`, `../04_architecture/concurrency.md` |
 | `IMP-081` | Edge Listener, Framing & Heartbeat | `NOT_STARTED` | IMP-061, IMP-068, IMP-098 | `../05_network/protocol.md`, `../05_network/versioning.md` |
 | `IMP-082` | Durable Command Queue & Backpressure | `NOT_STARTED` | IMP-005, IMP-068, IMP-098 | `../06_data/database.md`, `../06_data/save_rules.md` |
-| `IMP-083` | Task-Graph & Architecture Conformance (Q0/Q4) | `NOT_STARTED` | IMP-000, IMP-061 | `architecture_conformance.md`, `repository_layout.md` |
+| `IMP-083` | Task-Graph & Architecture Conformance (Q0/Q4) | `IN_PROGRESS` | IMP-000, IMP-061 | `architecture_conformance.md`, `repository_layout.md` |
 | `IMP-084` | Death / Respawn | `NOT_STARTED` | IMP-014, IMP-016, IMP-018 | `../01_gameplay/death_respawn.md`, `../01_gameplay/combat.md` |
 | `IMP-085` | Folklore Feats & Titles | `NOT_STARTED` | IMP-019, IMP-022, IMP-027, IMP-038, IMP-040, IMP-042, IMP-058 | `../03_systems/cosmetics.md`, `../07_content/cosmetic_catalog.md` |
 | `IMP-086` | Chivalry Points & Titles | `NOT_STARTED` | IMP-023, IMP-034, IMP-038 | `../03_systems/social.md`, `../06_data/data_model.md` |
@@ -256,10 +256,10 @@ evidence_location: "docs/10_implementation/evidence/IMP-001/"
 
 ## `IMP-002` — Deterministic RNG Interface
 id: IMP-002
-status: NOT_STARTED
-claimed_by: ""
-branch: ""
-claimed_at: ""
+status: IN_PROGRESS
+claimed_by: "coordinator-wave2"
+branch: "imp/IMP-002-deterministic-rng"
+claimed_at: "2026-09-28T00:00:00Z"
 blocked_by: ""
 
 specs: [`../04_architecture/concurrency.md`, `../06_data/config.md`, `../09_testing/gameplay.md`]
@@ -569,10 +569,10 @@ evidence_location: "docs/10_implementation/evidence/IMP-064/"
 
 ## `IMP-083` — Task-Graph & Architecture Conformance (Q0/Q4)
 id: IMP-083
-status: NOT_STARTED
-claimed_by: ""
-branch: ""
-claimed_at: ""
+status: IN_PROGRESS
+claimed_by: "coordinator-wave2"
+branch: "imp/IMP-083-conformance-q0q4"
+claimed_at: "2026-09-28T00:00:00Z"
 blocked_by: ""
 
 specs: [`architecture_conformance.md`, `repository_layout.md`, `audit_gates.md`, `task_queue.md`, `../templates/task.md`, `README.md`, `dependency_graph.md`, `spec_traceability.md`, `wave_execution_prompts.md`, `../README.md`, `../templates/adr.md`, `../templates/spec.md`, `engineering_conventions.md`, `../04_architecture/client_performance.md`]
@@ -954,10 +954,10 @@ evidence_location: "docs/10_implementation/evidence/IMP-078/"
 
 ## `IMP-005` — Operation Idempotency Primitive
 id: IMP-005
-status: NOT_STARTED
-claimed_by: ""
-branch: ""
-claimed_at: ""
+status: IN_PROGRESS
+claimed_by: "coordinator-wave2"
+branch: "imp/IMP-005-idempotency"
+claimed_at: "2026-09-28T00:00:00Z"
 blocked_by: ""
 
 specs: [`../06_data/database.md`, `../06_data/save_rules.md`, `../06_data/data_model.md`, `../06_data/migrations.md`, `../06_data/physical_schema_contract.md`]
@@ -3988,10 +3988,10 @@ evidence_location: "docs/10_implementation/evidence/IMP-067/"
 
 ## `IMP-070` — Asset Provenance Register & Validator
 id: IMP-070
-status: NOT_STARTED
-claimed_by: ""
-branch: ""
-claimed_at: ""
+status: IN_PROGRESS
+claimed_by: "coordinator-wave2"
+branch: "imp/IMP-070-asset-provenance"
+claimed_at: "2026-09-28T00:00:00Z"
 blocked_by: ""
 
 specs: [`../07_content/presentation_asset_manifest.md`, `../04_architecture/client_assets.md`, `../04_architecture/physics_geometry_contract.md`, `repository_layout.md`]
