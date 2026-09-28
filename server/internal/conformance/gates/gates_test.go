@@ -2,6 +2,7 @@ package gates
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -358,6 +359,34 @@ func TestImp064OwnedPathsCoverLocalizationRegistry(t *testing.T) {
 	}
 }
 
+// TestImp005OwnedPathsCoverModuleLockfiles (BLK-015): IMP-005 imports the
+// pinned github.com/jackc/pgx/v5 and github.com/golang-migrate/migrate/v4
+// modules, so its owned_paths must cover server/go.mod and server/go.sum —
+// co-owned with IMP-000 per repository_layout.md § Ownership Rules — or
+// Q0.control.diff rejects the pinned require lines the task lands.
+func TestImp005OwnedPathsCoverModuleLockfiles(t *testing.T) {
+	root := repoRoot(t)
+	packets, _, err := ParseTaskQueue(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var imp005 *TaskPacket
+	for i := range packets {
+		if packets[i].ID == "IMP-005" {
+			imp005 = &packets[i]
+			break
+		}
+	}
+	if imp005 == nil {
+		t.Skip("IMP-005 packet not in queue")
+	}
+	for _, f := range []string{"server/go.mod", "server/go.sum"} {
+		if !ownedFile(*imp005, f) {
+			t.Errorf("IMP-005 owned_paths do not cover %s", f)
+		}
+	}
+}
+
 // queueFixture renders a minimal one-packet task_queue.md in the real format
 // (## `IMP-900` — heading, `key: value` fields, backticked summary row).
 func queueFixture(status string) string {
@@ -397,15 +426,108 @@ fixture CODE-001
 // google.golang.org/protobuf at the GoModulePins version so generated
 // protocol code (IMP-061) compiles without the implementer editing the
 // IMP-000-owned lockfiles.
+// BLK-015: the pin is accepted in either require form — the single-line
+// `require google.golang.org/protobuf v...` or an entry inside a
+// `require ( ... )` block — because `go mod tidy` may rewrite the file
+// into block form when packets add their own pinned modules (IMP-005).
+// The parse mirrors stackpin.checkGoMod so the two consumers agree.
 func TestGoModDeclaresProtobufRequire(t *testing.T) {
 	root := repoRoot(t)
 	data, err := os.ReadFile(filepath.Join(root, "server", "go.mod"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := "google.golang.org/protobuf " + stackpin.ProtobufGo
-	if !strings.Contains(string(data), "require "+want) {
-		t.Errorf("server/go.mod missing `require %s`", want)
+	const mod = "google.golang.org/protobuf"
+	inRequire := false
+	found := false
+	for _, raw := range strings.Split(string(data), "\n") {
+		line := strings.TrimSpace(raw)
+		if line == "require (" {
+			inRequire = true
+			continue
+		}
+		if inRequire && line == ")" {
+			inRequire = false
+			continue
+		}
+		var reqLine string
+		switch {
+		case inRequire:
+			reqLine = line
+		case strings.HasPrefix(line, "require "):
+			reqLine = strings.TrimPrefix(line, "require ")
+		}
+		if i := strings.Index(reqLine, "//"); i >= 0 {
+			reqLine = strings.TrimSpace(reqLine[:i])
+		}
+		if f := strings.Fields(reqLine); len(f) == 2 && f[0] == mod && f[1] == stackpin.ProtobufGo {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("server/go.mod missing `require %s %s` (single-line or require block)", mod, stackpin.ProtobufGo)
+	}
+}
+
+// TestSchemaSnapshotFileExemptFromNumberedMigrationGate (BLK-015):
+// physical_schema_contract.md § Schema Snapshot mandates
+// server/migrations/schema_snapshot.sql, so the local delta gate's
+// invalid_mig filename check must exempt exactly that path while still
+// rejecting every other non-numbered file. The test runs the pipeline
+// text lifted from verify_delta.sh itself, so the gate cannot drift from
+// this assertion.
+func TestSchemaSnapshotFileExemptFromNumberedMigrationGate(t *testing.T) {
+	if _, err := exec.LookPath("bash"); err != nil {
+		t.Skip("bash unavailable; shell-gate regression runs on the Linux job")
+	}
+	root := repoRoot(t)
+	data, err := os.ReadFile(filepath.Join(root, ".devin", "scripts", "verify_delta.sh"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	src := string(data)
+	start := strings.Index(src, `invalid_mig="$(`)
+	if start < 0 {
+		t.Fatal("verify_delta.sh invalid_mig pipeline not found")
+	}
+	rest := src[start+len(`invalid_mig="$(`):]
+	end := strings.Index(rest, "|| true)")
+	if end < 0 {
+		t.Fatal("verify_delta.sh invalid_mig pipeline terminator not found")
+	}
+	// The grep chain after the `printf |` — fed via stdin so the test does
+	// not depend on argv newline handling (truncated on Windows Git Bash).
+	grepChain := rest[:end]
+	pipeIdx := strings.Index(grepChain, "|")
+	if pipeIdx < 0 {
+		t.Fatal("verify_delta.sh invalid_mig grep chain not found")
+	}
+	grepChain = strings.TrimSpace(grepChain[pipeIdx+1:])
+	run := func(files string) string {
+		cmd := exec.Command("bash", "-c", grepChain)
+		cmd.Stdin = strings.NewReader(files)
+		out, err := cmd.Output()
+		if err != nil {
+			if ee, ok := err.(*exec.ExitError); !ok || ee.ExitCode() != 1 {
+				t.Fatalf("invalid_mig pipeline failed: %v", err)
+			}
+		}
+		return string(out)
+	}
+	// The contract snapshot and the numbered pair pass clean.
+	ok := "server/migrations/000001_baseline_schema.up.sql\n" +
+		"server/migrations/000001_baseline_schema.down.sql\n" +
+		"server/migrations/schema_snapshot.sql"
+	if out := run(ok); out != "" {
+		t.Errorf("numbered pair + schema_snapshot.sql must pass invalid_mig, got %q", out)
+	}
+	// Every other non-numbered name, including look-alikes, still fails.
+	bad := "server/migrations/schema_snapshot.sql.bak\n" +
+		"server/migrations/schema_snapshot_extra.sql\n" +
+		"server/migrations/12345_short.up.sql\n" +
+		"server/migrations/000001_badname.sql"
+	if out := run(bad); strings.TrimSpace(out) != bad {
+		t.Errorf("non-exempt filenames must fail invalid_mig; pipeline returned %q, want %q", out, bad)
 	}
 }
 
