@@ -369,6 +369,14 @@ jobs:
           systemctl is-active systemd-oomd 2>/dev/null || true
           busctl introspect org.freedesktop.oom1 /org/freedesktop/oom1 2>/dev/null | head -5 || true
           mkdir -p artifacts/unity-tests "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cache"
+          # BLK-017: snapshot the Library the materialization editor left on its clean
+          # -quit exit; every test container (first attempt and retries) starts from
+          # this snapshot, never from a Library last written by an editor that ended
+          # in its SIGKILL exit (that state makes the next editor self-kill at its
+          # first domain reload). Container output is root-owned: sudo.
+          lib_snap="$RUNNER_TEMP/unity-lib-snap"
+          sudo rm -rf "$lib_snap"
+          sudo cp -a client/Library "$lib_snap"
           for mode in EditMode PlayMode; do
             ok=
             # BLK-014: PlayMode gets a wider budget — the mid-run watchdog
@@ -377,9 +385,8 @@ jobs:
             for i in $(seq 1 "$max"); do
               free -m
               arc=0
-              # Retry-only wipe: attempt 1 keeps a cache-restored Library
-              # (CI-002); a retry still starts from a clean Library.
-              [ "$i" -gt 1 ] && sudo find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + || true
+              sudo rm -rf client/Library
+              sudo cp -a "$lib_snap" client/Library
               getent hosts license.unity3d.com services.api.unity.com 2>/dev/null | head -4 || true
               curl -m 5 -so /dev/null -w 'lic-egress=%{http_code}\n' https://license.unity3d.com 2>/dev/null || true
               # /root/.cache writable for the licensing client (BLK-009).
@@ -399,14 +406,12 @@ jobs:
               rc=$arc
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
-                # BLK-017: every test container starts from fresh editor runtime state
-                # (user config/licensing dirs, client/Temp, Library UDS DataStore and
-                # LMDB lock files). A previous editor that ended in its SIGKILL exit
-                # leaves them stale; the next container then self-kills at its first
-                # domain reload. Only the licence file and imported assets carry over.
+                # BLK-017: every test container also starts with fresh editor state
+                # outside Library (user config/licensing dirs, client/Temp): only the
+                # activated licence file carries over.
                 att="$RUNNER_TEMP/unity-att"
                 # container writes are root-owned: remove with sudo
-                sudo rm -rf "$att" client/Temp client/Library/DataStore client/Library/ArtifactDB-lock client/Library/SourceAssetDB-lock
+                sudo rm -rf "$att" client/Temp
                 mkdir -p "$att/unity-lic/Unity" "$att/unity-cfg" "$att/unity-cache"
                 cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"
                 # /root/.cache writable for the licensing client (BLK-009).
@@ -494,6 +499,10 @@ jobs:
               exit 1
             fi
           done
+          # leave the clean snapshot for the Library cache save, not the state of
+          # the last (SIGKILL-ended) test editor (BLK-017)
+          sudo rm -rf client/Library
+          sudo cp -a "$lib_snap" client/Library
 
       - name: Dump kill-probe diagnostics
         if: always() && steps.unity-scope.outputs.run == 'true'
