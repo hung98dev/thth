@@ -495,9 +495,18 @@ func TestSchemaSnapshotFileExemptFromNumberedMigrationGate(t *testing.T) {
 	if end < 0 {
 		t.Fatal("verify_delta.sh invalid_mig pipeline terminator not found")
 	}
-	pipeline := rest[:end]
+	// The grep chain after the `printf |` — fed via stdin so the test does
+	// not depend on argv newline handling (truncated on Windows Git Bash).
+	grepChain := rest[:end]
+	pipeIdx := strings.Index(grepChain, "|")
+	if pipeIdx < 0 {
+		t.Fatal("verify_delta.sh invalid_mig grep chain not found")
+	}
+	grepChain = strings.TrimSpace(grepChain[pipeIdx+1:])
 	run := func(files string) string {
-		out, err := exec.Command("bash", "-c", "files=\"$1\"\n"+pipeline, "bash", files).Output()
+		cmd := exec.Command("bash", "-c", grepChain)
+		cmd.Stdin = strings.NewReader(files)
+		out, err := cmd.Output()
 		if err != nil {
 			if ee, ok := err.(*exec.ExitError); !ok || ee.ExitCode() != 1 {
 				t.Fatalf("invalid_mig pipeline failed: %v", err)
