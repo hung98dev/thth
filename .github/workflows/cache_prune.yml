@@ -1,0 +1,67 @@
+name: cache-prune
+
+# ADR-0073 amendment: the repository cache budget is 10 GB and eviction is
+# LRU, so per-PR caches (client/Library ~0.6 GB per OS) of closed PRs would
+# push out the main-scope Windows editor cache. This workflow deletes every
+# refs/pull/<n>/merge cache whose PR is closed or merged. Open PRs keep
+# theirs. No checkout, no secret: only the job's GITHUB_TOKEN (actions:write).
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 * * * *'
+
+permissions:
+  actions: write
+  pull-requests: read
+
+concurrency:
+  group: cache-prune
+  cancel-in-progress: false
+
+jobs:
+  prune:
+    name: 'prune closed-PR caches'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Install jq (pinned)
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/tools"; mkdir -p "$T/bin"
+          curl -fsSL "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64" -o "$T/bin/jq"
+          echo "b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f  $T/bin/jq" | sha256sum -c -
+          chmod +x "$T/bin/jq"
+          echo "$T/bin" >> "$GITHUB_PATH"
+
+      - name: Delete caches of closed PRs
+        shell: bash
+        env:
+          TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          api() { curl -fsS -H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' "$@"; }
+          : > caches.tsv
+          page=1
+          while :; do
+            body=$(api "https://api.github.com/repos/$REPO/actions/caches?per_page=100&page=$page")
+            n=$(echo "$body" | jq '.actions_caches | length')
+            echo "$body" | jq -r '.actions_caches[] | select(.ref | test("^refs/pull/[0-9]+/merge$")) | [.id, .ref, .size_in_bytes, .key] | @tsv' >> caches.tsv
+            [ "$n" -lt 100 ] && break
+            page=$((page+1))
+          done
+          freed=0
+          for pr in $(cut -f2 caches.tsv | sed -E 's#refs/pull/([0-9]+)/merge#\1#' | sort -un); do
+            state=$(api "https://api.github.com/repos/$REPO/pulls/$pr" | jq -r '.state')
+            [ "$state" = "closed" ] || { echo "PR #$pr $state: keep"; continue; }
+            while IFS=$'\t' read -r id ref size key; do
+              [ "$ref" = "refs/pull/$pr/merge" ] || continue
+              api -X DELETE "https://api.github.com/repos/$REPO/actions/caches/$id" >/dev/null
+              freed=$((freed+size))
+              echo "deleted $key ($ref, $size bytes)"
+            done < caches.tsv
+          done
+          echo "freed $freed bytes"
+          api "https://api.github.com/repos/$REPO/actions/cache/usage" | jq -r '"cache usage: \(.active_caches_size_in_bytes) bytes in \(.active_caches_count) caches"'

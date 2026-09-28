@@ -488,8 +488,8 @@ func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
 		t.Fatal("cache_warm.yml has no cache steps")
 	}
 	for _, w := range warmCaches {
-		if strings.HasPrefix(w.Key, "unity-library-") {
-			t.Errorf("%s: unity-library is content-derived and needs a licence; not warmed here", w.Name)
+		if strings.HasPrefix(w.Key, "unity-library-") && !strings.HasPrefix(w.Job, "warm-library-") {
+			t.Errorf("%s/%s: unity-library needs a licence; only warm-library-* jobs may warm it", w.Job, w.Name)
 		}
 		match := false
 		for _, v := range verify {
@@ -505,16 +505,42 @@ func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, bad := range []string{"secrets.", "UNITY_SERIAL", "Unity_lic"} {
-		if strings.Contains(string(data), bad) {
-			t.Errorf("cache_warm.yml must not reference %q", bad)
+	text := string(data)
+	if regexp.MustCompile(`(?m)^\s*pull_request(_target)?:`).MatchString(text) {
+		t.Error("cache_warm.yml reads Unity licence secrets; it must never run on pull_request")
+	}
+	// Secrets and licence state appear only inside the warm-library-* jobs.
+	job := ""
+	for _, line := range strings.Split(text, "\n") {
+		if m := jobHeaderRe.FindStringSubmatch(strings.TrimRight(line, "\r")); m != nil {
+			job = m[1]
 		}
+		if strings.HasPrefix(job, "warm-library-") {
+			continue
+		}
+		for _, bad := range []string{"secrets.", "UNITY_SERIAL", "Unity_lic"} {
+			if strings.Contains(line, bad) {
+				t.Errorf("cache_warm.yml job %q must not reference %q", job, bad)
+			}
+		}
+	}
+	// A main-scope Library is restored by PRs on exact key only; the warm
+	// jobs look it up without downloading and materialize only on a miss.
+	for _, w := range warmCaches {
+		if strings.HasPrefix(w.Key, "unity-library-") && len(w.RestoreKeys) > 0 {
+			t.Errorf("%s/%s: unity-library warm must not use restore-keys (BLK-005)", w.Job, w.Name)
+		}
+	}
+	if n := strings.Count(text, "lookup-only: true"); n != 2 {
+		t.Errorf("cache_warm.yml: want lookup-only on both Library warm steps, got %d", n)
 	}
 }
 
+var jobHeaderRe = regexp.MustCompile(`^  ([A-Za-z0-9_-]+):\s*$`)
+
 func jobOSMatches(verifyJob, warmJob string) bool {
-	return (verifyJob == "verify-linux" && warmJob == "warm-linux") ||
-		(verifyJob == "verify-windows" && warmJob == "warm-windows")
+	return (verifyJob == "verify-linux" && (warmJob == "warm-linux" || warmJob == "warm-library-linux")) ||
+		(verifyJob == "verify-windows" && (warmJob == "warm-windows" || warmJob == "warm-library-windows"))
 }
 
 // BLK-008: every Unity editor invocation (materialization, licence probe,

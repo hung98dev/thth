@@ -5,8 +5,11 @@ name: cache-warm
 # runs only on pull_request until the IMP-068 cutover, so this workflow
 # saves the pure-pin caches (native Windows Unity editor, Windows CLI tools,
 # EDB, Go) in the main scope. Keys and paths are byte-identical to
-# verify.yml (asserted by conformance/caching tests). No secret, no licence,
-# no gate: it only fills caches.
+# verify.yml (asserted by conformance/caching tests). No gate: it only fills
+# caches. The warm-library-* jobs (ADR-0073 amendment) also materialize
+# client/Library on an exact-key miss so PR runs restore a main-scope
+# Library; only those jobs read the Unity licence secrets, which is safe
+# because this workflow runs only on push to main (never pull_request).
 on:
   push:
     branches: [main]
@@ -14,6 +17,9 @@ on:
       - '.github/workflows/**'
       - 'docs/00_context/technology_versions.md'
       - 'server/go.sum'
+      - 'client/Packages/**'
+      - 'client/ProjectSettings/**'
+      - 'client/Assets/**/csc.rsp'
 
 permissions:
   contents: read
@@ -24,6 +30,9 @@ concurrency:
 
 env:
   GO_VERSION: '1.27.1'
+  UNITY_LINUX_IMAGE: 'unityci/editor:ubuntu-6000.6.1f1-base-3.2.2@sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d'
+  UNITY_LINUX_IMAGE_TAG: 'unityci/editor:ubuntu-6000.6.1f1-base-3.2.2'
+  UNITY_LINUX_IMAGE_DIGEST: 'sha256:2197a718c75ba71d6d9a05cfdfbce31cc401113f530963ac789160dffc96763d'
   UNITY_WINDOWS_EDITOR_URL: 'https://download.unity3d.com/download_unity/7efac9f6c10e/Windows64EditorInstaller/UnitySetup64-6000.6.1f1.exe'
   UNITY_WINDOWS_EDITOR_SHA256: '8884daa489c8708c17da571c46a869839dd7bbf45f69048bd4db5c6d054d5e36'
   EDB_ZIP_SHA256: 'fbe23da234ee31547bf8a36d29dfd81e82b849df2d2b78d2eecb43d360252f8c'
@@ -166,3 +175,215 @@ jobs:
           if ($p.ExitCode -ne 0 -or -not (Test-Path $exe)) { throw "unity install failed rc=$($p.ExitCode)" }
           Remove-Item $setup -Force
           Set-Content -Path $marker -Value $env:UNITY_WINDOWS_EDITOR_SHA256 -NoNewline
+
+  # ADR-0073 amendment: main-scope client/Library so PR runs restore it on an
+  # exact key (BLK-005 rule unchanged). Key/path byte-identical to verify.yml.
+  # lookup-only: a hit downloads nothing and skips materialization; a miss
+  # runs the same materialization as verify.yml and the post step saves.
+  warm-library-linux:
+    name: 'cache warm Library (Linux)'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Install git-lfs (pinned)
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/tools"; mkdir -p "$T/bin"
+          curl -fsSL "https://github.com/git-lfs/git-lfs/releases/download/v3.8.0/git-lfs-linux-amd64-v3.8.0.tar.gz" -o /tmp/lfs.tgz
+          echo "e455e00f15d9b95661b8d53498ffb0c3367962cf1ec73c31ab7369516cd6ab8d  /tmp/lfs.tgz" | sha256sum -c -
+          tar -xzf /tmp/lfs.tgz -C /tmp && cp /tmp/git-lfs-3.8.0/git-lfs "$T/bin/git-lfs"
+          echo "$T/bin" >> "$GITHUB_PATH"
+          "$T/bin/git-lfs" install --skip-repo || true
+
+      - name: Checkout (LFS)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          lfs: true
+
+      - name: Cache Unity client/Library (pinned)
+        id: cache-unity-library
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: client/Library
+          key: unity-library-${{ runner.os }}-${{ env.UNITY_LINUX_IMAGE_DIGEST }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
+          lookup-only: true
+
+      - name: Pull Unity image (pinned)
+        if: steps.cache-unity-library.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull "$UNITY_LINUX_IMAGE"
+          docker tag "$(docker image inspect -f '{{.Id}}' "$UNITY_LINUX_IMAGE")" "$UNITY_LINUX_IMAGE_TAG"
+
+      - name: Unity materialization (licence retry <=5)
+        if: steps.cache-unity-library.outputs.cache-hit != 'true'
+        timeout-minutes: 45
+        shell: bash
+        env:
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        run: |
+          set -uo pipefail
+          sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
+          mkdir -p "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cfg" "$RUNNER_TEMP/unity-cache"
+          for i in 1 2 3 4 5; do
+            [ "$i" -gt 1 ] && find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
+            cid=$(docker run -d -i --shm-size=4g --security-opt apparmor=unconfined \
+              -v "${{ github.workspace }}:/github/workspace" \
+              -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
+              -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
+              -v "$RUNNER_TEMP/unity-cache:/root/.cache" \
+              -v /etc/machine-id:/etc/machine-id:ro \
+              -w /github/workspace \
+              -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
+              -e LIBGL_ALWAYS_SOFTWARE=1 \
+              -e MONO_GC_PARAMS=nursery-size=64m \
+              "$UNITY_LINUX_IMAGE_TAG" \
+              bash -c '
+                EXTRA=""
+                if [ ! -s /root/.local/share/unity3d/Unity/Unity_lic.ulf ]; then
+                  rm -f /root/.local/share/unity3d/Unity/Unity_lic.ulf
+                  EXTRA="-serial $UNITY_SERIAL -username $UNITY_EMAIL -password $UNITY_PASSWORD"
+                fi
+                unity-editor -batchmode -projectPath /github/workspace/client $EXTRA -quit -logFile -
+              ') || cid=
+            if [ -n "$cid" ]; then
+              docker logs -f "$cid" > "$RUNNER_TEMP/unity-materialize.log" 2>&1 || true
+              rc=$(docker wait "$cid")
+              docker rm -f "$cid" >/dev/null 2>&1 || true
+            else
+              rc=199
+            fi
+            tail -60 "$RUNNER_TEMP/unity-materialize.log" 2>/dev/null || true
+            if grep -q 'Exiting batchmode successfully' "$RUNNER_TEMP/unity-materialize.log" && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-materialize.log"; then
+              # root-owned container output must be readable by the post-step tar
+              sudo chown -R "$(id -u):$(id -g)" client/Library
+              exit 0
+            fi
+            if [ "$rc" -eq 198 ]; then
+              echo "unity licence activation failed deterministically (rc=$rc) - not retrying" >&2
+              exit 1
+            fi
+            echo "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
+            [ "$i" -lt 5 ] && sleep 60
+          done
+          echo "unity materialization failed after 5 attempts (licence/infra)" >&2
+          exit 1
+
+  warm-library-windows:
+    name: 'cache warm Library (Windows)'
+    needs: warm-windows
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - name: Cache pinned CLI tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}\tools\cli
+          key: cli-tools-${{ runner.os }}-pwsh7.6.6-jq1.8.2-gh2.101.0-lfs3.8.0-02fe458b-a6fc67fe-bc6c8143-b62e7b8c
+
+      - name: Install git-lfs (pinned)
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          $T = "$env:RUNNER_TEMP\tools\cli"; New-Item -ItemType Directory -Force -Path "$T\bin" | Out-Null
+          if (-not (Test-Path "$T\bin\git-lfs.exe")) {
+            Invoke-WebRequest -Uri 'https://github.com/git-lfs/git-lfs/releases/download/v3.8.0/git-lfs-windows-amd64-v3.8.0.zip' -OutFile "$env:TEMP\lfs.zip" -UseBasicParsing
+            if ((Get-FileHash "$env:TEMP\lfs.zip" -Algorithm SHA256).Hash.ToLower() -ne 'b62e7b8ceddee635f691233d77de8eaa4b213e9209e0173811d8cfa77f7882c1') { throw 'git-lfs sha256 mismatch' }
+            Expand-Archive "$env:TEMP\lfs.zip" -DestinationPath "$env:TEMP\lfsx" -Force
+            Copy-Item "$env:TEMP\lfsx\git-lfs-3.8.0\git-lfs.exe" "$T\bin\git-lfs.exe"
+          }
+          "$T\bin" >> $env:GITHUB_PATH
+          & "$T\bin\git-lfs.exe" install --skip-repo | Out-Null
+
+      - name: Checkout (LFS)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          lfs: true
+
+      - name: Cache Unity client/Library (pinned)
+        id: cache-unity-library
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: client/Library
+          key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
+          lookup-only: true
+
+      - name: Cache Unity editor (pinned)
+        if: steps.cache-unity-library.outputs.cache-hit != 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}\unity-editor
+          key: unity-editor-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}
+
+      - name: Install Unity editor (pinned)
+        if: steps.cache-unity-library.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dir = "$env:RUNNER_TEMP\unity-editor"
+          $exe = "$dir\Editor\Unity.exe"
+          $marker = "$dir\installer.sha256"
+          if (-not ((Test-Path $exe) -and (Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $env:UNITY_WINDOWS_EDITOR_SHA256))) {
+            if (Test-Path $dir) { Remove-Item $dir -Recurse -Force }
+            $setup = "$env:RUNNER_TEMP\UnitySetup64.exe"
+            curl.exe -fSL -m 1800 --retry 3 --retry-delay 10 $env:UNITY_WINDOWS_EDITOR_URL -o $setup
+            if ($LASTEXITCODE -ne 0) { throw "unity installer download failed rc=$LASTEXITCODE" }
+            if ((Get-FileHash $setup -Algorithm SHA256).Hash.ToLower() -ne $env:UNITY_WINDOWS_EDITOR_SHA256) { throw 'unity installer sha256 mismatch' }
+            $p = Start-Process -FilePath $setup -ArgumentList '/S', "/D=$dir" -PassThru -Wait
+            if ($p.ExitCode -ne 0 -or -not (Test-Path $exe)) { throw "unity install failed rc=$($p.ExitCode)" }
+            Remove-Item $setup -Force
+            Set-Content -Path $marker -Value $env:UNITY_WINDOWS_EDITOR_SHA256 -NoNewline
+          }
+          "UNITY_EDITOR_PATH=$exe" >> $env:GITHUB_ENV
+
+      - name: Unity materialization (licence retry <=5)
+        if: steps.cache-unity-library.outputs.cache-hit != 'true'
+        timeout-minutes: 45
+        shell: pwsh
+        env:
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        run: |
+          $ulf = 'C:\ProgramData\Unity\Unity_lic.ulf'
+          $logPath = "$env:RUNNER_TEMP\unity-materialize.log"
+          $proj = "$env:GITHUB_WORKSPACE\client"
+          $ok = $false
+          foreach ($i in 1..5) {
+            Remove-Item $logPath -Force -ErrorAction SilentlyContinue
+            $uargs = @('-batchmode', '-nographics', '-projectPath', $proj, '-quit', '-logFile', $logPath)
+            if (-not (Test-Path $ulf)) {
+              $uargs += @('-serial', "$env:UNITY_SERIAL", '-username', "$env:UNITY_EMAIL", '-password', "$env:UNITY_PASSWORD")
+            }
+            $p = Start-Process -FilePath $env:UNITY_EDITOR_PATH -ArgumentList $uargs -PassThru -Wait -NoNewWindow
+            $rc = $p.ExitCode
+            $log = ''
+            if (Test-Path $logPath) {
+              $log = Get-Content $logPath -Raw
+              Get-Content $logPath -Tail 60
+            }
+            if ($log -match 'Exiting batchmode successfully' -and $log -notmatch 'Scripts have compiler errors' -and (Test-Path "$proj\Library\PackageCache")) { $ok = $true; break }
+            if ($log -match 'license|licence' -and $log -match 'fail|error|invalid') { Remove-Item $ulf -Force -ErrorAction SilentlyContinue }
+            if ($rc -eq 198) { Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
+            Write-Host "unity materialization attempt $i failed (rc=$rc); retrying after 60s"
+            if ($i -lt 5 -and $log -notmatch 'Scripts have compiler errors') { Start-Sleep -Seconds 60 }
+          }
+          if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
+
+      - name: Return Unity licence
+        if: always() && steps.cache-unity-library.outputs.cache-hit != 'true'
+        shell: pwsh
+        env:
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        run: |
+          if (-not $env:UNITY_EDITOR_PATH -or -not (Test-Path 'C:\ProgramData\Unity\Unity_lic.ulf')) { Write-Host 'no activated licence to return'; exit 0 }
+          $p = Start-Process -FilePath $env:UNITY_EDITOR_PATH -ArgumentList @('-batchmode', '-nographics', '-quit', '-returnlicense', '-username', "$env:UNITY_EMAIL", '-password', "$env:UNITY_PASSWORD", '-logFile', "$env:RUNNER_TEMP\unity-return.log") -PassThru -NoNewWindow
+          if ($p.WaitForExit(90000)) { Write-Host "licence return rc=$($p.ExitCode)" }
+          else { $p | Stop-Process -Force -ErrorAction SilentlyContinue; Write-Host 'licence return still running after 90s - stopped' }
+          exit 0
