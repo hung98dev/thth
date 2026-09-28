@@ -536,6 +536,11 @@ func TestCacheWarmMirrorsVerifyCaches(t *testing.T) {
 	if n := strings.Count(text, "lookup-only: ${{ github.event_name != 'schedule' }}"); n != 2 {
 		t.Errorf("cache_warm.yml: want schedule-aware lookup-only on both Library warm steps, got %d", n)
 	}
+	// BLK-017: the saved Library must come from a clean -quit
+	// materialization, never from an editor that ran -runTests.
+	if strings.Contains(text, "-runTests") {
+		t.Error("cache_warm.yml must not run -runTests; it saves only a clean -quit materialized Library (BLK-017)")
+	}
 	if !regexp.MustCompile(`(?m)^\s*schedule:`).MatchString(text) {
 		t.Error("cache_warm.yml needs a schedule keep-alive trigger (7-day cache eviction)")
 	}

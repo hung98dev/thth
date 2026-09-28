@@ -237,7 +237,7 @@ jobs:
           sudo systemctl stop systemd-oomd.service systemd-oomd.socket 2>/dev/null || true
           mkdir -p "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cfg" "$RUNNER_TEMP/unity-cache"
           for i in 1 2 3 4 5; do
-            [ "$i" -gt 1 ] && find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + 2>/dev/null || true
+            [ "$i" -gt 1 ] && sudo find client/Library -mindepth 1 -maxdepth 1 ! -name PackageCache -exec rm -rf {} + || true
             cid=$(docker run -d -i --shm-size=4g --security-opt apparmor=unconfined \
               -v "${{ github.workspace }}:/github/workspace" \
               -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
