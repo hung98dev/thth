@@ -360,7 +360,28 @@ jobs:
             if(pid==(pid_t)getpid()||pid==(pid_t)getpgrp())return 1;
             return 0;
           }
+          /* DIAG V2: a SIGKILL aimed at a pid that is actually a thread inside
+             THIS process (stale/recycled pid -> kill(tid) == kill(self)) must
+             be blocked: it is the observed editor self-SIGKILL. Returns 1 when
+             the target's Tgid equals our own pid. */
+          static int self_target(pid_t pid){
+            if(pid<=0||pid==(pid_t)getpid())return pid>0;
+            char p[64],b[256];int f,r=-1;long tg=-1;
+            snprintf(p,sizeof p,"/proc/%d/status",(int)pid);
+            f=open(p,O_RDONLY);if(f<0)return 0;
+            {int n=(int)read(f,b,sizeof b-1);close(f);if(n<=0)return 0;b[n]=0;}
+            char*s=strstr(b,"Tgid:");if(!s)return 0;
+            tg=strtol(s+5,0,10);
+            return tg==(long)getpid();
+          }
+          static int block_note(const char*call,long a1,long a2){
+            int fd=openout("blocked");if(fd<0)return 0;
+            dump_ctx(fd,call,a1,a2);close(fd);return 1;
+          }
           int kill(pid_t pid,int sig){res();
+            if(sig==9&&pid>0&&self_target(pid)){
+              if(!in_hook){in_hook=1;block_note("BLOCKED-selfkill",pid,sig);in_hook=0;}
+              return 0;}
             if(!in_hook&&interesting(pid,sig)){in_hook=1;int fd=openout("kill");
               if(fd>=0){dump_ctx(fd,"kill",pid,sig);close(fd);}in_hook=0;}
             return r_kill(pid,sig);}
@@ -369,10 +390,16 @@ jobs:
               if(fd>=0){dump_ctx(fd,"killpg",pg,sig);close(fd);}in_hook=0;}
             return r_killpg?r_killpg(pg,sig):r_kill(-pg,sig);}
           int tkill(pid_t t,int sig){res();
+            if(sig==9&&self_target(t)){
+              if(!in_hook){in_hook=1;block_note("BLOCKED-selftkill",t,sig);in_hook=0;}
+              return 0;}
             if(!in_hook&&(sig==9||t==(pid_t)getpid())){in_hook=1;int fd=openout("kill");
               if(fd>=0){dump_ctx(fd,"tkill",t,sig);close(fd);}in_hook=0;}
             return r_tkill?r_tkill(t,sig):(int)syscall(SYS_tkill,t,sig);}
           int tgkill(pid_t g,pid_t t,int sig){res();
+            if(sig==9&&g==(pid_t)getpid()){
+              if(!in_hook){in_hook=1;block_note("BLOCKED-selftgkill",t,sig);in_hook=0;}
+              return 0;}
             if(!in_hook&&(sig==9||g==(pid_t)getpid())){in_hook=1;int fd=openout("kill");
               if(fd>=0){dump_ctx(fd,"tgkill",t,sig);close(fd);}in_hook=0;}
             return r_tgkill?r_tgkill(g,t,sig):(int)syscall(SYS_tgkill,g,t,sig);}
@@ -473,7 +500,11 @@ jobs:
             ( while docker inspect -f '{{.State.Running}}' "$cid" 2>/dev/null | grep -q '^true$'; do
                 ts=$(date +%s.%3N)
                 { echo "=== t=$ts"; docker top "$cid" -eo pid,ppid,comm,etimes 2>/dev/null; } >> "$d/procs.txt"
-                { echo "=== t=$ts"; docker exec "$cid" sh -c 'ps -eLf -o pid,lwp,comm 2>/dev/null | tail -n +2' 2>/dev/null; } >> "$d/cprocs.txt"
+                { echo "=== t=$ts"; for hp in $(docker top "$cid" -eo pid --no-headers 2>/dev/null); do
+                    printf 'h=%s %s: ' "$hp" "$(cat /proc/$hp/comm 2>/dev/null)";
+                    grep -h NSpid /proc/$hp/task/*/status 2>/dev/null | awk '{printf "%s ",$NF}';
+                    echo;
+                  done; } >> "$d/cprocs.txt"
                 upid=$(docker top "$cid" -eo pid,comm 2>/dev/null | awk '$2=="Unity"{print $1; exit}')
                 if [ -n "$upid" ]; then
                   { echo "=== t=$ts upid=$upid"; ls -l /proc/$upid/fd 2>/dev/null | sed -n 's/^.* \([0-9]*\) -> \(.*\)$/fd \1 -> \2/p';
