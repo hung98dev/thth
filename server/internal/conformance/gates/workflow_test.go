@@ -206,7 +206,13 @@ func TestFreezeFailsExceptRevertAndOps(t *testing.T) {
 func TestUnityMaterializeRunsWhenUnityGatesSkip(t *testing.T) {
 	wf := verifyWf(t)
 	for unity, name := range map[string]string{"unity-linux": "verify-linux", "unity-windows": "verify-windows"} {
-		s := stepNamed(t, jobNamed(t, wf, unity), "Unity materialization (licence retry <=5)")
+		stepName := "Unity materialization (licence retry <=5)"
+		if unity == "unity-windows" {
+			// ADR-0077: Windows materialization is a detached background
+			// process started by the launcher step; the join is the gate.
+			stepName = "Start Unity materialization (background)"
+		}
+		s := stepNamed(t, jobNamed(t, wf, unity), stepName)
 		// Never gated on gate activation (owner-not-done): its only condition
 		// is the ADR-0073 path scope, validated by the verifier.
 		if s.If != "steps.unity-scope.outputs.run == 'true'" {
@@ -271,7 +277,19 @@ func TestLicenceActivationRetriedFiveTimes(t *testing.T) {
 	bashLoop := regexp.MustCompile(`for\s+\w+\s+in\s+([0-9 ]+);`)
 	pwshLoop := regexp.MustCompile(`foreach\s*\(\$\w+\s+in\s+1\.\.(\d+)\)`)
 	for _, name := range []string{"unity-linux", "unity-windows"} {
-		s := stepNamed(t, jobNamed(t, wf, name), "Unity materialization (licence retry <=5)")
+		var src string
+		if name == "unity-windows" {
+			// ADR-0077: the Windows retry loop is inside the detached
+			// materialization script the launcher runs.
+			data, err := os.ReadFile(filepath.Join(repoRoot(t), ".devin/scripts/unity_materialize.ps1"))
+			if err != nil {
+				t.Fatalf("read unity_materialize.ps1: %v", err)
+			}
+			src = string(data)
+		} else {
+			src = stepNamed(t, jobNamed(t, wf, name), "Unity materialization (licence retry <=5)").Run
+		}
+		s := &WorkflowStep{Run: src}
 		bounds := 0
 		for _, m := range bashLoop.FindAllStringSubmatch(s.Run, -1) {
 			f := strings.Fields(m[1])
@@ -485,6 +503,44 @@ func TestUnityImagePullOverlapsSetup(t *testing.T) {
 	}
 }
 
+// ADR-0077: the Windows materialization runs detached while the foreground
+// installs Go, restores the Go cache and computes the mode plan; the join is
+// the only consumer-side wait and must precede -runTests.
+func TestWindowsMaterializationOverlapsSetup(t *testing.T) {
+	wf := verifyWf(t)
+	j := jobNamed(t, wf, "unity-windows")
+	lib := stepNamed(t, j, "Cache Unity client/Library (pinned)")
+	editor := stepNamed(t, j, "Install Unity editor (pinned)")
+	start := stepNamed(t, j, "Start Unity materialization (background)")
+	if !(editor.Index < lib.Index && lib.Index < start.Index) {
+		t.Fatal("materialization needs the installed editor and the restored Library before it starts")
+	}
+	if start.If != "steps.unity-scope.outputs.run == 'true'" {
+		t.Fatalf("background materialization may only be conditioned on the Unity scope, got %q", start.If)
+	}
+	goInstall := stepNamed(t, j, "Install Go (pinned)")
+	goCache := stepNamed(t, j, "Cache Go modules + build (pinned)")
+	plan := stepNamed(t, j, "Unity mode plan")
+	join := stepNamed(t, j, "Join Unity materialization")
+	tests := stepNamed(t, j, "Unity EditMode+PlayMode tests")
+	if !(start.Index < goInstall.Index && goInstall.Index < goCache.Index && goCache.Index < plan.Index && plan.Index < join.Index && join.Index < tests.Index) {
+		t.Fatal("want order: start-bg < Install Go < Cache Go < mode plan < join < tests")
+	}
+	for _, want := range []string{"Start-Process", "unity_materialize.ps1", "pid.txt", "secrets.UNITY_SERIAL"} {
+		if !strings.Contains(stepBlock(t, wf, "unity-windows", "Start Unity materialization (background)"), want) {
+			t.Fatalf("background launcher missing %q", want)
+		}
+	}
+	for _, want := range []string{"exitcode.txt", "unity_materialize.ps1", "$rc -ne 0"} {
+		if !strings.Contains(join.Run, want) {
+			t.Fatalf("join step missing %q", want)
+		}
+	}
+	if join.If != "steps.unity-scope.outputs.run == 'true'" {
+		t.Fatalf("join may only be conditioned on the Unity scope, got %q", join.If)
+	}
+}
+
 // ADR-0077: the kill-probe (auditd/tracefs/bpftrace + editor version probes)
 // is an investigation tool, not a gate: it runs only when the repository
 // variable UNITY_KILL_PROBE is 'true'.
@@ -529,7 +585,11 @@ func TestMaterializationWarmRetry(t *testing.T) {
 			t.Fatalf("linux materialization missing %q", want)
 		}
 	}
-	win := stepNamed(t, jobNamed(t, wf, "unity-windows"), "Unity materialization (licence retry <=5)").Run
+	winData, err := os.ReadFile(filepath.Join(repoRoot(t), ".devin/scripts/unity_materialize.ps1"))
+	if err != nil {
+		t.Fatalf("read unity_materialize.ps1: %v", err)
+	}
+	win := string(winData)
 	if !strings.Contains(win, "$compile -and $prevCompile") || !strings.Contains(win, "-not $compile") {
 		t.Fatal("windows materialization must stop on repeated compiler errors and skip the 60 s wait for them")
 	}

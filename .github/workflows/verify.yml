@@ -1010,12 +1010,6 @@ jobs:
           "$T\bin" >> $env:GITHUB_PATH
           & "$T\bin\git-lfs.exe" install --skip-repo | Out-Null
 
-      - name: Install Go (pinned)
-        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
-        with:
-          go-version: '1.27.1'
-          cache: false
-
       - name: Checkout (LFS)
         id: checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -1028,17 +1022,6 @@ jobs:
       # may only roll the hash on content-addressed stores. Caches whose
       # payload derives from the hashed inputs restore on exact key only
       # (CI-001, BLK-005). Licence state is never cached (CI-002).
-      - name: Cache Go modules + build (pinned)
-        id: cache-go
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/AppData/Local/go-build
-          key: go-build-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('server/go.sum') }}
-          restore-keys: |
-            go-build-${{ runner.os }}-${{ env.GO_VERSION }}-
-
       - name: Unity scope
         id: unity-scope
         shell: pwsh
@@ -1067,21 +1050,6 @@ jobs:
       # ADR-0073: the Windows job runs the editor natively. The GameCI Windows
       # image (>10 GB) never fit the repository cache, so every run paid a
       # 16-17 min pull plus a failed 6-10 min cache save.
-      - name: Unity mode plan
-        id: unity-plan
-        if: steps.unity-scope.outputs.run == 'true'
-        shell: pwsh
-        env:
-          THINHTHAN_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          THINHTHAN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          $ErrorActionPreference = 'Stop'
-          # ADR-0075: launch only the Unity test modes whose Q3 gate is active.
-          $plan = go -C server run ./cmd/verify -plan-unity
-          if ($LASTEXITCODE -ne 0) { throw "unity mode plan failed rc=$LASTEXITCODE" }
-          $plan | Out-Host
-          $plan >> $env:GITHUB_OUTPUT
-
       - name: Cache Unity editor (pinned)
         id: cache-unity-editor
         if: steps.unity-scope.outputs.run == 'true'
@@ -1135,7 +1103,61 @@ jobs:
           path: client/Library
           key: unity-library-${{ runner.os }}-${{ env.UNITY_WINDOWS_EDITOR_SHA256 }}-${{ hashFiles('client/Packages/manifest.json', 'client/Packages/packages-lock.json', 'client/ProjectSettings/**', 'client/Assets/**/csc.rsp') }}
 
-      - name: Unity materialization (licence retry <=5)
+      # ADR-0077: materialization runs detached right after the Library
+      # restore (it reads/writes client/Library and needs UNITY_EDITOR_PATH +
+      # the licence env); the foreground's Go install, Go cache restore and
+      # mode plan then overlap it. Steps in one job are sequential, so the
+      # background unit is a detached pwsh process running
+      # .devin/scripts/unity_materialize.ps1; completion is signalled only by
+      # the exitcode.txt sentinel the join step reads.
+      - name: Start Unity materialization (background)
+        if: steps.unity-scope.outputs.run == 'true'
+        shell: pwsh
+        env:
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          CACHE_HIT_LIBRARY: ${{ steps.cache-unity-library.outputs.cache-hit }}
+        run: |
+          $state = "$env:RUNNER_TEMP\unity-materialize-state"
+          New-Item -ItemType Directory -Force -Path $state | Out-Null
+          Remove-Item "$state\exitcode.txt" -Force -ErrorAction SilentlyContinue
+          $p = Start-Process -FilePath 'pwsh' -ArgumentList '-NoProfile', '-File', "$env:GITHUB_WORKSPACE\.devin\scripts\unity_materialize.ps1" -WorkingDirectory $env:GITHUB_WORKSPACE -RedirectStandardOutput "$state\materialize.out.log" -RedirectStandardError "$state\materialize.err.log" -PassThru -NoNewWindow
+          Set-Content "$state\pid.txt" -Value "$($p.Id)" -NoNewline
+          Write-Host "unity materialization started in background (pid $($p.Id))"
+      - name: Install Go (pinned)
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        with:
+          go-version: '1.27.1'
+          cache: false
+
+      - name: Cache Go modules + build (pinned)
+        id: cache-go
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/AppData/Local/go-build
+          key: go-build-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('server/go.sum') }}
+          restore-keys: |
+            go-build-${{ runner.os }}-${{ env.GO_VERSION }}-
+
+      - name: Unity mode plan
+        id: unity-plan
+        if: steps.unity-scope.outputs.run == 'true'
+        shell: pwsh
+        env:
+          THINHTHAN_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          THINHTHAN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          # ADR-0075: launch only the Unity test modes whose Q3 gate is active.
+          $plan = go -C server run ./cmd/verify -plan-unity
+          if ($LASTEXITCODE -ne 0) { throw "unity mode plan failed rc=$LASTEXITCODE" }
+          $plan | Out-Host
+          $plan >> $env:GITHUB_OUTPUT
+
+      - name: Join Unity materialization
         if: steps.unity-scope.outputs.run == 'true'
         timeout-minutes: 30
         shell: pwsh
@@ -1145,41 +1167,27 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           CACHE_HIT_LIBRARY: ${{ steps.cache-unity-library.outputs.cache-hit }}
         run: |
-          . .\.devin\scripts\cache_telemetry.ps1
-          $sw = [System.Diagnostics.Stopwatch]::StartNew()
-          $libHit = if ($env:CACHE_HIT_LIBRARY -eq 'true') { 'hit' } else { 'miss' }
-          $ulf = 'C:\ProgramData\Unity\Unity_lic.ulf'
-          $logPath = "$env:RUNNER_TEMP\unity-materialize.log"
-          $proj = "$env:GITHUB_WORKSPACE\client"
-          $ok = $false
-          $prevCompile = $false
-          foreach ($i in 1..5) {
-            Remove-Item $logPath -Force -ErrorAction SilentlyContinue
-            $uargs = @('-batchmode', '-nographics', '-projectPath', $proj, '-quit', '-logFile', $logPath)
-            if (-not (Test-Path $ulf)) {
-              $uargs += @('-serial', "$env:UNITY_SERIAL", '-username', "$env:UNITY_EMAIL", '-password', "$env:UNITY_PASSWORD")
-            }
-            $p = Start-Process -FilePath $env:UNITY_EDITOR_PATH -ArgumentList $uargs -PassThru -Wait -NoNewWindow
-            $rc = $p.ExitCode
-            $log = ''
-            if (Test-Path $logPath) {
-              $log = Get-Content $logPath -Raw
-              Get-Content $logPath -Tail 60
-            }
-            if ($log -match 'Exiting batchmode successfully' -and $log -notmatch 'Scripts have compiler errors' -and (Test-Path "$proj\Library\PackageCache")) { $ok = $true; break }
-            if ($log -match 'license|licence' -and $log -match 'fail|error|invalid') { Remove-Item $ulf -Force -ErrorAction SilentlyContinue }
-            if ($rc -eq 198) { Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds; Write-Host "unity licence activation failed deterministically (rc=$rc) - not retrying"; exit 1 }
-            # ADR-0077: compiler errors retry at once (ADR-0073 item 5) and stop
-            # when they repeat on the next attempt.
-            $compile = $log -match 'Scripts have compiler errors'
-            if ($compile -and $prevCompile) { Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds; Write-Host 'unity materialization: compiler errors on two consecutive attempts - deterministic, not retrying'; exit 1 }
-            $prevCompile = $compile
-            Write-Host "unity materialization attempt $i failed (rc=$rc); $(if ($compile) { 'compiler errors; retrying now' } else { 'retrying after 60s' })"
-            if ($i -lt 5 -and -not $compile) { Start-Sleep -Seconds 60 }
+          $ErrorActionPreference = 'Stop'
+          $state = "$env:RUNNER_TEMP\unity-materialize-state"
+          $sentinel = "$state\exitcode.txt"
+          $deadline = (Get-Date).AddMinutes(28)
+          # ADR-0077: join the detached materialization. A missing sentinel
+          # means the launcher itself failed (not a Unity failure — the script
+          # always writes one), so run one synchronous materialization instead
+          # of failing blind; a real rc!=0 is final, the detached run already
+          # carries the full licence retry (no double retry).
+          while (-not (Test-Path $sentinel) -and (Get-Date) -lt $deadline) {
+            Start-Sleep -Seconds 5
           }
-          Write-CacheTelemetry -Step 'unity-library' -Result $libHit -WallSeconds $sw.Elapsed.TotalSeconds
-          if (-not $ok) { Write-Error 'unity materialization failed after 5 attempts (licence/infra)'; exit 1 }
-
+          if (-not (Test-Path $sentinel)) {
+            Write-Host 'background materialization produced no sentinel - running it in the foreground'
+            pwsh -NoProfile -File "$env:GITHUB_WORKSPACE\.devin\scripts\unity_materialize.ps1"
+          }
+          if (Test-Path "$state\materialize.out.log") { Get-Content "$state\materialize.out.log" -Tail 80 }
+          if (Test-Path "$state\materialize.err.log") { Get-Content "$state\materialize.err.log" -Tail 40 }
+          if (-not (Test-Path $sentinel)) { throw 'unity materialization produced no exit code' }
+          $rc = [int]((Get-Content $sentinel -Raw).Trim())
+          if ($rc -ne 0) { throw "unity materialization failed rc=$rc" }
       - name: Unity EditMode+PlayMode tests
         if: steps.unity-scope.outputs.run == 'true' && steps.unity-plan.outputs.modes != ''
         timeout-minutes: 30
