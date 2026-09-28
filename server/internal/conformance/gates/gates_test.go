@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -608,5 +609,55 @@ func TestGeneratedBoundaryAllowsCscRsp(t *testing.T) {
 	writeRepoFile(t, root, "client/Assets/Scripts/Protocol/notes.txt", "x")
 	if c := checkGeneratedBoundary(root); c.Status != StatusFail || !strings.Contains(c.Detail, "notes.txt") {
 		t.Fatalf("expected notes.txt flagged, got %v: %s", c.Status, c.Detail)
+	}
+}
+
+// TestQ4FenceMatchesSection25Callbacks pins the update_outside_frameloop
+// regex to the §2.5 callback set — the same four unityCallbacks the token
+// scanner in architecture/clientfence.go bans. BLK-019: the gate regex
+// briefly banned every lifecycle method and flagged IMP-101's `void Awake(`.
+func TestQ4FenceMatchesSection25Callbacks(t *testing.T) {
+	root := repoRoot(t)
+	data, err := os.ReadFile(filepath.Join(root, "server/internal/conformance/architecture/clientfence.go"))
+	if err != nil {
+		t.Fatalf("read clientfence.go: %v", err)
+	}
+	src := string(data)
+	mapStart := strings.Index(src, "unityCallbacks = map[string]bool{")
+	mapEnd := strings.Index(src[mapStart:], "}")
+	if mapStart < 0 || mapEnd < 0 {
+		t.Fatal("unityCallbacks map literal not found in clientfence.go")
+	}
+	keyRe := regexp.MustCompile(`"(\w+)"\s*:\s*true`)
+	spec := map[string]bool{}
+	for _, m := range keyRe.FindAllStringSubmatch(src[mapStart:mapStart+mapEnd], -1) {
+		spec[m[1]] = true
+	}
+	for _, want := range []string{"Update", "FixedUpdate", "LateUpdate", "OnGUI"} {
+		if !spec[want] {
+			t.Fatalf("unityCallbacks missing §2.5 callback %s", want)
+		}
+	}
+
+	var re *regexp.Regexp
+	for _, b := range bannedClientAPI {
+		if b.name == "update_outside_frameloop" {
+			re = b.re
+		}
+	}
+	if re == nil {
+		t.Fatal("update_outside_frameloop rule missing from bannedClientAPI")
+	}
+
+	// Declare every Unity lifecycle callback the way the scanner sees it
+	// (`void Name()`); the gate must ban exactly the §2.5 set, no more.
+	catalog := []string{"Update", "FixedUpdate", "LateUpdate", "OnGUI",
+		"Awake", "Start", "OnEnable", "OnDisable", "OnDestroy",
+		"OnTriggerEnter", "OnTriggerEnter2D", "OnCollisionEnter",
+		"OnApplicationQuit", "OnBecameVisible", "OnValidate", "Reset"}
+	for _, name := range catalog {
+		if got := re.MatchString("    void " + name + "()"); got != spec[name] {
+			t.Errorf("update_outside_frameloop on %s(): match=%v, §2.5/unityCallbacks=%v", name, got, spec[name])
+		}
 	}
 }
