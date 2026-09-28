@@ -654,6 +654,11 @@ jobs:
             mkdir -p "artifacts/unity-diag/mat-attempt$i"
             sudo cp -a "$RUNNER_TEMP/unity-lic" "$RUNNER_TEMP/unity-cfg" "artifacts/unity-diag/mat-attempt$i/" 2>/dev/null || true
             cp "$RUNNER_TEMP/unity-materialize.log" "artifacts/unity-diag/mat-attempt$i/" 2>/dev/null || true
+            # DIAG: capture lock/state files that may carry stale pids across retries
+            mkdir -p "artifacts/unity-diag/mat-attempt$i/locks"
+            for lf in client/Temp/UnityLockfile $(find client/Library client/Temp -name '*lock*' -o -name 'UnityLockfile' 2>/dev/null); do
+              [ -f "$lf" ] && sudo cp -a "$lf" "artifacts/unity-diag/mat-attempt$i/locks/" 2>/dev/null && sudo sh -c "xxd '$lf' | head -8 >> 'artifacts/unity-diag/mat-attempt$i/locks/'$(basename '$lf').hex" || true
+            done
             sudo chmod -R a+r "artifacts/unity-diag/mat-attempt$i" 2>/dev/null || true
             if grep -q 'Exiting batchmode successfully' "$RUNNER_TEMP/unity-materialize.log" && ! grep -q 'Scripts have compiler errors' "$RUNNER_TEMP/unity-materialize.log"; then
               cache_telemetry_emit unity-library "$libhit" "$((SECONDS-start))"
