@@ -650,3 +650,32 @@ func TestUnityEditorRunsUnderSetsid(t *testing.T) {
 		t.Error("setsid wrapper must exit 0 when a Passed results.xml exists (post-verdict kill is not a failure)")
 	}
 }
+
+// BLK-017: a Linux test container must not inherit editor state left by a
+// previous editor that ended in its SIGKILL exit (user config, analytics and
+// metrics DBs, client/Temp). Each -runTests container mounts per-attempt
+// licensing/config/cache dirs seeded only with the activated licence file.
+func TestUnityTestContainersStartFromFreshState(t *testing.T) {
+	wf := workflowText(t)
+	idx := strings.Index(wf, "setsid -w unity-editor")
+	if idx < 0 {
+		t.Fatal("test container invocation not found")
+	}
+	head := wf[:idx]
+	start := strings.LastIndex(head, `att="$RUNNER_TEMP/unity-att"`)
+	if start < 0 {
+		t.Fatal("test containers must use a per-attempt state dir (BLK-017)")
+	}
+	block := wf[start:idx]
+	for _, want := range []string{
+		`rm -rf "$att" client/Temp`,
+		`cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"`,
+		`-v "$att/unity-lic:/root/.local/share/unity3d"`,
+		`-v "$att/unity-cfg:/root/.config/unity3d"`,
+		`-v "$att/unity-cache:/root/.cache"`,
+	} {
+		if !strings.Contains(block, want) {
+			t.Errorf("test container setup missing %q (BLK-017)", want)
+		}
+	}
+}

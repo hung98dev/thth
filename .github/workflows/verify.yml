@@ -112,6 +112,7 @@ jobs:
           cache: false
 
       - name: Checkout (LFS)
+        id: checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           lfs: true
@@ -398,6 +399,15 @@ jobs:
               rc=$arc
               rm -f "artifacts/unity-tests/$mode-results.xml" "$RUNNER_TEMP/unity-tests.log"
               if [ "$arc" -eq 0 ]; then
+                # BLK-017: every test container starts from fresh editor state.
+                # A previous editor that ended in its SIGKILL exit leaves user
+                # config/analytics/metrics DBs and client/Temp behind; the next
+                # container then self-kills at its first domain reload. Only the
+                # activated licence file carries over.
+                att="$RUNNER_TEMP/unity-att"
+                rm -rf "$att" client/Temp
+                mkdir -p "$att/unity-lic/Unity" "$att/unity-cfg" "$att/unity-cache"
+                cp "$RUNNER_TEMP/unity-lic/Unity/Unity_lic.ulf" "$att/unity-lic/Unity/"
                 # /root/.cache writable for the licensing client (BLK-009).
                 # -nographics: no GL device, no Xvfb/llvmpipe path — removes the GfxDevice
                 # init surface where the editor's abort path fired (BLK-010).
@@ -405,9 +415,9 @@ jobs:
                 # longer drops the buffered tail containing the fatal line.
                 cid=$(docker run -d -i --shm-size=4g --security-opt apparmor=unconfined \
                   -v "${{ github.workspace }}:/github/workspace" \
-                  -v "$RUNNER_TEMP/unity-lic:/root/.local/share/unity3d" \
-                  -v "$RUNNER_TEMP/unity-cfg:/root/.config/unity3d" \
-                  -v "$RUNNER_TEMP/unity-cache:/root/.cache" \
+                  -v "$att/unity-lic:/root/.local/share/unity3d" \
+                  -v "$att/unity-cfg:/root/.config/unity3d" \
+                  -v "$att/unity-cache:/root/.cache" \
                   -v /etc/machine-id:/etc/machine-id:ro \
                   -w /github/workspace \
                   -e UNITY_PASSWORD -e UNITY_SERIAL -e UNITY_EMAIL \
@@ -418,12 +428,7 @@ jobs:
                     # BLK-014: setsid puts the editor in its own process group, so
                     # the watchdog killpg kills only that group — this wrapper is the
                     # container PID 1 and survives to pick the exit code itself.
-                    # BLK-017 diagnostic (temporary): syscall trace of the editor tree.
-                    ST=
-                    if (apt-get -qq update && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y strace) >/dev/null 2>&1; then
-                      ST="strace -f -tt -s 200 -e trace=process,kill,tgkill,openat,unlink,unlinkat,rename,connect,bind,flock -o /github/workspace/artifacts/unity-tests/$MODE-strace-$(date +%s).txt"
-                    fi
-                    $ST setsid -w unity-editor -batchmode -nographics -projectPath /github/workspace/client \
+                    setsid -w unity-editor -batchmode -nographics -projectPath /github/workspace/client \
                       -runTests -testPlatform "$MODE" \
                       -testResults "/github/workspace/artifacts/unity-tests/$MODE-results.xml" \
                       -logFile "/github/workspace/artifacts/unity-tests/$MODE-editor.log"
@@ -475,9 +480,9 @@ jobs:
               sudo dmesg 2>/dev/null | grep -iE 'oom|kill' | tail -10 || true
               sudo journalctl --no-pager -n 60 2>/dev/null | grep -iE 'oom|kill|unity' | tail -15 || true
               free -m
-              tail -100 "$RUNNER_TEMP/unity-cfg/Editor.log" 2>/dev/null || true
-              find "$RUNNER_TEMP/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
-              for f in $(find "$RUNNER_TEMP/unity-lic" -type f \( -name '*.log' -o -name '*.log.*' \) 2>/dev/null | sort); do
+              tail -100 "$RUNNER_TEMP/unity-att/unity-cfg/Editor.log" 2>/dev/null || true
+              find "$RUNNER_TEMP/unity-att/unity-cfg" -name 'crash*' -o -name '*.dmp' -o -name 'core*' 2>/dev/null | head || true
+              for f in $(find "$RUNNER_TEMP/unity-att/unity-lic" -type f \( -name '*.log' -o -name '*.log.*' \) 2>/dev/null | sort); do
                 echo "== licensing log $f"; tail -60 "$f" || true
               done
               echo "unity $mode tests attempt $i failed (rc=$rc); retrying"
@@ -556,6 +561,9 @@ jobs:
           'changed=false' >> $env:GITHUB_OUTPUT
 
       - name: Run Q0-Q6 verifier
+        # BLK-017: always produce verify-report.json once the tree is checked out
+        # (a failed Unity step is recorded as a Q3 FAIL, never a missing report).
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -668,6 +676,7 @@ jobs:
           cache: false
 
       - name: Checkout (LFS)
+        id: checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           lfs: true
@@ -959,6 +968,9 @@ jobs:
           'changed=false' >> $env:GITHUB_OUTPUT
 
       - name: Run Q0-Q6 verifier
+        # BLK-017: always produce verify-report.json once the tree is checked out
+        # (a failed Unity step is recorded as a Q3 FAIL, never a missing report).
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
