@@ -954,7 +954,7 @@ evidence_location: "docs/10_implementation/evidence/IMP-078/"
 
 ## `IMP-005` — Operation Idempotency Primitive
 id: IMP-005
-status: NOT_STARTED
+status: IN_PROGRESS
 claimed_by: "coordinator-wave2"
 branch: "imp/IMP-005-idempotency"
 claimed_at: "2026-09-28T00:00:00Z"
