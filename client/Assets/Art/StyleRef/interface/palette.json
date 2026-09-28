@@ -1,0 +1,31 @@
+{
+  "style_pack_id": "interface",
+  "colors": [
+    {"hex": "#1A120C", "name": "deep shadow"},
+    {"hex": "#2E1E16", "name": "dark lacquer"},
+    {"hex": "#3E2A1E", "name": "lacquer brown"},
+    {"hex": "#4A2530", "name": "shadow plum"},
+    {"hex": "#5A3D26", "name": "aged wood"},
+    {"hex": "#6E4E2C", "name": "warm wood"},
+    {"hex": "#8A6B3F", "name": "bronze"},
+    {"hex": "#A8874F", "name": "light bronze"},
+    {"hex": "#C9A45C", "name": "aged gold"},
+    {"hex": "#E0C078", "name": "pale gold"},
+    {"hex": "#4E7A5A", "name": "jade"},
+    {"hex": "#6FA07B", "name": "light jade"},
+    {"hex": "#2F5F4A", "name": "deep jade"},
+    {"hex": "#3E5A73", "name": "muted indigo"},
+    {"hex": "#4A7FA0", "name": "river blue"},
+    {"hex": "#6FA8C9", "name": "pale cyan"},
+    {"hex": "#B3342A", "name": "vermilion"},
+    {"hex": "#8F2E33", "name": "deep crimson"},
+    {"hex": "#D95B43", "name": "ember orange"},
+    {"hex": "#E8956B", "name": "soft ember"},
+    {"hex": "#E8DCC4", "name": "parchment"},
+    {"hex": "#F5EFE0", "name": "ivory"},
+    {"hex": "#9C8E7C", "name": "warm gray"},
+    {"hex": "#6B6258", "name": "dark gray"},
+    {"hex": "#7A3B4A", "name": "mauve shadow"},
+    {"hex": "#C9B8A0", "name": "sand"}
+  ]
+}
