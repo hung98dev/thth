@@ -467,7 +467,7 @@ jobs:
           set -uo pipefail
           IMG="${{ env.UNITY_LINUX_IMAGE_TAG }}"
           BIN="$RUNNER_TEMP/imgbin"; mkdir -p "$BIN"
-          docker run --rm "$IMG" bash -c '
+          timeout 240 docker run --rm "$IMG" bash -c '
             echo "== unity-editor wrapper =="
             which unity-editor || true
             ls -lL /usr/bin/unity-editor /opt/unity/Editor/unity-editor 2>/dev/null || true
@@ -486,7 +486,7 @@ jobs:
             echo "== Tools binary self-tests =="
             for t in UnityAutoQuitter Unity.DataStore; do
               f=/opt/unity/Editor/Data/Tools/$t
-              [ -f "$f" ] && { echo "---- $t --help"; "$f" --help 2>&1 | head -30 || true; }
+              [ -f "$f" ] && { echo "---- $t --help"; timeout 10 "$f" --help 2>&1 | head -30 || echo "(timeout/err rc=$?)"; }
             done
           ' 2>&1 | tee artifacts/unity-diag/image-layout.txt || true
           cid=$(docker create "$IMG")
