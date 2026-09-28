@@ -14,6 +14,11 @@
                        Windows-only binaries / cgo compile to
                        DEFERRED(local-missing) in verify-report.json.
                        CI (GITHUB_ACTIONS=true) must never pass it.
+    -Phase             ADR-0077: empty runs every gate; 'pre-unity' runs
+                       the Unity-independent gates into -ReportOut (an
+                       intermediate file); 'unity' adds the Unity gates to
+                       the -PreReport file and writes the final report (it
+                       runs every gate when -PreReport is unusable).
     On Linux without THINHTHAN_TEST_PG_DSN it starts the pinned postgres:18.6
     digest with `docker run` when Docker is available.
 
@@ -27,7 +32,10 @@ param(
     [switch]$MergeReports,              # internal: evidence job merges reports
     [string]$MergeDir = "",
     [string]$TaskID = "",
-    [string]$ReportOut = ""
+    [string]$ReportOut = "",
+    [ValidateSet('', 'pre-unity', 'unity')]
+    [string]$Phase = "",
+    [string]$PreReport = ""
 )
 
 Set-StrictMode -Version Latest
@@ -121,11 +129,14 @@ try {
     if ($UnityResultsDir) { $UnityResultsDir = [IO.Path]::GetFullPath($UnityResultsDir) }
     if ($ReportOut) { $ReportOut = [IO.Path]::GetFullPath($ReportOut) }
     if ($MergeDir) { $MergeDir = [IO.Path]::GetFullPath($MergeDir) }
+    if ($PreReport) { $PreReport = [IO.Path]::GetFullPath($PreReport) }
 
     $args = @('run', './cmd/verify')
     if ($LocalDeferMissing) { $args += '-local-defer' }
     if ($UnityResultsDir) { $args += @('-unity-results-dir', $UnityResultsDir) }
     if ($ReportOut) { $args += @('-report-out', $ReportOut) }
+    if ($Phase) { $args += @('-phase', $Phase) }
+    if ($PreReport) { $args += @('-pre-report', $PreReport) }
     if ($MergeReports -and $MergeDir) {
         $args += @('-merge-reports', $MergeDir)
         if ($TaskID) { $args += @('-task', $TaskID) }
@@ -141,7 +152,19 @@ try {
         $verifySw.Stop()
     }
     if (-not $MergeReports -and $env:GITHUB_ACTIONS -eq 'true' -and $ReportOut) {
-        Merge-CacheTelemetry -Report $ReportOut -WallSeconds $verifySw.Elapsed.TotalSeconds
+        if ($Phase -eq 'pre-unity') {
+            # The intermediate file is not a report: record the phase's wall
+            # time only; the final phase folds all telemetry into the report.
+            try {
+                . (Join-Path $RepoRoot '.devin/scripts/cache_telemetry.ps1')
+                $goHit = if ($env:THINHTHAN_CACHE_HIT_GO -eq 'true') { 'hit' } else { 'miss' }
+                Write-CacheTelemetry -Step 'verify-pre-unity' -Result $goHit -WallSeconds $verifySw.Elapsed.TotalSeconds
+            } catch {
+                Write-Host "verify.ps1: cache telemetry skipped: $_"
+            }
+        } else {
+            Merge-CacheTelemetry -Report $ReportOut -WallSeconds $verifySw.Elapsed.TotalSeconds
+        }
     }
     exit $exit
 } finally {
