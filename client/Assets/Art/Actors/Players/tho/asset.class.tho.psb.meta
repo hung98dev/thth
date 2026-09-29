@@ -280,7 +280,7 @@ ScriptedImporter:
   sharedRigCharacterData:
     bones:
     - name: torso
-      guid: 26650051791e96fa0a3311ceba48a430
+      guid: 5456a016cb17a3f8db69caf868099173
       position: {x: 0, y: 0.55, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -289,7 +289,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: head
-      guid: 6e17ee415bf4b64fbace0819cad48b6c
+      guid: 36cfb95001dd8c501a3c4d544c7f7ab9
       position: {x: 0, y: 1.15, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -298,7 +298,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: hair
-      guid: cd57eb1a9b0960f0682c77999a926ad9
+      guid: 24fa3422a6c5f605bc73b2d46effd37f
       position: {x: 0, y: 1.45, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -307,7 +307,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: arm_front
-      guid: 45fb4efc94d7c54f6b6fc13dd966b5f7
+      guid: bf7a22c569edc8b18634700d502af9d7
       position: {x: 0.28, y: 1, z: -0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -316,7 +316,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: arm_back
-      guid: d386fa594f9fe0285820796b405fc521
+      guid: fb111c3fcab49ae6b715f9bd12800460
       position: {x: -0.28, y: 1, z: 0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -325,7 +325,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: leg_front
-      guid: 2f99c5cf4de18690694b7e70b3596e2f
+      guid: 64faf4efedbb87276d9a592527915893
       position: {x: 0.14, y: 0.35, z: -0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -334,7 +334,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: leg_back
-      guid: c911d6aebbc2ab3ae9b77c9909a6e4f5
+      guid: 984d7794eece429b8054936372bbed7e
       position: {x: -0.14, y: 0.35, z: 0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -343,7 +343,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: weapon
-      guid: 4117d2ddef1408fab96cb3d06873d012
+      guid: d04428c70e71cbf207ab282f969dda5d
       position: {x: 0.35, y: 0.6, z: -0.02}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4

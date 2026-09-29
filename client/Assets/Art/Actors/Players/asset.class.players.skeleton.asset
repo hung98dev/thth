@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SkeletonAsset
   m_SpriteBones:
   - m_Name: torso
-    m_Guid: 
+    m_Guid: 5456a016cb17a3f8db69caf868099173
     m_Position: {x: 0, y: 0.55, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
@@ -23,7 +23,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
   - m_Name: head
-    m_Guid: 
+    m_Guid: 36cfb95001dd8c501a3c4d544c7f7ab9
     m_Position: {x: 0, y: 1.15, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
@@ -32,7 +32,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
   - m_Name: hair
-    m_Guid: 
+    m_Guid: 24fa3422a6c5f605bc73b2d46effd37f
     m_Position: {x: 0, y: 1.45, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
@@ -41,7 +41,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
   - m_Name: arm_front
-    m_Guid: 
+    m_Guid: bf7a22c569edc8b18634700d502af9d7
     m_Position: {x: 0.28, y: 1, z: -0.01}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
@@ -50,7 +50,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
   - m_Name: arm_back
-    m_Guid: 
+    m_Guid: fb111c3fcab49ae6b715f9bd12800460
     m_Position: {x: -0.28, y: 1, z: 0.01}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
@@ -59,7 +59,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
   - m_Name: leg_front
-    m_Guid: 
+    m_Guid: 64faf4efedbb87276d9a592527915893
     m_Position: {x: 0.14, y: 0.35, z: -0.01}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
@@ -68,7 +68,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
   - m_Name: leg_back
-    m_Guid: 
+    m_Guid: 984d7794eece429b8054936372bbed7e
     m_Position: {x: -0.14, y: 0.35, z: 0.01}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
@@ -77,7 +77,7 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 4294967295
   - m_Name: weapon
-    m_Guid: 
+    m_Guid: d04428c70e71cbf207ab282f969dda5d
     m_Position: {x: 0.35, y: 0.6, z: -0.02}
     m_Rotation: {x: 0, y: 0, z: 0, w: 1}
     m_Length: 0.4
