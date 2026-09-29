@@ -332,13 +332,14 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             return bones;
         }
 
-        private static System.Guid BoneGuid(int index, string name)
+        private static string BoneGuid(int index, string name)
         {
             using (var md5 = System.Security.Cryptography.MD5.Create())
             {
                 return new System.Guid(md5.ComputeHash(
                     System.Text.Encoding.UTF8.GetBytes(
-                        "imp071.players.bone." + index + "." + name)));
+                        "imp071.players.bone." + index + "." + name)))
+                    .ToString("N");
             }
         }
 
@@ -349,12 +350,12 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             if (existing != null)
             {
                 var cur = existing.GetSpriteBones();
-                if (cur != null && cur.Count == SkeletonSpec.Length)
+                if (cur != null && cur.Length == SkeletonSpec.Length)
                 {
                     var missing = false;
-                    for (var i = 0; i < cur.Count; i++)
+                    for (var i = 0; i < cur.Length; i++)
                     {
-                        if (cur[i].guid == System.Guid.Empty)
+                        if (string.IsNullOrEmpty(cur[i].guid))
                         {
                             missing = true;
                             break;
