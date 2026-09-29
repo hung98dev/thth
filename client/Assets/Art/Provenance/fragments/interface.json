@@ -10,7 +10,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:01Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -49,7 +49,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:10Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -88,7 +88,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:17Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -127,7 +127,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:25Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -166,7 +166,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:31Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -205,7 +205,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:39Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -244,7 +244,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:47Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -283,7 +283,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:25:55Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -322,7 +322,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:26:04Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -361,7 +361,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:26:12Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -400,7 +400,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:26:21Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -439,7 +439,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:26:29Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -478,7 +478,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:26:38Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -517,7 +517,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:26:48Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -556,7 +556,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:26:59Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -595,7 +595,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:27:09Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -634,7 +634,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:27:17Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -673,7 +673,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:27:25Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -712,7 +712,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:27:34Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -751,7 +751,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:27:43Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -790,7 +790,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:27:53Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -829,7 +829,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:02Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -868,7 +868,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:12Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -907,7 +907,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:20Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -946,7 +946,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:28Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -985,7 +985,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:35Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1024,7 +1024,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:42Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1063,7 +1063,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:50Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1102,7 +1102,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:28:57Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1141,7 +1141,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:29:05Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1180,7 +1180,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:29:13Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1219,7 +1219,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:29:21Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1258,7 +1258,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:29:29Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1297,7 +1297,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:29:36Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1336,7 +1336,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:29:47Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1375,7 +1375,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:29:57Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1414,7 +1414,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:30:08Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1453,7 +1453,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:30:16Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1492,7 +1492,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:30:25Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1531,7 +1531,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:30:36Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1570,7 +1570,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:30:45Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1609,7 +1609,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:30:53Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1648,7 +1648,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:01Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1687,7 +1687,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:10Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1726,7 +1726,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:21Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1765,7 +1765,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:28Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1804,7 +1804,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:35Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1843,7 +1843,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:42Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1882,7 +1882,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:50Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1921,7 +1921,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:31:57Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1960,7 +1960,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:32:05Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -1999,7 +1999,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:32:14Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2038,7 +2038,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:32:25Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2077,7 +2077,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:32:32Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2116,7 +2116,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:32:42Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2155,7 +2155,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:32:50Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2194,7 +2194,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:32:58Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2233,7 +2233,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:33:05Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2272,7 +2272,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:33:12Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2311,7 +2311,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:33:20Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2350,7 +2350,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:33:27Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2389,7 +2389,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:33:38Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2428,7 +2428,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:33:46Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2467,7 +2467,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:33:56Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2506,7 +2506,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:34:08Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2545,7 +2545,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:34:18Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2584,7 +2584,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:34:26Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2623,7 +2623,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:34:35Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2662,7 +2662,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:34:42Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2701,7 +2701,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:34:49Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2740,7 +2740,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:34:56Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2779,7 +2779,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:35:02Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2818,7 +2818,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:35:12Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2857,7 +2857,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:35:22Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2896,7 +2896,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:35:29Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2935,7 +2935,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:35:38Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -2974,7 +2974,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:35:50Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3013,7 +3013,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:35:57Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3052,7 +3052,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:36:05Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3091,7 +3091,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:36:14Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3130,7 +3130,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:36:22Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3169,7 +3169,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:36:31Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3208,7 +3208,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:36:40Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3247,7 +3247,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:36:49Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3286,7 +3286,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:36:59Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3325,7 +3325,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:37:09Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3364,7 +3364,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:37:19Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3403,7 +3403,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:37:28Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3442,7 +3442,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:37:37Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3481,7 +3481,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:37:49Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3520,7 +3520,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:37:58Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3559,7 +3559,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:38:07Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3598,7 +3598,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:38:17Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3637,7 +3637,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:38:26Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3676,7 +3676,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:38:35Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3715,7 +3715,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:38:45Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3754,7 +3754,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:38:54Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3793,7 +3793,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:02Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3832,7 +3832,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:10Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3871,7 +3871,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:18Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3910,7 +3910,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:26Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3949,7 +3949,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:36Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -3988,7 +3988,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:43Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4027,7 +4027,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:50Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4066,7 +4066,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:39:58Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4105,7 +4105,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:40:05Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4144,7 +4144,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:40:13Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4183,7 +4183,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:40:22Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4222,7 +4222,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:40:29Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4261,7 +4261,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:40:37Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4300,7 +4300,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:40:45Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4339,7 +4339,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:40:54Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4378,7 +4378,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:41:03Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4417,7 +4417,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:41:11Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4456,7 +4456,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:41:18Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4495,7 +4495,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:41:26Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4534,7 +4534,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:41:33Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4573,7 +4573,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:41:41Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4612,7 +4612,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:41:50Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4651,7 +4651,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:00Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4690,7 +4690,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:08Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4729,7 +4729,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:16Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4768,7 +4768,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:25Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4807,7 +4807,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:32Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4846,7 +4846,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:41Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4885,7 +4885,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:49Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4924,7 +4924,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:42:57Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -4963,7 +4963,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:43:05Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5002,7 +5002,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:43:12Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5041,7 +5041,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:43:20Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5080,7 +5080,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:43:27Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5119,7 +5119,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:43:34Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5158,7 +5158,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:43:43Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5197,7 +5197,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:43:52Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5236,7 +5236,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:44:00Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5275,7 +5275,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:44:10Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5314,7 +5314,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:44:20Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5353,7 +5353,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:44:30Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5392,7 +5392,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:44:39Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5431,7 +5431,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:44:47Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5470,7 +5470,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:44:56Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5509,7 +5509,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:45:04Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5548,7 +5548,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:45:12Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5587,7 +5587,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:45:21Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5626,7 +5626,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:45:29Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5665,7 +5665,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:45:39Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5704,7 +5704,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:45:49Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5743,7 +5743,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:45:59Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5782,7 +5782,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:46:07Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5821,7 +5821,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:46:15Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5860,7 +5860,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:46:23Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5899,7 +5899,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:46:32Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5938,7 +5938,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:46:42Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -5977,7 +5977,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:46:59Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6016,7 +6016,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:47:07Z",
       "source_sha256": "d46ec4b2fa7d3c69c91834de23a2195a7eda4eb5e666e0d67f59a1662e0477dc",
-      "final_sha256": "36b6bce2f3593bc48f48e1bd3c78e3e527f4bb02202489280041c417c915ecf0",
+      "final_sha256": "759f0d9727d8014178529e0bb4c201eea2f34d366a599b87b21f2165631db982",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6055,7 +6055,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:47:14Z",
       "source_sha256": "d2a0946aab7c4454ebf3df331e2278c9548cf2eaaffaa2d57126ae4a28864f9d",
-      "final_sha256": "8ead2f8f0fceac7002c7221ab48250cca8eb4499ff9fa29e2e5c520b47fa6a7c",
+      "final_sha256": "e21307fdaac279dc998a881edec237dc12e6e0dfa0d101958f5ae4e653ad5d64",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6094,7 +6094,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:47:23Z",
       "source_sha256": "b148434a8439e897ca140adfb39d0fda0ea8b593f34e6ea7ca9a9f38b709c762",
-      "final_sha256": "9bd5853574bd66fe2a3b61dd860420ee1946664552d59f0151c52a7afd7625e5",
+      "final_sha256": "0fbaca71ff07baa03fd827f9ae0d0a945802fe3caa83dfd84b89739b29ac1dba",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6133,7 +6133,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:47:33Z",
       "source_sha256": "91ad13385e13f54671c595f1847ed10c7c0aca2f8ee12cbface07c6131708f3c",
-      "final_sha256": "a06ea3656106011a1e9f344450049fafb916273de4499b20d338e6c9f72494e9",
+      "final_sha256": "404f4b36ca1b0afb04903a01cfb0ad3dc93b21540de16b5333a729a0f0a3775c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6172,7 +6172,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:47:43Z",
       "source_sha256": "06284c5b6e09fd7aa45ec5a2f97be19a118c1226e1651bebbf5e52e9e8962bc5",
-      "final_sha256": "ced6b41e21e8a886cc646e2d146ec7fdc91a21cbd0b5735a1bd2df1508a1b769",
+      "final_sha256": "06529006bb02ec8dede282b14f99d579eae6a1f4c237fdb918ef63176ee9b09c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6211,7 +6211,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:47:50Z",
       "source_sha256": "60eaaf0d6cab5a7e256c5fb546b9fa187137904df23e61e4060bf8b34ce81a1a",
-      "final_sha256": "c31d5a42cb20b2c7791520212c18e7415d79fdca8370ec4d2352ebd2b491e29d",
+      "final_sha256": "4c19a10393509d60d2d72e0a826fcd0850af4172c1232dba9204af69d607ad18",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6250,7 +6250,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:47:59Z",
       "source_sha256": "3b6234ba7da6aeee2921da8a3b8e4959a1d273f302a3b00d1b3cec7cf12c0f5c",
-      "final_sha256": "454839d536b97025bd4b1ac75750c935ad1efaaf07f2054852fa3245d66c4292",
+      "final_sha256": "c1bf09d4caba93b04269b8636efc5f9d6ad58e206b1bd93171a649dd39e67f81",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6289,7 +6289,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:48:09Z",
       "source_sha256": "be244864bf906b8e614474bea8f293bbeaad815d777b1a98b1016ea13493fca2",
-      "final_sha256": "497b3a399ad0713ef1d135b36d6783d91f1cd4be42ff4c6049b50fb6e5d3ef42",
+      "final_sha256": "330312a4fa6c223214da8c70ed1694a50a01ff40d48c326c6b0c038bc093adec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6328,7 +6328,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:48:20Z",
       "source_sha256": "42274e55aab4c8002923c58b820d750206009ff25c685bc3cb939db40c9b6f2a",
-      "final_sha256": "34308f9a20a689ede77f73e13ea4f2948a53e3ea0d86e4c19dff8ed0e82a6ccb",
+      "final_sha256": "571bdde50dbcfcbbc84adcd163c199f45422ad7869afab0b1737854d305a91ec",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6367,7 +6367,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:48:28Z",
       "source_sha256": "2b1c97ae2c658671dfa4c939cd66f34c3d5668f4f3b637d6dc9fc7b1b46d5ca2",
-      "final_sha256": "55b62c5b5bc1d603c18b3df91087c002ba32ca790017ab4ab9ea39e463871ab0",
+      "final_sha256": "d7b54b7e432418a032b8e1e5c8e8a6d84009e4daa30f3a864ccde28f08b3c988",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6406,7 +6406,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:48:38Z",
       "source_sha256": "07dd75cd7712ca01a32c9f659911a8d8110acab4b1bc00fd73db44b68131711a",
-      "final_sha256": "8193889cb10a6ee05ae0dd51c73bba7fe6d18b78eb9c4aa294a571755bd9fd0e",
+      "final_sha256": "176921d51f51d98a1796aaa75d5e967728bd77ac6aab6789732ccbc7283219d7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6445,7 +6445,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:48:47Z",
       "source_sha256": "3d9153832cc07d5564b5505cb6f4893cfa8909cbbc1278b5ae2c7672ecc3327e",
-      "final_sha256": "df3d65463756206730a6d3b2deb22669c694773f4d35c03da4a46369dffbd602",
+      "final_sha256": "65dcff1fb8196c53dcd40ab43a43eefccc024bc74505d882ca9f6522652b36c5",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6484,7 +6484,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:49:01Z",
       "source_sha256": "dd921c76f0ac4864d6987da4780fb46eac0fa7daaa89d0ec4a85642edf12b125",
-      "final_sha256": "b5918abe42fa98a316b0f9ca5bffa645ebf78ffc93a22c036f3e8526b60d8da4",
+      "final_sha256": "c91eb27503799d53742c998bc54ad3f05e287207343c8f943bb4707c2a7cf961",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6523,7 +6523,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:49:10Z",
       "source_sha256": "cf4b622e301f10a202743ecd82c4d0f72df0c85add6ed183204f75e3ea417a4b",
-      "final_sha256": "1723c1e94a52d24050ca9c7489127a81bd5dbb4512990b413d4a3f60ee0aad4e",
+      "final_sha256": "14a08b5e8f1abefd20850594a23507050a7e5f7270de407ab4219658091b5325",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6562,7 +6562,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:19:04Z",
       "source_sha256": "54b0c40c437e9b3054993dbeb6c5b0f8d288921ec9ca7ee3eeda2f4c56c70eaf",
-      "final_sha256": "8a250d731d8035e7d09ad0b8b3b5dde458d421254bd5bfc429a326505947cf66",
+      "final_sha256": "7e5367d7976fa8ec182b35ccd3a62026deb4900f96787841fc3f27bb64ed5a2c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6600,7 +6600,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:19:11Z",
       "source_sha256": "3352d87afd214ee5d73efcbb24b906252ca98281f69f0b5dfa452a35d6ad6e6c",
-      "final_sha256": "6f929752e917c73db5aa479c478dbdcaa00339317107b18573c972da940dfb28",
+      "final_sha256": "945dbcad5c95285d10162eb2242e2174701cd7635f77ca3c7ee8fec4105ceef8",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6638,7 +6638,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:19:21Z",
       "source_sha256": "4fd3220b6bd02ee5eef8e860912898a0d6dcdd603d1b8716bd8acb94457f1f4e",
-      "final_sha256": "f690ab53eaf1494e64ecc6d7d9992ec34b5f9182ff72ad18c233b07b714c1215",
+      "final_sha256": "31dfda543768dad04aea1bbd4b273cab50c145ae0676d2ce3866121068876ff0",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6676,7 +6676,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:19:30Z",
       "source_sha256": "740de1cd76a0c55bb89bee5f34491101c4d01d439eaf037f67cabb99bc71f0c1",
-      "final_sha256": "97ecfd6c396909b15a77c8ebd46d439fc18524ae3e0bf8c32d1770662f232400",
+      "final_sha256": "aec7e69ec253148c2f22dc1b3637a232b4c95767ee525eace266ef599c039149",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6714,7 +6714,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:19:38Z",
       "source_sha256": "89e0b517eac163b9e87ac58464b8544264f79d754977cb9bae500dbcfa70b9f4",
-      "final_sha256": "d7746eca02c1595f1e6fabfac8646bccc1aed47a212afc86fd108a28ff89fa41",
+      "final_sha256": "078766942115da42d61d5b377378fa857d2032dbd4485e000c8d23735c6e84b9",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6752,7 +6752,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:19:47Z",
       "source_sha256": "5fc26019e3c6c674344a3744296b9c92cfaba9e79dfad52375dd53140cdda3b7",
-      "final_sha256": "9a9b90226e7de6b9d29e1635cbc9b44657cabda677138e3aba99eec4aee0df56",
+      "final_sha256": "b0c3e148ae6db2e2031cee37f9105b1deb774feb0aaa943296c503bd296dd138",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6790,7 +6790,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:19:56Z",
       "source_sha256": "9ffeaf2cdfc951a12ccc1cea667a5cfb09ac9bee65b398beb389a31f68a22277",
-      "final_sha256": "bf2dee386a5640a83d549bc630031f78a2d99520358031e86c7287174f24fb54",
+      "final_sha256": "05f9ab2244f71f2ceecd951d2945539e60929d4c20850eb0b4886dc1be0efefe",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6828,7 +6828,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:20:06Z",
       "source_sha256": "aded7095116e4c5bc3a31181a68f10f24f52682d0724c86ac834bd136891ea1c",
-      "final_sha256": "4d2fba8b889c0a4a27f3cf4421f201138849bdc69c27a5d5e4ce2e43c65fc651",
+      "final_sha256": "dfe601124d7f4a2f3383c575f4281d82aa6dbeac40f9697aaf918aa4fdf7023f",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6866,7 +6866,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:20:15Z",
       "source_sha256": "c8f86e1d7644a9de4ccb1bdadb9c4d46c2f048b72a3275c81f0b3cd4f7bafe72",
-      "final_sha256": "5d719e38803fb031f7a303b4a34eccfe9945119de7252b593dc1c31e8d08b3fa",
+      "final_sha256": "3f4bbee31fcb17c32129d88743e24871258fdcb792ed901ef38679538a0d26c6",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6904,7 +6904,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:20:23Z",
       "source_sha256": "725aa90729c2304cd1a9feccfd96c5e2023fd3d90d9909666aa9fe5458ed6eb3",
-      "final_sha256": "784db593af77b79deccb6e73392eddae3171e39a20b7d8d49f0fb9ba2d77ed32",
+      "final_sha256": "9ae304f3818047919fd5a618fbc71212cca4776ee81daca4a5046aa080a7fb3f",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6942,7 +6942,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:20:34Z",
       "source_sha256": "01c3e897d81d65b0e3e448748006a5dc94403fe843e085c18e3f89d8de0b1948",
-      "final_sha256": "730f668b0b1a2c598a98e3576fc44993752f7b9ef2be59cc852406f1752e7573",
+      "final_sha256": "4cbb674263d135c7190dbde21ba3281b2b1ab896c1786e49873382e0e85eb188",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -6980,7 +6980,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:20:42Z",
       "source_sha256": "95ec01f5f2d8a9a5df3180586fb8a53becc98822c80ffd365f80b348c5e320ce",
-      "final_sha256": "f6862c261e4d8da71872b66401a122224350631b2afc24c044039edf89b05c8c",
+      "final_sha256": "8949ed4ac1d394937716c990eb1b8d74d20a842b48b2f45b844fa119cc7bed82",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7018,7 +7018,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:20:54Z",
       "source_sha256": "ca62597bbe8b18794561b4b9c6fe77ca6fff4a28d71c145019cef9616be84892",
-      "final_sha256": "75f676e59ff8aa33d4c1bf08bcdd2805357d9ad832538245f6bf1d64968df0fd",
+      "final_sha256": "f0f5ce193a0980524360f5449bc82c008786fd344826a6a37b762261cf300d10",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7056,7 +7056,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:21:03Z",
       "source_sha256": "d10ee0ea7527e08f4744672b4f49e595d0f6e1c5039e49e0e845cd7891c486f2",
-      "final_sha256": "f8813f9ef9017b9cfe5cd675482e227a9a5389a80a3c1a04f66a54b5d13d11b5",
+      "final_sha256": "9a43b475c42d11834f2278d505a812ad63a366a77116edf28371839248cc00be",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7094,7 +7094,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:21:12Z",
       "source_sha256": "5672f08f4f75b80b33b7621098f2b8f16f4e9307e3a827d327dc59f48e2d7d06",
-      "final_sha256": "7a5a7da399d98b997ceed8bf2d129c36090431b77f5b8eb133af1a928cd30a4c",
+      "final_sha256": "51ff3d7e6772fc1101bcb5ffa793a0389a984d603d3d6c1c46d064631bd3b418",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7132,7 +7132,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:21:22Z",
       "source_sha256": "e1c936de5abd90380f4c21e2e22a1175f3f288e128403084dc90595387ce6af4",
-      "final_sha256": "c73023a449d3dcc48a65b54c6cf95159d5cb5397ca5256fc456d6af97c279173",
+      "final_sha256": "466ceac0675b14e2ed20964b6371e8308fce7e859cf54d8959225f563739d7f9",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7170,7 +7170,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:21:31Z",
       "source_sha256": "324028fe77df5a4bfb8d91e62d685797ea4c102290691769ee378a2fb53326e6",
-      "final_sha256": "d79ae809f9f091a62a363010d3c53564378025dae6f9ae5d59db503d8005f0ff",
+      "final_sha256": "6fb4b9b6bfe8ac079aaad16cac81c63d81e4ece1b476970e07a0d4e57836abff",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7208,7 +7208,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:21:39Z",
       "source_sha256": "e851993d5c60bc2deee79857e862d01a8097bccbc70d99fecd10842d11aa8bfa",
-      "final_sha256": "6c85178d349f4c7967716d95a3cea8d337e7f36ebcf389fa843fc2c9bef09ba4",
+      "final_sha256": "b26a49c14daeb9a4c2571f5cc03f0d2a4a27157260c366ef425a87102f1a25f9",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7246,7 +7246,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:21:47Z",
       "source_sha256": "57b0ec4e3d8dc57fce550faf67e8bf7943c02c86fbd3d445878ab7094f76999a",
-      "final_sha256": "6c49a4feda901bbef76ac10cbe7d8f97b3aabdf87e9e6d6261b062ab54eb12d7",
+      "final_sha256": "2e3b9d7f42743d6b342967ea29bb42edc9853de181ffcc6ca03391c614f46cdf",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7284,7 +7284,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:21:56Z",
       "source_sha256": "c23e3f0dcecdc74e3edd831d5f2c67a86284d9884ff14e024d46b3e344a80eda",
-      "final_sha256": "ad0c1403555ce6d7375244da84d5419e61880825a2229b1321affbfbaac98296",
+      "final_sha256": "e502cce7a8b181f039501c4f8c021789f6af05f4533a51353f7fdeee859ae2b6",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7322,7 +7322,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:22:08Z",
       "source_sha256": "bc066b04463a44099c7de1842c67c440d10909eff8459a59287e9f37d0c77538",
-      "final_sha256": "2b22b3a61df5599aab0dcac55b7e6ab98bbdc2b17515be203144fddf95a055a6",
+      "final_sha256": "ab431584ed1350e9c894b2646cda08c19c7d61273fae0fe855ca3ffa6e0c83b1",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7360,7 +7360,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:22:19Z",
       "source_sha256": "30cba432f3fe4d8c92546309bdc3e789e5fd07886171863ada31cfb4676cb9a0",
-      "final_sha256": "9f00009bae9106cfdacf2bb0a3dedbbb835b2c9e5025c48ca52f941bad3eed01",
+      "final_sha256": "d017d553cd166e992ec1d457f58aa1e47a5c5f631c8f40a594c1db8acce349d0",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7398,7 +7398,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:22:29Z",
       "source_sha256": "898e8e94cf99f40475c3a39903138c26bc95f07477e59436e8621527417ba241",
-      "final_sha256": "ee44f38f4e95feb89a3ebd9d5f964b1973d969b7f22055b840d981b0486aa86b",
+      "final_sha256": "49bfc4bf4f142c2752c8366507261f2f7e8e84238f96e23f73532be987c5aa3b",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7436,7 +7436,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:22:39Z",
       "source_sha256": "1e63cb81aa0c8649ea9a0431363f6aa812d344e969974ad70c213afaf58f2af1",
-      "final_sha256": "b0d1910a006c2f86672ce3ac5b0b32501c6b7fb650f4cf7e87addd87471b118b",
+      "final_sha256": "1e418cfc692300efd53de3db3d3d51492358ab20caa3f2135d9e37d882ea04cf",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7474,7 +7474,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:22:48Z",
       "source_sha256": "fb688e962a91880682288c2c35cf40632f833196a223d08b04f33fd7febaf47d",
-      "final_sha256": "a62c148c8b1d1e496b89898f5a126a029ed8942812c3f334e6e33d0a91d2d39b",
+      "final_sha256": "26443d77b11b2649d4833b67c24691695b9164a80e9dd3b988c83a7a4f428226",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7512,7 +7512,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:22:58Z",
       "source_sha256": "7c54e17edef4e9556dc344421130ac3b99ac3c121d00e1a49be153ac344b6a6d",
-      "final_sha256": "3cccde5bc0648bf8fc9a95f0f123d07e7be1ebaa9d0832138946e3ce729ab80a",
+      "final_sha256": "44f950e886ce58bfcf3cb061d8f17a1a4f52d648d01ba222d597af63b32c17ca",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7550,7 +7550,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:23:07Z",
       "source_sha256": "7bf49c845e793adcff741bfbb47feb0222ea88203ca762f160162c174b69ebe1",
-      "final_sha256": "0630206fa994e07a925a4eea4f7501437ddc0e7aa74301127de07e4322f3e75b",
+      "final_sha256": "e0e9be30ce551d1cbfb880e8f4afb7283e1e87974719beeb4ef5474f83e5b7bb",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7588,7 +7588,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:23:17Z",
       "source_sha256": "3738fd4e509ae6c2c7790ea7ca49af1a64bba5d60991e504cd83e161f30ea05d",
-      "final_sha256": "59c1b5889991e9aeeb460c55aee99e14693dd91e98c7bb85d9fa49cddbe59767",
+      "final_sha256": "a688473ad3782caae8ea6d9fdd7dd399da78826dc4a3752b45a46d40f2bd5d6c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7626,7 +7626,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:23:26Z",
       "source_sha256": "4a39fa7bcf10bb14f47d19a6a8590b4a956a6fcbec1878683c336293637e0267",
-      "final_sha256": "be12501b70466abf1e4e68654414fd5f29f9c5f3b88dd0afc7cf3c87eb2b2135",
+      "final_sha256": "0a03f696157c92592aba4ed6f13419b3a983078f03fb3423bab506c860cc1a4d",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7664,7 +7664,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:23:34Z",
       "source_sha256": "28e8d3d4d2ffb954519ce53d9345dc1749f464ac0dfa46ae2cd845a7f5d2c948",
-      "final_sha256": "ee357d6d2b854ce64306480d808c31b8d278c4fbff6352f4d26863a8fdb21d02",
+      "final_sha256": "c0e70858b84814f4a2e92f9d7950aca5affa5677726026bcda308a8d1bef8c4b",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7702,7 +7702,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:23:42Z",
       "source_sha256": "574ef2e7a867d4ad5382255db510b88eb84fdfa5e413052ef6224e7a8993be49",
-      "final_sha256": "ee747ea686fe58684e53b2671388ab7f8da98314b93a13e081df180e93d6d356",
+      "final_sha256": "652f74df886f72a83bdb9ef63b0b31f123266cc7ac11c1d2ebd002ca3f6b0d34",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7740,7 +7740,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:23:49Z",
       "source_sha256": "8ff84f32bb0b6e61f359436cd104bcd849c1f71507d18e46e8cfac77c8e6012a",
-      "final_sha256": "79a8c8276c00a7bb8867fd8e470d5079b803cff1291b1318e44c7a9b48577d1a",
+      "final_sha256": "d64125bce245c03f237af3ff3d01547ed0790c9af79f47d89ed36a4301eb7cb9",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7778,7 +7778,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:23:57Z",
       "source_sha256": "ef80114daa2f21789cb2f7be928e4ff771c2a757729e6d0b21de990670baf279",
-      "final_sha256": "846880f05175b6ea077137d4d248571c63304310e8058516dcebc2ddcbdc43c5",
+      "final_sha256": "e6e158237e7409366f16c5f2885e4c17c8513c0ec2117762c99bcdbe6d3e3bcf",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7816,7 +7816,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:24:05Z",
       "source_sha256": "6ba377507ae3edc1dc3ca0793915dd5ac691092253f88fbe2a5bb2a73cd25568",
-      "final_sha256": "9fab6c9d15f63d9c386cfaac07d1c76c90355b576ab0c2c2481629a925f8d769",
+      "final_sha256": "17554d84bb44248c4dedb2c9373c2a2ee2a3d4c114f99b55e16f82b5c2713f93",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7854,7 +7854,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:24:13Z",
       "source_sha256": "3087961ccd2038e019f8fd10bd231bd7c3805a0d9b389317a1356eff74d48082",
-      "final_sha256": "688d7f21d8c1911a05d2b940227e940bbef70deae1dd68f24288540c5e51d03b",
+      "final_sha256": "8805d60bc4758e1b629723789b7e1880ed8208e9be3e344747adb9c477dc340a",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7892,7 +7892,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:24:20Z",
       "source_sha256": "813400723926dd2acbcb4c841fb428c8d96ca33e9c642c3fa69580444ccc99d0",
-      "final_sha256": "722d89c21b7ba236d6c896fa43e0bbf412b1d16fed16536f7fd37887f4709dab",
+      "final_sha256": "96629fb19196ce49d85dd1aa8718cd169fe04103b87a630c921455b55a937628",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7930,7 +7930,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:24:29Z",
       "source_sha256": "627c9263a9dd513e125d37c2f7c5b04dff6a6068513e9ed3790763f2adf0c372",
-      "final_sha256": "77cc7dd8204335886a2f989e3c586827ca06ea33d9708224d40d689600123c46",
+      "final_sha256": "2d61d4543899b4f9e06da9842d48db9b2d04776fec20385c23e16c39eba1b6ae",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -7968,7 +7968,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:24:38Z",
       "source_sha256": "738d3924c31405ba23187a5eae22d18bc7bc273b99b128d90c49686292e72383",
-      "final_sha256": "e6bce5f43c5e3372f29ac97b4b8f699c57b58c18869a3f9b591097f2acaecfbb",
+      "final_sha256": "ab694ed33eba40eb1c239f023417ce891be40d536b63a9fdada8f0a08b471fc1",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -8006,7 +8006,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:24:45Z",
       "source_sha256": "d15404db9b181ff105c85605e5e2126fe91c5e0a514b3044f720bba55f00e4e5",
-      "final_sha256": "3c36fff3596e81f8c467a181cd6b4d78d0ab271caec1c0f8a426a04255da8b35",
+      "final_sha256": "6e10095de0427bb286de5c39a5f6b50910e21f6b2cf028fc0271e17f128b2a8e",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -8044,7 +8044,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:24:53Z",
       "source_sha256": "e00d87148a2bc32b1b5410d73fb78e3f6546dd56c882c64d7d98b9fb88cee04b",
-      "final_sha256": "fdb8d589c6d2cff5d26cfad0db032101c1d35ff096b6cb1a5179a8dba87e1948",
+      "final_sha256": "3816c1952be46285da90c2ab5848b20c35084d6a6d3ed177d06ea509f4b3eaa0",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12172,7 +12172,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:54:56Z",
       "source_sha256": "2e2e5ccea47b66f5a958efae813520aff96c973b99bec133eb7b46fd54b93633",
-      "final_sha256": "938c3ee6dd519be707f870257cfe5add27e804bfeb7b37a7842c87f7be1fdc0a",
+      "final_sha256": "11ff935a5f42e3a96b64ecc9d4e5eaa5a9158793ebf6c343e534ad3a93ef2697",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12210,7 +12210,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:58:21Z",
       "source_sha256": "80209363d1d0b3424d8b5bd8f8a78a4e92b4db7e942db152bf044944acce3195",
-      "final_sha256": "8298e62515b499e7938ef1ad1539b3b6dc55d374db5d362f5288ed59c1dcc73b",
+      "final_sha256": "17d889d2081092f23c286b86b9cab4650a2e9de936f49d32e9c57a692f174d77",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12248,7 +12248,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:55:15Z",
       "source_sha256": "cdee43d3fd23b428d346bcf0347c64798116e34432611af12f8e4f2554f13ddb",
-      "final_sha256": "a291e3ccd91c1f5b73b9b5e3cb4fb7efd1cf45882678ce991f9d63bebbb3aebd",
+      "final_sha256": "2e90d186a0c8cc728bd7eee0f9f3b07b266997756a8b32d6e50232164f56c7fc",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12286,7 +12286,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:58:45Z",
       "source_sha256": "90f0bec8c59d87cf8833fa88ffa9101cda03fcd8edbb9d86ad1abac166fb124a",
-      "final_sha256": "0c2bca6e4594ccb26ad8ae0a029d4806d32e30c277aa6bd103b95fa58d07e01f",
+      "final_sha256": "f892112dd19a6a425c817a5cfe33c1a3b9e91bba4fde8050fac380625b714f93",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12324,7 +12324,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:55:36Z",
       "source_sha256": "b5f7862c9e75258a83fc918c63014dc274e42c3b54f00412d6abdbf918cc3628",
-      "final_sha256": "f40fb9fbbc238cf510d4c747efa0467641efa333efd2f29ae5eb1b906c89c629",
+      "final_sha256": "7f7310aee53ce25fa5801db112acdaa84682e967530b611149467fb48fdef240",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12362,7 +12362,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:59:09Z",
       "source_sha256": "4dde65deb8a8c93d3e300c9cd60dac86d79bf5fd6a8f8f4e62f3fc5e74b2920e",
-      "final_sha256": "5954abe17da2dc66a8e56782dc052c0f8011ef99d7aa4a664d5dc89bb6a1e47b",
+      "final_sha256": "5dc653eb778096ffceb80988adb2cf6242facdac34ccdc266545fb19520a47cc",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12400,7 +12400,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:56:47Z",
       "source_sha256": "1814905109df7ef83fabcce6bcdeee7cca455a8543143815e90a5193f0b8c1e7",
-      "final_sha256": "a7ea8c42075376049a296f1287900d1acb545f4efd543d429d8724bc114cd2af",
+      "final_sha256": "62210518a7da0d3244ad456b6e65fbd781a08c1c8876861a039f2dfdb0a91c62",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12438,7 +12438,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:55:57Z",
       "source_sha256": "28911427273acbad5e0e35c4921532110597df08be4d55e94b9c587502f3a24b",
-      "final_sha256": "3bffdc0939f0662df7c714e1fee66d5d685fa2fbb91ca7e5f35b0796bffc1b1d",
+      "final_sha256": "ce72ff5390c67aeda6ff5dfa2400ae3cc96c3d368c49cb3936ce9fd8a6685a49",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12476,7 +12476,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:57:11Z",
       "source_sha256": "c0a2c035b1d501808d5fd1cd500d961f0a494e6899388314d90183b3341352ab",
-      "final_sha256": "6425e9540972a08001c4ed920d246e22c63a4112b50d57d866373002a3082ad2",
+      "final_sha256": "dfc0aa0dddbb0089f934d19834bfcf9e2cfd16df62bddd70a39f484d0661b63f",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12514,7 +12514,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:56:22Z",
       "source_sha256": "5db7a47963cad2416cd2d828d1d6557f68e7ff2ea16d99b431efb9a5f8012ae5",
-      "final_sha256": "b3d7f8c64e53b723a7dae59fa605e1562b7d089f04a7c02acfaf3247b6c407fd",
+      "final_sha256": "103c292bb49f231bacb1e3c00b1873b6616f3fc5f20011ad95bf5b21bf58e14b",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12552,7 +12552,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:57:36Z",
       "source_sha256": "a8b730f19ad8019c62cb041a55ef0d27912454c6bf8feb7a7a8bd7ff96624504",
-      "final_sha256": "6f4faeaf54b45738b2cf05197e7fa1b111c98714ec2cfcfc8b70319520ec9a18",
+      "final_sha256": "afa191c5e217cf2c731af177cb18e970a029bb1937050a2ccdc9b554d454eb82",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12590,7 +12590,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:57:58Z",
       "source_sha256": "53a3ac36a2b963c16865ee323037463ddcf2ee6d10fc637319c0904c1d6b9163",
-      "final_sha256": "bf462ec2d13123b29058d7286ef3780e5c20bd62f4b18398e5f6f2e869ee2a85",
+      "final_sha256": "1d6dd8331dbf125dadfc758eb74a136ac9c2e15583c4ad77ff2967896284f223",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12628,7 +12628,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:59:32Z",
       "source_sha256": "b112cb19846a98d7a21fc4cdd91a9a31b27f8108f0560e9abb39c9594ec64266",
-      "final_sha256": "d8228457aa922f0c918596f26a9a24be4b4ee2e2a8357140b061196adf482880",
+      "final_sha256": "9cbe72f0b2b4a227eb5a3e2b862335ae5d06faf90d00decd74a08400f362f1a9",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12666,7 +12666,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:03:03Z",
       "source_sha256": "4e6df65af7f7499c05b2dd71b093ecd89902a205e63dd1fd8f4b340c12a831b6",
-      "final_sha256": "d9a8eb5e44f0eaf39f91cd4c280469bfb34856be8b2de508b084ea57c9baa928",
+      "final_sha256": "ebe48a408ed45f98331f5556022aa79a0cc461b683660958825544ba6adfcf55",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12704,7 +12704,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:01:28Z",
       "source_sha256": "46a14478ffe16e22595eedf8523320c774c024854a9fac8280f49ed91eff3ebe",
-      "final_sha256": "9ce5b2e6e4ec9743ac12d65514f8f2c6948889c0772c5a5b3278c176d0022044",
+      "final_sha256": "dc32d80a8b1247095f2395874789b52e8d05449fd7b09ba86abdebd6eaa1ea7c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12742,7 +12742,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:59:57Z",
       "source_sha256": "e9757b0efd95417585a687201d7007944870b1b3ac8750b23d8fbf0b21eae7d1",
-      "final_sha256": "edc12fe731c5364a35459298ddd00a4142063c524dde16e8e422e0efa130a743",
+      "final_sha256": "79cfc9ad9b802924498faa5791f3139f017aa23ade695d0d39db9274be8f06d3",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12780,7 +12780,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:03:27Z",
       "source_sha256": "edb9bbd9fcd21d272d847ac3b374438deb97e81cf6adcbb7715d8d2059903f8d",
-      "final_sha256": "d5c894f9a2c9f5f81871cfee8413216eeb63db3180ab12960261bdabf249a65e",
+      "final_sha256": "b9c8e0cc2fe029ed23ac29dce7a13d5a8d0936c4b2e73f93fe0eaed4408f2a5f",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12818,7 +12818,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:03:48Z",
       "source_sha256": "a1376dbdbe34d510e460ff1bf3142b7aacaa1911e622d420ed849488c685d97e",
-      "final_sha256": "8f59c07386b79e1961f71ef8cf2204c286239f627d871581df43c4f3d8660664",
+      "final_sha256": "c61c709d099781d78e410c00632adae98c0fee87b6a138cea6895dd8c5f84915",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12856,7 +12856,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:00:18Z",
       "source_sha256": "fabe76437bcc0262a95abf260b3fdea5be0a70e58df92d8ddb9f975e7536d09b",
-      "final_sha256": "7a757c2bc49770f91e4eb0a4c8dcf2f63e5255146a81318ad3d7a4221e8eb101",
+      "final_sha256": "264746a2173559f022f7f771e08b436838af2bbcd0d3d1967e941142326ba504",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12894,7 +12894,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:00:38Z",
       "source_sha256": "4ff0e99c53495076375693922b504833c70bf1fd43771f1f0ef857a3de89c524",
-      "final_sha256": "99c505399f09264619252af1d85243e0b22ca31c011737eca2882eac42dbda9d",
+      "final_sha256": "f29706336ace0c2a5bf0f1ac25e0587fe140c32529d97af431cde06bc2e494be",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12932,7 +12932,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:01:52Z",
       "source_sha256": "2cdc8476e934014a37906eb41f824c6b4db9210b55736bf4ca5450b434352fb9",
-      "final_sha256": "f0f6fe83775decc30e0b303c51f1ac411e0824617f968554ec4f166128ed3243",
+      "final_sha256": "fc798f839a6a4bf371a26467ae036889277990af9b757538c25b54786c56739d",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -12970,7 +12970,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:02:15Z",
       "source_sha256": "6edbec5768261ee5d26d799cda7baba921fca6ac817107dfee3d9fd9f2f217b6",
-      "final_sha256": "8626ced4ecbb0268ee799d6a75f9cd41b9fb68b88bf1c7a7d9284c56e08804e2",
+      "final_sha256": "01a8deb83ca67246dc1fb3659e0bfaab4a20fab5f887f8f2f9e8468eaad7c85b",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13008,7 +13008,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:02:41Z",
       "source_sha256": "55f3f1aacdf820a864a1a137bba8190c2a7bbe5c8e19375606dd84f5c6dc618d",
-      "final_sha256": "026ed1c7a14f972d77566881d18879a0cae9687f9f1803c6a3ea4ae9c51eba3b",
+      "final_sha256": "8d3007bc685d6e56ca70923fdf4c859b4876b12874b11a0d46cad5d0a35484da",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13046,7 +13046,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:01:02Z",
       "source_sha256": "0e16ee936436f68debb702f715c85f8287013b6163a42354e2b9bc434f095e05",
-      "final_sha256": "0699d72b22d139783033b7c319ce754850e0a534c8954d8c82ede62c2eed0876",
+      "final_sha256": "38d04a9f55c98a9493c2c217bdac8b70021bb32b04a79f5a803740e0a331f6d4",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13540,7 +13540,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:07:03Z",
       "source_sha256": "ba85f6860a13d092904027f9b5c2d011aeee18797477862884c20d052f96f871",
-      "final_sha256": "ad0772d433acc7a0c683a5f0fbbc960f140fbb72be36b06ee11d5abbf4f81d06",
+      "final_sha256": "7b6c1538d38ddbdd26d45054985a55003c8496e97fcf5dc83fc74f46a4e960f9",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13578,7 +13578,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:08:36Z",
       "source_sha256": "08f0ae4481fcecd35da5a93796b21a403ae4596a6a1d5f055c1127a47b3c5922",
-      "final_sha256": "e8b5f4ea38214bf8fca1af1c73da8d470ce631f99873d9d7ff2aff2dbb52dbad",
+      "final_sha256": "ebe365c420880e1bc2bb10505d4b4cf0bcfb4e6cc52fb008b5006bf340820cb2",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13616,7 +13616,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:04:13Z",
       "source_sha256": "ca4720b37cf2665603918d9777da3be788fad8db3091e5071de08d5f577a6ded",
-      "final_sha256": "2e2f12325e51ef3780705fdf913d049104871d99ce2a0e87271549c25b117d01",
+      "final_sha256": "9f729d009b0dec075e7e97342e576d68f7626ac273ecc74f55ba561a748a408b",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13654,7 +13654,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:07:26Z",
       "source_sha256": "69a680b4e88cc1183b78237b593a4f29e3329d26a68b05abcfaf75309f4646f7",
-      "final_sha256": "dcc95314cb2a26e1f89b4c0e259721066214629ccf84ba26e1740be87e0f5fa8",
+      "final_sha256": "a93f5841d509d22d743047efdda0ad947abdd0b0bb97884f444d6bd79c780219",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13692,7 +13692,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:04:36Z",
       "source_sha256": "fe741e9c618b8b4161ccc2df4bcf042af2e7bc1d82177987723bd56f216d962c",
-      "final_sha256": "b38ef56bd81aedc5365dc096684e2625ee4144a75a3b4d075a00c3f73ed4eee7",
+      "final_sha256": "75c7a1dcd9d68fee30a58a656623a0e0dc5c9af6d8f3810f20029cee03ff6c9f",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13730,7 +13730,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:09:03Z",
       "source_sha256": "30244f19a23ebb9c3e1cd269b4e1f2b8c794d2cdc9f68d5bd983df2b7b955dce",
-      "final_sha256": "2e4925d99718fadc56ea806d49a0ef9c67ef7999df407d831de4d7405884d181",
+      "final_sha256": "abdedb7be40f3205265ce577f4cf22b44dd673055e1d34d1365da68f6b9749a7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13768,7 +13768,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:05:34Z",
       "source_sha256": "6fe8a8ef938a6b994c25cbd975bf3b9b65717a7186be985308275c0e8cbde472",
-      "final_sha256": "1bba2b301164c1e768dac32d78267f0a09bdb82aacaaa2df28e73f8f43f16ee9",
+      "final_sha256": "742d1630bb332e084a4f93b8b8bc13836fbf0e72cb7f7fcad42261095925162c",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13806,7 +13806,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:07:51Z",
       "source_sha256": "9d2a056d99eeba90621502c1bbcf60fffd894f3c42573fd64577d71a711041b5",
-      "final_sha256": "2204d22fe56ada84b20e2b1674d01e834fb58ad3be44ca17b3fd29076fc76791",
+      "final_sha256": "3e9ae5c0853636c434e180ce3c90baaf8ca096ae0190f77a5f6a371a34371ddb",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13844,7 +13844,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:09:34Z",
       "source_sha256": "f8c857bffeb14de8071e50edbc92af20dbcefdef0435be81249b0108ff5aaa39",
-      "final_sha256": "f5bd6992f3f5f5c9c58a1b154ad923e50710062c43ede80fd5ee158c652a730b",
+      "final_sha256": "679ceb61193ff003ce2b870d60da6b4163ba3435eb9909d03b089c9c004d63b7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13882,7 +13882,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:08:15Z",
       "source_sha256": "177f7621b8e53764d7a30d645032b4f13cc8c673b58443bf44547a7040bf6132",
-      "final_sha256": "cddc6950f8d00c9d9f97c2cc4af854327f9d99f9e365b1cc1c57933a1237f270",
+      "final_sha256": "a28a038eb601139dde68cc92d56bec969cc5b0be5573e8e615ed86d090961b41",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13920,7 +13920,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:06:02Z",
       "source_sha256": "70102b830a23b9f5f73752680780d1109396766a88d98585856b87770502c7d3",
-      "final_sha256": "9115c43a9bed5e4cf0b442bcfd517790243474456afd77aef9989dff46714759",
+      "final_sha256": "0fe2da95beaea8b5189aa33775386aa2af67dcc026a095f581e2e7ba1a748a7e",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -13958,7 +13958,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:06:38Z",
       "source_sha256": "4d5476cefa5dfa6bdfdf4f7fb438cac0940f743fd977aff5ed3321de91535631",
-      "final_sha256": "eff06f23e23a9a667dc35542adefc3293aa7ad24cede3b6d06856bceff5978a9",
+      "final_sha256": "51cb322176e0505dc7451b636ea05e8f68666d425d347dcc16f573ed6a777290",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14452,7 +14452,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:13:52Z",
       "source_sha256": "aef322fe127045df4225e268d3f2c1825a16af55fcaaf5f2a8561962de6eeb8a",
-      "final_sha256": "4aed491b4243bed2d50bfc189c0f4b52c8f582172d2ab970c9a43d93389f12ac",
+      "final_sha256": "00b8f67096090bf0aefea087469f2893abb895788c927a17629ba3397d250ac3",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14490,7 +14490,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:10:02Z",
       "source_sha256": "90daa2613b000ae93b0854f93dd05244d2b7e4625cf24f5450c11bbd0ae36dad",
-      "final_sha256": "2c8cba43e0aa61711df8dedc57993707623b3cffbb278b0ef263a2cb77f48de5",
+      "final_sha256": "84ab9c6abfc4f1ab154c288d25245f9f49c32535d47ca2a3449b0bbd488b1579",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14528,7 +14528,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:12:01Z",
       "source_sha256": "02fd108ed2f106578c75503cf88e615c611aa426128bf81542b6e97047e2b920",
-      "final_sha256": "12235ce15ebac2e4b9fe231cbcb480a791cf808ae8f2b0b7d167c1ca006dd9f3",
+      "final_sha256": "85136d569ec3b40928e1afc200331a44bad57090cd3004abef322c65096068bb",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14566,7 +14566,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:14:17Z",
       "source_sha256": "d33ca2efab99714e3ff5eeeae347fbc1c554deb9b84de2d2c23b2500d08bf20e",
-      "final_sha256": "d3ce95eb0b21c0120d3db7b794e9f595af9350b273041bc6999f6dc3d3869a8b",
+      "final_sha256": "002cbaaa94017ea640611ab7a8aafb9e8fae34f8463fc824b326bcfa25eaea6b",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14604,7 +14604,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:12:30Z",
       "source_sha256": "68403600f2a4b43502286b8dbb3eb6968f1f8650a29ce085f602bbf89e2b859e",
-      "final_sha256": "e98cba8537e0283d5db9dea6a44092b4049b9b2b2c42366e4f13f6e3c967de20",
+      "final_sha256": "f3cb0b2627a493ff3fffc17695357dbc7b7a8f7f17cfa1b4918d74f41967d0b2",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14642,7 +14642,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:13:03Z",
       "source_sha256": "4aa0ea4cde6c15be9572b00210e9b878f473ab2b41cc8c3ca1afdc8f1f672b2e",
-      "final_sha256": "5ecafa8bd800fa70c19988a466320cbdba7fe2fd94f2fd4ef03289929f7a83c3",
+      "final_sha256": "feda3471e482f13b43a7623a941b0ba815598198785a45e00c7351f57e1510db",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14680,7 +14680,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:10:23Z",
       "source_sha256": "5261bcad40fa313cdbd416433fef89eb6258f1635b0d867a059c3e0af69e997a",
-      "final_sha256": "5d660f210ece75cfb766fc50d2ac7a892bcdb6f414b6088db94c9601c10c907a",
+      "final_sha256": "0dc2791404ca01c32731a8d3af52467e9ae8f79e6d3f121c025336240bd42cf8",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14718,7 +14718,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:14:43Z",
       "source_sha256": "c176bbf8cae09aabc911e40b8e76acd9c50ceae6e43a0440441d6b86006bbebc",
-      "final_sha256": "c1ebcd2dd7d210b55a5a9005140767deb91f06d9b8777c0628ea7706a395804e",
+      "final_sha256": "01c90b3ddcc55c13c9c22d83a246354c91c804acb31c64cbcee14856a0ca25d9",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14756,7 +14756,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:10:47Z",
       "source_sha256": "5e61de627a61eefa25f8e43339511791ec62f8c417cb8bcbc56fd5debefada6c",
-      "final_sha256": "ec83c941cc47a2b1ffa95c2ce95090f1e0bb6275a45828c1e5ea22219fd80ecc",
+      "final_sha256": "a3ac3fe38a8f5619f6e0683246af62a031c62b596719d574e508f61b6e4fd90b",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14794,7 +14794,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:11:12Z",
       "source_sha256": "0aa0402833d02d5e020752b9e3bfc403a70dce09f61112be0142dd5c631c49b6",
-      "final_sha256": "24165e99395d2fc54903e4fa4dd209d2935488b1139489f2b2ade7de9d8b91b8",
+      "final_sha256": "681459b2ae9accc327ba30789277bc8540414ea814172269017aa050a963cb03",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14832,7 +14832,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:11:37Z",
       "source_sha256": "5aaf8dcfbf54a8a3752c57fa14795b7896b40c3dcac470edc8a64304c125eb5f",
-      "final_sha256": "d9c443ae651d6234f3f2a4ecc9641c001e1a0f77c86f7cc3ee9f728d4bfb6768",
+      "final_sha256": "bf8934da6b4ea92a09f63944e39e62177e995e1ada0893fbd70e3f81abc40e4d",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -14870,7 +14870,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:13:28Z",
       "source_sha256": "b9f9e74195d885219c00b29c8b86cbe96e66251b9d9201b9bf6e1722d7c910fc",
-      "final_sha256": "19dafbc52088b1eda182fd3a07f773ce582416e9345f841fb3ee6f9a7667111a",
+      "final_sha256": "2eaf9ff2ee456e68c836faa92f4bf204f820743810880d974fbc2fd855f86db7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15364,7 +15364,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:16:35Z",
       "source_sha256": "da3a51b8a3060c7873a0b4ef64f2b837a45d18502421183edbb9fb64b4058b82",
-      "final_sha256": "cbcc7902f72a80e26818fb6d446819d63b9907d75467e2c3a0afa3f3da588847",
+      "final_sha256": "ac47344c75434dbd486a789bf73a8ea32b7281e343feff230bf756ec922b7aa4",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15402,7 +15402,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:18:09Z",
       "source_sha256": "8c6e73b99030929876aa54ee6db43975be227087f5f3dd301925f016b7d94620",
-      "final_sha256": "9579ffdc8416e25f856c4955b5f3e00cd733865089a704c370896f9e2e49731a",
+      "final_sha256": "ddea8925e33fc45ce17094257cd3afc316c02529dda6d710823c183f610e0339",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15440,7 +15440,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:16:59Z",
       "source_sha256": "dd6d36ea48d7021d920fe417ea7e3da3be0778b56b041d80c41481370bfc7212",
-      "final_sha256": "15000366da1d9e7f513d07e1171733b848b8639d375d0f36116f32dc1e044c4a",
+      "final_sha256": "81b989ced05a6882530d5a8117c441b97b095074f0e4f63e784df0c84b2412a7",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15478,7 +15478,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:18:33Z",
       "source_sha256": "4a95d72b43cba21f50b19de6c0d2b286137cb2064990277b6e5df21258726429",
-      "final_sha256": "d4c89a4ddc0de9b624ea54f528fcc2e9bb86a2691efbdb64e7cb0265f536e70f",
+      "final_sha256": "69f72de77c8d26fa665b7d4760194cb651617e3d5f46b81676a6b8f570737853",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15516,7 +15516,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:15:04Z",
       "source_sha256": "8bd635fef00a17bf4e1a62d90668c46eb7e455a5f0af0651262405773cf49ea6",
-      "final_sha256": "67cab4a26105bbde4da1a2338cc5aee0e2a30b47023815ebd70de630f4a2dd1e",
+      "final_sha256": "bcd3fb38985f4d96133d5b9d0104005ffb326978980e6bb6b0b4c965a335fd53",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15554,7 +15554,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:17:23Z",
       "source_sha256": "c5e4f0e44a329b6fa2926c4bfc1d7f396686d94ffd9ede388ec0b307e802c7b6",
-      "final_sha256": "05f6336167c26e975480e930415cc010543cdb4213fc38371be50ae28fdab737",
+      "final_sha256": "4d97f1c8d678ed671a97099579c8b079f6d2ff63d1b8bbbf9c60c5635a21cdef",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15592,7 +15592,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:15:22Z",
       "source_sha256": "b986b8c6051af513aa377026b8c1b5f22b1bc4820d1576ac3be2b7ef8733c3db",
-      "final_sha256": "97f31e26b78a0f2300bba9d61552f0aee02f752e5cab8056adc62307dcebde65",
+      "final_sha256": "0f731a0efd9773fde3dd795006a3daed27cb0192cd4862e4d4ce1431217cd278",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15630,7 +15630,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:18:56Z",
       "source_sha256": "b66aee4ef82f0e004ab3c58346f95362e18d8bfdc41abde2c3da737c3583622b",
-      "final_sha256": "dc2133e75a8ce8db741c182b03265c0c2363c9eefb55793930ab58acde5dfac3",
+      "final_sha256": "adca2b1d32d7db00395dd7207cef5f8aa8304f6761c833751e32cdcb10d02d09",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15668,7 +15668,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T07:53:32Z",
       "source_sha256": "47380f8700b1e7058035540ec74c8d78715223495aeb9e1770b3f776fa758e89",
-      "final_sha256": "dea5f522b802f8b86e85231431a9645b2e4720d5571898baf6ea87f28c6bc09e",
+      "final_sha256": "22d882a8d48587e822d1d36d229066f6d4fb5635634b056b258fd4b5e63ce2d8",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15706,7 +15706,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:15:56Z",
       "source_sha256": "6b22a4e6cb3c89882a9e590908cc7261e4dea89ce5da002da837ac1ff7739d27",
-      "final_sha256": "b3277bf90f7d996a2082db6cac027b4a08a0a5466631a2b8eabf49440711ecee",
+      "final_sha256": "ad8e3b049ac99c18bb09fd8bd5e36f4788499ac04df01e117b321429da1570d1",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15744,7 +15744,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:17:47Z",
       "source_sha256": "b5a0d64cc9a68e7c8aff3a6f105ebc2589d0f0ce592afa4d89e2606b6e54edf1",
-      "final_sha256": "43aca2a3dc6da815b7e56fe43c139839133f64a1aec3ea619a97d29231e5c0c3",
+      "final_sha256": "f15788aff04fa4ded61ed1686b0d664d95811c56a76f4c3550df5be23900a238",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",
@@ -15782,7 +15782,7 @@
       "license_uri": "https://stablehorde.net/terms-of-service",
       "acquired_at_utc": "2026-09-29T08:16:14Z",
       "source_sha256": "bc63b35b5b12e1a7a609c0057c3c692cf9dfd1e6767a35e116a091ef162ce777",
-      "final_sha256": "4f34688487278f7140dced7230524674418c30030c8971da9bebaf632c0e4acd",
+      "final_sha256": "0a6e8c06bc8d444c377f716f0f79e23bbed1c08dbdeb6be176338db23f526b9e",
       "changes": "alpha via rembg (bria-rmbg-2.0) cutout, magenta despill, hard-edge snap, speck cleanup, 2x cell normalize, 4px edge dilation; interior-hole+dilation normalization; fringe normalization; nine-slice centre flatten; palette gamut clamp",
       "generation_record": {
         "tool": "AI Horde",

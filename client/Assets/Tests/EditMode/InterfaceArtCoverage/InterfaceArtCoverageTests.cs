@@ -677,6 +677,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             var palette = LoadPalette(Abs(StyleRefRoot + "palette.json"));
             Assert.Greater(palette.Count, 0);
             var fail = new List<string>();
+            var cache = new Dictionary<int, float>();
             foreach (var rel in EnumerateProduced()
                     .Where(r => r.EndsWith(".png") && !r.Contains("telegraph")))
             {
@@ -690,15 +691,20 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                         continue;
                     }
                     total++;
-                    var lab = CieLab.ToLab(c);
-                    var best = float.MaxValue;
-                    foreach (var p in palette)
+                    var key = (c.r << 16) | (c.g << 8) | c.b;
+                    if (!cache.TryGetValue(key, out var best))
                     {
-                        var d = CieLab.DeltaE00(lab, p);
-                        if (d < best)
+                        var lab = CieLab.ToLab(c);
+                        best = float.MaxValue;
+                        foreach (var p in palette)
                         {
-                            best = d;
+                            var d = CieLab.DeltaE00(lab, p);
+                            if (d < best)
+                            {
+                                best = d;
+                            }
                         }
+                        cache[key] = best;
                     }
                     if (best <= 8f)
                     {
