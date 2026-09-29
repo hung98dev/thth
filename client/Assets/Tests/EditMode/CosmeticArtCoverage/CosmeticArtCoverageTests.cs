@@ -809,8 +809,8 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
                 List<GateViolation> v)>();
             Parallel.ForEach(decoded, item =>
             {
-                results.Add((item.p, StylePackGate.CheckPalette(
-                    item.px, item.w, item.h, null, palette!)));
+                results.Add((item.p, PaletteCoverageViolations(
+                    item.px, palette!)));
             });
             foreach (var r in results)
             {
@@ -818,6 +818,71 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
                     r.p + " palette gate violations: "
                         + string.Join(";", r.v.Select(v => v.Detail)));
             }
+        }
+
+        // Same rule as StylePackGate.CheckPalette (>= 85% of a>=128 px
+        // within DeltaE00 <= 8 of a palette colour), scored per unique
+        // colour with early exit — identical verdict without the
+        // per-pixel * palette scan that exceeds the EditMode timeout
+        // on the Windows runner.
+        private static List<GateViolation> PaletteCoverageViolations(
+            Color32[] pixels, List<Vector3> paletteLab)
+        {
+            var violations = new List<GateViolation>();
+            if (paletteLab.Count == 0)
+            {
+                violations.Add(new GateViolation(
+                    StylePackGate.RulePalette, "empty palette"));
+                return violations;
+            }
+            var counts = new Dictionary<int, int>();
+            var total = 0;
+            for (var i = 0; i < pixels.Length; i++)
+            {
+                var p = pixels[i];
+                if (p.a < 128)
+                {
+                    continue;
+                }
+                total++;
+                var key = p.r << 16 | p.g << 8 | p.b;
+                counts[key] = counts.TryGetValue(key, out var n)
+                    ? n + 1 : 1;
+            }
+            if (total == 0)
+            {
+                violations.Add(new GateViolation(
+                    StylePackGate.RulePalette, "empty silhouette"));
+                return violations;
+            }
+            var inside = 0;
+            foreach (var pair in counts)
+            {
+                var lab = CieLab.ToLab(new Color32(
+                    (byte)(pair.Key >> 16),
+                    (byte)(pair.Key >> 8),
+                    (byte)pair.Key,
+                    255));
+                var hit = false;
+                for (var c = 0; c < paletteLab.Count && !hit; c++)
+                {
+                    hit = CieLab.DeltaE00(lab, paletteLab[c])
+                        <= StylePackGate.PaletteMaxDeltaE;
+                }
+                if (hit)
+                {
+                    inside += pair.Value;
+                }
+            }
+            if (inside < StylePackGate.PaletteMinFraction * total)
+            {
+                violations.Add(new GateViolation(
+                    StylePackGate.RulePalette,
+                    inside + "/" + total + " S pixels within DeltaE00 <= "
+                        + StylePackGate.PaletteMaxDeltaE
+                        + " of the style palette (need >= 85%)"));
+            }
+            return violations;
         }
 
         [Test]
