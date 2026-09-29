@@ -654,7 +654,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                 Assert.IsTrue(
                     File.Exists(Abs(TermsDir + gen.terms_snapshot_sha256 + ".txt")),
                     "terms snapshot missing for " + row.file_path);
-                Assert.IsTrue(gen.seed.HasValue, row.file_path + " seed");
+                Assert.GreaterOrEqual(gen.seed, 0, row.file_path + " seed");
             }
         }
 
