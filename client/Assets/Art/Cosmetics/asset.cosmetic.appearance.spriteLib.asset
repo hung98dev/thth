@@ -1,0 +1,134 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bf7c34a0dc4e6348bea04faa70406ee, type: 3}
+  m_Name: asset.cosmetic.appearance.spriteLib
+  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteLibraryAsset
+  m_Labels:
+  - m_Name: torso
+    m_Hash: 660585605
+    m_CategoryList:
+    - m_Name: cosmetic.appearance.ao_toi_la
+      m_Hash: 96086416
+      m_Sprite: {fileID: -7761935448756678060, guid: c00f50550ad181486702eb78e4b3f1c8, type: 3}
+    - m_Name: cosmetic.appearance.ao_vai_hoa_van
+      m_Hash: 116142201
+      m_Sprite: {fileID: 8054425066017898272, guid: ddbc58fa832dd5a751dc17099f745aac, type: 3}
+    - m_Name: cosmetic.appearance.khan_ben_nuoc
+      m_Hash: 302244749
+      m_Sprite: {fileID: 8950566788118021140, guid: e7bf5f833be08ff59c9c304e2b6bcb3a, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tam_truyen
+      m_Hash: 672586294
+      m_Sprite: {fileID: -1791513216817189012, guid: a5c44aaa6a30614b66cea7df5fbf7f7b, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tien
+      m_Hash: 507041227
+      m_Sprite: {fileID: -7882432405282271523, guid: d88fff8d0b468dc3629f625df81a62fe, type: 3}
+    - m_Name: cosmetic.iap.appearance.nu_tuong_trong_dong
+      m_Hash: 395091495
+      m_Sprite: {fileID: -5511351847296085219, guid: d788a610f9dd078e5a1efb33336aaf05, type: 3}
+    - m_Name: cosmetic.iap.appearance.vo_quan_thanh_co
+      m_Hash: 436276905
+      m_Sprite: {fileID: -4933801546438691823, guid: 3da2e95493478c875d3a8b67224ef5c0, type: 3}
+  - m_Name: arm_back
+    m_Hash: 3663099
+    m_CategoryList:
+    - m_Name: cosmetic.appearance.ao_toi_la
+      m_Hash: 96086416
+      m_Sprite: {fileID: 5230523970780313051, guid: c00f50550ad181486702eb78e4b3f1c8, type: 3}
+    - m_Name: cosmetic.appearance.ao_vai_hoa_van
+      m_Hash: 116142201
+      m_Sprite: {fileID: 8664622039266855759, guid: ddbc58fa832dd5a751dc17099f745aac, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tam_truyen
+      m_Hash: 672586294
+      m_Sprite: {fileID: 6171092725762891731, guid: a5c44aaa6a30614b66cea7df5fbf7f7b, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tien
+      m_Hash: 507041227
+      m_Sprite: {fileID: -6704032229575562688, guid: d88fff8d0b468dc3629f625df81a62fe, type: 3}
+    - m_Name: cosmetic.iap.appearance.nu_tuong_trong_dong
+      m_Hash: 395091495
+      m_Sprite: {fileID: -7724325320933586963, guid: d788a610f9dd078e5a1efb33336aaf05, type: 3}
+    - m_Name: cosmetic.iap.appearance.vo_quan_thanh_co
+      m_Hash: 436276905
+      m_Sprite: {fileID: -6551142843686624173, guid: 3da2e95493478c875d3a8b67224ef5c0, type: 3}
+  - m_Name: arm_front
+    m_Hash: 738465096
+    m_CategoryList:
+    - m_Name: cosmetic.appearance.ao_vai_hoa_van
+      m_Hash: 116142201
+      m_Sprite: {fileID: 854340364859965012, guid: ddbc58fa832dd5a751dc17099f745aac, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tam_truyen
+      m_Hash: 672586294
+      m_Sprite: {fileID: -722964985120222199, guid: a5c44aaa6a30614b66cea7df5fbf7f7b, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tien
+      m_Hash: 507041227
+      m_Sprite: {fileID: 6855961983728530380, guid: d88fff8d0b468dc3629f625df81a62fe, type: 3}
+    - m_Name: cosmetic.iap.appearance.nu_tuong_trong_dong
+      m_Hash: 395091495
+      m_Sprite: {fileID: 1172104066734303892, guid: d788a610f9dd078e5a1efb33336aaf05, type: 3}
+    - m_Name: cosmetic.iap.appearance.vo_quan_thanh_co
+      m_Hash: 436276905
+      m_Sprite: {fileID: -130621665639027080, guid: 3da2e95493478c875d3a8b67224ef5c0, type: 3}
+  - m_Name: leg_front
+    m_Hash: 256218467
+    m_CategoryList:
+    - m_Name: cosmetic.appearance.ao_vai_hoa_van
+      m_Hash: 116142201
+      m_Sprite: {fileID: 7956847307776720347, guid: ddbc58fa832dd5a751dc17099f745aac, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tam_truyen
+      m_Hash: 672586294
+      m_Sprite: {fileID: -6947438444732009982, guid: a5c44aaa6a30614b66cea7df5fbf7f7b, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tien
+      m_Hash: 507041227
+      m_Sprite: {fileID: 9049536417720012288, guid: d88fff8d0b468dc3629f625df81a62fe, type: 3}
+    - m_Name: cosmetic.iap.appearance.nu_tuong_trong_dong
+      m_Hash: 395091495
+      m_Sprite: {fileID: -2680130001286038736, guid: d788a610f9dd078e5a1efb33336aaf05, type: 3}
+    - m_Name: cosmetic.iap.appearance.vo_quan_thanh_co
+      m_Hash: 436276905
+      m_Sprite: {fileID: -1993316008944656811, guid: 3da2e95493478c875d3a8b67224ef5c0, type: 3}
+  - m_Name: leg_back
+    m_Hash: 416313356
+    m_CategoryList:
+    - m_Name: cosmetic.appearance.ao_vai_hoa_van
+      m_Hash: 116142201
+      m_Sprite: {fileID: 6672239687341693270, guid: ddbc58fa832dd5a751dc17099f745aac, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tam_truyen
+      m_Hash: 672586294
+      m_Sprite: {fileID: -6297922718512932677, guid: a5c44aaa6a30614b66cea7df5fbf7f7b, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tien
+      m_Hash: 507041227
+      m_Sprite: {fileID: -374348481283141327, guid: d88fff8d0b468dc3629f625df81a62fe, type: 3}
+    - m_Name: cosmetic.iap.appearance.nu_tuong_trong_dong
+      m_Hash: 395091495
+      m_Sprite: {fileID: 6918571912631769641, guid: d788a610f9dd078e5a1efb33336aaf05, type: 3}
+    - m_Name: cosmetic.iap.appearance.vo_quan_thanh_co
+      m_Hash: 436276905
+      m_Sprite: {fileID: 7150691256797360847, guid: 3da2e95493478c875d3a8b67224ef5c0, type: 3}
+  - m_Name: hair
+    m_Hash: 485974297
+    m_CategoryList:
+    - m_Name: cosmetic.appearance.non_la_moc
+      m_Hash: 717286876
+      m_Sprite: {fileID: 40475434597371488, guid: 7255e265217cda10b7eb606e27d5c20f, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tam_truyen
+      m_Hash: 672586294
+      m_Sprite: {fileID: -7568057292805171027, guid: a5c44aaa6a30614b66cea7df5fbf7f7b, type: 3}
+    - m_Name: cosmetic.iap.appearance.co_tien
+      m_Hash: 507041227
+      m_Sprite: {fileID: -4088696307192082590, guid: d88fff8d0b468dc3629f625df81a62fe, type: 3}
+    - m_Name: cosmetic.iap.appearance.nu_tuong_trong_dong
+      m_Hash: 395091495
+      m_Sprite: {fileID: 1825007335621104496, guid: d788a610f9dd078e5a1efb33336aaf05, type: 3}
+    - m_Name: cosmetic.iap.appearance.vo_quan_thanh_co
+      m_Hash: 436276905
+      m_Sprite: {fileID: -5110089106768495330, guid: 3da2e95493478c875d3a8b67224ef5c0, type: 3}
+  m_ModificationHash: 0
+  m_Version: 1
