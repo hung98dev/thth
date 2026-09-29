@@ -33,7 +33,7 @@ options:
   1. `long? seed` -> `long seed = -1` (absent sentinel); validator `gen.seed < 0` => error; each packet's coverage test asserts `gen.seed >= 0` — smallest code change, keeps the ART-012 contract, and every committed fragment already uses int seeds (forward-compatible);
   2. keep `long?` and add an `ISerializationCallbackReceiver` on `AssetSourceRegister` that backfills `seed` from a serializable `seed_value` field — same observable contract, more code;
   3. replace JsonUtility with a hand-rolled parser for the register — largest surface for one field; rejected.
-blocks: IMP-073 (draft PR https://github.com/hung98dev/thth/pull/90); latent for IMP-071/072/074/075/104/105 coverage tests once they read `seed.HasValue`.
+blocks: IMP-073 (draft PR https://github.com/hung98dev/thth/pull/90).
 
 
 ## Resolved Blockers
