@@ -25,9 +25,16 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
-None. IDs start at `BLK-001` and `OPS-001`.
 
 ## Resolved Blockers
+
+### `OPS-001` — owner-provided art/audio generation tool not yet recorded; final-art tasks cannot run
+opened_by: coordinator   opened_at: 2026-09-28T15:55Z
+evidence: `docs/00_context/technology_versions.md` § Content production tools — "Art/audio generation tool | owner-provided" placeholder row; `docs/10_implementation/task_queue.md` header marks IMP-071/072/073/074/075/104/105 as final-art tasks requiring that tool; wave-3 claim attempt per `technology_versions.md` § Content production tools ("the first claim attempt opens a scoped OPS-xxx").
+owning spec / system: `docs/00_context/technology_versions.md` § Content production tools (ADR-0072, ADR-0076 selection criteria); `docs/10_implementation/audit_gates.md` § Owner Setup.
+blocks: IMP-071, IMP-072, IMP-073, IMP-074, IMP-075, IMP-104, IMP-105
+issue: https://github.com/hung98dev/thth/issues/82
+resolved_by: owner   resolved_at: 2026-09-28   resolution: `technology_versions.md` § Content production tools now records the free tool pair — AI Horde (SDXL-family image generation, secret `AI_HORDE_API_KEY`, ADR-0076 criteria) + Freesound (CC0/CC-BY audio, secret `FREESOUND_API_KEY`) via `spec/art-tool-free` (PR https://github.com/hung98dev/thth/pull/85); both secrets provisioned; IMP-071/072/073/074/075/104/105 -> NOT_STARTED
 
 ### `BLK-019` — Q4 client API fence regex banned every Unity lifecycle callback (`Update|FixedUpdate|LateUpdate|OnGUI|OnEnable|OnDisable|Start|Awake|OnDestroy`), diverging from `engineering_conventions.md` §2.5 and the `architecture/clientfence.go` token scanner (`unityCallbacks`), which ban only the first four; IMP-083's done PR was the first run where `CheckQ4Client` was active, and it flagged IMP-101's `ContactShadow.cs` `void Awake(` — a callback the spec does not ban
 opened_by: coordinator   opened_at: 2026-09-28T07:00Z   resolved_by: spec-owner   resolved_at: 2026-09-28
