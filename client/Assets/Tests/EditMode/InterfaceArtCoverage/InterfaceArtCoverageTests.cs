@@ -757,7 +757,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                     {
                         continue;
                     }
-                    if (f.Contains("/Editor/"))
+                    if (f.Replace('\\', '/').Contains("/Editor/"))
                     {
                         continue;
                     }
