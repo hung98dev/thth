@@ -9,7 +9,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/ao_toi_la/asset.cosmetic.appearance.ao_toi_la.icon.png",
-      "final_sha256": "9481b6abb5cbd23fdb31c7d672717627a00a7d9abcc567d1af483b836d9ffaf5",
+      "final_sha256": "fde144212a42831b2fb0f59374bfcabd9c6aa8f2a019fa8b9e47dfa782bb9cbb",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -59,7 +59,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/ao_toi_la/asset.cosmetic.appearance.ao_toi_la.png",
-      "final_sha256": "e380f4ae044fa9bbe6c0431a4547b4d223301e02de7c2f08ea6680f745c5021c",
+      "final_sha256": "650f7fc0c7aae847adb7d7f26578187aa4851baeb5b9e711e2ee9f99527de5bc",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -159,7 +159,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/ao_vai_hoa_van/asset.cosmetic.appearance.ao_vai_hoa_van.icon.png",
-      "final_sha256": "eb704bfac148304068e8483abfd01107112cca0531ce1020f3575041dc3a5c8b",
+      "final_sha256": "9e5297f637c546ebf1ead56bd510c57eef4b01d59d2ecb1b5e18a919f80f4a73",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -208,7 +208,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/ao_vai_hoa_van/asset.cosmetic.appearance.ao_vai_hoa_van.png",
-      "final_sha256": "98e158eb1772731801ffa97bf135d854ab79faa63ad30ef69e005e485c2cdb39",
+      "final_sha256": "b12d9ee05ad6c2ba7e986554447974a12355375c18214ff9fdf18f6f3b8738dd",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -306,7 +306,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/co_tam_truyen/asset.cosmetic.iap.appearance.co_tam_truyen.icon.png",
-      "final_sha256": "3e67a79589b679601f4515cafe4ccd9e97cd295d9010b7fc4b444b5af42f5bf0",
+      "final_sha256": "d53b311db90d2ff7bac5d8eaf356983c101c23f14b03d5147a4dbca568689752",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -355,7 +355,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/co_tam_truyen/asset.cosmetic.iap.appearance.co_tam_truyen.png",
-      "final_sha256": "98355de08755210aacf74a915f300cb6b6c06472d2ba4da1f88b826eb7bc6a6a",
+      "final_sha256": "070f3e5148befb557fc79bcf5cc4346441377cc3c4771d51f7677d4e9b72e124",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -453,7 +453,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/co_tien/asset.cosmetic.iap.appearance.co_tien.icon.png",
-      "final_sha256": "06af0acb42b295e4c0c269d0eb1c7b5f3bff5fc9bcbd5f1273d523f18485c630",
+      "final_sha256": "2998dd813e215c329c65472f8312f4ddcc463588bfa9fa44d5e91db34658cf3b",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -502,7 +502,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/co_tien/asset.cosmetic.iap.appearance.co_tien.png",
-      "final_sha256": "8b4f7374387e06412708ffbd1986325aa4b0c4d8c7499f3a0ebf051d04810ceb",
+      "final_sha256": "5c0ea405259897f9ed4bc922d7f242788b6f80e07882ed26b105c7f1533ffc71",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -600,7 +600,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/khan_ben_nuoc/asset.cosmetic.appearance.khan_ben_nuoc.icon.png",
-      "final_sha256": "31e43fb86f5af72f95c8408871596633e95f7067b78100aee7c231b9660355c4",
+      "final_sha256": "56ac15fe043306e0990633ff7c1c05342040c56376ee84b80d760556c556ffdb",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -649,7 +649,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/khan_ben_nuoc/asset.cosmetic.appearance.khan_ben_nuoc.png",
-      "final_sha256": "48d45d8bf3bc351925bfad0d72c6be91c39b87323a78aa13e102879c6524eab9",
+      "final_sha256": "5e4669a42c858c0802c5965fbe1b7ae27c63b06834a6eaeab9591a723f721209",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -747,7 +747,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/non_la_moc/asset.cosmetic.appearance.non_la_moc.icon.png",
-      "final_sha256": "0828462b5bc4e01bcc125b79f510590ac2754172c6e51a8ae6c0dd0e8a870414",
+      "final_sha256": "d1082477772cd956af43d7f8275eb8c80c3ad7ac7a68e62fb151ab7fd4a425d6",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -796,7 +796,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/non_la_moc/asset.cosmetic.appearance.non_la_moc.png",
-      "final_sha256": "76b461c66eed828aec2493edfd9ff3806f57b9ac13eae8bd825cbd8ad12e0ae7",
+      "final_sha256": "e605ca1e3f5e30e15996df12503268c7d70213c97ee7cce17126b7a5fe07e0b8",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -894,7 +894,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/nu_tuong_trong_dong/asset.cosmetic.iap.appearance.nu_tuong_trong_dong.icon.png",
-      "final_sha256": "49048d7d14ffa1b7d25b65da30fc13152bd39abdc72c1222af5ee1223c7f60a3",
+      "final_sha256": "dcf97b77943513a6656416bc7ff059f3b82bbf2fb75c4f31415670cb36cf374d",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -943,7 +943,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/nu_tuong_trong_dong/asset.cosmetic.iap.appearance.nu_tuong_trong_dong.png",
-      "final_sha256": "5e92fa126d4489f2b920ecb1bfaeb68497d55d2eb254d4d980ae833c76171175",
+      "final_sha256": "455c27ea985f68b4819e6c9d94c8907e0e71f85f09f6ea6d636f92f4e8ccbb52",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1041,7 +1041,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/vo_quan_thanh_co/asset.cosmetic.iap.appearance.vo_quan_thanh_co.icon.png",
-      "final_sha256": "2dffc7cbb9e686ffbf3a79768677c9c47c70b93c46243cf034cb0f3457256aee",
+      "final_sha256": "5f6f7e4fcd1e6bcb18b0c6979d0c845ad0798c0e0b9d34f09f84a8bdcd4e711d",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1090,7 +1090,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/appearances/vo_quan_thanh_co/asset.cosmetic.iap.appearance.vo_quan_thanh_co.png",
-      "final_sha256": "18b2c03248b6fe6135f7bf8fe453aa8c40cae9233dfa73019fe44885f5f7d56f",
+      "final_sha256": "526f47244346b69926c2c0bd1bf3c8a05c1f86188ad68844ec06efb754bb36b2",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1188,7 +1188,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/auras/asset.cosmetic.aura.linh_khi.icon.png",
-      "final_sha256": "b99f33aa87dd75e44a7f7f3b99cf211a590fb6b2c854e133151e38b79c6191e3",
+      "final_sha256": "e8b6d0eb86bde9253b4d1cde329f0dfc29234731106cb189656878d5aa3d9c69",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1237,7 +1237,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/auras/asset.cosmetic.aura.quy_khi.icon.png",
-      "final_sha256": "88838cca49fe1a542a327c2bc28ce4e58473244a989502fb49858f22306ce4eb",
+      "final_sha256": "78bfc1b243ad441366d3e0179edc9a08a0a960a060da33c6c1d04cb578d146a4",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1286,7 +1286,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.emote.season.0.paid.chap_tay.icon.png",
-      "final_sha256": "5d9a4fc2fb893c78fb9be01498e715dcf24d15d7fef5ddf4813ff9188152cea5",
+      "final_sha256": "2ea1c5a90feb62611eeaaac3c18aa195ad09ba16a2d1359d6f17bc23bde9d8d9",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1335,7 +1335,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.emote.season.1.paid.icon.png",
-      "final_sha256": "d27f9889401a7544a8f906012c6c7451486992d948c6e29c8c11c334df8611f2",
+      "final_sha256": "03f7234a1e96fc09c91c1d51deff548255b0e25be05dd5434eae065536416b86",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1384,7 +1384,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.emote.season.2.paid.icon.png",
-      "final_sha256": "b015b007863e9dfd3a3de11bba4cae0b8f165fbff391845b0c952bc5f98ad371",
+      "final_sha256": "3bd2e3436933e3035e6318fa6feafb302813463449ea81d0a93328a58b513eb3",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1433,7 +1433,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.emote.season.3.paid.icon.png",
-      "final_sha256": "418c4c924b1936bfdd8d4860d8a96163a6b427384d6532d411c17415876f1107",
+      "final_sha256": "17fcef70cb843fa4d93d463cf56c7b1be7cf4e85aa7ab93a965fba5f01091b75",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1482,7 +1482,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.emote.season.4.paid.icon.png",
-      "final_sha256": "d298ff18995f7766e9d6469066bf0a0527b1b76f9b6db43441e564c795402f1a",
+      "final_sha256": "e8d4ba836ea988208f672bcc71957438885b6346fced967522d11a667360c0ad",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1531,7 +1531,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.emote.season.5.paid.icon.png",
-      "final_sha256": "740a08817cb82963c04485a65ab7a3af0935e7d94e69def2be8313e61a26fd55",
+      "final_sha256": "cc0b8999458197ce1f75d4c8939210275fa452b99829a80dfa7c011c7361b561",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1580,7 +1580,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.iap.emote.bai_chao_lang.icon.png",
-      "final_sha256": "4c37ac7815c683012932a6799899906ef2338a2e5e074f60bc92bb4c873ad44a",
+      "final_sha256": "5f10fd1c9b5b3fe1afea9626f8b90adb122f7a6d7f275ad1e117a88fc22b8d48",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1628,7 +1628,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.iap.emote.ngoi_thien_dinh.icon.png",
-      "final_sha256": "2927832ae5e72ce236b68451ed9b2bf7a8beaf790e59202ffc79e9fb0a52a177",
+      "final_sha256": "66595c7a5224b60490db97e222caa128681b37d68ba166ff482c23858ab8ca06",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1677,7 +1677,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/emotes/asset.cosmetic.iap.emote.vo_tay_thang_tran.icon.png",
-      "final_sha256": "b5b78eb8cb2238df86a24409d6a2e592293288bb7c7e9c3b5c4e30ce76bc2431",
+      "final_sha256": "f1787e1a0b695fe15e2dfc323ab31c5e0677b0fa6cb3f7d4516f626a1d5396c5",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1725,7 +1725,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.bach_ho.icon.png",
-      "final_sha256": "7e455b806fac46892174649677f93a761683b5bf9f384984b778f6420b2a811f",
+      "final_sha256": "a93b255ce898ba7910e9ee01218dde2b13c629e15d83fd440db4243b3aaf11d3",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1774,7 +1774,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.ben_da.icon.png",
-      "final_sha256": "fb631f98735d5c00df829486c41b1176fd30962377099c3532d97c6c48bceec5",
+      "final_sha256": "fb871e96cf4a81616cd20458d6cf0b871fe24713984272cd476e6f71607ed025",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1823,7 +1823,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.guild_war.chien_ky.icon.png",
-      "final_sha256": "5b1dcc267319d5764402d210341ab079557161eeb8ed735eb7340e284007ed43",
+      "final_sha256": "1c0d5c6dfee77d8e077b5e0190b2e8bb3e4bfa51cedd374ea3becea6aba47a88",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1872,7 +1872,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.ho_tinh.icon.png",
-      "final_sha256": "478a6365fccd391c67d14fae0d9539d0e48eb236552d21c3d5961a0363abdc13",
+      "final_sha256": "5aeee82a4a0c513ead55f9492b666fa3b6a420532ed2a9f308ffd6cc160d8ac6",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1921,7 +1921,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.huyen_vu.icon.png",
-      "final_sha256": "36aae79a1c616051b1c56f1bcc465376a87bdf90fe74bb1e3bab0079d3a8d889",
+      "final_sha256": "2f6fe6bad69899c1c31d9cb1cd5ed3d67805537fda63e82c01938eb7c10dc3cf",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -1970,7 +1970,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.lan_linh.icon.png",
-      "final_sha256": "b4ed0d8eb857fdc80b6b35499b28015fa7988b8eaf1fed6ef0bf8158327020d4",
+      "final_sha256": "3a1aea61ad898fe53136d5bc9a544e90e9e1f3fcbf69e2f61891dd1db2a79e9e",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2019,7 +2019,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.nui_thieng.icon.png",
-      "final_sha256": "71c56fc13e75bebc924d9b21ef33f1031b7680ec088c60b4aad09785087b740d",
+      "final_sha256": "65d070724995cc5f5236bc9cc456e0510582704ce99bd93e6c0b91364975443b",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2068,7 +2068,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.phuong_hoang.icon.png",
-      "final_sha256": "6822ab6a409e2dac1a58bb2e98be020e0f70ab2387217ef6239735a0dd6b11da",
+      "final_sha256": "7f6502b64fb916b7c672811e031607423e2c50456d8976882b8cc25e83e43a0a",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2117,7 +2117,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.pvp.bac.icon.png",
-      "final_sha256": "230a5a8966fa937660b24d289b3c82fe9d1cf788d9cf78af80d2b23edd0fdc41",
+      "final_sha256": "f6325a3866ee3e7a838f7e0e32bb2403c24060bd8c3026f9a9c244574d8f16c5",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2166,7 +2166,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.pvp.linh.icon.png",
-      "final_sha256": "768013fe8a40e80d9a9f926adf3448f8058b036feaf3dc5a92fe10fc7edd05c5",
+      "final_sha256": "e556b5ee999b85d77d2c82396f9a510f7e22e2daf9e4a3f238ed2cdd8a1efa13",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2215,7 +2215,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.pvp.ngoc.icon.png",
-      "final_sha256": "09363f81396b4eddbded04835acc0acc3864b43a34da4e922a1d076036854448",
+      "final_sha256": "b6b7445c0e0c13eb6c11b7330927e84a6b345024557abf97181ced0e72ee98fb",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2264,7 +2264,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.pvp.than_thoai.icon.png",
-      "final_sha256": "71802317a53fdb5f7f702e518196133ed7b5e15ce4636ee8cb392183e7248fb9",
+      "final_sha256": "82d9031a9960667c2bc1d08fd6c6e04c22d648c739d007e4779546b33a311795",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2313,7 +2313,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.pvp.vang.icon.png",
-      "final_sha256": "51e564467428d27e6568956a1954bd43f1e214d5688284822531174aee45f3c1",
+      "final_sha256": "e1062d1e32987297e8140e0194bb8dcd1f557fc55223cd0912a4edc49fa479e7",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2362,7 +2362,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.rong_vang.icon.png",
-      "final_sha256": "815cbe006554449ff4ba4edea35ed784ca22d845e21ce2e7b93e197464473f7d",
+      "final_sha256": "d84660891955c20a220f8d6217b562699839c86f19326a1f8a013b2d69645d97",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2411,7 +2411,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.0.icon.png",
-      "final_sha256": "34c6db50e5214a948b2d2d5eb6e50d8ac6079d13e5e59a0ffe05be1db1e43af0",
+      "final_sha256": "b90757b1c2c0788dea6eb027e058b9ea44f7f1a327607bec44e4e01b39594b22",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2460,7 +2460,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.0.paid.icon.png",
-      "final_sha256": "9d9302fb6912289f2c633194b34ab0ebe57d1d2b2d7bc1d7e41e5f26a31f8cf0",
+      "final_sha256": "6210f96ba685659ed1e027d0d6bf77623fb322ebee077ebc7b09deaab20bdfa1",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2509,7 +2509,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.1.icon.png",
-      "final_sha256": "c2c0b62a5e061fbfdb1d07adcd17aaa0bfa69a1721639ae8b9970534c23c2a86",
+      "final_sha256": "0546fb005d195dfc25c6039d29ad58568632da07d12b515184793871b13e6fa5",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2558,7 +2558,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.1.paid.icon.png",
-      "final_sha256": "6719ace3cae1c53f35554200ce0f22c5be21f73728d2e9e0f7086ffa2eddcea0",
+      "final_sha256": "137659d37a41c6c79751b5e51d8d595aaca4d1f19d89409f52dda09731e64150",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2607,7 +2607,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.2.icon.png",
-      "final_sha256": "d9584aec88fb25da85fe3a1f80bdc9722049779a5ceaec825eb9c9780a31d0df",
+      "final_sha256": "be9555a6e8d020b7542e31c843ae008eb85ef1f4a996b144e51fe051f80de84d",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2656,7 +2656,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.2.paid.icon.png",
-      "final_sha256": "798a4a0ff8d2ab39dd29c1f0d576dc53cc604589afc03916ef477eb4b398aea0",
+      "final_sha256": "629f403041653da2c83d51f4f84a2c0c22716575fe51c9c52dc011c22ba6ea50",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2705,7 +2705,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.3.icon.png",
-      "final_sha256": "fb8688f8be79fb60023b1fe0e736468d8e1d5626039ad32b76abca9e15d82923",
+      "final_sha256": "db90f79b28fa71eb048d9269f174bac69683b46764463aa9c38efd052a3dde16",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2754,7 +2754,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.3.paid.icon.png",
-      "final_sha256": "974c8961e5a01e172003b5c520e96233bdacf930b839bd4b9d9238a89b52eed9",
+      "final_sha256": "5007a0c350c43eeee0b98f003bf63805fc64a5a1d378993357059e49162a70d9",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2803,7 +2803,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.4.icon.png",
-      "final_sha256": "0d085b27d4a6eb7d00a6a1084ac0f4a0c6ba6dc4103255c5efa3bcb2a7065a8c",
+      "final_sha256": "011676bdee5e6e3caa08c15fa3c1751b34b2d37b58b5a2d5a4b026b2bb8f4ee6",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2852,7 +2852,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.4.paid.icon.png",
-      "final_sha256": "1f48538b269ad2fad64a6557d842e25bf245de4c35af62e163186da152711cad",
+      "final_sha256": "d02372a03ce1b86bad3efe926489307896fbac3139f1307ca0f3ba9608251cab",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2901,7 +2901,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.5.icon.png",
-      "final_sha256": "919144b082805b0ad48fe107232b6fde38a737fe780d3f5531a3bcdb1a973d46",
+      "final_sha256": "25cb51580a32cf5739d42c21c37df1552d04c0625d5c576be3862b8ca1b7c2fd",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2950,7 +2950,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.frame.season.5.paid.icon.png",
-      "final_sha256": "7d8a467df788a0da25deea8b33b8f6c4693396c8328f5611e5db2823bdafdea6",
+      "final_sha256": "d65d393f09dff46949779f04e2712d7c41772acf223a17c2589b13ad7f623eb8",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -2999,7 +2999,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/frames/asset.cosmetic.iap.frame.thien_long.icon.png",
-      "final_sha256": "08e75c76b9f2e4e690812f6b2700d32a664675fa4b122ce6ee5d1893690f6812",
+      "final_sha256": "88c6e978906591b9d0773d956cb7ed1b19475da47f4da3be268759cbdd6d5c10",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3048,7 +3048,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/guild/asset.cosmetic.guild.banner.guild_war_champion.icon.png",
-      "final_sha256": "74f3c45e03f3a77fb33d00f263578add3a9a5862c22d4954cc581f76c9af960f",
+      "final_sha256": "ea94a1f8b00a3faba98b26cbc437efcc0e05899ad0f3a49c9b11484d2223b657",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3097,7 +3097,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/guild/asset.cosmetic.guild.banner.ritual_8.icon.png",
-      "final_sha256": "e5d0f9c94c60ed836e7e972d6d5dd6ad99e0be5bfdf6bcad6f6faee61da84fe1",
+      "final_sha256": "acbdcee59773b01e9520b2cb212f7e59c5b70528ae5dec11041420381be4248a",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3146,7 +3146,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/guild/asset.cosmetic.guild.crest.ritual_4.icon.png",
-      "final_sha256": "e6d3f8a7f84ec35aae6d966fca01d4831ebf8ed628ea17dfb1fe7ec5acb82e4a",
+      "final_sha256": "4b992dc9408d6b9458105868fa23a02df3448f517613d0e23da4522522929f1d",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3195,7 +3195,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/guild/asset.cosmetic.guild.shrine.guild_war_top10.icon.png",
-      "final_sha256": "76e13b714c13c5294e7c1f9adeb8370995075d6c7320be773b1be1aaa7253cf9",
+      "final_sha256": "9e2342ee99cf5001fa4e1cb673c24278582c9ea6cb16bcffc0d0f26dd3f9b8ef",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3244,7 +3244,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/guild/asset.cosmetic.guild.shrine.ritual_12.icon.png",
-      "final_sha256": "33026dd58e60e6895d94f20e520f8c48a12d7a9b3126d4916e5b8ff4a90c3d41",
+      "final_sha256": "6085eceb7bd0b3728fdf777bad71b9949bdc04e97f827a062e1857349a590a72",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3293,7 +3293,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/inscriptions/asset.cosmetic.guild_stone.inscription.kim_bach.icon.png",
-      "final_sha256": "5542257673bdedc47f720d812b97e33ea666935aaa2f0a936c8d5ce74b2ef610",
+      "final_sha256": "27b655497d033a014190dc2fc753a9f6f7269788e26b8b72adec028e51ab7e0d",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3342,7 +3342,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/inscriptions/asset.cosmetic.guild_stone.inscription.long_van.icon.png",
-      "final_sha256": "e3444335c72ebc0dc56be3aef8c0b72d926eaccc04a6fb5b535336cde7b34b62",
+      "final_sha256": "da0109519b57330a369dbedcec6b61cd93082c6e19d0bc00d8828d13d9bb0bf8",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3391,7 +3391,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/inscriptions/asset.cosmetic.guild_stone.inscription.ngoc_bich.icon.png",
-      "final_sha256": "ea5e71a4e04733d05aa3204039a5d424cda98b5946ac29ba03f413f2420565ce",
+      "final_sha256": "bc4d46d1e3b34025142cdb7b74ffa632936d7ea461e430508126594c65e75394",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3440,7 +3440,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/inscriptions/asset.cosmetic.guild_stone.inscription.phuong_vi.icon.png",
-      "final_sha256": "c455ae5ab95948c49169ebc560ba5338145897afa3ffdff5c426bf1c395790a4",
+      "final_sha256": "5336f4f016dda9de77366bed7d52371de5e97738baf75463889361a198c31a11",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3489,7 +3489,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/inscriptions/asset.cosmetic.guild_stone.inscription.thien_long.icon.png",
-      "final_sha256": "a8470803ca932cd766f2602b03de08f5efd2aba671596caa3d7c254d4a0331c7",
+      "final_sha256": "0ccc4136c497d8b7707f6df3cba9f286104e8305bffa00e087deb407c12697ae",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3538,7 +3538,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/inscriptions/asset.cosmetic.guild_stone.inscription.trung_nguyen.icon.png",
-      "final_sha256": "0e6bd65d37185c990f9d350f4b5e340ed4556db1a79f7644940c78c4508227a1",
+      "final_sha256": "d144800bd124a5f3924da6c5e2a254b4f772d86286190c031632278243811adf",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3587,7 +3587,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/nameplates/asset.cosmetic.iap.nameplate.hun_thuoc_co.icon.png",
-      "final_sha256": "2c849749a82ab543e9f86ddd3597c0280be92db52cc1d90047721ea8f5c76289",
+      "final_sha256": "30978a1351319f46c28cb1e7384d7c76911fa32aec32c29843960309a383478e",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3635,7 +3635,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/nameplates/asset.cosmetic.nameplate.ky_luat_vang.icon.png",
-      "final_sha256": "b6995b3c1648431226ca43d02fc090c2a63b5a27e878cf0f621fffdf475a6079",
+      "final_sha256": "261c4c33809e3a7a997834bde814f19499ebd1af6c9a299bd058f2079968499d",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3683,7 +3683,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/nameplates/asset.cosmetic.nameplate.linh_thuyen.icon.png",
-      "final_sha256": "a5d79aa8f1237a95ec13cbf4c90db073da68db54bedd9ddb1fb0cefd4297316d",
+      "final_sha256": "4d3b263be79dce643dfd27a86e3fb54c405754c7147356dbc19ea2c6a5de32c4",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3731,7 +3731,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/nameplates/asset.cosmetic.nameplate.son_ha.icon.png",
-      "final_sha256": "cc204d4131d358248ebc4bdcc9455975e8d4f152932164491906eef71bf02249",
+      "final_sha256": "113b00cc6a95152e9c9b7741763ff46b837131e2b3afd41693b26a0d1048c24d",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3779,7 +3779,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/shared/asset.cosmetic.shared.title_glow_halo.icon.png",
-      "final_sha256": "e14d8ebff4f0df379cb462e783ae59f3d4e51e72c945b9824dca6ef21edbba9a",
+      "final_sha256": "19611380887b49e3bc8d25b1fb511361ce3e1ce7f7c816d16d5dceddb1a29923",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -3814,7 +3814,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/shared/asset.cosmetic.shared.title_plate_glow.icon.png",
-      "final_sha256": "5e331ca478a5646972fcee0b0cc561b947d40e0003025689f707b3a0abedaeaa",
+      "final_sha256": "d332aae91edeb5a79f6a5b8d4a7530b6ffb13604fe088d1351fe78e80ef2ca3b",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -3849,7 +3849,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/shared/asset.cosmetic.shared.title_plate_prestige.icon.png",
-      "final_sha256": "c8faf2712fe485c1bdc2f3f2da140a04851c9b7839ce70df2e6ff2f7e1acfcb5",
+      "final_sha256": "19925733c7a39cbdf21942d740929e227afaa57dcdf9c15e3499e6afcc8a46bc",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -3884,7 +3884,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/shared/asset.cosmetic.shared.title_plate_story.icon.png",
-      "final_sha256": "c9b288f62d0044f38cbd0ab1c624b2b90947f1a522600cc8877dab07b959afaa",
+      "final_sha256": "657c85c3b628cbb7b0967edc2da72615cd2ded805942eeecfc8434c3589b8b1f",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -3919,7 +3919,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.kim_trang.icon.png",
-      "final_sha256": "7d680b349b372f7a962d8e4d3dd59142612e47eba2d2727c768427e6e438b48a",
+      "final_sha256": "0aa3f7d41ad8ac80e1769eebbbf6828071bf4ec8ff5c8f2ae1efb7e62a1b48a6",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -3968,7 +3968,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.linh_khoi.icon.png",
-      "final_sha256": "d003b0ffec95e3fb7786bfc7c47d4397bdbf15cb24ab2600e94a07ac53ad15b1",
+      "final_sha256": "eb0d89ff79a10c4331a93f60f5a7bac1e5c54a45ad192fb7b72515585f6624fd",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4017,7 +4017,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.lua_do.icon.png",
-      "final_sha256": "8ded4d392284ef42d55de44baf3e63e2b1f8e8c841411af873c9b59a3045e349",
+      "final_sha256": "ab61f2b5ad5bbfc0e6a266b908d01f2b2d45e6ce93ad7a0a3077812cbeed51e0",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4066,7 +4066,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.moc_xanh.icon.png",
-      "final_sha256": "4eb9e3e65ea38ed9115ab58edeaee4844468fef690adecd5edc8b56c0a93c162",
+      "final_sha256": "efab6ac626ed3bff758a6787ce5522c3af5598fbefc7901eb98ea99c69e92b21",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4115,7 +4115,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.season.0.icon.png",
-      "final_sha256": "684f08892213a5ada599199fa49aa85f23fb53642f979ddd08665a024a074f50",
+      "final_sha256": "d1d7b039f874c03b6f6c5294f901d7a42caa116ec79b5ff5802ed7fd151ce572",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4164,7 +4164,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.season.1.icon.png",
-      "final_sha256": "e30612e33c86d34a51aa095e5d1838e2acb76ab4d558c7e7bebc4177860f4fb5",
+      "final_sha256": "002456783c09a500b1a18e0b96340fa000a444cb5fc3cdc3299144c4a05c7ddc",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4213,7 +4213,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.season.2.icon.png",
-      "final_sha256": "42d0067aebd104e0fdfd14a844e66004dd15f612bf435669bffeb2c24c83f94e",
+      "final_sha256": "377833892a2de6d20fb03941a4db93fc185a4f58caa756c4cc347f4a3310fc27",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4262,7 +4262,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.season.3.icon.png",
-      "final_sha256": "dd912b905245558f550155f0a3e98501d20271309ec6d670fe1b1a595deca92d",
+      "final_sha256": "f4e09ebcb84b6e388b8280485cc219e3de9f85bff8c18a37c5a6870b46ffa886",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4311,7 +4311,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.season.4.icon.png",
-      "final_sha256": "c96e94fef8f6c46a5dc86a9bdf4b63af6c4581db0ceac0b80b158dbc2312694c",
+      "final_sha256": "f736bd28ffad70a20dc4c7225565a7c24685b47393aabfa70ca1be9f6931bf92",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4360,7 +4360,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.season.5.icon.png",
-      "final_sha256": "1b846a6290d73525ad939cc867340dd1276eb98e50d0bd6b812cee556c927c12",
+      "final_sha256": "8c0a219c9db5b7e1ae3991be16d82a83c42722a8bd7974736bd82bc7ff79b258",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4409,7 +4409,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.tho_vang.icon.png",
-      "final_sha256": "fc3be420287bcb636c96decb316adf1ca47d08c303102ae9d914f196f184cacd",
+      "final_sha256": "c5ab3819e41dd16be86bd3e96640d216e1488a5d6a5a713cc0d77f262e790440",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4458,7 +4458,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine.thuy_ngoc.icon.png",
-      "final_sha256": "7496570d3d48345dc5229cce6923e65354507af604e5a5ecf70a93065e06e510",
+      "final_sha256": "2964ddaff007ca9247cf1109aa536efa8c6617882dbd2a21269432af7fb323c0",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4507,7 +4507,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine_special.bach_ngoc.icon.png",
-      "final_sha256": "2216cec179ac234a9a4f59fcbf8d0a6b6bfe31093f19f78c59690f3388bac129",
+      "final_sha256": "e238a9eaae2f5091c973af346a91bddeeef295d0cbba7ea4803fd17a8669049b",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4556,7 +4556,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine_special.cu_thach.icon.png",
-      "final_sha256": "c83eb7c56d0b1b233fae5254e71807dd54adf4fd468f2fb9a5f940081b287899",
+      "final_sha256": "0aedbcb3050c5785c77402ac4bedb0503749e4ff8d214171cb87cad16e81fe21",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4605,7 +4605,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine_special.dai_hong.icon.png",
-      "final_sha256": "e0bbde594a3c676eabf395a0e635695fa90f064726353dbece069101da1d2991",
+      "final_sha256": "659c453f6c2e0074bebd4e027051c9c703f78b5fd6861dfbe35f19bf028bb18e",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4654,7 +4654,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine_special.hong_tran.icon.png",
-      "final_sha256": "ea5439122cfdc578d2443841572c7ce1352dd0e2d35c6188ee3a835b627d59b0",
+      "final_sha256": "1979f9dcaade39cb3b2d806eaff78960dcd1896d9dcc93679942a246ccedfdce",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4703,7 +4703,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/shrines/asset.cosmetic.shrine_special.ngoc_bich.icon.png",
-      "final_sha256": "6b5ba99d2fbfdedb4858dfbdf3a553e8c05649daad6799c58c6f31d62f71d43e",
+      "final_sha256": "e7957b3062491b5393b0e712b13211acbd6f8bd55ed38abc815daecaba1025b5",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4752,7 +4752,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.iap.title_glow.long_nhan.icon.png",
-      "final_sha256": "abc5bc556f02f0b253c879e32bda8a4a41ce789a1e53c4a3dafcef00c84d5778",
+      "final_sha256": "a517d1233796f8a95cf86b5420e28666821e7585a305540d1599f1dd79ad25e6",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -4801,7 +4801,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.hoa_quang.icon.png",
-      "final_sha256": "12b54628fb5671ead6b036b5554fded1ea22dedfd8c2b11ce26cdc87a90a0792",
+      "final_sha256": "220193969f09dc1b286d05dac23bb40b7a7b1506fab0b05dd04e1a1379669c82",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -4836,7 +4836,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.hong_phuc.icon.png",
-      "final_sha256": "529b70739155a27d6a55ce8702a392f53dbb9d0b7492854b0b4975a15166808a",
+      "final_sha256": "0e557a850190464662443b340287deb22f507157b7786fe81789053fb5189c0b",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -4871,7 +4871,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.kim_quang.icon.png",
-      "final_sha256": "196734b3ba943bf4527ce8f282b799edf9164cd26fd77649cbfe89609e19fa5b",
+      "final_sha256": "19b4596d945a614d568078534cebee1a6d34501e1d3650898171b101774349e5",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -4906,7 +4906,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.linh_hoa.icon.png",
-      "final_sha256": "88ae94550d84a8237dd0ea0abe62b40dc369f4de9052f9247bc61bf48d2ed2c1",
+      "final_sha256": "5c5274ba2c3ecb2dced08d43f8199779c31ac90cf481893e26b5428bf0c3d47b",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -4941,7 +4941,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.moc_xanh.icon.png",
-      "final_sha256": "7acd9dfd96ae0b74d6632efbd097519f4479b5280d1ffea31c91f457fc67b891",
+      "final_sha256": "6004450758658b26f1f4944d28d331183e711bebbd86c7f010c680d511a783c5",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -4976,7 +4976,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.thien_van.icon.png",
-      "final_sha256": "a3a9314238edc8dcde322237462cb5c0c7d3689ca1c7c83a9379af3f8563058b",
+      "final_sha256": "a22beec730d85900769345716eab72117c6b7cedd04cb36d073e7b32072f6d5d",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -5011,7 +5011,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.tho_bach.icon.png",
-      "final_sha256": "0a199cd42a836551447aed3c8bfa49fc52e5e79a8650a7b0e9f6487f88a80963",
+      "final_sha256": "11adb38db9d48a1d85108a94fe055f2c7056bb0423ecf8055663679b58556a69",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -5046,7 +5046,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": false,
       "file_path": "client/Assets/Art/Cosmetics/title_glows/asset.cosmetic.title_glow.thuy_linh.icon.png",
-      "final_sha256": "d7e5ec99cb8c5e01751abcbe6264effbe891f623423e1b48c30e66f8c0dc7bbd",
+      "final_sha256": "6afab5cc500a2b43dfb2a19a11d9a14ba38e84d8c68bf26d53926b8292fc2477",
       "folklore_card": null,
       "generation_record": {
         "c2pa_present": false,
@@ -5081,7 +5081,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/trails/asset.cosmetic.iap.trail.bao_gam.icon.png",
-      "final_sha256": "d6837fd1e5e624530e623055a895fd67cb422adfc15696dcff6997a3ad378533",
+      "final_sha256": "956aa5f25a09fdd62a0650465cc02fd044a5321a058c2675de8ab836e843f80a",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -5129,7 +5129,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/trails/asset.cosmetic.iap.trail.long_hoa.icon.png",
-      "final_sha256": "eb6da266195e55a81da67a49e78af7f96cc252074e87e5896ecc96abd3242746",
+      "final_sha256": "4c70bd56c94794d10c0d6941322f5eb437990971c109608437286d30a3b50966",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
@@ -5177,7 +5177,7 @@
       "creator": "AI Horde + Devin agent",
       "cultural_entity": true,
       "file_path": "client/Assets/Art/Cosmetics/trails/asset.cosmetic.iap.trail.phuong_hoang_vu.icon.png",
-      "final_sha256": "0e4be5a2e5726d81d4afc49b985d17daecce691e028c63e0102e1371f81c71e2",
+      "final_sha256": "e10d8839694faf3841071a22f1de87b0cfa91eae42b6393788769dd7b173fc1e",
       "folklore_card": {
         "motifs_checked": [
           "no torii gates",
