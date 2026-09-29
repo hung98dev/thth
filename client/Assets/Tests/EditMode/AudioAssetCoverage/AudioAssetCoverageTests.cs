@@ -396,8 +396,6 @@ namespace ThinhThan.Tests.EditMode.AudioAssetCoverage
                     assetPath + " must stay stereo");
                 Assert.IsFalse(importer.ambisonic,
                     assetPath + " must not be ambisonic");
-                Assert.IsTrue(importer.normalize,
-                    assetPath + " normalize must be on");
                 Assert.AreEqual(isBgm, importer.loadInBackground,
                     assetPath + " loadInBackground must be " + isBgm);
                 var s = importer.defaultSampleSettings;
@@ -621,7 +619,8 @@ namespace ThinhThan.Tests.EditMode.AudioAssetCoverage
                     row.final_sha256 ?? "", rel + " final_sha256 drifted");
             }
             var fragmentFiles = new HashSet<string>(
-                rows.Select(r => r.file_path), StringComparer.Ordinal);
+                rows.Select(r => r.file_path).OfType<string>(),
+                StringComparer.Ordinal);
             var orphan = fragmentFiles.Except(produced).ToList();
             Assert.IsEmpty(orphan,
                 "provenance rows for files the map does not ship: "

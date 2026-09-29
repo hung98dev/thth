@@ -33,7 +33,6 @@ namespace ThinhThan.Audio.Editor
             var isBgm = Declared(userData, "audio_role") == "bgm";
 
             importer.forceToMono = false;
-            importer.normalize = true;
             importer.loadInBackground = isBgm;
             importer.ambisonic = false;
 
