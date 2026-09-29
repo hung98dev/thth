@@ -2,7 +2,7 @@ fileFormatVersion: 2
 guid: f9fee2be635168b97ac9b9e5a2922236
 AudioImporter:
   externalObjects: {}
-  serializedVersion: 9
+  serializedVersion: 8
   defaultSettings:
     serializedVersion: 2
     loadType: 0
@@ -15,7 +15,7 @@ AudioImporter:
   platformSettingOverrides: {}
   forceToMono: 0
   normalize: 1
-  preloadAudioData: 1
+  loadInBackground: 0
   ambisonic: 0
   3D: 1
   userData: asset_class=AUDIO;audio_role=sfx

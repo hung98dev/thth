@@ -2,7 +2,7 @@ fileFormatVersion: 2
 guid: f23213f4785c3c9814b8ed35cdd9f1d2
 AudioImporter:
   externalObjects: {}
-  serializedVersion: 9
+  serializedVersion: 8
   defaultSettings:
     serializedVersion: 2
     loadType: 2
@@ -15,7 +15,7 @@ AudioImporter:
   platformSettingOverrides: {}
   forceToMono: 0
   normalize: 1
-  preloadAudioData: 0
+  loadInBackground: 1
   ambisonic: 0
   3D: 1
   userData: asset_class=AUDIO;audio_role=bgm
