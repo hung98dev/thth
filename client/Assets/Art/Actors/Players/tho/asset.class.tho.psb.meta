@@ -280,7 +280,7 @@ ScriptedImporter:
   sharedRigCharacterData:
     bones:
     - name: torso
-      guid: 
+      guid: 26650051791e96fa0a3311ceba48a430
       position: {x: 0, y: 0.55, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -289,7 +289,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: head
-      guid: 
+      guid: 6e17ee415bf4b64fbace0819cad48b6c
       position: {x: 0, y: 1.15, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -298,7 +298,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: hair
-      guid: 
+      guid: cd57eb1a9b0960f0682c77999a926ad9
       position: {x: 0, y: 1.45, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -307,7 +307,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: arm_front
-      guid: 
+      guid: 45fb4efc94d7c54f6b6fc13dd966b5f7
       position: {x: 0.28, y: 1, z: -0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -316,7 +316,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: arm_back
-      guid: 
+      guid: d386fa594f9fe0285820796b405fc521
       position: {x: -0.28, y: 1, z: 0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -325,7 +325,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: leg_front
-      guid: 
+      guid: 2f99c5cf4de18690694b7e70b3596e2f
       position: {x: 0.14, y: 0.35, z: -0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -334,7 +334,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: leg_back
-      guid: 
+      guid: c911d6aebbc2ab3ae9b77c9909a6e4f5
       position: {x: -0.14, y: 0.35, z: 0.01}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
@@ -343,7 +343,7 @@ ScriptedImporter:
         serializedVersion: 2
         rgba: 4294967295
     - name: weapon
-      guid: 
+      guid: 4117d2ddef1408fab96cb3d06873d012
       position: {x: 0.35, y: 0.6, z: -0.02}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       length: 0.4
