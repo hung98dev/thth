@@ -1,0 +1,66 @@
+{
+  "schema_version": 2,
+  "task_id": "IMP-003",
+  "source_tree_hash": "0a46a71ebf37227e62640c6442d532b5ba2b8b8f38581688207842d70d8330b5",
+  "toolchain": {
+    "go": "1.27.1",
+    "unity": "6000.6.1f1",
+    "postgresql": "18.6",
+    "protoc": "36.2",
+    "protoc_gen_go": "v1.36.12"
+  },
+  "commands": [
+    "go -C server build ./...",
+    "go -C server test ./...",
+    "go -C server vet ./...",
+    "go -C server test -race \u003csim|edge|durable|global\u003e",
+    "go -C server build ./...",
+    "go -C server test ./...",
+    "go -C server vet ./..."
+  ],
+  "test_summary": {
+    "total": 118,
+    "passed": 114,
+    "failed": 0,
+    "skipped": 4
+  },
+  "skipped_reasons": [
+    {
+      "id": "Q3",
+      "reason": "owner-not-done IMP-065",
+      "allowed": true
+    },
+    {
+      "id": "Q5",
+      "reason": "owner-not-done IMP-004",
+      "allowed": true
+    },
+    {
+      "id": "Q3",
+      "reason": "owner-not-done IMP-065",
+      "allowed": true
+    },
+    {
+      "id": "Q5",
+      "reason": "owner-not-done IMP-004",
+      "allowed": true
+    }
+  ],
+  "content_revision": "none",
+  "ci_run_id": "36503648319",
+  "run_attempt": 1,
+  "jobs": [
+    {
+      "name": "Q0-Q6 verify (Linux)",
+      "os": "linux",
+      "result": "PASSED"
+    },
+    {
+      "name": "Q0-Q6 verify (Windows)",
+      "os": "windows",
+      "result": "PASSED"
+    }
+  ],
+  "worktree_clean": true,
+  "result": "PASSED"
+}
