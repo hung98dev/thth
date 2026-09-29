@@ -1,0 +1,1601 @@
+{
+  "schema_version": 1,
+  "assets": [
+    {
+      "asset_key": "asset.class.hoa.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/hoa/asset.class.hoa.png",
+      "content_id": "class.hoa",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "1822ac0c03e1c6df33e7e8a95407628321516bca5b6a9315c43d0923d3820aa4",
+      "final_sha256": "6f8f3a986e9b710fb6443c6177d1aab76892236da4db27cd9a73e52672e40958",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; part layer split; speck cleanup; edge dilation; composite weapon layer from weapon_hoa.webp; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, female charm caster, auburn hair pinned with a brass pin, warm red-orange woven wrap over plain tunic, paper charms tucked in a hip pouch, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 2021731219,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lo ban dan gian va phu vieng (folk hearth and paper-charm customs)",
+          "Den ong sao (folk star-lantern tradition)"
+        ],
+        "regional_variants": "Bac/Trung hearth rituals; village lantern-keeper variants",
+        "motifs_checked": [
+          "fictional paper charms only (no legible script)",
+          "clay lantern not glass or crystal",
+          "no Taoist canonical vestments"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.hoa.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/hoa/asset.class.hoa.psb",
+      "content_id": "class.hoa",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "1822ac0c03e1c6df33e7e8a95407628321516bca5b6a9315c43d0923d3820aa4",
+      "final_sha256": "80b26268143388750ba9c6787bdd874b2316835498951eddff66143a71fb45cb",
+      "changes": "same pipeline as showcase; layer-split into the 8 fixed rig layers; serialized as 8BPS v1 .psb",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, female charm caster, auburn hair pinned with a brass pin, warm red-orange woven wrap over plain tunic, paper charms tucked in a hip pouch, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 2021731219,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024, \"psb\": \"8BPS v1, 8 named layers at canvas offsets\"}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lo ban dan gian va phu vieng (folk hearth and paper-charm customs)",
+          "Den ong sao (folk star-lantern tradition)"
+        ],
+        "regional_variants": "Bac/Trung hearth rituals; village lantern-keeper variants",
+        "motifs_checked": [
+          "fictional paper charms only (no legible script)",
+          "clay lantern not glass or crystal",
+          "no Taoist canonical vestments"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.kim.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/kim/asset.class.kim.png",
+      "content_id": "class.kim",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "362fd312c39fe181d532c7041d94933f4a248065608cc4e40810c68466f6da6e",
+      "final_sha256": "7724491a79f0b76373c1e71a58d8f695c252af7c3eb328c6b4d9b5e8f27fdac1",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; part layer split; speck cleanup; edge dilation; composite weapon layer from weapon_kim.webp; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, male sword fighter, dark hair under a woven headband, indigo and brown village tunic with cord belt, straw sandals, bronze arm bracer, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 623607399,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Truyen co tich hiep si va ngu kiem si lang que (village swordsman archetype)",
+          "Vu khi dong thoi Dong Son (bronze-age weapon forms)"
+        ],
+        "regional_variants": "Bac bo village swordsman; southern palm-leaf martial garb",
+        "motifs_checked": [
+          "no Chinese cultivation robes or xianxia silhouettes",
+          "no Japanese katana/onmyoji styling",
+          "dao sabre form (single-edge Vietnamese sabre)",
+          "woven indigo/brown village cloth only"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.kim.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/kim/asset.class.kim.psb",
+      "content_id": "class.kim",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "362fd312c39fe181d532c7041d94933f4a248065608cc4e40810c68466f6da6e",
+      "final_sha256": "232f96283d211201f9990ec512c44a1ce63c7eee661affcc79aaa6c9a893c9b0",
+      "changes": "same pipeline as showcase; layer-split into the 8 fixed rig layers; serialized as 8BPS v1 .psb",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, male sword fighter, dark hair under a woven headband, indigo and brown village tunic with cord belt, straw sandals, bronze arm bracer, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 623607399,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024, \"psb\": \"8BPS v1, 8 named layers at canvas offsets\"}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Truyen co tich hiep si va ngu kiem si lang que (village swordsman archetype)",
+          "Vu khi dong thoi Dong Son (bronze-age weapon forms)"
+        ],
+        "regional_variants": "Bac bo village swordsman; southern palm-leaf martial garb",
+        "motifs_checked": [
+          "no Chinese cultivation robes or xianxia silhouettes",
+          "no Japanese katana/onmyoji styling",
+          "dao sabre form (single-edge Vietnamese sabre)",
+          "woven indigo/brown village cloth only"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.moc.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/moc/asset.class.moc.png",
+      "content_id": "class.moc",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "0cf4bbdb3efd43a83155a78f93b34a238c15f1b2db2bc5ebae61fe3af135940d",
+      "final_sha256": "5bd7ce303ba8ab8c67fe224af2b3c5d111c40593f71e1b0ef8397d96220f53e6",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; part layer split; speck cleanup; edge dilation; composite weapon layer from weapon_moc.webp; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, female herbalist healer, hair in a simple bun with a wooden hairpin, muted green and earth-brown apron over woven tunic, reed satchel of dried herbs at hip, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 272926804,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Thay thuoc dan gian (village herbalist tradition)",
+          "Co tich nguoi len rung hai thuoc (mountain herb gatherers)"
+        ],
+        "regional_variants": "Thuong duong herb gatherer; dong bang village apothecary",
+        "motifs_checked": [
+          "reed/bamboo satchel not porcelain jars",
+          "wooden hairpin not metal ornament",
+          "no imperial court robes"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.moc.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/moc/asset.class.moc.psb",
+      "content_id": "class.moc",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "0cf4bbdb3efd43a83155a78f93b34a238c15f1b2db2bc5ebae61fe3af135940d",
+      "final_sha256": "ef8664d4acddc59a488a454ccd6f109668ca79b7f624edfc80f136bb5b544d5c",
+      "changes": "same pipeline as showcase; layer-split into the 8 fixed rig layers; serialized as 8BPS v1 .psb",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, female herbalist healer, hair in a simple bun with a wooden hairpin, muted green and earth-brown apron over woven tunic, reed satchel of dried herbs at hip, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 272926804,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024, \"psb\": \"8BPS v1, 8 named layers at canvas offsets\"}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Thay thuoc dan gian (village herbalist tradition)",
+          "Co tich nguoi len rung hai thuoc (mountain herb gatherers)"
+        ],
+        "regional_variants": "Thuong duong herb gatherer; dong bang village apothecary",
+        "motifs_checked": [
+          "reed/bamboo satchel not porcelain jars",
+          "wooden hairpin not metal ornament",
+          "no imperial court robes"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.tho.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/tho/asset.class.tho.png",
+      "content_id": "class.tho",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "58b76bff26f6f8a9a8213679feb6892367a87c61e670dcd75cbba7efc01ba819",
+      "final_sha256": "66f4ae4b6ddc0dc120a3a9cb5e837a2b6ad30e2fe2b4051bbfc08b8f795aecd4",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; part layer split; speck cleanup; edge dilation; composite weapon layer from weapon_tho.webp; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, chibi stocky little village guardian boy, dark topknot, ochre and umber padded vest, stone prayer beads on wrist, thick rope belt, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1162136135,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lang co lo and gate-guardian beliefs (village protectors)",
+          "Brick-kiln and dike-worker folklore of the deltas"
+        ],
+        "regional_variants": "Dong bang brickworks guardian; highland stone-worker variant",
+        "motifs_checked": [
+          "hardwood club not mace or hammer",
+          "stone prayer beads modest scale",
+          "padded vest not armour plate"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.tho.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/tho/asset.class.tho.psb",
+      "content_id": "class.tho",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "58b76bff26f6f8a9a8213679feb6892367a87c61e670dcd75cbba7efc01ba819",
+      "final_sha256": "541357af36967c040c93d10f5656721a58c4629efdff77d0ac90b003e5b7b787",
+      "changes": "same pipeline as showcase; layer-split into the 8 fixed rig layers; serialized as 8BPS v1 .psb",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, chibi stocky little village guardian boy, dark topknot, ochre and umber padded vest, stone prayer beads on wrist, thick rope belt, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1162136135,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024, \"psb\": \"8BPS v1, 8 named layers at canvas offsets\"}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lang co lo and gate-guardian beliefs (village protectors)",
+          "Brick-kiln and dike-worker folklore of the deltas"
+        ],
+        "regional_variants": "Dong bang brickworks guardian; highland stone-worker variant",
+        "motifs_checked": [
+          "hardwood club not mace or hammer",
+          "stone prayer beads modest scale",
+          "padded vest not armour plate"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.thuy.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/thuy/asset.class.thuy.png",
+      "content_id": "class.thuy",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "e192d3a99d74c31c72bb1b0076cb98d0b0d9c09d00d45dbb928b6c44578510c3",
+      "final_sha256": "4d2243fb2a9aa7ca2e5facd717212f6630cea6ccee9824874b5a6ad38a46b5ec",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; part layer split; speck cleanup; edge dilation; composite weapon layer from weapon_thuy.webp; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, chibi little river caller boy, blue-grey woven tunic with net sash, small conical straw hat on his back by a cord, rolled trouser cuffs, sandals, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 596331575,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Son Tinh - Thuy Tinh (water versus mountain contest)",
+          "Songs and ferrymen of the Red River delta folklore"
+        ],
+        "regional_variants": "Dong bang song Hong river folk; Mekong boatman variants",
+        "motifs_checked": [
+          "bamboo staff and bronze bell, no trident or western sorcerer props",
+          "conical straw hat (non la) not foreign headwear",
+          "net sash and rolled cuffs, no robe"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.class.thuy.prefab",
+      "file_path": "client/Assets/Art/Actors/Players/thuy/asset.class.thuy.psb",
+      "content_id": "class.thuy",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "e192d3a99d74c31c72bb1b0076cb98d0b0d9c09d00d45dbb928b6c44578510c3",
+      "final_sha256": "6fe15004b6b612e84dc3cfd3877df8100592c85c10158b5a17b494583c8635a5",
+      "changes": "same pipeline as showcase; layer-split into the 8 fixed rig layers; serialized as 8BPS v1 .psb",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading with three value tiers and occlusion shadow edges, colored outline slightly darker than fill, subtle rim light, one key light from top front, cast shadow down-left inside silhouette, full body single character three-quarter front view facing camera-left, arms relaxed at sides, empty open hands, chibi little river caller boy, blue-grey woven tunic with net sash, small conical straw hat on his back by a cord, rolled trouser cuffs, sandals, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 596331575,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024, \"psb\": \"8BPS v1, 8 named layers at canvas offsets\"}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Son Tinh - Thuy Tinh (water versus mountain contest)",
+          "Songs and ferrymen of the Red River delta folklore"
+        ],
+        "regional_variants": "Dong bang song Hong river folk; Mekong boatman variants",
+        "motifs_checked": [
+          "bamboo staff and bronze bell, no trident or western sorcerer props",
+          "conical straw hat (non la) not foreign headwear",
+          "net sash and rolled cuffs, no robe"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_anchor_charm_bundle.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/anchor_charm_bundle.png",
+      "content_id": null,
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "6e8fbf0aac1bf7375c196f2befd982d7a457451b38d20283f21f5436ca4e3115",
+      "final_sha256": "d4fb384028c5cfdc350e7d7a86ea53ee3630d9727cb380487fe6c8f9f9b9151c",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG character style, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, one bundle of folk paper charms and bamboo sticks, single subject centered, plain village clothing of woven cloth bamboo wood bronze paper cord materials, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 2023677681,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": null,
+      "cultural_entity": false,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_anchor_herbalist.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/anchor_herbalist.png",
+      "content_id": null,
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "f8c06979f258c63d411cd7bda5eae10a207d7a3d5751f0cc2446a738932c8b91",
+      "final_sha256": "31fd8f21d7c0de33ba846354bfcb6db53262d05b9c2fd5af4843409288c391aa",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG character style, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, chibi Vietnamese female herbalist with reed satchel, single subject centered, plain village clothing of woven cloth bamboo wood bronze paper cord materials, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 319281695,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": null,
+      "cultural_entity": false,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_anchor_lantern.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/anchor_lantern.png",
+      "content_id": null,
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "8565299b88db6390082ebb4405140dda085ad11fa8241e793766f13010025d06",
+      "final_sha256": "43cefdee9d925b630d3a56e6a1e989fda5faf1ba95b36b12fbb35fd8e85ce6ac",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG character style, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, chibi Vietnamese lantern keeper girl with paper charms, single subject centered, plain village clothing of woven cloth bamboo wood bronze paper cord materials, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1769586545,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": null,
+      "cultural_entity": false,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_anchor_star_lantern.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/anchor_star_lantern.png",
+      "content_id": null,
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "332cdf9db03d591fbf95a762c3abc30263c8ee2e6c7a32a5f55eca52bd42f0fb",
+      "final_sha256": "5d61010e79bef562e0c392fad68541ed5ef4f040391d6f7dc0df51e0f58197df",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG character style, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, one star-shaped folk paper lantern glowing warm, single subject centered, plain village clothing of woven cloth bamboo wood bronze paper cord materials, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1649959272,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": null,
+      "cultural_entity": false,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_anchor_sword_study.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/anchor_sword_study.png",
+      "content_id": null,
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "07d1424daa11576aacf0e1767764c3d8cddcd0888b94bdad5ddb7b4a687d869a",
+      "final_sha256": "484dc45cf3a956432578bad5ed884a28ab831df0f6b79ef80dd5131d72358861",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG character style, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, one Vietnamese dao sabre lying on woven cloth, single subject centered, plain village clothing of woven cloth bamboo wood bronze paper cord materials, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 736547529,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": null,
+      "cultural_entity": false,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_anchor_swordsman.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/anchor_swordsman.png",
+      "content_id": null,
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "418f58eeb8c557b6c35d6a1c8261b2c9813e7c84e53bf984950e1992393b4ccb",
+      "final_sha256": "cf6551f7bacd53dc2803ac045dcd0f13c1fce009cc85a3acae6ffa96aab688bc",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG character style, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, chibi Vietnamese village swordsman with dao sabre, single subject centered, plain village clothing of woven cloth bamboo wood bronze paper cord materials, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1154885308,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": null,
+      "cultural_entity": false,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_hoa_back34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/hoa_back34.png",
+      "content_id": "class.hoa",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "7219ebb52efc9f68f0f3e3e3f13faa77fbfcfc41cce08d8e79d3c12b26fd51f0",
+      "final_sha256": "0f681376afc95e4aa038fd52aef56f50b33473a40bf7a0774ed532c2361a98e7",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter back view turned away centered standing straight, female charm caster, auburn hair pinned with a brass pin, warm red-orange woven wrap over plain tunic, paper charms tucked in a hip pouch, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1047003934,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lo ban dan gian va phu vieng (folk hearth and paper-charm customs)",
+          "Den ong sao (folk star-lantern tradition)"
+        ],
+        "regional_variants": "Bac/Trung hearth rituals; village lantern-keeper variants",
+        "motifs_checked": [
+          "fictional paper charms only (no legible script)",
+          "clay lantern not glass or crystal",
+          "no Taoist canonical vestments"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_hoa_front.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/hoa_front.png",
+      "content_id": "class.hoa",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "47a7a19cb27de2077595a20213a6e94f140b76255972b1c6ff58c4a1e86bc44a",
+      "final_sha256": "a14db2439cb5e99cef8ad798fb8e19b216ce1e83235a16bd9ad61874417c59ff",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character facing camera front view centered standing straight, female charm caster, auburn hair pinned with a brass pin, warm red-orange woven wrap over plain tunic, paper charms tucked in a hip pouch, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 585577046,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lo ban dan gian va phu vieng (folk hearth and paper-charm customs)",
+          "Den ong sao (folk star-lantern tradition)"
+        ],
+        "regional_variants": "Bac/Trung hearth rituals; village lantern-keeper variants",
+        "motifs_checked": [
+          "fictional paper charms only (no legible script)",
+          "clay lantern not glass or crystal",
+          "no Taoist canonical vestments"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_hoa_front34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/hoa_front34.png",
+      "content_id": "class.hoa",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "88fd3ea7d5952da7950a53af949ca06341ea8e209aad686b675b2bfaf0d2d61d",
+      "final_sha256": "fe649a5d04944d4066bab666f0b24e051507601f01455edcb1f900aa7311c1e4",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter front view facing camera-left centered standing straight, female charm caster, auburn hair pinned with a brass pin, warm red-orange woven wrap over plain tunic, paper charms tucked in a hip pouch, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 808454863,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lo ban dan gian va phu vieng (folk hearth and paper-charm customs)",
+          "Den ong sao (folk star-lantern tradition)"
+        ],
+        "regional_variants": "Bac/Trung hearth rituals; village lantern-keeper variants",
+        "motifs_checked": [
+          "fictional paper charms only (no legible script)",
+          "clay lantern not glass or crystal",
+          "no Taoist canonical vestments"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_hoa_side.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/hoa_side.png",
+      "content_id": "class.hoa",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "c78efb15c42ba9983a8e74f59ca8213b216101d01e7a0a221d1a78c946e1a5f4",
+      "final_sha256": "42316983ae3b26055b5731ca3f85d621ebb0cafa163450e4cbb6b769c097f842",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character full side profile view facing left centered standing straight, female charm caster, auburn hair pinned with a brass pin, warm red-orange woven wrap over plain tunic, paper charms tucked in a hip pouch, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1776055451,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lo ban dan gian va phu vieng (folk hearth and paper-charm customs)",
+          "Den ong sao (folk star-lantern tradition)"
+        ],
+        "regional_variants": "Bac/Trung hearth rituals; village lantern-keeper variants",
+        "motifs_checked": [
+          "fictional paper charms only (no legible script)",
+          "clay lantern not glass or crystal",
+          "no Taoist canonical vestments"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_kim_back34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/kim_back34.png",
+      "content_id": "class.kim",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "903ef45f3446bea8df293378d8a275ff700cccea435849bb23d06bbd59ac7388",
+      "final_sha256": "3696cb309a3e635a4653ff28ee5fd96c794dbe5a9e34f369edc29d0b980cc992",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter back view turned away centered standing straight, male sword fighter, dark hair under a woven headband, indigo and brown village tunic with cord belt, straw sandals, bronze arm bracer, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1911215320,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Truyen co tich hiep si va ngu kiem si lang que (village swordsman archetype)",
+          "Vu khi dong thoi Dong Son (bronze-age weapon forms)"
+        ],
+        "regional_variants": "Bac bo village swordsman; southern palm-leaf martial garb",
+        "motifs_checked": [
+          "no Chinese cultivation robes or xianxia silhouettes",
+          "no Japanese katana/onmyoji styling",
+          "dao sabre form (single-edge Vietnamese sabre)",
+          "woven indigo/brown village cloth only"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_kim_front.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/kim_front.png",
+      "content_id": "class.kim",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "901fccb8f34f84337573fee71c12bf670fed5538ddfb8beca14662d46d723334",
+      "final_sha256": "6d713ecee58bf530853a17e9f28376a52c03de2d6bb285c9ed9c33bef0f28afc",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character facing camera front view centered standing straight, male sword fighter, dark hair under a woven headband, indigo and brown village tunic with cord belt, straw sandals, bronze arm bracer, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 447049056,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Truyen co tich hiep si va ngu kiem si lang que (village swordsman archetype)",
+          "Vu khi dong thoi Dong Son (bronze-age weapon forms)"
+        ],
+        "regional_variants": "Bac bo village swordsman; southern palm-leaf martial garb",
+        "motifs_checked": [
+          "no Chinese cultivation robes or xianxia silhouettes",
+          "no Japanese katana/onmyoji styling",
+          "dao sabre form (single-edge Vietnamese sabre)",
+          "woven indigo/brown village cloth only"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_kim_front34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/kim_front34.png",
+      "content_id": "class.kim",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "716943852e7c1c2d545fe60c62ccf34ae1d16e57f18bc014daabbd3114914d91",
+      "final_sha256": "4e4d10d992158612b08b92a36f6e18c85c5e3ec9f500d3cacba44a81b057c7b7",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter front view facing camera-left centered standing straight, male sword fighter, dark hair under a woven headband, indigo and brown village tunic with cord belt, straw sandals, bronze arm bracer, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1123610525,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Truyen co tich hiep si va ngu kiem si lang que (village swordsman archetype)",
+          "Vu khi dong thoi Dong Son (bronze-age weapon forms)"
+        ],
+        "regional_variants": "Bac bo village swordsman; southern palm-leaf martial garb",
+        "motifs_checked": [
+          "no Chinese cultivation robes or xianxia silhouettes",
+          "no Japanese katana/onmyoji styling",
+          "dao sabre form (single-edge Vietnamese sabre)",
+          "woven indigo/brown village cloth only"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_kim_side.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/kim_side.png",
+      "content_id": "class.kim",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "62e79f257bca3ab4e9317bd4cae2df972e0d06357de9a292d7c7cdf7fe38b4a6",
+      "final_sha256": "cfb782e5d400043ba769a0c2f1f3fc4065eb408e6047447c8ba5aa585fbeec9f",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character full side profile view facing left centered standing straight, male sword fighter, dark hair under a woven headband, indigo and brown village tunic with cord belt, straw sandals, bronze arm bracer, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1933674041,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Truyen co tich hiep si va ngu kiem si lang que (village swordsman archetype)",
+          "Vu khi dong thoi Dong Son (bronze-age weapon forms)"
+        ],
+        "regional_variants": "Bac bo village swordsman; southern palm-leaf martial garb",
+        "motifs_checked": [
+          "no Chinese cultivation robes or xianxia silhouettes",
+          "no Japanese katana/onmyoji styling",
+          "dao sabre form (single-edge Vietnamese sabre)",
+          "woven indigo/brown village cloth only"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_moc_back34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/moc_back34.png",
+      "content_id": "class.moc",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "c4d0fd925eaf82f28a0261192ba10de2bb869ca1fdba91a07b172610e42ef47d",
+      "final_sha256": "1598888a834546ad657e3168ede075943528068b68ab618836b95f5f5f98fc42",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter back view turned away centered standing straight, female herbalist healer, hair in a simple bun with a wooden hairpin, muted green and earth-brown apron over woven tunic, reed satchel of dried herbs at hip, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 442814247,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Thay thuoc dan gian (village herbalist tradition)",
+          "Co tich nguoi len rung hai thuoc (mountain herb gatherers)"
+        ],
+        "regional_variants": "Thuong duong herb gatherer; dong bang village apothecary",
+        "motifs_checked": [
+          "reed/bamboo satchel not porcelain jars",
+          "wooden hairpin not metal ornament",
+          "no imperial court robes"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_moc_front.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/moc_front.png",
+      "content_id": "class.moc",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "b0015f43ea0a05c86acddbc8dfd624c69f486cefe4ed2ac11588beb3d7a511b3",
+      "final_sha256": "7d0167ae5e4bd0c7058005ce046f9d7251a3f4967c0e8a8ab251c50e5caa1182",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character facing camera front view centered standing straight, female herbalist healer, hair in a simple bun with a wooden hairpin, muted green and earth-brown apron over woven tunic, reed satchel of dried herbs at hip, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 2146395696,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Thay thuoc dan gian (village herbalist tradition)",
+          "Co tich nguoi len rung hai thuoc (mountain herb gatherers)"
+        ],
+        "regional_variants": "Thuong duong herb gatherer; dong bang village apothecary",
+        "motifs_checked": [
+          "reed/bamboo satchel not porcelain jars",
+          "wooden hairpin not metal ornament",
+          "no imperial court robes"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_moc_front34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/moc_front34.png",
+      "content_id": "class.moc",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "1351121d6d8ac75dd52b33eed25f2ada770e8daaa5d1190e7d4d7a6504f50a8d",
+      "final_sha256": "f3ff40deaacd342e7f8de7258f73db13de3e1648c99de0567cca706d1db26c54",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter front view facing camera-left centered standing straight, female herbalist healer, hair in a simple bun with a wooden hairpin, muted green and earth-brown apron over woven tunic, reed satchel of dried herbs at hip, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1871810059,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Thay thuoc dan gian (village herbalist tradition)",
+          "Co tich nguoi len rung hai thuoc (mountain herb gatherers)"
+        ],
+        "regional_variants": "Thuong duong herb gatherer; dong bang village apothecary",
+        "motifs_checked": [
+          "reed/bamboo satchel not porcelain jars",
+          "wooden hairpin not metal ornament",
+          "no imperial court robes"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_moc_side.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/moc_side.png",
+      "content_id": "class.moc",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "afa906a9ccdafbe791d23bb230fafce4484818f88f638b20b9a2edce8f73fff3",
+      "final_sha256": "46ad49c649fce9350ff137e50d0da859a147606d80bacba40e0cd81aa12d135b",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character full side profile view facing left centered standing straight, female herbalist healer, hair in a simple bun with a wooden hairpin, muted green and earth-brown apron over woven tunic, reed satchel of dried herbs at hip, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1827986420,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Thay thuoc dan gian (village herbalist tradition)",
+          "Co tich nguoi len rung hai thuoc (mountain herb gatherers)"
+        ],
+        "regional_variants": "Thuong duong herb gatherer; dong bang village apothecary",
+        "motifs_checked": [
+          "reed/bamboo satchel not porcelain jars",
+          "wooden hairpin not metal ornament",
+          "no imperial court robes"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_tho_back34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/tho_back34.png",
+      "content_id": "class.tho",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "16bc260b5c2ccab3a72d8c6c0124e616a3692530c64842215d7ad75e8ec759a1",
+      "final_sha256": "af2b56fbffaa5ae6b65bda34c4217d23274386d2854f49a5cfef15887cfb528c",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter back view turned away centered standing straight, chibi stocky little village guardian boy, dark topknot, ochre and umber padded vest, stone prayer beads on wrist, thick rope belt, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1913724291,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lang co lo and gate-guardian beliefs (village protectors)",
+          "Brick-kiln and dike-worker folklore of the deltas"
+        ],
+        "regional_variants": "Dong bang brickworks guardian; highland stone-worker variant",
+        "motifs_checked": [
+          "hardwood club not mace or hammer",
+          "stone prayer beads modest scale",
+          "padded vest not armour plate"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_tho_front.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/tho_front.png",
+      "content_id": "class.tho",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "c1338819ae349a93f72c012b51155ed976e58feedfeac376d68c4bdcc5fdf914",
+      "final_sha256": "3ac9701859ff2f368abc0bd45facee8135b88241b1c8bec9ab843280f51dd1ac",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character facing camera front view centered standing straight, chibi stocky little village guardian boy, dark topknot, ochre and umber padded vest, stone prayer beads on wrist, thick rope belt, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 854192503,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lang co lo and gate-guardian beliefs (village protectors)",
+          "Brick-kiln and dike-worker folklore of the deltas"
+        ],
+        "regional_variants": "Dong bang brickworks guardian; highland stone-worker variant",
+        "motifs_checked": [
+          "hardwood club not mace or hammer",
+          "stone prayer beads modest scale",
+          "padded vest not armour plate"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_tho_front34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/tho_front34.png",
+      "content_id": "class.tho",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "5a0d9765b32c46a83f7e338689a000bff54cb3fbfa1a9c1ecdc59f053a46c6a5",
+      "final_sha256": "44f1c840498a81ac33751a70138d8eaa26eb923a76fe843a106654089e005968",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter front view facing camera-left centered standing straight, chibi stocky little village guardian boy, dark topknot, ochre and umber padded vest, stone prayer beads on wrist, thick rope belt, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1052941352,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lang co lo and gate-guardian beliefs (village protectors)",
+          "Brick-kiln and dike-worker folklore of the deltas"
+        ],
+        "regional_variants": "Dong bang brickworks guardian; highland stone-worker variant",
+        "motifs_checked": [
+          "hardwood club not mace or hammer",
+          "stone prayer beads modest scale",
+          "padded vest not armour plate"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_tho_side.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/tho_side.png",
+      "content_id": "class.tho",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "d889668b51f8e5d3d8da9a15ec5664f6949f9365a9ccf7da9a08e81ad6d060c4",
+      "final_sha256": "a7c0262e9f561a089e68fce767edeff2c51d2427ec51fe1ab3849102e6384d94",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character full side profile view facing left centered standing straight, chibi stocky little village guardian boy, dark topknot, ochre and umber padded vest, stone prayer beads on wrist, thick rope belt, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1030033153,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Lang co lo and gate-guardian beliefs (village protectors)",
+          "Brick-kiln and dike-worker folklore of the deltas"
+        ],
+        "regional_variants": "Dong bang brickworks guardian; highland stone-worker variant",
+        "motifs_checked": [
+          "hardwood club not mace or hammer",
+          "stone prayer beads modest scale",
+          "padded vest not armour plate"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_thuy_back34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/thuy_back34.png",
+      "content_id": "class.thuy",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "3e65ae14b6de47a1b997e33b676a86073bc26c91272f4eb92e1215af2685eb78",
+      "final_sha256": "c8b31139aed016bc654ecda9ff84a16de559b182a43aafa0eafb280ccbdcfcf1",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter back view turned away centered standing straight, chibi little river caller boy, blue-grey woven tunic with net sash, small conical straw hat on his back by a cord, rolled trouser cuffs, sandals, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 1547198461,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Son Tinh - Thuy Tinh (water versus mountain contest)",
+          "Songs and ferrymen of the Red River delta folklore"
+        ],
+        "regional_variants": "Dong bang song Hong river folk; Mekong boatman variants",
+        "motifs_checked": [
+          "bamboo staff and bronze bell, no trident or western sorcerer props",
+          "conical straw hat (non la) not foreign headwear",
+          "net sash and rolled cuffs, no robe"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_thuy_front.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/thuy_front.png",
+      "content_id": "class.thuy",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "4c6af9164d3f270a66fb906ca211d2bdb1daef1f9f83dd99ae3c9d46d5e3b1e9",
+      "final_sha256": "73155aede451fe66f97b059cc9ac36ca72722092de49e757ed06df655f161062",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character facing camera front view centered standing straight, chibi little river caller boy, blue-grey woven tunic with net sash, small conical straw hat on his back by a cord, rolled trouser cuffs, sandals, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 799411722,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Son Tinh - Thuy Tinh (water versus mountain contest)",
+          "Songs and ferrymen of the Red River delta folklore"
+        ],
+        "regional_variants": "Dong bang song Hong river folk; Mekong boatman variants",
+        "motifs_checked": [
+          "bamboo staff and bronze bell, no trident or western sorcerer props",
+          "conical straw hat (non la) not foreign headwear",
+          "net sash and rolled cuffs, no robe"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_thuy_front34.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/thuy_front34.png",
+      "content_id": "class.thuy",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "7feb99118ee98372df3afc06e96d77cf4396e5b5b27e823ae3cb583c7d19d036",
+      "final_sha256": "2924be1ef42c935647f26b4314e87a43e5e216e35f6e42b88674175357f1dec8",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character three-quarter front view facing camera-left centered standing straight, chibi little river caller boy, blue-grey woven tunic with net sash, small conical straw hat on his back by a cord, rolled trouser cuffs, sandals, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 156363089,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Son Tinh - Thuy Tinh (water versus mountain contest)",
+          "Songs and ferrymen of the Red River delta folklore"
+        ],
+        "regional_variants": "Dong bang song Hong river folk; Mekong boatman variants",
+        "motifs_checked": [
+          "bamboo staff and bronze bell, no trident or western sorcerer props",
+          "conical straw hat (non la) not foreign headwear",
+          "net sash and rolled cuffs, no robe"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.prop.actors_players_turn_thuy_side.sprite",
+      "file_path": "client/Assets/Art/StyleRef/actors_players/turnarounds/thuy_side.png",
+      "content_id": "class.thuy",
+      "source_kind": "AI_CREATED",
+      "creator": "AI Horde + Devin agent",
+      "source_uri": null,
+      "license_id": "AI_TOOL_TERMS",
+      "license_uri": "https://stablehorde.net/terms",
+      "acquired_at_utc": "2026-09-28T23:07:22Z",
+      "source_sha256": "e39034e280bf15bc13f3ba4b6b9883115ae9d88525a915a8fb380461896b28fe",
+      "final_sha256": "d715bce7a644d95bc5935a987917e6f9b8393b144961ff8a8713eeb5d2ebfd1b",
+      "changes": "rembg alpha; trim; downscale_to_2x to 192x256 cell; bottom-anchored placement; speck cleanup; edge dilation; gate-compliance alpha profile/top-light/edge-band postprocess; tie-break-corrected fringe/dilation copy",
+      "attribution": null,
+      "generation_record": {
+        "tool": "AI Horde",
+        "version": "stablehorde.net API v2",
+        "model_id": "AlbedoBase XL (SDXL)",
+        "model_sha256": null,
+        "terms_uri": "https://stablehorde.net/terms",
+        "terms_snapshot_sha256": "f8f2a416fbdd91b20c5872d885db8efb950b23da828e8d072d8c81b31fa8b37b",
+        "prompt": "2D hand-painted chibi character concept art, Vietnamese folk fantasy MMORPG, big-headed small-bodied proportions, painted volume shading, colored outline, rim light, one key light from top front, full body single character full side profile view facing left centered standing straight, chibi little river caller boy, blue-grey woven tunic with net sash, small conical straw hat on his back by a cord, rolled trouser cuffs, sandals, muted earth tones, plain solid pure magenta background, no scenery no props",
+        "seed": 552459652,
+        "parameters": "{\"sampler_name\": \"k_euler_a\", \"cfg_scale\": 6.5, \"steps\": 28, \"n\": 1, \"karras\": true, \"width\": 768, \"height\": 1024}",
+        "workflow_sha256": "9472fee4fd5f290797f6cc8c698b2734fdd6d026322c6ad4ccfdb3ecc7c79ee2",
+        "style_pack_id": "actors_players/players",
+        "reference_uris": [],
+        "reference_sha256": [],
+        "c2pa_present": false
+      },
+      "folklore_card": {
+        "source_tales": [
+          "Son Tinh - Thuy Tinh (water versus mountain contest)",
+          "Songs and ferrymen of the Red River delta folklore"
+        ],
+        "regional_variants": "Dong bang song Hong river folk; Mekong boatman variants",
+        "motifs_checked": [
+          "bamboo staff and bronze bell, no trident or western sorcerer props",
+          "conical straw hat (non la) not foreign headwear",
+          "net sash and rolled cuffs, no robe"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [],
+      "review_state": "PENDING"
+    }
+  ]
+}
