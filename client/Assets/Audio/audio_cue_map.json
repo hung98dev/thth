@@ -1,0 +1,344 @@
+{
+ "schema_version": 1,
+ "fragment": "audio",
+ "sfx": [
+  {
+   "cue": "ui_confirm",
+   "asset_key": "asset.sfx.ui_confirm.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.ui_confirm.clip.ogg"
+  },
+  {
+   "cue": "ui_cancel",
+   "asset_key": "asset.sfx.ui_cancel.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.ui_cancel.clip.ogg"
+  },
+  {
+   "cue": "ui_error",
+   "asset_key": "asset.sfx.ui_error.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.ui_error.clip.ogg"
+  },
+  {
+   "cue": "jump",
+   "asset_key": "asset.sfx.jump.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.jump.clip.ogg"
+  },
+  {
+   "cue": "land",
+   "asset_key": "asset.sfx.land.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.land.clip.ogg"
+  },
+  {
+   "cue": "basic_attack",
+   "asset_key": "asset.sfx.basic_attack.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.basic_attack.clip.ogg"
+  },
+  {
+   "cue": "hit",
+   "asset_key": "asset.sfx.hit.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.hit.clip.ogg"
+  },
+  {
+   "cue": "guard",
+   "asset_key": "asset.sfx.guard.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.guard.clip.ogg"
+  },
+  {
+   "cue": "just_guard_success",
+   "asset_key": "asset.sfx.just_guard_success.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.just_guard_success.clip.ogg"
+  },
+  {
+   "cue": "skill_cast",
+   "asset_key": "asset.sfx.skill_cast.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.skill_cast.clip.ogg"
+  },
+  {
+   "cue": "boss_telegraph",
+   "asset_key": "asset.sfx.boss_telegraph.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.boss_telegraph.clip.ogg"
+  },
+  {
+   "cue": "item_pickup",
+   "asset_key": "asset.sfx.item_pickup.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.item_pickup.clip.ogg"
+  },
+  {
+   "cue": "quest_complete",
+   "asset_key": "asset.sfx.quest_complete.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.quest_complete.clip.ogg"
+  },
+  {
+   "cue": "map_transfer",
+   "asset_key": "asset.sfx.map_transfer.clip",
+   "group": "shared.local",
+   "file": "sfx/asset.sfx.map_transfer.clip.ogg"
+  }
+ ],
+ "bgm": [
+  {
+   "id": "zone.lang_da",
+   "asset_key": "asset.bgm.zone.lang_da.bgm",
+   "group": "audio.bgm.lang_da",
+   "file": "bgm/asset.bgm.zone.lang_da.bgm.ogg"
+  },
+  {
+   "id": "zone.rung_u_minh",
+   "asset_key": "asset.bgm.zone.rung_u_minh.bgm",
+   "group": "audio.bgm.rung_u_minh",
+   "file": "bgm/asset.bgm.zone.rung_u_minh.bgm.ogg"
+  },
+  {
+   "id": "zone.ben_nuoc_den",
+   "asset_key": "asset.bgm.zone.ben_nuoc_den.bgm",
+   "group": "audio.bgm.ben_nuoc_den",
+   "file": "bgm/asset.bgm.zone.ben_nuoc_den.bgm.ogg"
+  },
+  {
+   "id": "zone.deo_may",
+   "asset_key": "asset.bgm.zone.deo_may.bgm",
+   "group": "audio.bgm.deo_may",
+   "file": "bgm/asset.bgm.zone.deo_may.bgm.ogg"
+  },
+  {
+   "id": "zone.thanh_co",
+   "asset_key": "asset.bgm.zone.thanh_co.bgm",
+   "group": "audio.bgm.thanh_co",
+   "file": "bgm/asset.bgm.zone.thanh_co.bgm.ogg"
+  },
+  {
+   "id": "zone.nui_thieng",
+   "asset_key": "asset.bgm.zone.nui_thieng.bgm",
+   "group": "audio.bgm.nui_thieng",
+   "file": "bgm/asset.bgm.zone.nui_thieng.bgm.ogg"
+  },
+  {
+   "id": "shared.pvp",
+   "asset_key": "asset.bgm.shared.pvp.bgm",
+   "group": "audio.bgm.shared",
+   "file": "bgm/asset.bgm.shared.pvp.bgm.ogg"
+  },
+  {
+   "id": "shared.guild_war",
+   "asset_key": "asset.bgm.shared.guild_war.bgm",
+   "group": "audio.bgm.shared",
+   "file": "bgm/asset.bgm.shared.guild_war.bgm.ogg"
+  }
+ ],
+ "scene_bgm": [
+  {
+   "space_id": "map.ben_nuoc_den.bai_lau",
+   "alias_key": "asset.map.ben_nuoc_den.bai_lau.bgm",
+   "target_key": "asset.bgm.zone.ben_nuoc_den.bgm",
+   "group": "region.ben_nuoc_den"
+  },
+  {
+   "space_id": "map.ben_nuoc_den.ben_do_cu",
+   "alias_key": "asset.map.ben_nuoc_den.ben_do_cu.bgm",
+   "target_key": "asset.bgm.zone.ben_nuoc_den.bgm",
+   "group": "region.ben_nuoc_den"
+  },
+  {
+   "space_id": "map.ben_nuoc_den.cho_ben",
+   "alias_key": "asset.map.ben_nuoc_den.cho_ben.bgm",
+   "target_key": "asset.bgm.zone.ben_nuoc_den.bgm",
+   "group": "region.ben_nuoc_den"
+  },
+  {
+   "space_id": "map.ben_nuoc_den.duong_ngap",
+   "alias_key": "asset.map.ben_nuoc_den.duong_ngap.bgm",
+   "target_key": "asset.bgm.zone.ben_nuoc_den.bgm",
+   "group": "region.ben_nuoc_den"
+  },
+  {
+   "space_id": "map.deo_may.ban_chan_deo",
+   "alias_key": "asset.map.deo_may.ban_chan_deo.bgm",
+   "target_key": "asset.bgm.zone.deo_may.bgm",
+   "group": "region.deo_may"
+  },
+  {
+   "space_id": "map.deo_may.duong_rung",
+   "alias_key": "asset.map.deo_may.duong_rung.bgm",
+   "target_key": "asset.bgm.zone.deo_may.bgm",
+   "group": "region.deo_may"
+  },
+  {
+   "space_id": "map.deo_may.khe_da",
+   "alias_key": "asset.map.deo_may.khe_da.bgm",
+   "target_key": "asset.bgm.zone.deo_may.bgm",
+   "group": "region.deo_may"
+  },
+  {
+   "space_id": "map.deo_may.rung_cam",
+   "alias_key": "asset.map.deo_may.rung_cam.bgm",
+   "target_key": "asset.bgm.zone.deo_may.bgm",
+   "group": "region.deo_may"
+  },
+  {
+   "space_id": "map.lang_da.ben_da",
+   "alias_key": "asset.map.lang_da.ben_da.bgm",
+   "target_key": "asset.bgm.zone.lang_da.bgm",
+   "group": "region.lang_da"
+  },
+  {
+   "space_id": "map.lang_da.bo_ruong",
+   "alias_key": "asset.map.lang_da.bo_ruong.bgm",
+   "target_key": "asset.bgm.zone.lang_da.bgm",
+   "group": "region.lang_da"
+  },
+  {
+   "space_id": "map.lang_da.dinh_lang",
+   "alias_key": "asset.map.lang_da.dinh_lang.bgm",
+   "target_key": "asset.bgm.zone.lang_da.bgm",
+   "group": "region.lang_da"
+  },
+  {
+   "space_id": "map.lang_da.go_ma",
+   "alias_key": "asset.map.lang_da.go_ma.bgm",
+   "target_key": "asset.bgm.zone.lang_da.bgm",
+   "group": "region.lang_da"
+  },
+  {
+   "space_id": "map.nui_thieng.chan_nui",
+   "alias_key": "asset.map.nui_thieng.chan_nui.bgm",
+   "target_key": "asset.bgm.zone.nui_thieng.bgm",
+   "group": "region.nui_thieng"
+  },
+  {
+   "space_id": "map.nui_thieng.cong_co",
+   "alias_key": "asset.map.nui_thieng.cong_co.bgm",
+   "target_key": "asset.bgm.zone.nui_thieng.bgm",
+   "group": "region.nui_thieng"
+  },
+  {
+   "space_id": "map.nui_thieng.rung_may",
+   "alias_key": "asset.map.nui_thieng.rung_may.bgm",
+   "target_key": "asset.bgm.zone.nui_thieng.bgm",
+   "group": "region.nui_thieng"
+  },
+  {
+   "space_id": "map.nui_thieng.suon_da",
+   "alias_key": "asset.map.nui_thieng.suon_da.bgm",
+   "target_key": "asset.bgm.zone.nui_thieng.bgm",
+   "group": "region.nui_thieng"
+  },
+  {
+   "space_id": "map.rung_u_minh.loi_tram",
+   "alias_key": "asset.map.rung_u_minh.loi_tram.bgm",
+   "target_key": "asset.bgm.zone.rung_u_minh.bgm",
+   "group": "region.rung_u_minh"
+  },
+  {
+   "space_id": "map.rung_u_minh.mieu_bo_hoang",
+   "alias_key": "asset.map.rung_u_minh.mieu_bo_hoang.bgm",
+   "target_key": "asset.bgm.zone.rung_u_minh.bgm",
+   "group": "region.rung_u_minh"
+  },
+  {
+   "space_id": "map.rung_u_minh.rung_sau",
+   "alias_key": "asset.map.rung_u_minh.rung_sau.bgm",
+   "target_key": "asset.bgm.zone.rung_u_minh.bgm",
+   "group": "region.rung_u_minh"
+  },
+  {
+   "space_id": "map.rung_u_minh.xom_rung",
+   "alias_key": "asset.map.rung_u_minh.xom_rung.bgm",
+   "target_key": "asset.bgm.zone.rung_u_minh.bgm",
+   "group": "region.rung_u_minh"
+  },
+  {
+   "space_id": "map.thanh_co.cong_ngoai",
+   "alias_key": "asset.map.thanh_co.cong_ngoai.bgm",
+   "target_key": "asset.bgm.zone.thanh_co.bgm",
+   "group": "region.thanh_co"
+  },
+  {
+   "space_id": "map.thanh_co.den_tran",
+   "alias_key": "asset.map.thanh_co.den_tran.bgm",
+   "target_key": "asset.bgm.zone.thanh_co.bgm",
+   "group": "region.thanh_co"
+  },
+  {
+   "space_id": "map.thanh_co.duong_da",
+   "alias_key": "asset.map.thanh_co.duong_da.bgm",
+   "target_key": "asset.bgm.zone.thanh_co.bgm",
+   "group": "region.thanh_co"
+  },
+  {
+   "space_id": "map.thanh_co.hao_can",
+   "alias_key": "asset.map.thanh_co.hao_can.bgm",
+   "target_key": "asset.bgm.zone.thanh_co.bgm",
+   "group": "region.thanh_co"
+  },
+  {
+   "space_id": "dungeon.dinh_lang_bo_hoang",
+   "alias_key": "asset.dungeon.dinh_lang_bo_hoang.bgm",
+   "target_key": "asset.bgm.zone.lang_da.bgm",
+   "group": "dungeon.dinh_lang_bo_hoang"
+  },
+  {
+   "space_id": "dungeon.mieu_ba_trong_rung",
+   "alias_key": "asset.dungeon.mieu_ba_trong_rung.bgm",
+   "target_key": "asset.bgm.zone.rung_u_minh.bgm",
+   "group": "dungeon.mieu_ba_trong_rung"
+  },
+  {
+   "space_id": "dungeon.xom_chim",
+   "alias_key": "asset.dungeon.xom_chim.bgm",
+   "target_key": "asset.bgm.zone.ben_nuoc_den.bgm",
+   "group": "dungeon.xom_chim"
+  },
+  {
+   "space_id": "dungeon.hang_ma_tranh",
+   "alias_key": "asset.dungeon.hang_ma_tranh.bgm",
+   "target_key": "asset.bgm.zone.deo_may.bgm",
+   "group": "dungeon.hang_ma_tranh"
+  },
+  {
+   "space_id": "dungeon.den_tran",
+   "alias_key": "asset.dungeon.den_tran.bgm",
+   "target_key": "asset.bgm.zone.thanh_co.bgm",
+   "group": "dungeon.den_tran"
+  },
+  {
+   "space_id": "instance.finale.than_trung",
+   "alias_key": "asset.instance.finale.than_trung.bgm",
+   "target_key": "asset.bgm.zone.nui_thieng.bgm",
+   "group": "dungeon.finale"
+  },
+  {
+   "space_id": "map.guild_war.five_seal_conflict",
+   "alias_key": "asset.map.guild_war.five_seal_conflict.bgm",
+   "target_key": "asset.bgm.shared.guild_war.bgm",
+   "group": "pvp.shared"
+  },
+  {
+   "space_id": "map.pvp.duel_court",
+   "alias_key": "asset.map.pvp.duel_court.bgm",
+   "target_key": "asset.bgm.shared.pvp.bgm",
+   "group": "pvp.shared"
+  },
+  {
+   "space_id": "map.pvp.five_element_arena",
+   "alias_key": "asset.map.pvp.five_element_arena.bgm",
+   "target_key": "asset.bgm.shared.pvp.bgm",
+   "group": "pvp.shared"
+  }
+ ],
+ "terms_snapshots": {
+  "tool_terms": "",
+  "licenses": []
+ }
+}
