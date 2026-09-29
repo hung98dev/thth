@@ -4192,7 +4192,7 @@ evidence_location: "docs/10_implementation/evidence/IMP-105/"
 
 ## `IMP-073` — UI, Item, Equipment & Skill VFX Art
 id: IMP-073
-status: NOT_STARTED
+status: IN_PROGRESS
 claimed_by: "coordinator-wave3"
 branch: "imp/IMP-073-ui-item-vfx-art"
 claimed_at: "2026-09-28T00:00:00Z"
