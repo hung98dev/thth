@@ -201,6 +201,10 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
         // for text/shared entries.
         private static string IconPathFor(Entry e)
         {
+            if (!string.IsNullOrEmpty(e.icon_file))
+            {
+                return "client/" + CosmeticsRoot + "/" + e.icon_file;
+            }
             var shared = SharedTargets();
             var refName = e.icon != null && e.icon.StartsWith("shared:")
                 ? e.icon.Substring("shared:".Length)

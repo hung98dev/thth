@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: a5c44aaa6a30614b66cea7df5fbf7f7b
+ScriptedImporter:
+  serializedVersion: 2
+  userData: 
+  script: {fileID: 11500000, guid: b2a9591990af98743ba3ff7cf1000886, type: 3}
+  characterMode: 1
+  documentPivot: {x: 0.5, y: 0}
+  skeletonAssetReferenceID: c997717c5335e0edab315437ff3d9269

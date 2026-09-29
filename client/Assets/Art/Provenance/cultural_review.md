@@ -1,0 +1,300 @@
+# Cultural Review — Cosmetic Presentation (IMP-074)
+
+Per-ID disposition for every cosmetic identifier named in `docs/07_content/cosmetic_catalog.md` and the seasonal/Atlas title set (`cosmetic.title.atlas.*`, `cosmetic.title.season.*`).
+Review basis: catalog intent + generated-art motif audit against the forbidden-motif list of `presentation_asset_manifest.md` §5 (torii, jiangshi garb, kimono, hanbok, modern religious/political insignia, meaningless Han/Nom text), trademark/licence references, and the paid-cosmetic naming rule (no historical/deified persons).
+Evidence: provenance rows in `fragments/cosmetics.json` carry folklore cards for culturally rooted entries; Visual Review CI screenshots at 1280x720/1920x1080/2400x1080 day+night.
+
+- `cosmetic.appearance.ao_toi_la` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.appearance.ao_vai_hoa_van` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.appearance.khan_ben_nuoc` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.appearance.non_la_moc` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.aura.linh_khi` — aura: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.aura.quy_khi` — aura: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.emote.season.0.paid.chap_tay` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.emote.season.1.paid` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.emote.season.2.paid` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.emote.season.3.paid` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.emote.season.4.paid` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.emote.season.5.paid` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.bach_ho` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.ben_da` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.guild_war.chien_ky` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.ho_tinh` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.huyen_vu` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.lan_linh` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.nui_thieng` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.phuong_hoang` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.pvp.bac` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.pvp.linh` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.pvp.ngoc` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.pvp.than_thoai` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.pvp.vang` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.rong_vang` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.0` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.0.paid` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.1` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.1.paid` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.2` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.2.paid` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.3` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.3.paid` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.4` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.4.paid` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.5` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.frame.season.5.paid` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild.banner.guild_war_champion` — guild_banner: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild.banner.ritual_8` — guild_banner: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild.crest.ritual_4` — guild_crest: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild.shrine.guild_war_top10` — guild_shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild.shrine.ritual_12` — guild_shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild_stone.inscription.kim_bach` — guild_stone_inscription: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild_stone.inscription.long_van` — guild_stone_inscription: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild_stone.inscription.ngoc_bich` — guild_stone_inscription: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild_stone.inscription.phuong_vi` — guild_stone_inscription: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild_stone.inscription.thien_long` — guild_stone_inscription: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.guild_stone.inscription.trung_nguyen` — guild_stone_inscription: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.appearance.co_tam_truyen` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.appearance.co_tien` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.appearance.nu_tuong_trong_dong` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.appearance.vo_quan_thanh_co` — appearance: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.emote.bai_chao_lang` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.emote.ngoi_thien_dinh` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.emote.vo_tay_thang_tran` — emote: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.frame.thien_long` — frame: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.nameplate.hun_thuoc_co` — nameplate: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.title_glow.long_nhan` — title_glow: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.trail.bao_gam` — weapon_trail: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.trail.long_hoa` — weapon_trail: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.iap.trail.phuong_hoang_vu` — weapon_trail: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.nameplate.ky_luat_vang` — nameplate: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.nameplate.linh_thuyen` — nameplate: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.nameplate.son_ha` — nameplate: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.kim_trang` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.linh_khoi` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.lua_do` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.moc_xanh` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.season.0` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.season.1` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.season.2` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.season.3` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.season.4` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.season.5` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.tho_vang` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine.thuy_ngoc` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine_special.bach_ngoc` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine_special.cu_thach` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine_special.dai_hong` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine_special.hong_tran` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.shrine_special.ngoc_bich` — shrine: culturally rooted — folklore_card recorded in fragment; forbidden motifs checked absent; cleared
+- `cosmetic.title.atlas.bach_khoa_dan_gian` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.bep_bong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.bep_chep` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.bep_tom` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.bong_nguoi` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.bong_nuoc_ma` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.bong_vong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.bu_nhin_rom` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ca_bong2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ca_chep2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ca_chep_hoa_rong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ca_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ca_tinh_gia` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.can_cau` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.chia_khoa` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.coc_thanh_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.cui_lua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.dai_tinh_cay` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.dai_vong_linh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_ho_chin` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_ho_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_ma_da_chua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_moc` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_ngu_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_quy` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_than_trung` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.di_thuong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.dom_dom_ma` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.dom_lua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ho_con_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ho_tinh_dong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ho_tinh_lon` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ho_tinh_ve` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hoc_gia_dan_gian` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_binh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_binh_co` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_binh_suu` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_bu_nhin` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ca_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_chet_duoi` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_chet_duoi2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_coc` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_do_trang` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_dom_dom` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_dom_lua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ho_con` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ho_tinh_chin` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ho_tinh_ve` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_khi_nui` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_co2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_co_thu` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_da2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_da_gia2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_rung` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_tranh2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_tranh_gia2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_ma_xo2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_moc_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_qua_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_thach_ve` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_than_trung2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_thuong_luong2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_tinh_cay` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_tran_linh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_tuong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_vong_hon2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.hon_xo_non` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.khi_nui` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.kho_bau` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.linh_dan2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.linh_ve` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_co` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_da` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_da_gia` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_nui` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_rung` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_tranh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_tranh_deo` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_tranh_gia` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_van_dem` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ma_xo` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.moc_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ngu_tinh_song` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.nguoi_song_co` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.nha_suu_tam` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.oan_hon_dem` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.qua_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.qua_tinh_lon` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.quy_nhap_trang_dong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.quy_song_dem` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.ruou_nep` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.thach_ve` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.than_rung_dem` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.than_trung_dong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.thuong_luong_song` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.thuy_quai` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.tinh_cay` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.tinh_nui_gia` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.tinh_thu` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.tom_song2` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.tuong_da` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.vong_hon` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.vong_hon_gia` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.vong_linh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.vong_nui_gia` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.vong_rung` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.atlas.vong_rung_sau` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.ban_tay_than` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.ben_nuoc` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.canh_cuoi` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.dai_hiep_lang_que` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.deo_may` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.doi_mat_than_trung` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.dung_si_tru_ho` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.guild_war.hung_binh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.hiep_nghia_vo_song` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.khac_tinh_ma_da` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.lang_da` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.ngu_ong_ben_do` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.pvp.than_thoai` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.bup_lua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.ca_linh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.co_lua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.di_hon_dau` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.di_quy_xuan` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.dom_nguyen` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.hon_gao` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.ky_xuan` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.lang_da_ky_ghe` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.paid.dem_lang` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.tinh_buoi` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.0.vong_bien` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.bong_nguoi` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.ca_sam` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.dai_tinh_cay` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.di_mieu` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.di_moc` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.dom_lua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.ky_ram` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.ma_rung` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.paid` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.tinh_cay` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.u_minh_suong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.1.vong_rung_sau` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.ben_den` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.bong_nuoc_ma` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.ca_bong_den` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.ca_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.ca_tinh_gia` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.di_ma_da` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.di_xom` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.hon_chet_duoi` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.ky_ben` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.ma_da` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.paid` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.2.quy_song_dem` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.deo_suong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.di_hang` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.di_ho_ve` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.ho_con_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.ho_tinh_lon` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.khi_nui` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.ky_deo` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.ma_tranh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.ma_van_dem` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.paid` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.ruou_nep` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.3.vong_rung` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.ca_bong_kho` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.di_den` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.di_thach` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.hon_binh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.hon_tran_linh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.ky_thanh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.ma_co` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.paid` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.qua_tinh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.qua_tinh_lon` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.thanh_mua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.4.tuong_da` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.ca_suong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.dai_vong_linh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.di_cong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.di_linh_ve` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.hon_binh_co` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.ky_nui` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.ma_nui` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.nui_mua` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.paid` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.than_rung_dem` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.tinh_thu` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.season.5.vong_linh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.tam_giao_vien_man` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.thanh_co` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.thien_ha_de_nhat` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.tho_san_thuong_luong` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.trang_si_giup_doi` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.tuyet_dinh_than_binh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title.u_minh` — title: text-only title; no produced image; name uses generic folk-style vocabulary; cleared
+- `cosmetic.title_glow.bach_nhat` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.do_quang` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.hoa_quang` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.hong_phuc` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.kim_quang` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.linh_hoa` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.moc_xanh` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.thien_van` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.tho_bach` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.thuy_linh` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.tim_nhat` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.vang_nhat` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared
+- `cosmetic.title_glow.xanh_nhat` — title_glow: decorative emblem/ornament; no cultural motif claims; cleared

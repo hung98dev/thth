@@ -6,19 +6,18 @@ namespace ThinhThan.Art.Editor
 {
     // IMP-074 cosmetic art import rules: stamps the canonical import
     // profile (presentation_asset_manifest.md section 3/3.1a) onto every
-    // PNG under Assets/Art/Cosmetics/ and Assets/Art/StyleRef/cosmetics/
-    // that carries a sidecar declaration (<asset>.importmeta). The
-    // sidecar holds the importer userData verbatim (asset_class=...,
-    // size_profile=..., detached_parts) so CI materialization produces
-    // identical .meta files byte-for-byte. UI_ART imports at 200 PPU
-    // with a centred pivot; COSMETIC_APPEARANCE cells import at 100 PPU
-    // with the actor pivot (Bottom Center). Style Pack anchors import
-    // with the same rules but never ship inside Addressables.
+    // PNG under Assets/Art/Cosmetics/ and Assets/Art/StyleRef/cosmetics/.
+    // The asset_class declaration lives in the committed .meta userData
+    // (Unity seeds the importer with it before preprocessing and
+    // round-trips it back out), so CI materialization produces identical
+    // .meta files byte-for-byte. UI_ART imports at 200 PPU with a
+    // centred pivot; COSMETIC_APPEARANCE cells import at 100 PPU with
+    // the actor pivot (Bottom Center). Style Pack anchors import with
+    // the same rules but never ship inside Addressables.
     public sealed class CosmeticArtImporter : AssetPostprocessor
     {
         private const string CosmeticsRoot = "Assets/Art/Cosmetics/";
         private const string StyleRefRoot = "Assets/Art/StyleRef/cosmetics/";
-        private const string SidecarSuffix = ".importmeta";
 
         private void OnPreprocessTexture()
         {
@@ -29,15 +28,12 @@ namespace ThinhThan.Art.Editor
             {
                 return;
             }
-            var sidecar = Path.Combine(
-                Path.GetDirectoryName(Application.dataPath) ?? "",
-                assetPath + SidecarSuffix);
-            if (!File.Exists(sidecar))
+            var importer = (TextureImporter)assetImporter;
+            var userData = (importer.userData ?? string.Empty).Trim();
+            if (userData.Length == 0)
             {
                 return;
             }
-            var importer = (TextureImporter)assetImporter;
-            var userData = File.ReadAllText(sidecar).Trim();
             var assetClass = Declared(userData, "asset_class");
             var isAppearance = assetClass == "COSMETIC_APPEARANCE";
 
