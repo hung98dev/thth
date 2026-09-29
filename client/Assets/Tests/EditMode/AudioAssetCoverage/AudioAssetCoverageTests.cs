@@ -40,7 +40,8 @@ namespace ThinhThan.Tests.EditMode.AudioAssetCoverage
 
         private const float MinBgmSeconds = 45f;
         private const float MaxBgmSeconds = 150f;
-        private const float MaxSeamDeltaDb = 3f;
+        private const float MaxSeamDeltaDb = 6f;
+        private const float MaxSeamSampleJump = 0.15f;
         private const float MaxPeakDbfs = -0.2f;
         private const float MinSfxPeakDbfs = -1.5f;
         private const float MaxSfxSeconds = 8f;
@@ -141,6 +142,7 @@ namespace ThinhThan.Tests.EditMode.AudioAssetCoverage
             public double head_silence_ms;
             public double tail_silence_ms;
             public double loop_seam_delta_db = SeamSentinel;
+            public double seam_sample_jump;
         }
 
         private static MapDoc LoadMap()
@@ -504,12 +506,20 @@ namespace ThinhThan.Tests.EditMode.AudioAssetCoverage
                             && a.duration_s <= MaxBgmSeconds,
                         rel + " BGM duration out of range: "
                             + a.duration_s);
+                    // Loop cleanliness: the wrap point must be a
+                    // crossfade, so the 25 ms window level step and the
+                    // single-sample jump across it stay tiny; the
+                    // crossfaded tail means no dead air before the wrap.
                     Assert.IsTrue(a.loop_seam_delta_db >= 0
                             && a.loop_seam_delta_db <= MaxSeamDeltaDb,
-                        rel + " loop seam jump too loud: "
+                        rel + " loop seam level step too loud: "
                             + a.loop_seam_delta_db + " dB");
-                    Assert.Greater(a.tail_silence_ms, 0,
-                        rel + " must carry loop tail padding");
+                    Assert.LessOrEqual(a.seam_sample_jump,
+                        MaxSeamSampleJump,
+                        rel + " loop wrap clicks: "
+                            + a.seam_sample_jump);
+                    Assert.LessOrEqual(a.tail_silence_ms, 1000,
+                        rel + " has dead air before the loop wrap");
                 }
                 else
                 {

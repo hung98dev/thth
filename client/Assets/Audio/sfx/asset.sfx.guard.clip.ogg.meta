@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 4a96c6d2d77b32355e1d172ee40669d9
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 9
+  defaultSettings:
+    serializedVersion: 2
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 0.7
+    conversionMode: 7
+    preloadAudioData: 1
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  ambisonic: 0
+  3D: 1
+  userData: asset_class=AUDIO;audio_role=sfx
+  assetBundleName: 
+  assetBundleVariant: 

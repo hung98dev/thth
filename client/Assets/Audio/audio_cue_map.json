@@ -338,7 +338,16 @@
   }
  ],
  "terms_snapshots": {
-  "tool_terms": "",
-  "licenses": []
+  "tool_terms": "b7be9f9b43bca29de590bdd805f3fdf5aa9dbb35dd4821052d1126ee2640134b",
+  "licenses": [
+   {
+    "license_id": "CC-BY-4.0",
+    "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
+   },
+   {
+    "license_id": "CC0-1.0",
+    "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+   }
+  ]
  }
 }
