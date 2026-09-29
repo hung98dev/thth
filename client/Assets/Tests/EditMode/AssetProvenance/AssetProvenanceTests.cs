@@ -418,7 +418,7 @@ namespace ThinhThan.Tests.EditMode.AssetProvenance
             errors = AssetProvenanceValidator.Validate(RegisterOf(row2));
             Assert.IsTrue(HasError(errors, "model_id"));
             var row3 = AiRow("client/Assets/Art/Actor/x.png", Sha(new byte[] { 1 }));
-            row3.generation_record!.seed = null;
+            row3.generation_record!.seed = -1;
             errors = AssetProvenanceValidator.Validate(RegisterOf(row3));
             Assert.IsTrue(HasError(errors, "seed"));
 
