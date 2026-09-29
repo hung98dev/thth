@@ -234,11 +234,137 @@ ScriptedImporter:
   sharedRigSpriteImportData: []
   mosaicSpriteImportData: []
   sharedRigCharacterData:
-    bones: []
-    parts: []
+    bones:
+    - name: torso
+      guid: 5456a016cb17a3f8db69caf868099173
+      position: {x: 0, y: 0.55, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: -1
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    - name: head
+      guid: 36cfb95001dd8c501a3c4d544c7f7ab9
+      position: {x: 0, y: 1.15, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: 0
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    - name: hair
+      guid: 24fa3422a6c5f605bc73b2d46effd37f
+      position: {x: 0, y: 1.45, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: 1
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    - name: arm_front
+      guid: bf7a22c569edc8b18634700d502af9d7
+      position: {x: 0.28, y: 1, z: -0.01}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: 0
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    - name: arm_back
+      guid: fb111c3fcab49ae6b715f9bd12800460
+      position: {x: -0.28, y: 1, z: 0.01}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: 0
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    - name: leg_front
+      guid: 64faf4efedbb87276d9a592527915893
+      position: {x: 0.14, y: 0.35, z: -0.01}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: 0
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    - name: leg_back
+      guid: 984d7794eece429b8054936372bbed7e
+      position: {x: -0.14, y: 0.35, z: 0.01}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: 0
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    - name: weapon
+      guid: d04428c70e71cbf207ab282f969dda5d
+      position: {x: 0.35, y: 0.6, z: -0.02}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      length: 0.4
+      parentId: 3
+      color:
+        serializedVersion: 2
+        rgba: 4294967295
+    parts:
+    - spritePosition:
+        x: 54
+        y: 131
+        width: 64
+        height: 55
+      spriteId: 92caadfc01121b538a2cec019f0569ac
+      bones: 
+      parentGroup: 0
+      order: 0
+    - spritePosition:
+        x: 91
+        y: 38
+        width: 41
+        height: 93
+      spriteId: 6661730d1d4123c6db24d8a0d0ac4e27
+      bones: 
+      parentGroup: 0
+      order: 0
+    - spritePosition:
+        x: 44
+        y: 38
+        width: 37
+        height: 93
+      spriteId: 116680a1d1d6066e6874c968a314c72d
+      bones: 
+      parentGroup: 0
+      order: 0
+    - spritePosition:
+        x: 55
+        y: 49
+        width: 62
+        height: 71
+      spriteId: a8d8d1b817110fe6e9dc23a0378277a3
+      bones: 
+      parentGroup: 0
+      order: 0
+    - spritePosition:
+        x: 81
+        y: 2
+        width: 35
+        height: 58
+      spriteId: a63816d5e2a64f3b3bf163f26de918ca
+      bones: 
+      parentGroup: 0
+      order: 0
+    - spritePosition:
+        x: 59
+        y: 2
+        width: 32
+        height: 58
+      spriteId: ff22aadfe728f1de9a1d94278168e92d
+      bones: 
+      parentGroup: 0
+      order: 0
     dimension: {x: 0, y: 0}
     characterGroups: []
-    pivot: {x: 0, y: 0}
+    pivot: {x: 0.5, y: 0}
     boneReadOnly: 0
   characterData:
     bones: []
