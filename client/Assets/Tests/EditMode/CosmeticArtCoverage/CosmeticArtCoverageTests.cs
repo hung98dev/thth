@@ -1,8 +1,10 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using CutoutGateImpl =
     ThinhThan.Core.Assets.Editor.AssetProduction.CutoutQualityGate;
@@ -231,33 +233,6 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
             var px = tex.GetPixels32();
             Object.DestroyImmediate(tex);
             return px;
-        }
-
-        private static List<GateViolation> GateOne(string repoPath)
-        {
-            var violations = new List<GateViolation>();
-            var assetPath = repoPath.Substring("client/".Length);
-            var abs = Abs(repoPath);
-            var importer = AssetImporter.GetAtPath(assetPath);
-            var meta = ImportMetadata.Parse(
-                importer != null ? importer.userData : null);
-            if (meta.AssetClass == null)
-            {
-                violations.Add(new GateViolation(
-                    "asset_class", "import metadata missing for " + repoPath));
-                return violations;
-            }
-            var input = PresentationSizing.ToCutoutInput(
-                null!, 0, 0, meta.AssetClass.Value, meta, null);
-            violations.AddRange(CutoutGateImpl.ValidateFile(abs, input));
-            if (input.Width > 0)
-            {
-                var vinput = PresentationSizing.ToVolumeInput(
-                    input.Pixels, input.Width, input.Height,
-                    meta.AssetClass.Value, null);
-                violations.AddRange(VolumeDepthGateImpl.ValidatePixels(vinput));
-            }
-            return violations;
         }
 
         private static string[] ReadPsbLayerNames(string absPath)
@@ -563,7 +538,9 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
 
         // Cutout Gate + Volume & Depth Gate over every produced texture:
         // UI_ART runs the UI subset, COSMETIC_APPEARANCE runs the full
-        // pair. Zero violations.
+        // pair. Zero violations. The pixel gate is pure math, so after the
+        // main-thread decode + importer read each file validates in
+        // parallel — the 30-minute CI cap cannot fit ~110 serial checks.
         [Test]
         public void TestCutoutAndVolumeGates()
         {
@@ -572,12 +549,71 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
                 .Where(p => p.EndsWith(".png", System.StringComparison.Ordinal))
                 .ToList();
             Assert.IsNotEmpty(produced, "no produced textures");
+            var work = new List<(string path, GateViolation[] pre,
+                CutoutGateInput? input)>();
             foreach (var p in produced)
             {
-                var violations = GateOne(p);
-                Assert.IsEmpty(violations,
-                    p + " gate violations: "
-                        + string.Join(";", violations.Select(v => v.Rule
+                var assetPath = p.Substring("client/".Length);
+                var abs = Abs(p);
+                var importer = AssetImporter.GetAtPath(assetPath);
+                var meta = ImportMetadata.Parse(
+                    importer != null ? importer.userData : null);
+                if (meta.AssetClass == null)
+                {
+                    work.Add((p, new[]
+                    {
+                        new GateViolation("asset_class",
+                            "import metadata missing for " + p),
+                    }, default));
+                    continue;
+                }
+                var cls = meta.AssetClass.Value;
+                var input = PresentationSizing.ToCutoutInput(
+                    null!, 0, 0, cls, meta, null);
+                var pre = new List<GateViolation>();
+                if (GateScope.CutoutRules(cls).HasFlag(CutoutRule.Format))
+                {
+                    var probeError = PngProbe.CheckFile(abs);
+                    if (probeError != null)
+                    {
+                        pre.Add(new GateViolation(
+                            CutoutGateImpl.RuleFormat, probeError));
+                    }
+                }
+                if (pre.Count == 0)
+                {
+                    input.Pixels = LoadPng(abs, out var w, out var h);
+                    input.Width = w;
+                    input.Height = h;
+                }
+                work.Add((p, pre.ToArray(), input));
+            }
+            var results = new ConcurrentBag<(string path,
+                List<GateViolation> v)>();
+            Parallel.ForEach(work, item =>
+            {
+                var violations = new List<GateViolation>(item.pre);
+                if (item.input != null && item.input.Pixels != null)
+                {
+                    violations.AddRange(
+                        CutoutGateImpl.ValidatePixels(item.input));
+                    if (item.input.Width > 0)
+                    {
+                        var vinput = PresentationSizing.ToVolumeInput(
+                            item.input.Pixels, item.input.Width,
+                            item.input.Height, item.input.AssetClass,
+                            null);
+                        violations.AddRange(
+                            VolumeDepthGateImpl.ValidatePixels(vinput));
+                    }
+                }
+                results.Add((item.path, violations));
+            });
+            foreach (var r in results)
+            {
+                Assert.IsEmpty(r.v,
+                    r.path + " gate violations: "
+                        + string.Join(";", r.v.Select(v => v.Rule
                             + "@" + v.Detail)));
             }
         }
@@ -764,14 +800,25 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
             var produced = ProducedRepoPaths(doc)
                 .Where(p => p.EndsWith(".png", System.StringComparison.Ordinal))
                 .ToList();
-            foreach (var p in produced)
+            // Decode on the main thread; the palette scan is pure math
+            // and runs in parallel (same CI-minute budget reasoning as
+            // TestCutoutAndVolumeGates).
+            var decoded = produced
+                .Select(p => (p, px: LoadPng(Abs(p),
+                    out var w, out var h), w, h))
+                .ToList();
+            var results = new ConcurrentBag<(string p,
+                List<GateViolation> v)>();
+            Parallel.ForEach(decoded, item =>
             {
-                var px = LoadPng(Abs(p), out var w, out var h);
-                var violations = StylePackGate.CheckPalette(
-                    px, w, h, null, palette!);
-                Assert.IsEmpty(violations,
-                    p + " palette gate violations: "
-                        + string.Join(";", violations.Select(v => v.Detail)));
+                results.Add((item.p, StylePackGate.CheckPalette(
+                    item.px, item.w, item.h, null, palette!)));
+            });
+            foreach (var r in results)
+            {
+                Assert.IsEmpty(r.v,
+                    r.p + " palette gate violations: "
+                        + string.Join(";", r.v.Select(v => v.Detail)));
             }
         }
 
