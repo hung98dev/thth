@@ -1,0 +1,673 @@
+{
+  "schema_version": 1,
+  "assets": [
+    {
+      "asset_key": "asset.bgm.shared.guild_war.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.shared.guild_war.bgm.ogg",
+      "content_id": "bgm.shared.guild_war.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "EvanBoyerman (bed) + TheoJT (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/EvanBoyerman/sounds/753859/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "e055ee3600207eb287f634b510da6f364f3038a80b8c09c10eecf9e65ce8dd43",
+      "final_sha256": "60fd8e7dd9f48d016f5299548a56693a0bc102d8fd90eef4aa7358c1545340e0",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Guild War — cinematic battle theme over distant booms\" composed from CC-licensed sources: bed \"Outdoor Fireworks Ambience in Suburb Neighborhood at Night (Stereo Ambience)\" by EvanBoyerman and motif \"Cinematic Battle Song\" by TheoJT on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/EvanBoyerman/sounds/753859/, https://freesound.org/people/TheoJT/sounds/510953/)",
+      "folklore_card": {
+        "source_tales": [
+          "chiến tranh Đông sơn",
+          "trống đồng Đông Sơn"
+        ],
+        "regional_variants": "huyền thoại chiến trường",
+        "motifs_checked": [
+          "trống chiến",
+          "không sao chép soundtrack hiện đại"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "TheoJT",
+          "source_uri": "https://freesound.org/people/TheoJT/sounds/510953/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "4ab0e691e1c456b83c89adbc324d74d0f8985b720649cc09fdb49acac7fbd915"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.bgm.shared.pvp.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.shared.pvp.bgm.ogg",
+      "content_id": "bgm.shared.pvp.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "SonoRec (bed) + LiyahMackenzie (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/SonoRec/sounds/262246/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "08f573fed97735f5a2e150eabd32a3384b362e56d80c28d65c6210c38dc3eeec",
+      "final_sha256": "13a97ef6675f9765a3a043990db3ae85da3987e733f768b02ad5a175c89eb2d2",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Arena — taiko war loop over arena crowd\" composed from CC-licensed sources: bed \"MadridArenaPtBaja.mp3\" by SonoRec and motif \"Taiko Scruffing 112BPM Loop\" by LiyahMackenzie on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/SonoRec/sounds/262246/, https://freesound.org/people/LiyahMackenzie/sounds/847193/)",
+      "folklore_card": {
+        "source_tales": [
+          "trống trận Lam Sơn",
+          "hội đấu vật làng"
+        ],
+        "regional_variants": "đấu trường truyền thống",
+        "motifs_checked": [
+          "taiko/trống chậm",
+          "không nhạc phim có bản quyền"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "LiyahMackenzie",
+          "source_uri": "https://freesound.org/people/LiyahMackenzie/sounds/847193/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "28dd2e8e7937ab6448b0c0fece013509f2b7305b8c69407ede355f383edb2f0f"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.bgm.zone.ben_nuoc_den.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.zone.ben_nuoc_den.bgm.ogg",
+      "content_id": "bgm.zone.ben_nuoc_den.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "Garuda1982 (bed) + PatrickLieberkind (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/Garuda1982/sounds/645971/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "a9b4e24aab66d0fae1836760104690f981385944f4a839e0f6e2b6a4036712ef",
+      "final_sha256": "2b4b39638411da21ba4721249626241f32a65454064d72705ac72350b10cd4d8",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Bến Nước Đen — dark river drone over night lake ambience\" composed from CC-licensed sources: bed \"night at the forest lake nature atmo\" by Garuda1982 and motif \"Dark Ambience\" by PatrickLieberkind on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/Garuda1982/sounds/645971/, https://freesound.org/people/PatrickLieberkind/sounds/244961/)",
+      "folklore_card": {
+        "source_tales": [
+          "Bến Nước Đen — di tích kháng chiến",
+          "huyền thoại sông nước đêm"
+        ],
+        "regional_variants": "bến đò miền Tây",
+        "motifs_checked": [
+          "drone trầm",
+          "không nhạc đưa đám"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "PatrickLieberkind",
+          "source_uri": "https://freesound.org/people/PatrickLieberkind/sounds/244961/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "ec346c4b2e5d5891fa15986e51796bae6d73d563e74da8a1801b18195e1b39bc"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.bgm.zone.deo_may.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.zone.deo_may.bgm.ogg",
+      "content_id": "bgm.zone.deo_may.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "Leandros.Ntounis (bed) + milivolt (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/Leandros.Ntounis/sounds/163607/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "054db3c6d9b9fff296266fc845f1627a798c6bf6c2887d668e56d6bb5b216897",
+      "final_sha256": "1634ca9b7335c9b947b9fc591912c1ef052ca65ea8e102da97d7e33e8023e7d9",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Đèo Mây — high pass wind with distant temple bells\" composed from CC-licensed sources: bed \"Wind, Soft. Crickets.wav\" by Leandros.Ntounis and motif \"Keisu temple bell\" by milivolt on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/Leandros.Ntounis/sounds/163607/, https://freesound.org/people/milivolt/sounds/367128/)",
+      "folklore_card": {
+        "source_tales": [
+          "đèo mây Hải Vân",
+          "chuông chùa núi cao"
+        ],
+        "regional_variants": "vùng núi Bắc/Trung",
+        "motifs_checked": [
+          "chuông chùa xa",
+          "không giai điệu quan họ có bản quyền"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "milivolt",
+          "source_uri": "https://freesound.org/people/milivolt/sounds/367128/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "b280a9631ef59bfba8e3489b379549b8d2e9da4bfaa551d060a12005b0bde004"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.bgm.zone.lang_da.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.zone.lang_da.bgm.ogg",
+      "content_id": "bgm.zone.lang_da.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "klankbeeld (bed) + CarlosCarty (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/klankbeeld/sounds/269199/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "d3e191680f0522fc8b8e334cbb4c17af502f753cf92a73b204438bde6e29a721",
+      "final_sha256": "fbc725fe79754a597b66499abe106c85674107436c12f3ebbbe2f7eaa17a33e9",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Làng Dạ — riverside hamlet at dawn (bamboo flute over village ambience)\" composed from CC-licensed sources: bed \"Hamlet morning 01 Bokhoven 150405_0585.wav\" by klankbeeld and motif \"Dizi Flute 03.wav\" by CarlosCarty on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/klankbeeld/sounds/269199/, https://freesound.org/people/CarlosCarty/sounds/427849/)",
+      "folklore_card": {
+        "source_tales": [
+          "truyen co tich Viet Nam — lang que",
+          "Nam bộ folk village life"
+        ],
+        "regional_variants": "đồng bằng sông Cửu Long village soundscape",
+        "motifs_checked": [
+          "đàn tranh/dizi bamboo timbre",
+          "không dùng giai điệu dân ca có bản quyền"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "CarlosCarty",
+          "source_uri": "https://freesound.org/people/CarlosCarty/sounds/427849/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "bef7e7d2b25c3c4d4a5c47c09f48082928c8766260b6d41536d68c5dad89fd60"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.bgm.zone.nui_thieng.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.zone.nui_thieng.bgm.ogg",
+      "content_id": "bgm.zone.nui_thieng.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "kevp888 (bed) + djgriffin (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/kevp888/sounds/701473/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "218ba0d9472f604ec28678474f110cedd6f674b9dc37f405b13b39305ef6545c",
+      "final_sha256": "b31e86fbc1fcc706c0c8bf75f7665bd1395decc29f87959bd692a569aa98d754",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Núi Thiêng — sacred mountain twilight with low chant\" composed from CC-licensed sources: bed \"230819_2537_FR_Summer_twilight_in_the_mountains.wav\" by kevp888 and motif \"tibetan chant 4 colargol.aif\" by djgriffin on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/kevp888/sounds/701473/, https://freesound.org/people/djgriffin/sounds/15489/)",
+      "folklore_card": {
+        "source_tales": [
+          "núi thiêng Tả Lơn/Yên Tử",
+          "kinh Phật niệm chú"
+        ],
+        "regional_variants": "núi Phật giáo Việt Nam",
+        "motifs_checked": [
+          "chant trầm",
+          "không sao chép bài hát hiện đại"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "djgriffin",
+          "source_uri": "https://freesound.org/people/djgriffin/sounds/15489/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "73c714de13178e1de3e1bc3c96a77159f86c3de6af5d6d97685468da32ffd97d"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.bgm.zone.rung_u_minh.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.zone.rung_u_minh.bgm.ogg",
+      "content_id": "bgm.zone.rung_u_minh.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "bolkmar (bed) + OverlookHotelRecords (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/bolkmar/sounds/423804/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "bcb873fbbaa5a3bfefd6aab0e83e86003395c6dc15dd3145b4a31aac78485fa2",
+      "final_sha256": "059a228310539ef54b907f3762c8df8c943253017e95a021ead693b2473f0830",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Rừng U Minh — dense forest ritual drums under jungle birds\" composed from CC-licensed sources: bed \"Exotic Birds sound\" by bolkmar and motif \"Tribal Drum Pattern 2.wav\" by OverlookHotelRecords on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/bolkmar/sounds/423804/, https://freesound.org/people/OverlookHotelRecords/sounds/271430/)",
+      "folklore_card": {
+        "source_tales": [
+          "rừng U Minh kháng chiến",
+          "truyện ma rừng Nam Bộ"
+        ],
+        "regional_variants": "U Minh melaleuca forest, Nam Bộ",
+        "motifs_checked": [
+          "trống nghi lễ",
+          "không sao chép giai điệu sử có"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "OverlookHotelRecords",
+          "source_uri": "https://freesound.org/people/OverlookHotelRecords/sounds/271430/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "e21dba5cbc359c0e54038bf45c6518b202aea6d0bd8da2adcc9d32eb7d9ae7dd"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.bgm.zone.thanh_co.bgm",
+      "file_path": "client/Assets/Audio/bgm/asset.bgm.zone.thanh_co.bgm.ogg",
+      "content_id": "bgm.zone.thanh_co.bgm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "Calcuttan (bed) + Veridiansunrise (motif) via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/Calcuttan/sounds/186745/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "35dfde66cb1deef47b0781f1f92d3271ec9d784d288374da09db69938bab3c64",
+      "final_sha256": "b9e04c20378936b9604405a95b611719a032d9e5699232b7ca147db56b781759",
+      "changes": "agent-composed loop: bed loopified with 4 s wrap crossfade, motif layer looped/tiled to same length at 55% bed RMS, mixed, peak-normalized -0.8 dBFS, Ogg Vorbis q5 stereo",
+      "attribution": "BGM \"Thành Cổ — ancient citadel gong over temple soundscape\" composed from CC-licensed sources: bed \"Kali Temple Soundscape\" by Calcuttan and motif \"Buddhist Golden Temple Gong\" by Veridiansunrise on freesound.org, both CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/Calcuttan/sounds/186745/, https://freesound.org/people/Veridiansunrise/sounds/350723/)",
+      "folklore_card": {
+        "source_tales": [
+          "thành cổ Quảng Trị/Thăng Long",
+          "nghi lễ cổ truyền"
+        ],
+        "regional_variants": "thành quách miền Bắc",
+        "motifs_checked": [
+          "cồng chiêng",
+          "không dùng nhạc cung đình có bản quyền"
+        ]
+      },
+      "cultural_entity": true,
+      "inputs": [
+        {
+          "creator": "Veridiansunrise",
+          "source_uri": "https://freesound.org/people/Veridiansunrise/sounds/350723/",
+          "license_id": "CC-BY-4.0",
+          "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+          "acquired_at_utc": "2026-09-29T18:03:43Z",
+          "sha256": "84cdffde080d66c1a0eaa52286732a6a1cf277d3c8eac6039a964b54f8b1707c"
+        }
+      ],
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.basic_attack.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.basic_attack.clip.ogg",
+      "content_id": "sfx.basic_attack",
+      "source_kind": "FREE_LICENSED",
+      "creator": "Squirrel_404 via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/Squirrel_404/sounds/737748/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "9b72696483ff139c42ce598c066b6e2dae6740f53e1fc94d6b9eaf13fdb02415",
+      "final_sha256": "b1dfd08b9f5226b6c0532a5df7565fd203b3d7bad367a53710761e45687af9ef",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Large sword swing\" by Squirrel_404 on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/Squirrel_404/sounds/737748/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.boss_telegraph.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.boss_telegraph.clip.ogg",
+      "content_id": "sfx.boss_telegraph",
+      "source_kind": "FREE_LICENSED",
+      "creator": "aesqe via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/aesqe/sounds/49127/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "9aaee8e4a0d359847f2b2ee67c9e0701708bdc72ecdbfac8db5f7c0f334e5bff",
+      "final_sha256": "59762491c019696c392331d7f8e901523f380d3afe44a638fe1065478af9c3c0",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"monster_growl_01.wav\" by aesqe on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/aesqe/sounds/49127/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.guard.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.guard.clip.ogg",
+      "content_id": "sfx.guard",
+      "source_kind": "FREE_LICENSED",
+      "creator": "DinisNakamura via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/DinisNakamura/sounds/812518/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "f464528eb347a6cceb34317335f47c16cc5cab3419689847d78c0d9552ad8d72",
+      "final_sha256": "1fb341adef175d8b2ba829b4c75c370b64ccbd11b0361337e1e94a11c81dae20",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Shield block-01\" by DinisNakamura on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/DinisNakamura/sounds/812518/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.hit.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.hit.clip.ogg",
+      "content_id": "sfx.hit",
+      "source_kind": "FREE_LICENSED",
+      "creator": "-GeorgeDiamond- via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/-GeorgeDiamond-/sounds/718259/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "ff0ea00794b11405ed69a0446608ad35706844540f88fe1d8e093bdf6099859e",
+      "final_sha256": "c4d83af98180c7e806c43d5f182d92437304310dd6e5ac747c73badea64fe16b",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Sword Stab  Body Hit\" by -GeorgeDiamond- on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/-GeorgeDiamond-/sounds/718259/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.item_pickup.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.item_pickup.clip.ogg",
+      "content_id": "sfx.item_pickup",
+      "source_kind": "FREE_LICENSED",
+      "creator": "Scrampunk via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/Scrampunk/sounds/345297/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "9fb11859914aa97cf8e763a5a73f462c48cad413730d0d4746dbec24240c079d",
+      "final_sha256": "a24f2bf646f26d330e053946dd8205045e220ad925afc02029c269b076f966c4",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Itemize\" by Scrampunk on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/Scrampunk/sounds/345297/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.jump.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.jump.clip.ogg",
+      "content_id": "sfx.jump",
+      "source_kind": "FREE_LICENSED",
+      "creator": "_bepis via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/_bepis/sounds/414422/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "1aa7096ac7a465adaccb8c585acb0362bffb109ea0eeec46eb14e00f8c29378d",
+      "final_sha256": "b072fbbb7642ad2f86b2f07d777a34c3fc4e294999bf7c4f6682cd9fef1e2a77",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Whoosh.wav\" by _bepis on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/_bepis/sounds/414422/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.just_guard_success.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.just_guard_success.clip.ogg",
+      "content_id": "sfx.just_guard_success",
+      "source_kind": "FREE_LICENSED",
+      "creator": "32cheeseman32 via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/32cheeseman32/sounds/180828/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "07ba3955213b1c0b1f6331093820c70acfedcf841cbc798b6ee594fc52270dd5",
+      "final_sha256": "2676692989ec52c5e623ce05d56ee4486ea1dab820527f15f73a201df7f8dfc4",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"SwordClash09\" by 32cheeseman32 on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/32cheeseman32/sounds/180828/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.land.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.land.clip.ogg",
+      "content_id": "sfx.land",
+      "source_kind": "FREE_LICENSED",
+      "creator": "jjhouse4 via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/jjhouse4/sounds/203039/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "5738f90e6b85fb5b166ec864efd228045240f706345ee80dcd063ec8b36ecfd6",
+      "final_sha256": "d961d28cefc7f3b7e3293d4ce803c69e5e56f7866e60c4741c462d0380da112c",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Dropping Body on Hard Ground.wav\" by jjhouse4 on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/jjhouse4/sounds/203039/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.map_transfer.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.map_transfer.clip.ogg",
+      "content_id": "sfx.map_transfer",
+      "source_kind": "FREE_LICENSED",
+      "creator": "Elethorpia via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/Elethorpia/sounds/133867/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "07329d4218d99ef5eaaa9c8e6e5fd2b48e8d046046f32b6f0fb758fdd1e0f4f9",
+      "final_sha256": "5360c4fa89c1bf05c11062b84dad98b7de322a7f25223238ae80a4617ed6d0dd",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"teleport.wav\" by Elethorpia on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/Elethorpia/sounds/133867/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.quest_complete.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.quest_complete.clip.ogg",
+      "content_id": "sfx.quest_complete",
+      "source_kind": "FREE_LICENSED",
+      "creator": "mokasza via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/mokasza/sounds/810753/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "9fa18ea9099f9e5ef3e0b3e5291d59c8c083f986f884686c6c2af943b01ae5ec",
+      "final_sha256": "d9dd16423b68986e5d99fb296d99e3d197a4c7e9d54288aa27289852a7b06f8d",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Level Up 01\" by mokasza on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/mokasza/sounds/810753/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.skill_cast.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.skill_cast.clip.ogg",
+      "content_id": "sfx.skill_cast",
+      "source_kind": "FREE_LICENSED",
+      "creator": "qubodup via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/qubodup/sounds/202147/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "464cbc01660489450170d65bf8e74a5c1e86cd407ae8a083bfd0223e2cc94985",
+      "final_sha256": "a8ff727de8d81a5cb14ee4da398c9cbc77717fbcaebb0f6b4a65f7346ad15c31",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Enchant.flac\" by qubodup on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/qubodup/sounds/202147/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.ui_cancel.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.ui_cancel.clip.ogg",
+      "content_id": "sfx.ui_cancel",
+      "source_kind": "FREE_LICENSED",
+      "creator": "joseegn via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/joseegn/sounds/756267/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "f930d67387613c6e239f5322079996193f7533caa52bb0b323d204a25ef6cd64",
+      "final_sha256": "86038be7018c0e83cc4033af392084a4bca26599ddbb2def13a19202cf6bd592",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"UI_Sound_Return_1\" by joseegn on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/joseegn/sounds/756267/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.ui_confirm.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.ui_confirm.clip.ogg",
+      "content_id": "sfx.ui_confirm",
+      "source_kind": "FREE_LICENSED",
+      "creator": "InspectorJ via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/InspectorJ/sounds/403007/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "2fcc6405b2a210e01db5540818a0bb53dc845adc7fa515ed15281dfb2a3f9e2d",
+      "final_sha256": "ec1bc68e02e62fa196977296c6c7c9e6f24575d8223914f37e9ec4c2e9e1a59f",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"UI Confirmation Alert, A2.wav\" by InspectorJ on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/InspectorJ/sounds/403007/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    },
+    {
+      "asset_key": "asset.sfx.ui_error.clip",
+      "file_path": "client/Assets/Audio/sfx/asset.sfx.ui_error.clip.ogg",
+      "content_id": "sfx.ui_error",
+      "source_kind": "FREE_LICENSED",
+      "creator": "SilverIllusionist via Freesound.org API (https://freesound.org/apiv2)",
+      "source_uri": "https://freesound.org/people/SilverIllusionist/sounds/665138/",
+      "license_id": "CC-BY-4.0",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "acquired_at_utc": "2026-09-29T18:03:43Z",
+      "source_sha256": "e795fb0aa87ee378ff20f68233f8a2d2566fbebb5c57204d131ffd7fcd5ffc10",
+      "final_sha256": "e27258f44661c9afd8a28e4a3d7ebb3b649f2455008ccd329691f320426bfebc",
+      "changes": "decode preview -> trim silence -> peak-normalize -0.7 dBFS -> 60 ms fades -> resample 44.1 kHz mono -> Ogg Vorbis q5",
+      "attribution": "\"Error (Piercing Retort).wav\" by SilverIllusionist on freesound.org, licensed CC BY 4.0, sourced via Freesound.org API (https://freesound.org/apiv2) (https://freesound.org/people/SilverIllusionist/sounds/665138/)",
+      "folklore_card": {
+        "source_tales": [
+          "none — generic combat/UI foley recording, no cultural tale source"
+        ],
+        "regional_variants": "none — non-regional foley",
+        "motifs_checked": [
+          "no folk melody or ethnic-instrument motif used; source is a generic recorded sound reviewed against the forbidden-motif list"
+        ]
+      },
+      "cultural_entity": false,
+      "review_state": "PENDING"
+    }
+  ]
+}
