@@ -1,0 +1,2917 @@
+{
+ "schema_version": 1,
+ "fragment": "cosmetics",
+ "shared_targets": {
+  "title_plate_story": {
+   "file": "shared/asset.cosmetic.shared.title_plate_story.icon.png",
+   "asset_key": "asset.cosmetic.shared.title_plate_story.icon"
+  },
+  "title_plate_glow": {
+   "file": "shared/asset.cosmetic.shared.title_plate_glow.icon.png",
+   "asset_key": "asset.cosmetic.shared.title_plate_glow.icon"
+  },
+  "title_plate_prestige": {
+   "file": "shared/asset.cosmetic.shared.title_plate_prestige.icon.png",
+   "asset_key": "asset.cosmetic.shared.title_plate_prestige.icon"
+  },
+  "title_glow_halo": {
+   "file": "shared/asset.cosmetic.shared.title_glow_halo.icon.png",
+   "asset_key": "asset.cosmetic.shared.title_glow_halo.icon"
+  }
+ },
+ "entries": [
+  {
+   "cosmetic_id": "cosmetic.appearance.ao_toi_la",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Áo Tơi Lá",
+   "seed": 1388452658,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.appearance.ao_toi_la.prefab",
+   "icon": "asset:cosmetic.appearance.ao_toi_la.icon",
+   "layers": [
+    "torso",
+    "arm_back"
+   ],
+   "file": "appearances/ao_toi_la/asset.cosmetic.appearance.ao_toi_la.psb",
+   "icon_file": "appearances/ao_toi_la/asset.cosmetic.appearance.ao_toi_la.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.appearance.ao_vai_hoa_van",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Áo Vải Hoa Văn",
+   "seed": 1719142123,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.appearance.ao_vai_hoa_van.prefab",
+   "icon": "asset:cosmetic.appearance.ao_vai_hoa_van.icon",
+   "layers": [
+    "torso",
+    "arm_front",
+    "arm_back",
+    "leg_front",
+    "leg_back"
+   ],
+   "file": "appearances/ao_vai_hoa_van/asset.cosmetic.appearance.ao_vai_hoa_van.psb",
+   "icon_file": "appearances/ao_vai_hoa_van/asset.cosmetic.appearance.ao_vai_hoa_van.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.appearance.khan_ben_nuoc",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Khan Ben Nuoc",
+   "seed": 270502091,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.appearance.khan_ben_nuoc.prefab",
+   "icon": "asset:cosmetic.appearance.khan_ben_nuoc.icon",
+   "layers": [
+    "torso"
+   ],
+   "file": "appearances/khan_ben_nuoc/asset.cosmetic.appearance.khan_ben_nuoc.psb",
+   "icon_file": "appearances/khan_ben_nuoc/asset.cosmetic.appearance.khan_ben_nuoc.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.appearance.non_la_moc",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Non La Moc",
+   "seed": 1131939978,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.appearance.non_la_moc.prefab",
+   "icon": "asset:cosmetic.appearance.non_la_moc.icon",
+   "layers": [
+    "hair"
+   ],
+   "file": "appearances/non_la_moc/asset.cosmetic.appearance.non_la_moc.psb",
+   "icon_file": "appearances/non_la_moc/asset.cosmetic.appearance.non_la_moc.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.aura.linh_khi",
+   "kind": "aura",
+   "slot": "aura",
+   "display": "aura",
+   "seed": 2120733168,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.aura.linh_khi.icon",
+   "icon": "asset:cosmetic.aura.linh_khi.icon",
+   "file": "auras/asset.cosmetic.aura.linh_khi.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.aura.quy_khi",
+   "kind": "aura",
+   "slot": "aura",
+   "display": "aura",
+   "seed": 2088419044,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.aura.quy_khi.icon",
+   "icon": "asset:cosmetic.aura.quy_khi.icon",
+   "file": "auras/asset.cosmetic.aura.quy_khi.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.emote.season.0.paid.chap_tay",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Chắp Tay",
+   "seed": 1002742332,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.emote.season.0.paid.chap_tay.icon",
+   "icon": "asset:cosmetic.emote.season.0.paid.chap_tay.icon",
+   "file": "emotes/asset.cosmetic.emote.season.0.paid.chap_tay.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.emote.season.1.paid",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Điệu Mùa U Minh",
+   "seed": 1913410388,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.emote.season.1.paid.icon",
+   "icon": "asset:cosmetic.emote.season.1.paid.icon",
+   "file": "emotes/asset.cosmetic.emote.season.1.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.emote.season.2.paid",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Điệu Mùa Bến Đen",
+   "seed": 83193882,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.emote.season.2.paid.icon",
+   "icon": "asset:cosmetic.emote.season.2.paid.icon",
+   "file": "emotes/asset.cosmetic.emote.season.2.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.emote.season.3.paid",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Điệu Mùa Đèo Sương",
+   "seed": 158036230,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.emote.season.3.paid.icon",
+   "icon": "asset:cosmetic.emote.season.3.paid.icon",
+   "file": "emotes/asset.cosmetic.emote.season.3.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.emote.season.4.paid",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Điệu Mùa Thành Mùa",
+   "seed": 2005286685,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.emote.season.4.paid.icon",
+   "icon": "asset:cosmetic.emote.season.4.paid.icon",
+   "file": "emotes/asset.cosmetic.emote.season.4.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.emote.season.5.paid",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Điệu Mùa Núi Mùa",
+   "seed": 1498725019,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.emote.season.5.paid.icon",
+   "icon": "asset:cosmetic.emote.season.5.paid.icon",
+   "file": "emotes/asset.cosmetic.emote.season.5.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.bach_ho",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "frame",
+   "seed": 1520321007,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.bach_ho.icon",
+   "icon": "asset:cosmetic.frame.bach_ho.icon",
+   "file": "frames/asset.cosmetic.frame.bach_ho.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.ben_da",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Bến Đa",
+   "seed": 615773693,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.ben_da.icon",
+   "icon": "asset:cosmetic.frame.ben_da.icon",
+   "file": "frames/asset.cosmetic.frame.ben_da.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.guild_war.chien_ky",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Chiến Kỳ",
+   "seed": 798805681,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.guild_war.chien_ky.icon",
+   "icon": "asset:cosmetic.frame.guild_war.chien_ky.icon",
+   "file": "frames/asset.cosmetic.frame.guild_war.chien_ky.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.ho_tinh",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Hồ Tinh",
+   "seed": 1397752918,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.ho_tinh.icon",
+   "icon": "asset:cosmetic.frame.ho_tinh.icon",
+   "file": "frames/asset.cosmetic.frame.ho_tinh.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.huyen_vu",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "frame",
+   "seed": 60820027,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.huyen_vu.icon",
+   "icon": "asset:cosmetic.frame.huyen_vu.icon",
+   "file": "frames/asset.cosmetic.frame.huyen_vu.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.lan_linh",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "frame",
+   "seed": 1070788223,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.lan_linh.icon",
+   "icon": "asset:cosmetic.frame.lan_linh.icon",
+   "file": "frames/asset.cosmetic.frame.lan_linh.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.nui_thieng",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Núi Thiêng",
+   "seed": 2119155147,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.nui_thieng.icon",
+   "icon": "asset:cosmetic.frame.nui_thieng.icon",
+   "file": "frames/asset.cosmetic.frame.nui_thieng.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.phuong_hoang",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "frame",
+   "seed": 599389224,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.phuong_hoang.icon",
+   "icon": "asset:cosmetic.frame.phuong_hoang.icon",
+   "file": "frames/asset.cosmetic.frame.phuong_hoang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.pvp.bac",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Bạc Đấu Trường",
+   "seed": 1302176289,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.pvp.bac.icon",
+   "icon": "asset:cosmetic.frame.pvp.bac.icon",
+   "file": "frames/asset.cosmetic.frame.pvp.bac.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.pvp.linh",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Linh Đấu Trường",
+   "seed": 952672725,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.pvp.linh.icon",
+   "icon": "asset:cosmetic.frame.pvp.linh.icon",
+   "file": "frames/asset.cosmetic.frame.pvp.linh.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.pvp.ngoc",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Ngọc Đấu Trường",
+   "seed": 814690382,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.pvp.ngoc.icon",
+   "icon": "asset:cosmetic.frame.pvp.ngoc.icon",
+   "file": "frames/asset.cosmetic.frame.pvp.ngoc.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.pvp.than_thoai",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Thần Thoại Đấu Trường",
+   "seed": 112036528,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.pvp.than_thoai.icon",
+   "icon": "asset:cosmetic.frame.pvp.than_thoai.icon",
+   "file": "frames/asset.cosmetic.frame.pvp.than_thoai.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.pvp.vang",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Vàng Đấu Trường",
+   "seed": 2000221567,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.pvp.vang.icon",
+   "icon": "asset:cosmetic.frame.pvp.vang.icon",
+   "file": "frames/asset.cosmetic.frame.pvp.vang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.rong_vang",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "frame",
+   "seed": 1649234032,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.rong_vang.icon",
+   "icon": "asset:cosmetic.frame.rong_vang.icon",
+   "file": "frames/asset.cosmetic.frame.rong_vang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.0",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Mùa Làng Đa",
+   "seed": 43307287,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.0.icon",
+   "icon": "asset:cosmetic.frame.season.0.icon",
+   "file": "frames/asset.cosmetic.frame.season.0.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.0.paid",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Đêm Làng",
+   "seed": 38488193,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.0.paid.icon",
+   "icon": "asset:cosmetic.frame.season.0.paid.icon",
+   "file": "frames/asset.cosmetic.frame.season.0.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.1",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Mùa U Minh",
+   "seed": 233501951,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.1.icon",
+   "icon": "asset:cosmetic.frame.season.1.icon",
+   "file": "frames/asset.cosmetic.frame.season.1.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.1.paid",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Đêm U Minh",
+   "seed": 468498291,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.1.paid.icon",
+   "icon": "asset:cosmetic.frame.season.1.paid.icon",
+   "file": "frames/asset.cosmetic.frame.season.1.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.2",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Mùa Bến Đen",
+   "seed": 1266093565,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.2.icon",
+   "icon": "asset:cosmetic.frame.season.2.icon",
+   "file": "frames/asset.cosmetic.frame.season.2.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.2.paid",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Đêm Bến Đen",
+   "seed": 1121252569,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.2.paid.icon",
+   "icon": "asset:cosmetic.frame.season.2.paid.icon",
+   "file": "frames/asset.cosmetic.frame.season.2.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.3",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Mùa Đèo Sương",
+   "seed": 1553840833,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.3.icon",
+   "icon": "asset:cosmetic.frame.season.3.icon",
+   "file": "frames/asset.cosmetic.frame.season.3.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.3.paid",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Đêm Đèo Sương",
+   "seed": 2074531679,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.3.paid.icon",
+   "icon": "asset:cosmetic.frame.season.3.paid.icon",
+   "file": "frames/asset.cosmetic.frame.season.3.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.4",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Mùa Thành Mùa",
+   "seed": 685176660,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.4.icon",
+   "icon": "asset:cosmetic.frame.season.4.icon",
+   "file": "frames/asset.cosmetic.frame.season.4.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.4.paid",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Đêm Thành Mùa",
+   "seed": 545653809,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.4.paid.icon",
+   "icon": "asset:cosmetic.frame.season.4.paid.icon",
+   "file": "frames/asset.cosmetic.frame.season.4.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.5",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Mùa Núi Mùa",
+   "seed": 1800285537,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.5.icon",
+   "icon": "asset:cosmetic.frame.season.5.icon",
+   "file": "frames/asset.cosmetic.frame.season.5.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.frame.season.5.paid",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Khung Đêm Núi Mùa",
+   "seed": 1422344157,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.frame.season.5.paid.icon",
+   "icon": "asset:cosmetic.frame.season.5.paid.icon",
+   "file": "frames/asset.cosmetic.frame.season.5.paid.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild.banner.guild_war_champion",
+   "kind": "guild_banner",
+   "slot": "guild_banner",
+   "display": "Cờ Bá Chủ Ngũ Ấn",
+   "seed": 28767917,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild.banner.guild_war_champion.icon",
+   "icon": "asset:cosmetic.guild.banner.guild_war_champion.icon",
+   "file": "guild/asset.cosmetic.guild.banner.guild_war_champion.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild.banner.ritual_8",
+   "kind": "guild_banner",
+   "slot": "guild_banner",
+   "display": "Cờ Hoa Văn",
+   "seed": 1751824211,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild.banner.ritual_8.icon",
+   "icon": "asset:cosmetic.guild.banner.ritual_8.icon",
+   "file": "guild/asset.cosmetic.guild.banner.ritual_8.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild.crest.ritual_4",
+   "kind": "guild_crest",
+   "slot": "guild_crest",
+   "display": "Nét Tre",
+   "seed": 602813579,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild.crest.ritual_4.icon",
+   "icon": "asset:cosmetic.guild.crest.ritual_4.icon",
+   "file": "guild/asset.cosmetic.guild.crest.ritual_4.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild.shrine.guild_war_top10",
+   "kind": "guild_shrine",
+   "slot": "guild_shrine",
+   "display": "Đàn Ngũ Ấn",
+   "seed": 1385186667,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild.shrine.guild_war_top10.icon",
+   "icon": "asset:cosmetic.guild.shrine.guild_war_top10.icon",
+   "file": "guild/asset.cosmetic.guild.shrine.guild_war_top10.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild.shrine.ritual_12",
+   "kind": "guild_shrine",
+   "slot": "guild_shrine",
+   "display": "Đèn Hội Tụ",
+   "seed": 1048607108,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild.shrine.ritual_12.icon",
+   "icon": "asset:cosmetic.guild.shrine.ritual_12.icon",
+   "file": "guild/asset.cosmetic.guild.shrine.ritual_12.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild_stone.inscription.kim_bach",
+   "kind": "guild_stone_inscription",
+   "slot": "guild_stone_inscription",
+   "display": "Kim Bạch",
+   "seed": 1484522094,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild_stone.inscription.kim_bach.icon",
+   "icon": "asset:cosmetic.guild_stone.inscription.kim_bach.icon",
+   "file": "inscriptions/asset.cosmetic.guild_stone.inscription.kim_bach.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild_stone.inscription.long_van",
+   "kind": "guild_stone_inscription",
+   "slot": "guild_stone_inscription",
+   "display": "Long Vân",
+   "seed": 1349838663,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild_stone.inscription.long_van.icon",
+   "icon": "asset:cosmetic.guild_stone.inscription.long_van.icon",
+   "file": "inscriptions/asset.cosmetic.guild_stone.inscription.long_van.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild_stone.inscription.ngoc_bich",
+   "kind": "guild_stone_inscription",
+   "slot": "guild_stone_inscription",
+   "display": "Ngọc Bích",
+   "seed": 1459075087,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild_stone.inscription.ngoc_bich.icon",
+   "icon": "asset:cosmetic.guild_stone.inscription.ngoc_bich.icon",
+   "file": "inscriptions/asset.cosmetic.guild_stone.inscription.ngoc_bich.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild_stone.inscription.phuong_vi",
+   "kind": "guild_stone_inscription",
+   "slot": "guild_stone_inscription",
+   "display": "Phượng Vĩ",
+   "seed": 195175747,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild_stone.inscription.phuong_vi.icon",
+   "icon": "asset:cosmetic.guild_stone.inscription.phuong_vi.icon",
+   "file": "inscriptions/asset.cosmetic.guild_stone.inscription.phuong_vi.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild_stone.inscription.thien_long",
+   "kind": "guild_stone_inscription",
+   "slot": "guild_stone_inscription",
+   "display": "Thiên Long",
+   "seed": 1615063594,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild_stone.inscription.thien_long.icon",
+   "icon": "asset:cosmetic.guild_stone.inscription.thien_long.icon",
+   "file": "inscriptions/asset.cosmetic.guild_stone.inscription.thien_long.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.guild_stone.inscription.trung_nguyen",
+   "kind": "guild_stone_inscription",
+   "slot": "guild_stone_inscription",
+   "display": "Trung Nguyên",
+   "seed": 1930657479,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.guild_stone.inscription.trung_nguyen.icon",
+   "icon": "asset:cosmetic.guild_stone.inscription.trung_nguyen.icon",
+   "file": "inscriptions/asset.cosmetic.guild_stone.inscription.trung_nguyen.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.appearance.co_tam_truyen",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Cổ Tâm Truyện",
+   "seed": 1668615611,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.appearance.co_tam_truyen.prefab",
+   "icon": "asset:cosmetic.iap.appearance.co_tam_truyen.icon",
+   "layers": [
+    "hair",
+    "torso",
+    "arm_front",
+    "arm_back",
+    "leg_front",
+    "leg_back"
+   ],
+   "file": "appearances/co_tam_truyen/asset.cosmetic.iap.appearance.co_tam_truyen.psb",
+   "icon_file": "appearances/co_tam_truyen/asset.cosmetic.iap.appearance.co_tam_truyen.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.appearance.co_tien",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Cô Tiên",
+   "seed": 1088582998,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.appearance.co_tien.prefab",
+   "icon": "asset:cosmetic.iap.appearance.co_tien.icon",
+   "layers": [
+    "hair",
+    "torso",
+    "arm_front",
+    "arm_back",
+    "leg_front",
+    "leg_back"
+   ],
+   "file": "appearances/co_tien/asset.cosmetic.iap.appearance.co_tien.psb",
+   "icon_file": "appearances/co_tien/asset.cosmetic.iap.appearance.co_tien.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.appearance.nu_tuong_trong_dong",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Nữ Tướng Trống Đồng",
+   "seed": 25224897,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.appearance.nu_tuong_trong_dong.prefab",
+   "icon": "asset:cosmetic.iap.appearance.nu_tuong_trong_dong.icon",
+   "layers": [
+    "hair",
+    "torso",
+    "arm_front",
+    "arm_back",
+    "leg_front",
+    "leg_back"
+   ],
+   "file": "appearances/nu_tuong_trong_dong/asset.cosmetic.iap.appearance.nu_tuong_trong_dong.psb",
+   "icon_file": "appearances/nu_tuong_trong_dong/asset.cosmetic.iap.appearance.nu_tuong_trong_dong.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.appearance.vo_quan_thanh_co",
+   "kind": "appearance",
+   "slot": "appearance",
+   "display": "Võ Quan Thành Cổ",
+   "seed": 1860450430,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.appearance.vo_quan_thanh_co.prefab",
+   "icon": "asset:cosmetic.iap.appearance.vo_quan_thanh_co.icon",
+   "layers": [
+    "hair",
+    "torso",
+    "arm_front",
+    "arm_back",
+    "leg_front",
+    "leg_back"
+   ],
+   "file": "appearances/vo_quan_thanh_co/asset.cosmetic.iap.appearance.vo_quan_thanh_co.psb",
+   "icon_file": "appearances/vo_quan_thanh_co/asset.cosmetic.iap.appearance.vo_quan_thanh_co.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.emote.bai_chao_lang",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Bái Chao Làng",
+   "seed": 820591057,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.emote.bai_chao_lang.icon",
+   "icon": "asset:cosmetic.iap.emote.bai_chao_lang.icon",
+   "file": "emotes/asset.cosmetic.iap.emote.bai_chao_lang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.emote.ngoi_thien_dinh",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Ngồi Thiền Đình",
+   "seed": 2080540424,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.emote.ngoi_thien_dinh.icon",
+   "icon": "asset:cosmetic.iap.emote.ngoi_thien_dinh.icon",
+   "file": "emotes/asset.cosmetic.iap.emote.ngoi_thien_dinh.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.emote.vo_tay_thang_tran",
+   "kind": "emote",
+   "slot": "emote",
+   "display": "Vỗ Tay Thắng Trận",
+   "seed": 312506103,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.emote.vo_tay_thang_tran.icon",
+   "icon": "asset:cosmetic.iap.emote.vo_tay_thang_tran.icon",
+   "file": "emotes/asset.cosmetic.iap.emote.vo_tay_thang_tran.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.frame.thien_long",
+   "kind": "frame",
+   "slot": "frame",
+   "display": "Thiên Long",
+   "seed": 2125908435,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.frame.thien_long.icon",
+   "icon": "asset:cosmetic.iap.frame.thien_long.icon",
+   "file": "frames/asset.cosmetic.iap.frame.thien_long.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.nameplate.hun_thuoc_co",
+   "kind": "nameplate",
+   "slot": "nameplate",
+   "display": "Hun Thuốc Cỏ",
+   "seed": 1612598297,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.nameplate.hun_thuoc_co.icon",
+   "icon": "asset:cosmetic.iap.nameplate.hun_thuoc_co.icon",
+   "file": "nameplates/asset.cosmetic.iap.nameplate.hun_thuoc_co.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.title_glow.long_nhan",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Long Nhan",
+   "seed": 773951807,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.title_glow.long_nhan.icon",
+   "icon": "asset:cosmetic.iap.title_glow.long_nhan.icon",
+   "file": "title_glows/asset.cosmetic.iap.title_glow.long_nhan.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.trail.bao_gam",
+   "kind": "weapon_trail",
+   "slot": "weapon_trail",
+   "display": "Báo Gấm",
+   "seed": 799206049,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.trail.bao_gam.icon",
+   "icon": "asset:cosmetic.iap.trail.bao_gam.icon",
+   "file": "trails/asset.cosmetic.iap.trail.bao_gam.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.trail.long_hoa",
+   "kind": "weapon_trail",
+   "slot": "weapon_trail",
+   "display": "Long Hoa",
+   "seed": 1398543003,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.trail.long_hoa.icon",
+   "icon": "asset:cosmetic.iap.trail.long_hoa.icon",
+   "file": "trails/asset.cosmetic.iap.trail.long_hoa.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.iap.trail.phuong_hoang_vu",
+   "kind": "weapon_trail",
+   "slot": "weapon_trail",
+   "display": "Phượng Hoàng Vũ",
+   "seed": 1722795294,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.iap.trail.phuong_hoang_vu.icon",
+   "icon": "asset:cosmetic.iap.trail.phuong_hoang_vu.icon",
+   "file": "trails/asset.cosmetic.iap.trail.phuong_hoang_vu.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.nameplate.ky_luat_vang",
+   "kind": "nameplate",
+   "slot": "nameplate",
+   "display": "nameplate",
+   "seed": 1631213898,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.nameplate.ky_luat_vang.icon",
+   "icon": "asset:cosmetic.nameplate.ky_luat_vang.icon",
+   "file": "nameplates/asset.cosmetic.nameplate.ky_luat_vang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.nameplate.linh_thuyen",
+   "kind": "nameplate",
+   "slot": "nameplate",
+   "display": "nameplate",
+   "seed": 1194784686,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.nameplate.linh_thuyen.icon",
+   "icon": "asset:cosmetic.nameplate.linh_thuyen.icon",
+   "file": "nameplates/asset.cosmetic.nameplate.linh_thuyen.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.nameplate.son_ha",
+   "kind": "nameplate",
+   "slot": "nameplate",
+   "display": "nameplate",
+   "seed": 190511129,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.nameplate.son_ha.icon",
+   "icon": "asset:cosmetic.nameplate.son_ha.icon",
+   "file": "nameplates/asset.cosmetic.nameplate.son_ha.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.kim_trang",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Kim Trắng",
+   "seed": 762198151,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.kim_trang.icon",
+   "icon": "asset:cosmetic.shrine.kim_trang.icon",
+   "file": "shrines/asset.cosmetic.shrine.kim_trang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.linh_khoi",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Linh Khói",
+   "seed": 2028278238,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.linh_khoi.icon",
+   "icon": "asset:cosmetic.shrine.linh_khoi.icon",
+   "file": "shrines/asset.cosmetic.shrine.linh_khoi.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.lua_do",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Lửa Đỏ",
+   "seed": 406308077,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.lua_do.icon",
+   "icon": "asset:cosmetic.shrine.lua_do.icon",
+   "file": "shrines/asset.cosmetic.shrine.lua_do.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.moc_xanh",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Mộc Xanh",
+   "seed": 647667074,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.moc_xanh.icon",
+   "icon": "asset:cosmetic.shrine.moc_xanh.icon",
+   "file": "shrines/asset.cosmetic.shrine.moc_xanh.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.season.0",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Mùa Làng Đa",
+   "seed": 953728176,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.season.0.icon",
+   "icon": "asset:cosmetic.shrine.season.0.icon",
+   "file": "shrines/asset.cosmetic.shrine.season.0.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.season.1",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Mùa U Minh",
+   "seed": 895334852,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.season.1.icon",
+   "icon": "asset:cosmetic.shrine.season.1.icon",
+   "file": "shrines/asset.cosmetic.shrine.season.1.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.season.2",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Mùa Bến Đen",
+   "seed": 363681410,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.season.2.icon",
+   "icon": "asset:cosmetic.shrine.season.2.icon",
+   "file": "shrines/asset.cosmetic.shrine.season.2.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.season.3",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Mùa Đèo Sương",
+   "seed": 1214989026,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.season.3.icon",
+   "icon": "asset:cosmetic.shrine.season.3.icon",
+   "file": "shrines/asset.cosmetic.shrine.season.3.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.season.4",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Mùa Thành Mùa",
+   "seed": 2073992106,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.season.4.icon",
+   "icon": "asset:cosmetic.shrine.season.4.icon",
+   "file": "shrines/asset.cosmetic.shrine.season.4.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.season.5",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Mùa Núi Mùa",
+   "seed": 1263192385,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.season.5.icon",
+   "icon": "asset:cosmetic.shrine.season.5.icon",
+   "file": "shrines/asset.cosmetic.shrine.season.5.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.tho_vang",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Thổ Vàng",
+   "seed": 143940626,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.tho_vang.icon",
+   "icon": "asset:cosmetic.shrine.tho_vang.icon",
+   "file": "shrines/asset.cosmetic.shrine.tho_vang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine.thuy_ngoc",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "Miếu Thủy Ngọc",
+   "seed": 1211230474,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine.thuy_ngoc.icon",
+   "icon": "asset:cosmetic.shrine.thuy_ngoc.icon",
+   "file": "shrines/asset.cosmetic.shrine.thuy_ngoc.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine_special.bach_ngoc",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "shrine",
+   "seed": 1512979655,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine_special.bach_ngoc.icon",
+   "icon": "asset:cosmetic.shrine_special.bach_ngoc.icon",
+   "file": "shrines/asset.cosmetic.shrine_special.bach_ngoc.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine_special.cu_thach",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "shrine",
+   "seed": 1387581839,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine_special.cu_thach.icon",
+   "icon": "asset:cosmetic.shrine_special.cu_thach.icon",
+   "file": "shrines/asset.cosmetic.shrine_special.cu_thach.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine_special.dai_hong",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "shrine",
+   "seed": 1164040982,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine_special.dai_hong.icon",
+   "icon": "asset:cosmetic.shrine_special.dai_hong.icon",
+   "file": "shrines/asset.cosmetic.shrine_special.dai_hong.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine_special.hong_tran",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "shrine",
+   "seed": 1790584343,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine_special.hong_tran.icon",
+   "icon": "asset:cosmetic.shrine_special.hong_tran.icon",
+   "file": "shrines/asset.cosmetic.shrine_special.hong_tran.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.shrine_special.ngoc_bich",
+   "kind": "shrine",
+   "slot": "character_shrine",
+   "display": "shrine",
+   "seed": 1440338903,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.shrine_special.ngoc_bich.icon",
+   "icon": "asset:cosmetic.shrine_special.ngoc_bich.icon",
+   "file": "shrines/asset.cosmetic.shrine_special.ngoc_bich.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bach_khoa_dan_gian",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bach Khoa Dan Gian",
+   "seed": 961383902,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bep_bong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bep Bong",
+   "seed": 455929567,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bep_chep",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bep Chep",
+   "seed": 844085040,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bep_tom",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bep Tom",
+   "seed": 394142270,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bong_nguoi",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bong Nguoi",
+   "seed": 588971189,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bong_nuoc_ma",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bong Nuoc Ma",
+   "seed": 76515910,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bong_vong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bong Vong",
+   "seed": 1460709090,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.bu_nhin_rom",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bu Nhin Rom",
+   "seed": 56325406,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ca_bong2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Bong2",
+   "seed": 948610029,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ca_chep2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Chep2",
+   "seed": 207653146,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ca_chep_hoa_rong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Chep Hoa Rong",
+   "seed": 1542660877,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ca_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Tinh",
+   "seed": 1832568325,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ca_tinh_gia",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Tinh Gia",
+   "seed": 557209294,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.can_cau",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Can Cau",
+   "seed": 1937361784,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.chia_khoa",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Chia Khoa",
+   "seed": 882226578,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.coc_thanh_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Coc Thanh Tinh",
+   "seed": 708142428,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.cui_lua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Cui Lua",
+   "seed": 1201524545,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.dai_tinh_cay",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dai Tinh Cay",
+   "seed": 1834322920,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.dai_vong_linh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dai Vong Linh",
+   "seed": 2126038259,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_ho_chin",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Ho Chin",
+   "seed": 2127762283,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_ho_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Ho Tinh",
+   "seed": 1415264984,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_ma_da_chua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Ma Da Chua",
+   "seed": 1131449371,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_moc",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Moc",
+   "seed": 2054815753,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_ngu_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Ngu Tinh",
+   "seed": 1305904584,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_quy",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Quy",
+   "seed": 393631849,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_than_trung",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Than Trung",
+   "seed": 853806490,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.di_thuong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Thuong",
+   "seed": 2014157294,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.dom_dom_ma",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dom Dom Ma",
+   "seed": 628302412,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.dom_lua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dom Lua",
+   "seed": 1924271203,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ho_con_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ho Con Tinh",
+   "seed": 2087541504,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ho_tinh_dong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ho Tinh Dong",
+   "seed": 1769774085,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ho_tinh_lon",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ho Tinh Lon",
+   "seed": 246909131,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ho_tinh_ve",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ho Tinh Ve",
+   "seed": 1169680221,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hoc_gia_dan_gian",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hoc Gia Dan Gian",
+   "seed": 1271014136,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_binh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Binh",
+   "seed": 1472094873,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_binh_co",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Binh Co",
+   "seed": 570288261,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_binh_suu",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Binh Suu",
+   "seed": 326796355,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_bu_nhin",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Bu Nhin",
+   "seed": 1109108375,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ca_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ca Tinh",
+   "seed": 553673638,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_chet_duoi",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Chet Duoi",
+   "seed": 1522719951,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_chet_duoi2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Chet Duoi2",
+   "seed": 1339437645,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_coc",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Coc",
+   "seed": 1042504201,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_do_trang",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Do Trang",
+   "seed": 758695228,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_dom_dom",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Dom Dom",
+   "seed": 1945099775,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_dom_lua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Dom Lua",
+   "seed": 559644734,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ho_con",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ho Con",
+   "seed": 826364409,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ho_tinh_chin",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ho Tinh Chin",
+   "seed": 803400249,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ho_tinh_ve",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ho Tinh Ve",
+   "seed": 1115877438,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_khi_nui",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Khi Nui",
+   "seed": 651419186,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_co2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Co2",
+   "seed": 1164748748,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_co_thu",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Co Thu",
+   "seed": 1298631082,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_da2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Da2",
+   "seed": 699438568,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_da_gia2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Da Gia2",
+   "seed": 65265250,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_rung",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Rung",
+   "seed": 1882949810,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_tranh2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Tranh2",
+   "seed": 624092375,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_tranh_gia2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Tranh Gia2",
+   "seed": 439030806,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_ma_xo2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Ma Xo2",
+   "seed": 1322181532,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_moc_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Moc Tinh",
+   "seed": 1931635355,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_qua_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Qua Tinh",
+   "seed": 1879835215,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_thach_ve",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Thach Ve",
+   "seed": 1540775317,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_than_trung2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Than Trung2",
+   "seed": 538859909,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_thuong_luong2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Thuong Luong2",
+   "seed": 1006304934,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_tinh_cay",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Tinh Cay",
+   "seed": 814534769,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_tran_linh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Tran Linh",
+   "seed": 284681742,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_tuong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Tuong",
+   "seed": 1955660626,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_vong_hon2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Vong Hon2",
+   "seed": 1998675782,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.hon_xo_non",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Xo Non",
+   "seed": 905386223,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.khi_nui",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Khi Nui",
+   "seed": 231997342,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.kho_bau",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Kho Bau",
+   "seed": 1847053164,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.linh_dan2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Linh Dan2",
+   "seed": 1853091978,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.linh_ve",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Linh Ve",
+   "seed": 1020389695,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_co",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Co",
+   "seed": 669717401,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_da",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Da",
+   "seed": 1415386054,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_da_gia",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Da Gia",
+   "seed": 631142369,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_nui",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Nui",
+   "seed": 931765693,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_rung",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Rung",
+   "seed": 1615674913,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_tranh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Tranh",
+   "seed": 315663336,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_tranh_deo",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Tranh Deo",
+   "seed": 1698431131,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_tranh_gia",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Tranh Gia",
+   "seed": 1389913916,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_van_dem",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Van Dem",
+   "seed": 1077942145,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ma_xo",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Xo",
+   "seed": 445921536,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.moc_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Moc Tinh",
+   "seed": 1860251719,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ngu_tinh_song",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ngu Tinh Song",
+   "seed": 382352844,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.nguoi_song_co",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Nguoi Song Co",
+   "seed": 1398921543,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.nha_suu_tam",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Nha Suu Tam",
+   "seed": 609904402,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.oan_hon_dem",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Oan Hon Dem",
+   "seed": 1896346082,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.qua_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Qua Tinh",
+   "seed": 843581963,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.qua_tinh_lon",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Qua Tinh Lon",
+   "seed": 1585407055,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.quy_nhap_trang_dong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Quy Nhap Trang Dong",
+   "seed": 1011639189,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.quy_song_dem",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Quy Song Dem",
+   "seed": 755075447,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.ruou_nep",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ruou Nep",
+   "seed": 241327023,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.thach_ve",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Thach Ve",
+   "seed": 1727277545,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.than_rung_dem",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Than Rung Dem",
+   "seed": 355510993,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.than_trung_dong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Than Trung Dong",
+   "seed": 1770180977,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.thuong_luong_song",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Thuong Luong Song",
+   "seed": 1652008538,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.thuy_quai",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Thuy Quai",
+   "seed": 1176139782,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.tinh_cay",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tinh Cay",
+   "seed": 225081475,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.tinh_nui_gia",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tinh Nui Gia",
+   "seed": 899209968,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.tinh_thu",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tinh Thu",
+   "seed": 1669043962,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.tom_song2",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tom Song2",
+   "seed": 246274695,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.tuong_da",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tuong Da",
+   "seed": 2099387891,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.vong_hon",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Hon",
+   "seed": 1112404750,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.vong_hon_gia",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Hon Gia",
+   "seed": 1126552624,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.vong_linh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Linh",
+   "seed": 767928919,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.vong_nui_gia",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Nui Gia",
+   "seed": 837949597,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.vong_rung",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Rung",
+   "seed": 1055011648,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.atlas.vong_rung_sau",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Rung Sau",
+   "seed": 692442034,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.ban_tay_than",
+   "kind": "title",
+   "slot": "title",
+   "display": "Ban Tay Than",
+   "seed": 869955972,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.ben_nuoc",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Qua Bến Nước",
+   "seed": 731666469,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.canh_cuoi",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Khép Canh Cuối",
+   "seed": 789422252,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.dai_hiep_lang_que",
+   "kind": "title",
+   "slot": "title",
+   "display": "Đại Hiệp Làng Quê",
+   "seed": 18050848,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.deo_may",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Qua Đèo Mây",
+   "seed": 1305978163,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.doi_mat_than_trung",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Đối Mặt Thần Trùng",
+   "seed": 1334799772,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.dung_si_tru_ho",
+   "kind": "title",
+   "slot": "title",
+   "display": "Dung Si Tru Ho",
+   "seed": 132731356,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.guild_war.hung_binh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Hùng Binh Ngũ Ấn",
+   "seed": 1901983840,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.hiep_nghia_vo_song",
+   "kind": "title",
+   "slot": "title",
+   "display": "Hiệp Nghĩa Vô Song",
+   "seed": 1494817423,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.khac_tinh_ma_da",
+   "kind": "title",
+   "slot": "title",
+   "display": "Khac Tinh Ma Da",
+   "seed": 1138857407,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.lang_da",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Qua Làng Đa",
+   "seed": 1420599715,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.ngu_ong_ben_do",
+   "kind": "title",
+   "slot": "title",
+   "display": "Ngu Ong Ben Do",
+   "seed": 1701134372,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.pvp.than_thoai",
+   "kind": "title",
+   "slot": "title",
+   "display": "Thần Thoại Đấu Trường",
+   "seed": 1658524452,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.bup_lua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bup Lua",
+   "seed": 683913849,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.ca_linh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Linh",
+   "seed": 324892071,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.co_lua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Co Lua",
+   "seed": 1218538316,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.di_hon_dau",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Hon Dau",
+   "seed": 1889127749,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.di_quy_xuan",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Quy Xuan",
+   "seed": 1871532614,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.dom_nguyen",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dom Nguyen",
+   "seed": 1552858179,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.hon_gao",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Gao",
+   "seed": 1456000051,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.ky_xuan",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ky Xuan",
+   "seed": 2085094724,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.lang_da_ky_ghe",
+   "kind": "title",
+   "slot": "title",
+   "display": "Kỳ Ghé Làng Đa",
+   "seed": 1536592009,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.paid.dem_lang",
+   "kind": "title",
+   "slot": "title",
+   "display": "Đêm Làng",
+   "seed": 199942240,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.tinh_buoi",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tinh Buoi",
+   "seed": 763130878,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.0.vong_bien",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Bien",
+   "seed": 678989383,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.bong_nguoi",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bong Nguoi",
+   "seed": 1318867412,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.ca_sam",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Sam",
+   "seed": 689311927,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.dai_tinh_cay",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dai Tinh Cay",
+   "seed": 1903724760,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.di_mieu",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Mieu",
+   "seed": 54996068,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.di_moc",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Moc",
+   "seed": 7898224,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.dom_lua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dom Lua",
+   "seed": 793235717,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.ky_ram",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ky Ram",
+   "seed": 1135037360,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.ma_rung",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Rung",
+   "seed": 813848813,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.paid",
+   "kind": "title",
+   "slot": "title",
+   "display": "Danh Hiệu Mùa U Minh",
+   "seed": 666823800,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.tinh_cay",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tinh Cay",
+   "seed": 1026357291,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.u_minh_suong",
+   "kind": "title",
+   "slot": "title",
+   "display": "U Minh Sương",
+   "seed": 1230405470,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.1.vong_rung_sau",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Rung Sau",
+   "seed": 1232259762,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.ben_den",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bến Đen",
+   "seed": 999883090,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.bong_nuoc_ma",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Bong Nuoc Ma",
+   "seed": 1889885834,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.ca_bong_den",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Bong Den",
+   "seed": 815459172,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.ca_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Tinh",
+   "seed": 2136914199,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.ca_tinh_gia",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Tinh Gia",
+   "seed": 262813607,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.di_ma_da",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Ma Da",
+   "seed": 105972921,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.di_xom",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Xom",
+   "seed": 1498044674,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.hon_chet_duoi",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Chet Duoi",
+   "seed": 1295956753,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.ky_ben",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ky Ben",
+   "seed": 981154985,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.ma_da",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Da",
+   "seed": 1437010959,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.paid",
+   "kind": "title",
+   "slot": "title",
+   "display": "Danh Hiệu Mùa Bến Đen",
+   "seed": 1066341907,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.2.quy_song_dem",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Quy Song Dem",
+   "seed": 1983788860,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.deo_suong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Đèo Sương",
+   "seed": 240768446,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.di_hang",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Hang",
+   "seed": 1111353051,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.di_ho_ve",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Ho Ve",
+   "seed": 88379333,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.ho_con_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ho Con Tinh",
+   "seed": 976942809,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.ho_tinh_lon",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ho Tinh Lon",
+   "seed": 341083191,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.khi_nui",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Khi Nui",
+   "seed": 450006395,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.ky_deo",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ky Deo",
+   "seed": 1504491821,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.ma_tranh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Tranh",
+   "seed": 1756767245,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.ma_van_dem",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Van Dem",
+   "seed": 684254829,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.paid",
+   "kind": "title",
+   "slot": "title",
+   "display": "Danh Hiệu Mùa Đèo Sương",
+   "seed": 224060605,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.ruou_nep",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ruou Nep",
+   "seed": 65556255,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.3.vong_rung",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Rung",
+   "seed": 226855978,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.ca_bong_kho",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Bong Kho",
+   "seed": 177154360,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.di_den",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Den",
+   "seed": 1326630898,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.di_thach",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Thach",
+   "seed": 637972429,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.hon_binh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Binh",
+   "seed": 685811561,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.hon_tran_linh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Tran Linh",
+   "seed": 29976848,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.ky_thanh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ky Thanh",
+   "seed": 432500017,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.ma_co",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Co",
+   "seed": 1008116118,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.paid",
+   "kind": "title",
+   "slot": "title",
+   "display": "Danh Hiệu Mùa Thành Mùa",
+   "seed": 822737702,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.qua_tinh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Qua Tinh",
+   "seed": 1971142491,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.qua_tinh_lon",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Qua Tinh Lon",
+   "seed": 127706941,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.thanh_mua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Thành Mùa",
+   "seed": 1353451856,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.4.tuong_da",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tuong Da",
+   "seed": 306646134,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.ca_suong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ca Suong",
+   "seed": 83709567,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.dai_vong_linh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Dai Vong Linh",
+   "seed": 2140942266,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.di_cong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Cong",
+   "seed": 1959033252,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.di_linh_ve",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Di Linh Ve",
+   "seed": 658123535,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.hon_binh_co",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Hon Binh Co",
+   "seed": 1801227900,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.ky_nui",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ky Nui",
+   "seed": 1221627040,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.ma_nui",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Ma Nui",
+   "seed": 72102862,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.nui_mua",
+   "kind": "title",
+   "slot": "title",
+   "display": "Núi Mùa",
+   "seed": 1427234129,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.paid",
+   "kind": "title",
+   "slot": "title",
+   "display": "Danh Hiệu Mùa Núi Mùa",
+   "seed": 1875899510,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.than_rung_dem",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Than Rung Dem",
+   "seed": 2115463045,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.tinh_thu",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Tinh Thu",
+   "seed": 21508950,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.season.5.vong_linh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Bậc Thầy Vong Linh",
+   "seed": 1037010071,
+   "presentation": "text",
+   "icon": "shared:title_plate_glow"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.tam_giao_vien_man",
+   "kind": "title",
+   "slot": "title",
+   "display": "Tâm Giao Viên Mãn",
+   "seed": 2044613970,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.thanh_co",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Nghe Trống Thành",
+   "seed": 282115944,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.thien_ha_de_nhat",
+   "kind": "title",
+   "slot": "title",
+   "display": "Thiên Hạ Đệ Nhất",
+   "seed": 132675352,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.tho_san_thuong_luong",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Săn Thuồng Luồng",
+   "seed": 1269310019,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.trang_si_giup_doi",
+   "kind": "title",
+   "slot": "title",
+   "display": "Tráng Sĩ Giúp Đời",
+   "seed": 1909652480,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.tuyet_dinh_than_binh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Tuyet Dinh Than Binh",
+   "seed": 714507064,
+   "presentation": "text",
+   "icon": "shared:title_plate_prestige"
+  },
+  {
+   "cosmetic_id": "cosmetic.title.u_minh",
+   "kind": "title",
+   "slot": "title",
+   "display": "Người Đi U Minh",
+   "seed": 1748225064,
+   "presentation": "text",
+   "icon": "shared:title_plate_story"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.bach_nhat",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Bạch Nhạt",
+   "seed": 190188716,
+   "presentation": "shared",
+   "target": "shared:title_glow_halo",
+   "tint": "#E9E4D8",
+   "icon": "shared:title_glow_halo"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.do_quang",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Đỏ Quang",
+   "seed": 1019458500,
+   "presentation": "shared",
+   "target": "shared:title_glow_halo",
+   "tint": "#D9362B",
+   "icon": "shared:title_glow_halo"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.hoa_quang",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "title_glow",
+   "seed": 1590956163,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.hoa_quang.icon",
+   "icon": "asset:cosmetic.title_glow.hoa_quang.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.hoa_quang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.hong_phuc",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Hồng Phúc",
+   "seed": 648605189,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.hong_phuc.icon",
+   "icon": "asset:cosmetic.title_glow.hong_phuc.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.hong_phuc.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.kim_quang",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "title_glow",
+   "seed": 1943401732,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.kim_quang.icon",
+   "icon": "asset:cosmetic.title_glow.kim_quang.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.kim_quang.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.linh_hoa",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Linh Hoa",
+   "seed": 2037097709,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.linh_hoa.icon",
+   "icon": "asset:cosmetic.title_glow.linh_hoa.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.linh_hoa.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.moc_xanh",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "title_glow",
+   "seed": 2134048339,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.moc_xanh.icon",
+   "icon": "asset:cosmetic.title_glow.moc_xanh.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.moc_xanh.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.thien_van",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Thiên Vân",
+   "seed": 1376217607,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.thien_van.icon",
+   "icon": "asset:cosmetic.title_glow.thien_van.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.thien_van.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.tho_bach",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "title_glow",
+   "seed": 1516250526,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.tho_bach.icon",
+   "icon": "asset:cosmetic.title_glow.tho_bach.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.tho_bach.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.thuy_linh",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "title_glow",
+   "seed": 102618135,
+   "presentation": "asset",
+   "asset_key": "asset.cosmetic.title_glow.thuy_linh.icon",
+   "icon": "asset:cosmetic.title_glow.thuy_linh.icon",
+   "file": "title_glows/asset.cosmetic.title_glow.thuy_linh.icon.png"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.tim_nhat",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Tím Nhạt",
+   "seed": 384440342,
+   "presentation": "shared",
+   "target": "shared:title_glow_halo",
+   "tint": "#9B7BD4",
+   "icon": "shared:title_glow_halo"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.vang_nhat",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Vàng Nhạt",
+   "seed": 1152041984,
+   "presentation": "shared",
+   "target": "shared:title_glow_halo",
+   "tint": "#E8C97A",
+   "icon": "shared:title_glow_halo"
+  },
+  {
+   "cosmetic_id": "cosmetic.title_glow.xanh_nhat",
+   "kind": "title_glow",
+   "slot": "title_glow",
+   "display": "Ánh Xanh Nhạt",
+   "seed": 1163323918,
+   "presentation": "shared",
+   "target": "shared:title_glow_halo",
+   "tint": "#6FB7E8",
+   "icon": "shared:title_glow_halo"
+  }
+ ]
+}
