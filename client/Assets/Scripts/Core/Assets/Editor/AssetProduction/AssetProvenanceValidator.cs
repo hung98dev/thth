@@ -547,7 +547,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
             {
                 Err("generation_record.prompt missing");
             }
-            if (!gen.seed.HasValue)
+            if (gen.seed < 0)
             {
                 Err("generation_record.seed missing (ART-012)");
             }

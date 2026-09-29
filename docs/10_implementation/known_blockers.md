@@ -25,8 +25,10 @@ issue: <ops-blocked issue URL>                       (OPS only)
 
 ## Open Blockers
 
+## Resolved Blockers
+
 ### `BLK-020` — `GenerationRecord.seed` is `long?`; Unity `JsonUtility` cannot bind `System.Nullable<T>`, so `AssetProvenanceValidator`'s `generation_record.seed missing (ART-012)` and the `Assert.IsTrue(gen.seed.HasValue)` line in every art-coverage test are unsatisfiable for ANY `AI_CREATED` row regardless of fragment content
-opened_by: IMP-073 implementer   opened_at: 2026-09-29T10:45Z
+opened_by: IMP-073 implementer   opened_at: 2026-09-29T10:45Z   resolved_by: spec-owner   resolved_at: 2026-09-29
 evidence: `client/Assets/Scripts/Core/Assets/Editor/AssetProduction/GenerationRecord.cs` `public long? seed`; `AssetSourceRegisterIO.cs` `JsonUtility.FromJson<AssetSourceRegister>(json)`; `AssetProvenanceValidator.cs` `if (!gen.seed.HasValue) Err("generation_record.seed missing (ART-012)")`; `client/Assets/Tests/EditMode/InterfaceArtCoverage/InterfaceArtCoverageTests.cs` `Assert.IsTrue(gen.seed.HasValue)`. CI run https://github.com/hung98dev/thth/actions/runs/36552808940 (`unity-test-results-linux`, head `6d64fd3`): 430 rows x "generation_record.seed missing (ART-012)" in TestProvenanceRowsComplete; TestAiCreatedToolMatchesOwnerSetup fails "seed Expected: True But was: False" on the first row — every row carries `"seed": <int>` in the committed fragment. JsonUtility's field walker skips generic types other than arrays/List (documented supported set: primitives, enums, strings, Unity structs, [Serializable] classes/structs of supported fields); `Nullable<long>` has no public serializable fields, so int, string and object (`{"hasValue":true,"value":N}`) JSON forms all leave `seed` == null. IMP-071's merged fragment also carries int seeds and passed only because `PlayerArtCoverageTests` never calls `ValidateFiles` nor reads `seed` — the defect is latent on main for every final-art packet.
 owning spec / system: `client/Assets/Scripts/Core/Assets/Editor/AssetProduction/GenerationRecord.cs` + `AssetProvenanceValidator.cs` + `AssetSourceRegisterIO.cs` (all outside every IMP packet's `owned_paths`); `docs/07_content/presentation_asset_manifest.md` §6 provenance schema (ART-012 reproducibility seed).
 options:
@@ -34,9 +36,7 @@ options:
   2. keep `long?` and add an `ISerializationCallbackReceiver` on `AssetSourceRegister` that backfills `seed` from a serializable `seed_value` field — same observable contract, more code;
   3. replace JsonUtility with a hand-rolled parser for the register — largest surface for one field; rejected.
 blocks: IMP-073 (draft PR https://github.com/hung98dev/thth/pull/90).
-
-
-## Resolved Blockers
+resolution: option 1 — `GenerationRecord.seed` is `long seed = -1` (negative sentinel: absent stays -1 under JsonUtility); `AssetProvenanceValidator` errors when `gen.seed < 0` (ART-012 contract unchanged); `IsEmpty()` reads `seed < 0`; `AssetProvenanceTests` seeds the failure case with `-1`; art-coverage tests in each packet assert `gen.seed >= 0`. Every committed fragment already carries int seeds — forward-compatible. IMP-073 -> NOT_STARTED
 
 ### `OPS-001` — owner-provided art/audio generation tool not yet recorded; final-art tasks cannot run
 opened_by: coordinator   opened_at: 2026-09-28T15:55Z

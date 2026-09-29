@@ -19,7 +19,9 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
         public string? terms_uri;
         public string? terms_snapshot_sha256;
         public string? prompt;
-        public long? seed;
+        // -1 = absent: JsonUtility cannot bind Nullable<T>, so the field
+        // uses a negative sentinel; valid seeds are non-negative.
+        public long seed = -1;
         public string? parameters;
         public string? workflow_sha256;
         public string? style_pack_id;
@@ -35,7 +37,7 @@ namespace ThinhThan.Core.Assets.Editor.AssetProduction
                 && string.IsNullOrEmpty(version)
                 && string.IsNullOrEmpty(terms_uri)
                 && string.IsNullOrEmpty(prompt)
-                && !seed.HasValue
+                && seed < 0
                 && (reference_uris == null || reference_uris.Count == 0);
         }
     }
