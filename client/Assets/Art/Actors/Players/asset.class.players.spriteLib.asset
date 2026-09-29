@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bf7c34a0dc4e6348bea04faa70406ee, type: 3}
+  m_Name: asset.class.players.spriteLib
+  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteLibraryAsset
+  m_Labels:
+  - m_Name: head
+    m_Hash: 670299804
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: 5956295586030693708, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: -1495922241266198971, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: -9083234658149963631, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: 5584889072146610594, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: 7739103863007424626, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  - m_Name: hair
+    m_Hash: 485974297
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: -6471753638855369047, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: 2475845945921630864, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: 3275867691003448572, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: -4237055558842136432, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: 6388429974255685420, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  - m_Name: torso
+    m_Hash: 660585605
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: 7924623271337300501, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: 9162495850443753206, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: 6412520996971504113, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: 747780908538496928, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: -3840521621412777827, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  - m_Name: arm_front
+    m_Hash: 738465096
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: -9136547872803158965, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: -450330252916958946, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: -6206111666823585322, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: -3188321289861158956, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: -3724153451463404471, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  - m_Name: arm_back
+    m_Hash: 3663099
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: 1947847132514571734, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: 8140712504031516999, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: 5580581067413932875, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: -4414947294323007127, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: 6991258292411373563, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  - m_Name: leg_front
+    m_Hash: 256218467
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: 2088396579321511373, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: -5670212870758757579, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: 3503271699835444327, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: -9030557019176982860, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: 8541247624237306430, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  - m_Name: leg_back
+    m_Hash: 416313356
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: 6868581122101713283, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: -1340894208787206570, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: -7597286767953234332, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: -6350104183323961284, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: 4579349296277761014, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  - m_Name: weapon
+    m_Hash: 691251174
+    m_CategoryList:
+    - m_Name: kim
+      m_Hash: 1023357144
+      m_Sprite: {fileID: 1539739991950626729, guid: adaf19752137ef30e927f2ade121b8fa, type: 3}
+    - m_Name: moc
+      m_Hash: 160483051
+      m_Sprite: {fileID: 6200482161942554850, guid: cacf267038eac65478a7c6e341f8e004, type: 3}
+    - m_Name: thuy
+      m_Hash: 944518756
+      m_Sprite: {fileID: -5665381262081865995, guid: bba4fbc5363dc8b09b541e278a850cb9, type: 3}
+    - m_Name: hoa
+      m_Hash: 559244588
+      m_Sprite: {fileID: 8122639846641338001, guid: 5c435ae8bf3576bc192859b31235a92a, type: 3}
+    - m_Name: tho
+      m_Hash: 479233272
+      m_Sprite: {fileID: -4739472270185650952, guid: b3286fd7a5443516799f01c0d0d69353, type: 3}
+  m_ModificationHash: 0
+  m_Version: 1
