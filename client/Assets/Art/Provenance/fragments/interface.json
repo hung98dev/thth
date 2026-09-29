@@ -2,7 +2,7 @@
   "schema_version": 1,
   "assets": [
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/body.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/body.png",
       "asset_key": "asset.item.eq.t1.ben_da.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -28,7 +28,7 @@
       "content_id": "item.eq.t1.ben_da.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/charm.png",
       "asset_key": "asset.item.eq.t1.ben_da.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -54,7 +54,7 @@
       "content_id": "item.eq.t1.ben_da.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/costume.png",
       "asset_key": "asset.item.eq.t1.ben_da.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -80,7 +80,7 @@
       "content_id": "item.eq.t1.ben_da.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/feet.png",
       "asset_key": "asset.item.eq.t1.ben_da.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -106,7 +106,7 @@
       "content_id": "item.eq.t1.ben_da.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/hands.png",
       "asset_key": "asset.item.eq.t1.ben_da.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -132,7 +132,7 @@
       "content_id": "item.eq.t1.ben_da.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/head.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/head.png",
       "asset_key": "asset.item.eq.t1.ben_da.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -158,7 +158,7 @@
       "content_id": "item.eq.t1.ben_da.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/jade.png",
       "asset_key": "asset.item.eq.t1.ben_da.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -184,7 +184,7 @@
       "content_id": "item.eq.t1.ben_da.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/legs.png",
       "asset_key": "asset.item.eq.t1.ben_da.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -210,7 +210,7 @@
       "content_id": "item.eq.t1.ben_da.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/necklace.png",
       "asset_key": "asset.item.eq.t1.ben_da.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -236,7 +236,7 @@
       "content_id": "item.eq.t1.ben_da.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/relic.png",
       "asset_key": "asset.item.eq.t1.ben_da.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -262,7 +262,7 @@
       "content_id": "item.eq.t1.ben_da.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/ring.png",
       "asset_key": "asset.item.eq.t1.ben_da.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -288,7 +288,7 @@
       "content_id": "item.eq.t1.ben_da.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/seal.png",
       "asset_key": "asset.item.eq.t1.ben_da.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -314,7 +314,7 @@
       "content_id": "item.eq.t1.ben_da.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/talisman.png",
       "asset_key": "asset.item.eq.t1.ben_da.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -340,7 +340,7 @@
       "content_id": "item.eq.t1.ben_da.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_ben_da/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/1_ben_da/weapon.png",
       "asset_key": "asset.item.eq.t1.ben_da.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -366,7 +366,7 @@
       "content_id": "item.eq.t1.ben_da.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/body.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/body.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -392,7 +392,7 @@
       "content_id": "item.eq.t1.dinh_lang.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/charm.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -418,7 +418,7 @@
       "content_id": "item.eq.t1.dinh_lang.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/costume.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -444,7 +444,7 @@
       "content_id": "item.eq.t1.dinh_lang.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/feet.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -470,7 +470,7 @@
       "content_id": "item.eq.t1.dinh_lang.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/hands.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -496,7 +496,7 @@
       "content_id": "item.eq.t1.dinh_lang.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/head.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/head.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -522,7 +522,7 @@
       "content_id": "item.eq.t1.dinh_lang.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/jade.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -548,7 +548,7 @@
       "content_id": "item.eq.t1.dinh_lang.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/legs.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -574,7 +574,7 @@
       "content_id": "item.eq.t1.dinh_lang.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/necklace.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -600,7 +600,7 @@
       "content_id": "item.eq.t1.dinh_lang.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/relic.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -626,7 +626,7 @@
       "content_id": "item.eq.t1.dinh_lang.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/ring.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -652,7 +652,7 @@
       "content_id": "item.eq.t1.dinh_lang.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/seal.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -678,7 +678,7 @@
       "content_id": "item.eq.t1.dinh_lang.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/talisman.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -704,7 +704,7 @@
       "content_id": "item.eq.t1.dinh_lang.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t1_dinh_lang/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/1_dinh_lang/weapon.png",
       "asset_key": "asset.item.eq.t1.dinh_lang.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -730,7 +730,7 @@
       "content_id": "item.eq.t1.dinh_lang.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/body.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/body.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -756,7 +756,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/charm.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -782,7 +782,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/costume.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -808,7 +808,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/feet.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -834,7 +834,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/hands.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -860,7 +860,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/head.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/head.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -886,7 +886,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/jade.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -912,7 +912,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/legs.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -938,7 +938,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/necklace.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -964,7 +964,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/relic.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -990,7 +990,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/ring.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1016,7 +1016,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/seal.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1042,7 +1042,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/talisman.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1068,7 +1068,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_dom_lua_rung/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/2_dom_lua_rung/weapon.png",
       "asset_key": "asset.item.eq.t2.dom_lua_rung.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1094,7 +1094,7 @@
       "content_id": "item.eq.t2.dom_lua_rung.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/body.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/body.png",
       "asset_key": "asset.item.eq.t2.u_minh.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1120,7 +1120,7 @@
       "content_id": "item.eq.t2.u_minh.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/charm.png",
       "asset_key": "asset.item.eq.t2.u_minh.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1146,7 +1146,7 @@
       "content_id": "item.eq.t2.u_minh.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/costume.png",
       "asset_key": "asset.item.eq.t2.u_minh.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1172,7 +1172,7 @@
       "content_id": "item.eq.t2.u_minh.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/feet.png",
       "asset_key": "asset.item.eq.t2.u_minh.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1198,7 +1198,7 @@
       "content_id": "item.eq.t2.u_minh.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/hands.png",
       "asset_key": "asset.item.eq.t2.u_minh.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1224,7 +1224,7 @@
       "content_id": "item.eq.t2.u_minh.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/head.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/head.png",
       "asset_key": "asset.item.eq.t2.u_minh.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1250,7 +1250,7 @@
       "content_id": "item.eq.t2.u_minh.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/jade.png",
       "asset_key": "asset.item.eq.t2.u_minh.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1276,7 +1276,7 @@
       "content_id": "item.eq.t2.u_minh.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/legs.png",
       "asset_key": "asset.item.eq.t2.u_minh.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1302,7 +1302,7 @@
       "content_id": "item.eq.t2.u_minh.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/necklace.png",
       "asset_key": "asset.item.eq.t2.u_minh.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1328,7 +1328,7 @@
       "content_id": "item.eq.t2.u_minh.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/relic.png",
       "asset_key": "asset.item.eq.t2.u_minh.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1354,7 +1354,7 @@
       "content_id": "item.eq.t2.u_minh.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/ring.png",
       "asset_key": "asset.item.eq.t2.u_minh.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1380,7 +1380,7 @@
       "content_id": "item.eq.t2.u_minh.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/seal.png",
       "asset_key": "asset.item.eq.t2.u_minh.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1406,7 +1406,7 @@
       "content_id": "item.eq.t2.u_minh.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/talisman.png",
       "asset_key": "asset.item.eq.t2.u_minh.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1432,7 +1432,7 @@
       "content_id": "item.eq.t2.u_minh.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t2_u_minh/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/2_u_minh/weapon.png",
       "asset_key": "asset.item.eq.t2.u_minh.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1458,7 +1458,7 @@
       "content_id": "item.eq.t2.u_minh.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/body.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/body.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1484,7 +1484,7 @@
       "content_id": "item.eq.t3.ben_nuoc.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/charm.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1510,7 +1510,7 @@
       "content_id": "item.eq.t3.ben_nuoc.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/costume.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1536,7 +1536,7 @@
       "content_id": "item.eq.t3.ben_nuoc.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/feet.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1562,7 +1562,7 @@
       "content_id": "item.eq.t3.ben_nuoc.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/hands.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1588,7 +1588,7 @@
       "content_id": "item.eq.t3.ben_nuoc.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/head.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/head.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1614,7 +1614,7 @@
       "content_id": "item.eq.t3.ben_nuoc.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/jade.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1640,7 +1640,7 @@
       "content_id": "item.eq.t3.ben_nuoc.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/legs.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1666,7 +1666,7 @@
       "content_id": "item.eq.t3.ben_nuoc.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/necklace.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1692,7 +1692,7 @@
       "content_id": "item.eq.t3.ben_nuoc.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/relic.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1718,7 +1718,7 @@
       "content_id": "item.eq.t3.ben_nuoc.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/ring.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1744,7 +1744,7 @@
       "content_id": "item.eq.t3.ben_nuoc.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/seal.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1770,7 +1770,7 @@
       "content_id": "item.eq.t3.ben_nuoc.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/talisman.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1796,7 +1796,7 @@
       "content_id": "item.eq.t3.ben_nuoc.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_ben_nuoc/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/3_ben_nuoc/weapon.png",
       "asset_key": "asset.item.eq.t3.ben_nuoc.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1822,7 +1822,7 @@
       "content_id": "item.eq.t3.ben_nuoc.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/body.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/body.png",
       "asset_key": "asset.item.eq.t3.xom_chim.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1848,7 +1848,7 @@
       "content_id": "item.eq.t3.xom_chim.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/charm.png",
       "asset_key": "asset.item.eq.t3.xom_chim.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1874,7 +1874,7 @@
       "content_id": "item.eq.t3.xom_chim.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/costume.png",
       "asset_key": "asset.item.eq.t3.xom_chim.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1900,7 +1900,7 @@
       "content_id": "item.eq.t3.xom_chim.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/feet.png",
       "asset_key": "asset.item.eq.t3.xom_chim.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1926,7 +1926,7 @@
       "content_id": "item.eq.t3.xom_chim.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/hands.png",
       "asset_key": "asset.item.eq.t3.xom_chim.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1952,7 +1952,7 @@
       "content_id": "item.eq.t3.xom_chim.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/head.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/head.png",
       "asset_key": "asset.item.eq.t3.xom_chim.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -1978,7 +1978,7 @@
       "content_id": "item.eq.t3.xom_chim.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/jade.png",
       "asset_key": "asset.item.eq.t3.xom_chim.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2004,7 +2004,7 @@
       "content_id": "item.eq.t3.xom_chim.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/legs.png",
       "asset_key": "asset.item.eq.t3.xom_chim.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2030,7 +2030,7 @@
       "content_id": "item.eq.t3.xom_chim.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/necklace.png",
       "asset_key": "asset.item.eq.t3.xom_chim.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2056,7 +2056,7 @@
       "content_id": "item.eq.t3.xom_chim.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/relic.png",
       "asset_key": "asset.item.eq.t3.xom_chim.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2082,7 +2082,7 @@
       "content_id": "item.eq.t3.xom_chim.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/ring.png",
       "asset_key": "asset.item.eq.t3.xom_chim.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2108,7 +2108,7 @@
       "content_id": "item.eq.t3.xom_chim.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/seal.png",
       "asset_key": "asset.item.eq.t3.xom_chim.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2134,7 +2134,7 @@
       "content_id": "item.eq.t3.xom_chim.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/talisman.png",
       "asset_key": "asset.item.eq.t3.xom_chim.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2160,7 +2160,7 @@
       "content_id": "item.eq.t3.xom_chim.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t3_xom_chim/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/3_xom_chim/weapon.png",
       "asset_key": "asset.item.eq.t3.xom_chim.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2186,7 +2186,7 @@
       "content_id": "item.eq.t3.xom_chim.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/body.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/body.png",
       "asset_key": "asset.item.eq.t4.dau_ho.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2212,7 +2212,7 @@
       "content_id": "item.eq.t4.dau_ho.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/charm.png",
       "asset_key": "asset.item.eq.t4.dau_ho.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2238,7 +2238,7 @@
       "content_id": "item.eq.t4.dau_ho.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/costume.png",
       "asset_key": "asset.item.eq.t4.dau_ho.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2264,7 +2264,7 @@
       "content_id": "item.eq.t4.dau_ho.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/feet.png",
       "asset_key": "asset.item.eq.t4.dau_ho.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2290,7 +2290,7 @@
       "content_id": "item.eq.t4.dau_ho.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/hands.png",
       "asset_key": "asset.item.eq.t4.dau_ho.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2316,7 +2316,7 @@
       "content_id": "item.eq.t4.dau_ho.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/head.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/head.png",
       "asset_key": "asset.item.eq.t4.dau_ho.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2342,7 +2342,7 @@
       "content_id": "item.eq.t4.dau_ho.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/jade.png",
       "asset_key": "asset.item.eq.t4.dau_ho.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2368,7 +2368,7 @@
       "content_id": "item.eq.t4.dau_ho.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/legs.png",
       "asset_key": "asset.item.eq.t4.dau_ho.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2394,7 +2394,7 @@
       "content_id": "item.eq.t4.dau_ho.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/necklace.png",
       "asset_key": "asset.item.eq.t4.dau_ho.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2420,7 +2420,7 @@
       "content_id": "item.eq.t4.dau_ho.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/relic.png",
       "asset_key": "asset.item.eq.t4.dau_ho.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2446,7 +2446,7 @@
       "content_id": "item.eq.t4.dau_ho.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/ring.png",
       "asset_key": "asset.item.eq.t4.dau_ho.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2472,7 +2472,7 @@
       "content_id": "item.eq.t4.dau_ho.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/seal.png",
       "asset_key": "asset.item.eq.t4.dau_ho.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2498,7 +2498,7 @@
       "content_id": "item.eq.t4.dau_ho.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/talisman.png",
       "asset_key": "asset.item.eq.t4.dau_ho.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2524,7 +2524,7 @@
       "content_id": "item.eq.t4.dau_ho.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_dau_ho/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/4_dau_ho/weapon.png",
       "asset_key": "asset.item.eq.t4.dau_ho.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2550,7 +2550,7 @@
       "content_id": "item.eq.t4.dau_ho.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/body.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/body.png",
       "asset_key": "asset.item.eq.t4.deo_may.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2576,7 +2576,7 @@
       "content_id": "item.eq.t4.deo_may.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/charm.png",
       "asset_key": "asset.item.eq.t4.deo_may.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2602,7 +2602,7 @@
       "content_id": "item.eq.t4.deo_may.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/costume.png",
       "asset_key": "asset.item.eq.t4.deo_may.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2628,7 +2628,7 @@
       "content_id": "item.eq.t4.deo_may.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/feet.png",
       "asset_key": "asset.item.eq.t4.deo_may.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2654,7 +2654,7 @@
       "content_id": "item.eq.t4.deo_may.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/hands.png",
       "asset_key": "asset.item.eq.t4.deo_may.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2680,7 +2680,7 @@
       "content_id": "item.eq.t4.deo_may.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/head.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/head.png",
       "asset_key": "asset.item.eq.t4.deo_may.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2706,7 +2706,7 @@
       "content_id": "item.eq.t4.deo_may.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/jade.png",
       "asset_key": "asset.item.eq.t4.deo_may.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2732,7 +2732,7 @@
       "content_id": "item.eq.t4.deo_may.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/legs.png",
       "asset_key": "asset.item.eq.t4.deo_may.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2758,7 +2758,7 @@
       "content_id": "item.eq.t4.deo_may.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/necklace.png",
       "asset_key": "asset.item.eq.t4.deo_may.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2784,7 +2784,7 @@
       "content_id": "item.eq.t4.deo_may.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/relic.png",
       "asset_key": "asset.item.eq.t4.deo_may.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2810,7 +2810,7 @@
       "content_id": "item.eq.t4.deo_may.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/ring.png",
       "asset_key": "asset.item.eq.t4.deo_may.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2836,7 +2836,7 @@
       "content_id": "item.eq.t4.deo_may.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/seal.png",
       "asset_key": "asset.item.eq.t4.deo_may.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2862,7 +2862,7 @@
       "content_id": "item.eq.t4.deo_may.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/talisman.png",
       "asset_key": "asset.item.eq.t4.deo_may.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2888,7 +2888,7 @@
       "content_id": "item.eq.t4.deo_may.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t4_deo_may/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/4_deo_may/weapon.png",
       "asset_key": "asset.item.eq.t4.deo_may.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2914,7 +2914,7 @@
       "content_id": "item.eq.t4.deo_may.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/body.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/body.png",
       "asset_key": "asset.item.eq.t5.thanh_co.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2940,7 +2940,7 @@
       "content_id": "item.eq.t5.thanh_co.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/charm.png",
       "asset_key": "asset.item.eq.t5.thanh_co.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2966,7 +2966,7 @@
       "content_id": "item.eq.t5.thanh_co.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/costume.png",
       "asset_key": "asset.item.eq.t5.thanh_co.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -2992,7 +2992,7 @@
       "content_id": "item.eq.t5.thanh_co.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/feet.png",
       "asset_key": "asset.item.eq.t5.thanh_co.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3018,7 +3018,7 @@
       "content_id": "item.eq.t5.thanh_co.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/hands.png",
       "asset_key": "asset.item.eq.t5.thanh_co.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3044,7 +3044,7 @@
       "content_id": "item.eq.t5.thanh_co.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/head.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/head.png",
       "asset_key": "asset.item.eq.t5.thanh_co.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3070,7 +3070,7 @@
       "content_id": "item.eq.t5.thanh_co.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/jade.png",
       "asset_key": "asset.item.eq.t5.thanh_co.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3096,7 +3096,7 @@
       "content_id": "item.eq.t5.thanh_co.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/legs.png",
       "asset_key": "asset.item.eq.t5.thanh_co.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3122,7 +3122,7 @@
       "content_id": "item.eq.t5.thanh_co.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/necklace.png",
       "asset_key": "asset.item.eq.t5.thanh_co.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3148,7 +3148,7 @@
       "content_id": "item.eq.t5.thanh_co.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/relic.png",
       "asset_key": "asset.item.eq.t5.thanh_co.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3174,7 +3174,7 @@
       "content_id": "item.eq.t5.thanh_co.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/ring.png",
       "asset_key": "asset.item.eq.t5.thanh_co.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3200,7 +3200,7 @@
       "content_id": "item.eq.t5.thanh_co.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/seal.png",
       "asset_key": "asset.item.eq.t5.thanh_co.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3226,7 +3226,7 @@
       "content_id": "item.eq.t5.thanh_co.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/talisman.png",
       "asset_key": "asset.item.eq.t5.thanh_co.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3252,7 +3252,7 @@
       "content_id": "item.eq.t5.thanh_co.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_thanh_co/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/5_thanh_co/weapon.png",
       "asset_key": "asset.item.eq.t5.thanh_co.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3278,7 +3278,7 @@
       "content_id": "item.eq.t5.thanh_co.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/body.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/body.png",
       "asset_key": "asset.item.eq.t5.trong_tran.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3304,7 +3304,7 @@
       "content_id": "item.eq.t5.trong_tran.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/charm.png",
       "asset_key": "asset.item.eq.t5.trong_tran.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3330,7 +3330,7 @@
       "content_id": "item.eq.t5.trong_tran.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/costume.png",
       "asset_key": "asset.item.eq.t5.trong_tran.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3356,7 +3356,7 @@
       "content_id": "item.eq.t5.trong_tran.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/feet.png",
       "asset_key": "asset.item.eq.t5.trong_tran.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3382,7 +3382,7 @@
       "content_id": "item.eq.t5.trong_tran.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/hands.png",
       "asset_key": "asset.item.eq.t5.trong_tran.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3408,7 +3408,7 @@
       "content_id": "item.eq.t5.trong_tran.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/head.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/head.png",
       "asset_key": "asset.item.eq.t5.trong_tran.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3434,7 +3434,7 @@
       "content_id": "item.eq.t5.trong_tran.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/jade.png",
       "asset_key": "asset.item.eq.t5.trong_tran.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3460,7 +3460,7 @@
       "content_id": "item.eq.t5.trong_tran.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/legs.png",
       "asset_key": "asset.item.eq.t5.trong_tran.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3486,7 +3486,7 @@
       "content_id": "item.eq.t5.trong_tran.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/necklace.png",
       "asset_key": "asset.item.eq.t5.trong_tran.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3512,7 +3512,7 @@
       "content_id": "item.eq.t5.trong_tran.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/relic.png",
       "asset_key": "asset.item.eq.t5.trong_tran.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3538,7 +3538,7 @@
       "content_id": "item.eq.t5.trong_tran.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/ring.png",
       "asset_key": "asset.item.eq.t5.trong_tran.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3564,7 +3564,7 @@
       "content_id": "item.eq.t5.trong_tran.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/seal.png",
       "asset_key": "asset.item.eq.t5.trong_tran.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3590,7 +3590,7 @@
       "content_id": "item.eq.t5.trong_tran.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/talisman.png",
       "asset_key": "asset.item.eq.t5.trong_tran.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3616,7 +3616,7 @@
       "content_id": "item.eq.t5.trong_tran.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t5_trong_tran/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/5_trong_tran/weapon.png",
       "asset_key": "asset.item.eq.t5.trong_tran.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3642,7 +3642,7 @@
       "content_id": "item.eq.t5.trong_tran.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/body.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/body.png",
       "asset_key": "asset.item.eq.t6.dau_cu.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3668,7 +3668,7 @@
       "content_id": "item.eq.t6.dau_cu.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/charm.png",
       "asset_key": "asset.item.eq.t6.dau_cu.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3694,7 +3694,7 @@
       "content_id": "item.eq.t6.dau_cu.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/costume.png",
       "asset_key": "asset.item.eq.t6.dau_cu.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3720,7 +3720,7 @@
       "content_id": "item.eq.t6.dau_cu.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/feet.png",
       "asset_key": "asset.item.eq.t6.dau_cu.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3746,7 +3746,7 @@
       "content_id": "item.eq.t6.dau_cu.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/hands.png",
       "asset_key": "asset.item.eq.t6.dau_cu.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3772,7 +3772,7 @@
       "content_id": "item.eq.t6.dau_cu.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/head.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/head.png",
       "asset_key": "asset.item.eq.t6.dau_cu.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3798,7 +3798,7 @@
       "content_id": "item.eq.t6.dau_cu.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/jade.png",
       "asset_key": "asset.item.eq.t6.dau_cu.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3824,7 +3824,7 @@
       "content_id": "item.eq.t6.dau_cu.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/legs.png",
       "asset_key": "asset.item.eq.t6.dau_cu.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3850,7 +3850,7 @@
       "content_id": "item.eq.t6.dau_cu.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/necklace.png",
       "asset_key": "asset.item.eq.t6.dau_cu.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3876,7 +3876,7 @@
       "content_id": "item.eq.t6.dau_cu.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/relic.png",
       "asset_key": "asset.item.eq.t6.dau_cu.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3902,7 +3902,7 @@
       "content_id": "item.eq.t6.dau_cu.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/ring.png",
       "asset_key": "asset.item.eq.t6.dau_cu.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3928,7 +3928,7 @@
       "content_id": "item.eq.t6.dau_cu.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/seal.png",
       "asset_key": "asset.item.eq.t6.dau_cu.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3954,7 +3954,7 @@
       "content_id": "item.eq.t6.dau_cu.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/talisman.png",
       "asset_key": "asset.item.eq.t6.dau_cu.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -3980,7 +3980,7 @@
       "content_id": "item.eq.t6.dau_cu.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_dau_cu/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/6_dau_cu/weapon.png",
       "asset_key": "asset.item.eq.t6.dau_cu.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4006,7 +4006,7 @@
       "content_id": "item.eq.t6.dau_cu.weapon"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/body.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/body.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.body.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4032,7 +4032,7 @@
       "content_id": "item.eq.t6.nui_thieng.body"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/charm.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/charm.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.charm.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4058,7 +4058,7 @@
       "content_id": "item.eq.t6.nui_thieng.charm"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/costume.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/costume.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.costume.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4084,7 +4084,7 @@
       "content_id": "item.eq.t6.nui_thieng.costume"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/feet.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/feet.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.feet.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4110,7 +4110,7 @@
       "content_id": "item.eq.t6.nui_thieng.feet"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/hands.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/hands.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.hands.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4136,7 +4136,7 @@
       "content_id": "item.eq.t6.nui_thieng.hands"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/head.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/head.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.head.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4162,7 +4162,7 @@
       "content_id": "item.eq.t6.nui_thieng.head"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/jade.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/jade.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.jade.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4188,7 +4188,7 @@
       "content_id": "item.eq.t6.nui_thieng.jade"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/legs.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/legs.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.legs.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4214,7 +4214,7 @@
       "content_id": "item.eq.t6.nui_thieng.legs"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/necklace.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/necklace.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.necklace.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4240,7 +4240,7 @@
       "content_id": "item.eq.t6.nui_thieng.necklace"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/relic.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/relic.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.relic.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4266,7 +4266,7 @@
       "content_id": "item.eq.t6.nui_thieng.relic"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/ring.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/ring.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.ring.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4292,7 +4292,7 @@
       "content_id": "item.eq.t6.nui_thieng.ring"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/seal.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/seal.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.seal.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4318,7 +4318,7 @@
       "content_id": "item.eq.t6.nui_thieng.seal"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/talisman.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/talisman.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.talisman.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
@@ -4344,7 +4344,7 @@
       "content_id": "item.eq.t6.nui_thieng.talisman"
     },
     {
-      "file_path": "client/Assets/Art/Items/eq/t6_nui_thieng/weapon.png",
+      "file_path": "client/Assets/Art/Items/eq/6_nui_thieng/weapon.png",
       "asset_key": "asset.item.eq.t6.nui_thieng.weapon.icon",
       "source_kind": "AI_CREATED",
       "creator": "Devin (Cognition AI) - AI Horde",
