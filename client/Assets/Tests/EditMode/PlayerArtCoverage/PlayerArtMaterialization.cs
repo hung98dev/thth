@@ -311,14 +311,8 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
             ("defeat", false, DefeatCurves),
         };
 
-        private static Object? EnsureSkeleton()
+        private static SpriteBone[] BuildBones()
         {
-            var existing = AssetDatabase.LoadAssetAtPath<Object>(SkeletonPath);
-            if (existing != null)
-            {
-                return existing;
-            }
-            var skel = ScriptableObject.CreateInstance<SkeletonAsset>();
             var bones = new SpriteBone[SkeletonSpec.Length];
             for (var i = 0; i < SkeletonSpec.Length; i++)
             {
@@ -330,9 +324,54 @@ namespace ThinhThan.Tests.EditMode.PlayerArtCoverage
                     length = 0.4f,
                     parentId = SkeletonSpec[i].Parent,
                     color = Color.white,
+                    // The importer re-generates an empty bone guid on every
+                    // reimport (drift); a deterministic one is preserved.
+                    guid = BoneGuid(i, SkeletonSpec[i].Name),
                 };
             }
-            skel.SetSpriteBones(bones);
+            return bones;
+        }
+
+        private static System.Guid BoneGuid(int index, string name)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                return new System.Guid(md5.ComputeHash(
+                    System.Text.Encoding.UTF8.GetBytes(
+                        "imp071.players.bone." + index + "." + name)));
+            }
+        }
+
+        private static Object? EnsureSkeleton()
+        {
+            var existing =
+                AssetDatabase.LoadAssetAtPath<SkeletonAsset>(SkeletonPath);
+            if (existing != null)
+            {
+                var cur = existing.GetSpriteBones();
+                if (cur != null && cur.Count == SkeletonSpec.Length)
+                {
+                    var missing = false;
+                    for (var i = 0; i < cur.Count; i++)
+                    {
+                        if (cur[i].guid == System.Guid.Empty)
+                        {
+                            missing = true;
+                            break;
+                        }
+                    }
+                    if (!missing)
+                    {
+                        return existing;
+                    }
+                }
+                existing.SetSpriteBones(BuildBones());
+                EditorUtility.SetDirty(existing);
+                AssetDatabase.SaveAssetIfDirty(existing);
+                return existing;
+            }
+            var skel = ScriptableObject.CreateInstance<SkeletonAsset>();
+            skel.SetSpriteBones(BuildBones());
             AssetDatabase.CreateAsset(skel, SkeletonPath);
             return skel;
         }
