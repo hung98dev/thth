@@ -31,8 +31,8 @@ namespace ThinhThan.Art.Editor
             EditorSceneManager.sceneOpened += OnSceneOpened;
         }
 
-        private static void OnSceneOpened(UnityEngine.SceneManagement.Scene scene,
-                                          OpenSceneMode mode)
+        private static void OnSceneOpened(
+            UnityEngine.SceneManagement.Scene scene, OpenSceneMode mode)
         {
             if (scene.path.EndsWith(UiSceneSuffix, System.StringComparison.Ordinal))
             {

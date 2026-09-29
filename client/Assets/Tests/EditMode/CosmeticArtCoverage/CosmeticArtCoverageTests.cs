@@ -560,11 +560,9 @@ namespace ThinhThan.Tests.EditMode.CosmeticArtCoverage
                     importer != null ? importer.userData : null);
                 if (meta.AssetClass == null)
                 {
-                    work.Add((p, new[]
-                    {
-                        new GateViolation("asset_class",
-                            "import metadata missing for " + p),
-                    }, default));
+                    var missing = new GateViolation(
+                        "asset_class", "import metadata missing for " + p);
+                    work.Add((p, new[] { missing }, default));
                     continue;
                 }
                 var cls = meta.AssetClass.Value;
