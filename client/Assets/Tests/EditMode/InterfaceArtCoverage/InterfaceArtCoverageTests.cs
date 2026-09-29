@@ -158,7 +158,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             w = tex.width;
             h = tex.height;
             var px = tex.GetPixels32();
-            Object.DestroyImmediate(tex);
+            UnityEngine.Object.DestroyImmediate(tex);
             return px;
         }
 
@@ -266,7 +266,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             var reqs = ContentCatalogScanner.Scan(ContentCatalogScanner.DefaultDocsRoot);
             var items = reqs.Where(
                 r => r.Kind == CatalogAssetKind.Item
-                     && !r.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal));
+                    && !r.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal));
             foreach (var req in items)
             {
                 var icon = ItemIconPath(req.CatalogId);
@@ -282,7 +282,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             var reqs = ContentCatalogScanner.Scan(ContentCatalogScanner.DefaultDocsRoot);
             var eqs = reqs.Where(
                 r => r.Kind == CatalogAssetKind.Item
-                     && r.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal));
+                    && r.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal));
             var seen = new HashSet<string>();
             foreach (var req in eqs)
             {
@@ -339,10 +339,10 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             // exactly one shared decal on disk.
             var modes = new HashSet<string>(StringComparer.Ordinal);
             foreach (Match m in Regex.Matches(
-                         File.ReadAllText(Path.Combine(
-                             Path.GetFullPath(Path.Combine(ProjectRoot, "..")),
-                             "docs/07_content/class_skill_catalog.md")),
-                         @"\|\s*(DIRECTION_BOX|MELEE_BOX|DIRECTION|PROJECTILE|AREA_POSITION|AREA_SELF|SINGLE_TARGET|SELF|NONE)\s*\|"))
+                        File.ReadAllText(Path.Combine(
+                            Path.GetFullPath(Path.Combine(ProjectRoot, "..")),
+                            "docs/07_content/class_skill_catalog.md")),
+                        @"\|\s*(DIRECTION_BOX|MELEE_BOX|DIRECTION|PROJECTILE|AREA_POSITION|AREA_SELF|SINGLE_TARGET|SELF|NONE)\s*\|"))
             {
                 modes.Add(m.Groups[1].Value);
             }
@@ -370,14 +370,14 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                     paths.Add(SkillIconPath(req.CatalogId));
                 }
                 else if (req.Kind == CatalogAssetKind.Item
-                         && !req.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal))
+                        && !req.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal))
                 {
                     paths.Add(ItemIconPath(req.CatalogId));
                 }
             }
             var eqs = reqs.Where(
                 r => r.Kind == CatalogAssetKind.Item
-                     && r.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal));
+                    && r.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal));
             var seenEq = new HashSet<string>();
             foreach (var req in eqs)
             {
@@ -414,11 +414,11 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                 var rel = req.Kind == CatalogAssetKind.Skill
                     ? SkillIconPath(req.CatalogId)
                     : req.Kind == CatalogAssetKind.Item
-                      && req.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal)
+                        && req.CatalogId.StartsWith("item.eq.", System.StringComparison.Ordinal)
                         ? EquipmentIconPath(req.CatalogId)
                         : req.Kind == CatalogAssetKind.Item
-                          ? ItemIconPath(req.CatalogId)
-                          : req.Kind == CatalogAssetKind.Effect
+                            ? ItemIconPath(req.CatalogId)
+                            : req.Kind == CatalogAssetKind.Effect
                             ? EffectIconPath(req.CatalogId)
                             : null;
                 if (rel == null || !File.Exists(Abs(rel)))
@@ -678,7 +678,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             Assert.Greater(palette.Count, 0);
             var fail = new List<string>();
             foreach (var rel in EnumerateProduced()
-                     .Where(r => r.EndsWith(".png") && !r.Contains("telegraph")))
+                    .Where(r => r.EndsWith(".png") && !r.Contains("telegraph")))
             {
                 var px = LoadPx(rel, out var w, out var h);
                 var inBand = 0;
@@ -756,7 +756,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                         continue;
                     }
                     result.Add(Path.GetRelativePath(ProjectRoot, f)
-                               .Replace('\\', '/'));
+                                .Replace('\\', '/'));
                 }
             }
             return result;
@@ -768,8 +768,8 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
             var palette = new List<Vector3>();
             // palette.json: {"colors": [{"hex":"#RRGGBB"}, ...]}
             foreach (System.Text.RegularExpressions.Match m in
-                     System.Text.RegularExpressions.Regex.Matches(
-                         json, "#[0-9A-Fa-f]{6}"))
+                    System.Text.RegularExpressions.Regex.Matches(
+                        json, "#[0-9A-Fa-f]{6}"))
             {
                 var s = m.Value.Substring(1);
                 var c = new Color32(
@@ -857,7 +857,7 @@ namespace ThinhThan.Tests.EditMode.InterfaceArtCoverage
                 var platform = (cmap[4 + 8 * i] << 8) | cmap[5 + 8 * i];
                 var enc = (cmap[6 + 8 * i] << 8) | cmap[7 + 8 * i];
                 var off = (uint)((cmap[8 + 8 * i] << 24) | (cmap[9 + 8 * i] << 16)
-                                 | (cmap[10 + 8 * i] << 8) | cmap[11 + 8 * i]);
+                                | (cmap[10 + 8 * i] << 8) | cmap[11 + 8 * i]);
                 var fmt = (cmap[off] << 8) | cmap[off + 1];
                 if (fmt == 12)
                 {

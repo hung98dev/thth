@@ -24,7 +24,7 @@ namespace ThinhThan.Art.Editor
         }
 
         private static void OnSceneOpened(UnityEngine.SceneManagement.Scene scene,
-                                          OpenSceneMode mode)
+                                            OpenSceneMode mode)
         {
             if (!scene.path.EndsWith(ReviewSceneSuffix, System.StringComparison.Ordinal))
             {
