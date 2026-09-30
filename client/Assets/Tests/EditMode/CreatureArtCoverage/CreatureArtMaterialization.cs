@@ -200,6 +200,10 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
             {
                 return;
             }
+            // delayCall can fire while the initial refresh still has the
+            // new textures queued; finish any pending import synchronously
+            // so frame sprites resolve below.
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             var map = LoadMap();
             var changed = false;
             changed |= EnsureClips(map);
@@ -436,18 +440,21 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
         private static Sprite[] LoadFrameSprites(MapEntry e, string clipName)
         {
             var sprites = new List<Sprite>();
-            var dir = CreaturesRoot + "/" + e.dir;
+            var absDir = Path.Combine(Application.dataPath, "Art", "Actors",
+                "Creatures") + "/" + e.dir;
             var prefix = "asset." + e.entity_id + ".anim." + clipName + ".";
-            var guids = AssetDatabase.FindAssets("t:Sprite " + prefix,
-                new[] { dir });
             var paths = new List<string>();
-            foreach (var g in guids)
+            if (Directory.Exists(absDir))
             {
-                var p = AssetDatabase.GUIDToAssetPath(g);
-                if (Path.GetFileNameWithoutExtension(p).StartsWith(prefix,
-                        System.StringComparison.Ordinal))
+                foreach (var f in Directory.GetFiles(absDir, "*.png"))
                 {
-                    paths.Add(p);
+                    var stem = Path.GetFileNameWithoutExtension(f);
+                    if (stem.StartsWith(prefix,
+                            System.StringComparison.Ordinal))
+                    {
+                        paths.Add("Assets/Art/Actors/Creatures/" + e.dir
+                            + "/" + stem + ".png");
+                    }
                 }
             }
             paths.Sort(System.StringComparer.Ordinal);
