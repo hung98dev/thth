@@ -1,0 +1,2472 @@
+{
+  "schema_version": 1,
+  "fragment": "actors_creatures",
+  "style_pack_id": "actors_creatures/creatures",
+  "shared_targets": [
+    {
+      "name": "drowned",
+      "base_entity": "monster.ben_nuoc_den.ma_da",
+      "dir": "ben_nuoc_den/ma_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "fish_spirit",
+      "base_entity": "monster.ben_nuoc_den.ca_tinh",
+      "dir": "ben_nuoc_den/ca_tinh",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "flame_plant",
+      "base_entity": "monster.rung_u_minh.dom_lua",
+      "dir": "rung_u_minh/dom_lua",
+      "size_profile": "MONSTER_SMALL",
+      "technique": "frame_by_frame"
+    },
+    {
+      "name": "fox_spirit",
+      "base_entity": "monster.deo_may.ho_tinh",
+      "dir": "deo_may/ho_tinh",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "scarecrow",
+      "base_entity": "monster.lang_da.bu_nhin_rom",
+      "dir": "lang_da/bu_nhin_rom",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "shadow_spirit",
+      "base_entity": "monster.rung_u_minh.bong_nguoi",
+      "dir": "rung_u_minh/bong_nguoi",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "soldier_spirit",
+      "base_entity": "monster.thanh_co.hon_binh",
+      "dir": "thanh_co/hon_binh",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "stone_sentinel",
+      "base_entity": "monster.thanh_co.thach_ve",
+      "dir": "thanh_co/thach_ve",
+      "size_profile": "MONSTER_ELITE",
+      "technique": "skeletal"
+    },
+    {
+      "name": "straw_giant",
+      "base_entity": "monster.rung_u_minh.ma_tranh",
+      "dir": "rung_u_minh/ma_tranh",
+      "size_profile": "MONSTER_ELITE",
+      "technique": "skeletal"
+    },
+    {
+      "name": "tree_spirit",
+      "base_entity": "monster.rung_u_minh.tinh_cay",
+      "dir": "rung_u_minh/tinh_cay",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "wisp",
+      "base_entity": "monster.lang_da.dom_dom_ma",
+      "dir": "lang_da/dom_dom_ma",
+      "size_profile": "MONSTER_SMALL",
+      "technique": "frame_by_frame"
+    },
+    {
+      "name": "wraith_hood",
+      "base_entity": "monster.lang_da.vong_hon",
+      "dir": "lang_da/vong_hon",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    },
+    {
+      "name": "wraith_mist",
+      "base_entity": "monster.nui_thieng.vong_linh",
+      "dir": "nui_thieng/vong_linh",
+      "size_profile": "MONSTER_MEDIUM",
+      "technique": "skeletal"
+    }
+  ],
+  "entries": [
+    {
+      "entity_id": "beast.hoa.ga_than",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "HOA",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 3845714147,
+      "dir": "hoa/ga_than",
+      "presentation": "asset",
+      "species": "divine rooster",
+      "folklore": {
+        "source_tales": [
+          "ga than — the divine rooster calling the dawn"
+        ],
+        "regional_variants": "dawn-rooster spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.hoa.hoa_diep",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "HOA",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 497955697,
+      "dir": "hoa/hoa_diep",
+      "presentation": "asset",
+      "species": "fire butterfly",
+      "folklore": {
+        "source_tales": [
+          "hoa diep — the fire butterfly of autumn nights"
+        ],
+        "regional_variants": "fire-butterfly omen tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.kim.ho_vang",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "KIM",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 3035975,
+      "dir": "kim/ho_vang",
+      "presentation": "asset",
+      "species": "golden tiger",
+      "folklore": {
+        "source_tales": [
+          "ho vang — the golden tiger of Vietnamese guardian tales"
+        ],
+        "regional_variants": "village guardian tiger iconography",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.kim.nghe_dong",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "KIM",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 334317410,
+      "dir": "kim/nghe_dong",
+      "presentation": "asset",
+      "species": "bronze nghe lion-dog",
+      "folklore": {
+        "source_tales": [
+          "nghe dong — the bronze lion-dog of temple gates"
+        ],
+        "regional_variants": "Dong Son bronze nghe guardian motif",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.moc.chim_lac",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "MOC",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 4021610142,
+      "dir": "moc/chim_lac",
+      "presentation": "asset",
+      "species": "Lac bird",
+      "folklore": {
+        "source_tales": [
+          "chim lac — the Lac bird of the bronze drums"
+        ],
+        "regional_variants": "Dong Son drum bird motif",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.moc.huou_sao",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "MOC",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 751997182,
+      "dir": "moc/huou_sao",
+      "presentation": "asset",
+      "species": "spotted deer",
+      "folklore": {
+        "source_tales": [
+          "huou sao — the spotted deer of the forest shrines"
+        ],
+        "regional_variants": "forest deer of upland tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.tho.coc_than",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "THO",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 4233416366,
+      "dir": "tho/coc_than",
+      "presentation": "asset",
+      "species": "sacred toad",
+      "folklore": {
+        "source_tales": [
+          "coc than — the sacred toad bearing rain"
+        ],
+        "regional_variants": "rain-toad folk tales, Coc Kinh motif",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.tho.trau_dong",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "THO",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 3634917835,
+      "dir": "tho/trau_dong",
+      "presentation": "asset",
+      "species": "bronze buffalo",
+      "folklore": {
+        "source_tales": [
+          "trau dong — the bronze buffalo of the paddy fields"
+        ],
+        "regional_variants": "paddy buffalo and bronze-drum field motifs",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.thuy.rai_ca",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "THUY",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 1725501704,
+      "dir": "thuy/rai_ca",
+      "presentation": "asset",
+      "species": "otter",
+      "folklore": {
+        "source_tales": [
+          "rai ca — the otter fisher of the river markets"
+        ],
+        "regional_variants": "river otter fishing folk tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "beast.thuy.rua_than",
+      "kind": "beast",
+      "rank": "BEAST",
+      "element": "THUY",
+      "zone": "",
+      "size_profile": "SPIRIT_BEAST",
+      "combat": "SUMMON",
+      "attack_clips": 0,
+      "phases": 0,
+      "seed": 2290198140,
+      "dir": "thuy/rua_than",
+      "presentation": "asset",
+      "species": "sacred turtle",
+      "folklore": {
+        "source_tales": [
+          "rua than — the sacred turtle of Hoan Kiem legend"
+        ],
+        "regional_variants": "Kim Qui golden turtle legend",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.ho_tinh",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "BOSS_LARGE",
+      "combat": "BOSS",
+      "attack_clips": 5,
+      "phases": 2,
+      "seed": 2764597465,
+      "dir": "boss/ho_tinh",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "ho tinh — the tiger spirit of the cloud pass"
+        ],
+        "regional_variants": "tiger-spirit and pass-guardian tales of the ranges",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.ho_tinh_chin_duoi",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "BOSS_LARGE",
+      "combat": "BOSS",
+      "attack_clips": 5,
+      "phases": 2,
+      "seed": 898352225,
+      "dir": "boss/ho_tinh_chin_duoi",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "ho tinh chin duoi — the nine-tailed fox of the old citadel"
+        ],
+        "regional_variants": "nine-tail fox legend grounded in Vietnamese landscape",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.ma_da_chua",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "WORLD_BOSS",
+      "combat": "BOSS",
+      "attack_clips": 6,
+      "phases": 2,
+      "seed": 2241667715,
+      "dir": "boss/ma_da_chua",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "ma da — the drowned-corpse lord of the black water"
+        ],
+        "regional_variants": "water-corpse king tales, black river",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.moc_tinh_da",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "BOSS_LARGE",
+      "combat": "BOSS",
+      "attack_clips": 5,
+      "phases": 2,
+      "seed": 3306166718,
+      "dir": "boss/moc_tinh_da",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "moc tinh — the ancient root-bound tree demon of U Minh"
+        ],
+        "regional_variants": "deep-forest ancient-tree demon tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.ngu_tinh",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "WORLD_BOSS",
+      "combat": "BOSS",
+      "attack_clips": 5,
+      "phases": 2,
+      "seed": 2046879003,
+      "dir": "boss/ngu_tinh",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "ngu tinh — the great fish demon of the mountain lake"
+        ],
+        "regional_variants": "lake fish-demon tales of the sacred mountain",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.quy_nhap_trang",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "BOSS_LARGE",
+      "combat": "BOSS",
+      "attack_clips": 4,
+      "phases": 2,
+      "seed": 2064736960,
+      "dir": "boss/quy_nhap_trang",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "quy nhap trang — the great possessing ghost of the village banyan"
+        ],
+        "regional_variants": "banyan-shrine possession tales of the north",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.than_trung",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "WORLD_BOSS",
+      "combat": "BOSS",
+      "attack_clips": 3,
+      "phases": 3,
+      "seed": 4074583621,
+      "dir": "boss/than_trung",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "than trung — the omen spirit of repeated calamity"
+        ],
+        "regional_variants": "trung-tang omen beliefs, stylized without religious ritual",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "boss.thuong_luong",
+      "kind": "boss",
+      "rank": "BOSS",
+      "element": "",
+      "zone": "",
+      "size_profile": "BOSS_LARGE",
+      "combat": "BOSS",
+      "attack_clips": 5,
+      "phases": 2,
+      "seed": 1382284917,
+      "dir": "boss/thuong_luong",
+      "presentation": "asset",
+      "folklore": {
+        "source_tales": [
+          "thuong luong — the water serpent lord of the black landing"
+        ],
+        "regional_variants": "river-serpent king tales of the Mekong",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      }
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.bong_nuoc_ma",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THUY",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "FLOAT_BURST",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1168112856,
+      "dir": "ben_nuoc_den/bong_nuoc_ma",
+      "folklore": {
+        "source_tales": [
+          "bong nuoc ma — a water shadow drifting under lamplight"
+        ],
+        "regional_variants": "dark-water shadow tales of the night landing",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.ca_tinh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THUY",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 4113085854,
+      "dir": "ben_nuoc_den/ca_tinh",
+      "folklore": {
+        "source_tales": [
+          "ngu tinh / ca tinh — fish demons of deep pools"
+        ],
+        "regional_variants": "river and lake demon lore, Mekong delta",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.ca_tinh_gia",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THUY",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2142805560,
+      "dir": "ben_nuoc_den/ca_tinh_gia",
+      "folklore": {
+        "source_tales": [
+          "ngu tinh / ca tinh — fish demons of deep pools"
+        ],
+        "regional_variants": "river and lake demon lore, Mekong delta",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:fish_spirit",
+      "tint": "#4E7E97"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.hon_chet_duoi",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3769824823,
+      "dir": "ben_nuoc_den/hon_chet_duoi",
+      "folklore": {
+        "source_tales": [
+          "ma da / ma do — ghosts of the drowned haunting dark water landings"
+        ],
+        "regional_variants": "river-mouth and ferry-landing water ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:drowned",
+      "tint": "#92ADBA"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.ma_da",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "CONTROL",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3980579698,
+      "dir": "ben_nuoc_den/ma_da",
+      "folklore": {
+        "source_tales": [
+          "ma da / ma do — ghosts of the drowned haunting dark water landings"
+        ],
+        "regional_variants": "river-mouth and ferry-landing water ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.ma_da_gia",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "THUY",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "CONTROL",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 590728273,
+      "dir": "ben_nuoc_den/ma_da_gia",
+      "folklore": {
+        "source_tales": [
+          "ma da gia — elder drowned spirit of the black water"
+        ],
+        "regional_variants": "black-river elder ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.nguoi_song_co",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 717095458,
+      "dir": "ben_nuoc_den/nguoi_song_co",
+      "folklore": {
+        "source_tales": [
+          "ma da / ma do — ghosts of the drowned haunting dark water landings"
+        ],
+        "regional_variants": "river-mouth and ferry-landing water ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:drowned",
+      "tint": "#6E8698"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.quy_song_dem",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 548989375,
+      "dir": "ben_nuoc_den/quy_song_dem",
+      "folklore": {
+        "source_tales": [
+          "ma da / ma do — ghosts of the drowned haunting dark water landings"
+        ],
+        "regional_variants": "river-mouth and ferry-landing water ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:drowned",
+      "tint": "#5D748A"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.thuong_luong",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THUY",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1160259797,
+      "dir": "ben_nuoc_den/thuong_luong",
+      "folklore": {
+        "source_tales": [
+          "thuong luong — the giant water serpent of Vietnamese legend"
+        ],
+        "regional_variants": "river-serpent tales across delta waterways",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.ben_nuoc_den.thuy_quai",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "THUY",
+      "zone": "ben_nuoc_den",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1874919177,
+      "dir": "ben_nuoc_den/thuy_quai",
+      "folklore": {
+        "source_tales": [
+          "thuy quai — a water beast of the deep channels"
+        ],
+        "regional_variants": "river-monster tales of flooded forest waterways",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.deo_may.ho_con_tinh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3130774961,
+      "dir": "deo_may/ho_con_tinh",
+      "folklore": {
+        "source_tales": [
+          "ho tinh — fox spirits of clouded passes"
+        ],
+        "regional_variants": "pass and hillside fox-spirit tales, northern uplands",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:fox_spirit",
+      "tint": "#C97636"
+    },
+    {
+      "entity_id": "monster.deo_may.ho_tinh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3879731674,
+      "dir": "deo_may/ho_tinh",
+      "folklore": {
+        "source_tales": [
+          "ho tinh — fox spirits of clouded passes"
+        ],
+        "regional_variants": "pass and hillside fox-spirit tales, northern uplands",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.deo_may.ho_tinh_lon",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1035256463,
+      "dir": "deo_may/ho_tinh_lon",
+      "folklore": {
+        "source_tales": [
+          "ho tinh — fox spirits of clouded passes"
+        ],
+        "regional_variants": "pass and hillside fox-spirit tales, northern uplands",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:fox_spirit",
+      "tint": "#B85F2E"
+    },
+    {
+      "entity_id": "monster.deo_may.ho_tinh_ve",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "KIM",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 868563944,
+      "dir": "deo_may/ho_tinh_ve",
+      "folklore": {
+        "source_tales": [
+          "ho tinh ve — guardian fox spirit of the pass shrine"
+        ],
+        "regional_variants": "mountain-pass fox-guardian tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.deo_may.khi_nui",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THO",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1233232751,
+      "dir": "deo_may/khi_nui",
+      "folklore": {
+        "source_tales": [
+          "khi nui — mountain monkeys of the high passes"
+        ],
+        "regional_variants": "forest monkey tales of the northern ranges",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.deo_may.ma_tranh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 894122032,
+      "dir": "deo_may/ma_tranh",
+      "folklore": {
+        "source_tales": [
+          "ma tranh — straw effigy spirits; bu nhin rom field guardians"
+        ],
+        "regional_variants": "Mekong delta rice-field ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:scarecrow",
+      "tint": "#B09B68"
+    },
+    {
+      "entity_id": "monster.deo_may.ma_tranh_gia",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "NONE",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3998581257,
+      "dir": "deo_may/ma_tranh_gia",
+      "folklore": {
+        "source_tales": [
+          "ma tranh — grown straw demons of the deep forest"
+        ],
+        "regional_variants": "U Minh forest straw-spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:straw_giant",
+      "tint": "#978858"
+    },
+    {
+      "entity_id": "monster.deo_may.ma_van_dem",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "FLOAT_BURST",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1276427187,
+      "dir": "deo_may/ma_van_dem",
+      "folklore": {
+        "source_tales": [
+          "ma van dem — a night-moth spirit veiled in fog"
+        ],
+        "regional_variants": "mountain mist moth tales of the cloud pass",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.deo_may.vong_nui_gia",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 329231305,
+      "dir": "deo_may/vong_nui_gia",
+      "folklore": {
+        "source_tales": [
+          "vong linh / hon thieu — mist-born mountain and forest spirits"
+        ],
+        "regional_variants": "highland fog spirit tales, Tay Nguyen and Truong Son",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_mist",
+      "tint": "#A8A0B8"
+    },
+    {
+      "entity_id": "monster.deo_may.vong_rung",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "deo_may",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2862975100,
+      "dir": "deo_may/vong_rung",
+      "folklore": {
+        "source_tales": [
+          "vong linh / hon thieu — mist-born mountain and forest spirits"
+        ],
+        "regional_variants": "highland fog spirit tales, Tay Nguyen and Truong Son",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_mist",
+      "tint": "#8FB59B"
+    },
+    {
+      "entity_id": "monster.lang_da.bu_nhin_rom",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "MOC",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2957862739,
+      "dir": "lang_da/bu_nhin_rom",
+      "folklore": {
+        "source_tales": [
+          "ma tranh — straw effigy spirits; bu nhin rom field guardians"
+        ],
+        "regional_variants": "Mekong delta rice-field ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.bup_lua",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "HOA",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "FLOAT_BURST",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2606718277,
+      "dir": "lang_da/bup_lua",
+      "folklore": {
+        "source_tales": [
+          "dom dom ma / ma troi — ghost lights over wet ground at night"
+        ],
+        "regional_variants": "wetland will-o-wisp tales, Mekong delta",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wisp",
+      "tint": "#E89A5E"
+    },
+    {
+      "entity_id": "monster.lang_da.co_lua",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "MOC",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2321498309,
+      "dir": "lang_da/co_lua",
+      "folklore": {
+        "source_tales": [
+          "dom lua / co lua — drifting flame-seed spirits"
+        ],
+        "regional_variants": "burning-grass and ember spirit tales of dry season fields",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:flame_plant",
+      "tint": "#D87340"
+    },
+    {
+      "entity_id": "monster.lang_da.coc_thanh_tinh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THO",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1951092792,
+      "dir": "lang_da/coc_thanh_tinh",
+      "folklore": {
+        "source_tales": [
+          "coc tinh — toad spirits of village ponds"
+        ],
+        "regional_variants": "pond toad and rain-caller folk tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.dom_dom_ma",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "HOA",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "FLOAT_BURST",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2941057747,
+      "dir": "lang_da/dom_dom_ma",
+      "folklore": {
+        "source_tales": [
+          "dom dom ma / ma troi — ghost lights over wet ground at night"
+        ],
+        "regional_variants": "wetland will-o-wisp tales, Mekong delta",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.dom_dom_nguyen",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "HOA",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "FLOAT_BURST",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 197580511,
+      "dir": "lang_da/dom_dom_nguyen",
+      "folklore": {
+        "source_tales": [
+          "dom dom ma / ma troi — ghost lights over wet ground at night"
+        ],
+        "regional_variants": "wetland will-o-wisp tales, Mekong delta",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wisp",
+      "tint": "#6FD88A"
+    },
+    {
+      "entity_id": "monster.lang_da.hon_do_trang",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2280164167,
+      "dir": "lang_da/hon_do_trang",
+      "folklore": {
+        "source_tales": [
+          "vong hon — wandering spirits of the unburied dead in Vietnamese village ghost tales"
+        ],
+        "regional_variants": "delta ghost lore, north and central Vietnam",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_hood",
+      "tint": "#E4EAF2"
+    },
+    {
+      "entity_id": "monster.lang_da.hon_gao",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2280726438,
+      "dir": "lang_da/hon_gao",
+      "folklore": {
+        "source_tales": [
+          "vong hon — wandering spirits of the unburied dead in Vietnamese village ghost tales"
+        ],
+        "regional_variants": "delta ghost lore, north and central Vietnam",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_hood",
+      "tint": "#D9CFA8"
+    },
+    {
+      "entity_id": "monster.lang_da.hon_ma_co_thu",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2735023620,
+      "dir": "lang_da/hon_ma_co_thu",
+      "folklore": {
+        "source_tales": [
+          "vong hon — wandering spirits of the unburied dead in Vietnamese village ghost tales"
+        ],
+        "regional_variants": "delta ghost lore, north and central Vietnam",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_hood",
+      "tint": "#DDD6E8"
+    },
+    {
+      "entity_id": "monster.lang_da.hon_xo_non",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "THO",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2464751552,
+      "dir": "lang_da/hon_xo_non",
+      "folklore": {
+        "source_tales": [
+          "hon xo non — a clay-pot spirit guarding the village commons"
+        ],
+        "regional_variants": "kitchen-god and hearth-pot folk beliefs, village altars",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.ma_xo",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "THO",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3116416545,
+      "dir": "lang_da/ma_xo",
+      "folklore": {
+        "source_tales": [
+          "ma xo — the rope demon binding unwary travellers"
+        ],
+        "regional_variants": "meadow and dike-path binding-spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.quy_nhap_trang",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "CONTROL",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2284102111,
+      "dir": "lang_da/quy_nhap_trang",
+      "folklore": {
+        "source_tales": [
+          "quy nhap trang — possessing spirit motif, possession as horror not gore"
+        ],
+        "regional_variants": "north and central exorcism tales; stylized without gore",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.tinh_buoi",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "MOC",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3845576952,
+      "dir": "lang_da/tinh_buoi",
+      "folklore": {
+        "source_tales": [
+          "tinh buoi — sticky seed-pod spirits clinging to travellers"
+        ],
+        "regional_variants": "seed-pod and burr spirit tales of the village edge",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.vong_bien",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2370726929,
+      "dir": "lang_da/vong_bien",
+      "folklore": {
+        "source_tales": [
+          "vong hon — wandering spirits of the unburied dead in Vietnamese village ghost tales"
+        ],
+        "regional_variants": "delta ghost lore, north and central Vietnam",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_hood",
+      "tint": "#B8C8DE"
+    },
+    {
+      "entity_id": "monster.lang_da.vong_hon",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2232709007,
+      "dir": "lang_da/vong_hon",
+      "folklore": {
+        "source_tales": [
+          "vong hon — wandering spirits of the unburied dead in Vietnamese village ghost tales"
+        ],
+        "regional_variants": "delta ghost lore, north and central Vietnam",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.lang_da.vong_hon_gia",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "lang_da",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 888477415,
+      "dir": "lang_da/vong_hon_gia",
+      "folklore": {
+        "source_tales": [
+          "vong hon — wandering spirits of the unburied dead in Vietnamese village ghost tales"
+        ],
+        "regional_variants": "delta ghost lore, north and central Vietnam",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_hood",
+      "tint": "#C9D2E0"
+    },
+    {
+      "entity_id": "monster.nui_thieng.bong_vong",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "NONE",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "CONTROL",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3694116526,
+      "dir": "nui_thieng/bong_vong",
+      "folklore": {
+        "source_tales": [
+          "bong vong — a returning shadow that drains the living"
+        ],
+        "regional_variants": "omen-shadow and soul-snatch tales of the sacred mountain",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.nui_thieng.dai_vong_linh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 384614330,
+      "dir": "nui_thieng/dai_vong_linh",
+      "folklore": {
+        "source_tales": [
+          "vong linh / hon thieu — mist-born mountain and forest spirits"
+        ],
+        "regional_variants": "highland fog spirit tales, Tay Nguyen and Truong Son",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_mist",
+      "tint": "#88A3CC"
+    },
+    {
+      "entity_id": "monster.nui_thieng.hon_binh_co",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1939415877,
+      "dir": "nui_thieng/hon_binh_co",
+      "folklore": {
+        "source_tales": [
+          "hon binh — spectral soldiers bound to old citadel walls"
+        ],
+        "regional_variants": "Thang Long and Thanh Co citadel legends",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:soldier_spirit",
+      "tint": "#A8ACB8"
+    },
+    {
+      "entity_id": "monster.nui_thieng.linh_ve",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "KIM",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "GUARD",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1368204693,
+      "dir": "nui_thieng/linh_ve",
+      "folklore": {
+        "source_tales": [
+          "linh ve — a guardian spirit bound to the mountain gate"
+        ],
+        "regional_variants": "sacred mountain guardian tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.nui_thieng.ma_nui",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THO",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 152724925,
+      "dir": "nui_thieng/ma_nui",
+      "folklore": {
+        "source_tales": [
+          "bong ma / bong dem — darkness taking a walking shape"
+        ],
+        "regional_variants": "night-shadow ghost tales of abandoned shrines",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:shadow_spirit",
+      "tint": "#4E4A5E"
+    },
+    {
+      "entity_id": "monster.nui_thieng.ngu_tinh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THUY",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 4209513310,
+      "dir": "nui_thieng/ngu_tinh",
+      "folklore": {
+        "source_tales": [
+          "ngu tinh / ca tinh — fish demons of deep pools"
+        ],
+        "regional_variants": "river and lake demon lore, Mekong delta",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:fish_spirit",
+      "tint": "#6FA0B8"
+    },
+    {
+      "entity_id": "monster.nui_thieng.than_rung_dem",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1627633747,
+      "dir": "nui_thieng/than_rung_dem",
+      "folklore": {
+        "source_tales": [
+          "bong ma / bong dem — darkness taking a walking shape"
+        ],
+        "regional_variants": "night-shadow ghost tales of abandoned shrines",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:shadow_spirit",
+      "tint": "#453F58"
+    },
+    {
+      "entity_id": "monster.nui_thieng.than_trung",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 722295492,
+      "dir": "nui_thieng/than_trung",
+      "folklore": {
+        "source_tales": [
+          "bong ma / bong dem — darkness taking a walking shape"
+        ],
+        "regional_variants": "night-shadow ghost tales of abandoned shrines",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:shadow_spirit",
+      "tint": "#3E3850"
+    },
+    {
+      "entity_id": "monster.nui_thieng.tinh_nui_gia",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THO",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2613639626,
+      "dir": "nui_thieng/tinh_nui_gia",
+      "folklore": {
+        "source_tales": [
+          "tinh cay / ma cay co thu — spirits of ancient trees"
+        ],
+        "regional_variants": "village banyan and old-forest tree spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:tree_spirit",
+      "tint": "#8B7B66"
+    },
+    {
+      "entity_id": "monster.nui_thieng.tinh_thu",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "HOA",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1798111341,
+      "dir": "nui_thieng/tinh_thu",
+      "folklore": {
+        "source_tales": [
+          "tinh cay / ma cay co thu — spirits of ancient trees"
+        ],
+        "regional_variants": "village banyan and old-forest tree spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:tree_spirit",
+      "tint": "#C98A54"
+    },
+    {
+      "entity_id": "monster.nui_thieng.vong_linh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "nui_thieng",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 2257943307,
+      "dir": "nui_thieng/vong_linh",
+      "folklore": {
+        "source_tales": [
+          "vong linh / hon thieu — mist-born mountain and forest spirits"
+        ],
+        "regional_variants": "highland fog spirit tales, Tay Nguyen and Truong Son",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.bong_nguoi",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 716989559,
+      "dir": "rung_u_minh/bong_nguoi",
+      "folklore": {
+        "source_tales": [
+          "bong ma / bong dem — darkness taking a walking shape"
+        ],
+        "regional_variants": "night-shadow ghost tales of abandoned shrines",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.dai_tinh_cay",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "MOC",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "CONTROL",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3611371802,
+      "dir": "rung_u_minh/dai_tinh_cay",
+      "folklore": {
+        "source_tales": [
+          "tinh cay / ma cay co thu — spirits of ancient trees"
+        ],
+        "regional_variants": "village banyan and old-forest tree spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:tree_spirit",
+      "tint": "#6B8A58"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.dom_lua",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "HOA",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "FLOAT_BURST",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 897499594,
+      "dir": "rung_u_minh/dom_lua",
+      "folklore": {
+        "source_tales": [
+          "dom lua / co lua — drifting flame-seed spirits"
+        ],
+        "regional_variants": "burning-grass and ember spirit tales of dry season fields",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.ma_rung",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1089965884,
+      "dir": "rung_u_minh/ma_rung",
+      "folklore": {
+        "source_tales": [
+          "ma tranh — straw effigy spirits; bu nhin rom field guardians"
+        ],
+        "regional_variants": "Mekong delta rice-field ghost tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:scarecrow",
+      "tint": "#8FA06E"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.ma_tranh",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "NONE",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1984806018,
+      "dir": "rung_u_minh/ma_tranh",
+      "folklore": {
+        "source_tales": [
+          "ma tranh — grown straw demons of the deep forest"
+        ],
+        "regional_variants": "U Minh forest straw-spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.moc_tinh",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "MOC",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3366129784,
+      "dir": "rung_u_minh/moc_tinh",
+      "folklore": {
+        "source_tales": [
+          "moc tinh — great wood spirits of the old forest"
+        ],
+        "regional_variants": "U Minh deep-forest tree spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.tinh_cay",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "MOC",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "CONTROL",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 4036291038,
+      "dir": "rung_u_minh/tinh_cay",
+      "folklore": {
+        "source_tales": [
+          "tinh cay / ma cay co thu — spirits of ancient trees"
+        ],
+        "regional_variants": "village banyan and old-forest tree spirit tales",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.rung_u_minh.vong_rung_sau",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "rung_u_minh",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "RUSH",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1145930910,
+      "dir": "rung_u_minh/vong_rung_sau",
+      "folklore": {
+        "source_tales": [
+          "vong linh / hon thieu — mist-born mountain and forest spirits"
+        ],
+        "regional_variants": "highland fog spirit tales, Tay Nguyen and Truong Son",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_mist",
+      "tint": "#7DA68A"
+    },
+    {
+      "entity_id": "monster.thanh_co.hon_binh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 632285222,
+      "dir": "thanh_co/hon_binh",
+      "folklore": {
+        "source_tales": [
+          "hon binh — spectral soldiers bound to old citadel walls"
+        ],
+        "regional_variants": "Thang Long and Thanh Co citadel legends",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.thanh_co.hon_tran_linh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1258767595,
+      "dir": "thanh_co/hon_tran_linh",
+      "folklore": {
+        "source_tales": [
+          "hon binh — spectral soldiers bound to old citadel walls"
+        ],
+        "regional_variants": "Thang Long and Thanh Co citadel legends",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:soldier_spirit",
+      "tint": "#D4BC9E"
+    },
+    {
+      "entity_id": "monster.thanh_co.hon_tuong",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "KIM",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "SUMMON_ECHO",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1896576727,
+      "dir": "thanh_co/hon_tuong",
+      "folklore": {
+        "source_tales": [
+          "thach ve / hon tuong — stone sentinels and soldier statues of the citadel"
+        ],
+        "regional_variants": "fortress-gate stone guardian legends, Thanh Co",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:stone_sentinel",
+      "tint": "#A89A88"
+    },
+    {
+      "entity_id": "monster.thanh_co.ma_co",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "ZONE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3541397796,
+      "dir": "thanh_co/ma_co",
+      "folklore": {
+        "source_tales": [
+          "bong ma / bong dem — darkness taking a walking shape"
+        ],
+        "regional_variants": "night-shadow ghost tales of abandoned shrines",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:shadow_spirit",
+      "tint": "#6B6478"
+    },
+    {
+      "entity_id": "monster.thanh_co.oan_hon_dem",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "NONE",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "CONTROL",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1598004344,
+      "dir": "thanh_co/oan_hon_dem",
+      "folklore": {
+        "source_tales": [
+          "vong hon — wandering spirits of the unburied dead in Vietnamese village ghost tales"
+        ],
+        "regional_variants": "delta ghost lore, north and central Vietnam",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "shared",
+      "target": "shared:wraith_hood",
+      "tint": "#B5A8C9"
+    },
+    {
+      "entity_id": "monster.thanh_co.qua_tinh",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_SMALL",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 30522160,
+      "dir": "thanh_co/qua_tinh",
+      "folklore": {
+        "source_tales": [
+          "qua tinh — small wild fruit spirits"
+        ],
+        "regional_variants": "orchard spirit tales, Thanh Co",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.thanh_co.qua_tinh_lon",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "KIM",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "PROJECTILE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 1837949955,
+      "dir": "thanh_co/qua_tinh_lon",
+      "folklore": {
+        "source_tales": [
+          "qua tinh — wild fruit spirits of the old city orchards"
+        ],
+        "regional_variants": "orchard and market-ghost tales, Thanh Co",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.thanh_co.thach_ve",
+      "kind": "monster",
+      "rank": "ELITE",
+      "element": "THO",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_ELITE",
+      "combat": "GUARD",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 3983181884,
+      "dir": "thanh_co/thach_ve",
+      "folklore": {
+        "source_tales": [
+          "thach ve / hon tuong — stone sentinels and soldier statues of the citadel"
+        ],
+        "regional_variants": "fortress-gate stone guardian legends, Thanh Co",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    },
+    {
+      "entity_id": "monster.thanh_co.tuong_da",
+      "kind": "monster",
+      "rank": "NORMAL",
+      "element": "THO",
+      "zone": "thanh_co",
+      "size_profile": "MONSTER_MEDIUM",
+      "combat": "MELEE",
+      "attack_clips": 1,
+      "phases": 0,
+      "seed": 235107439,
+      "dir": "thanh_co/tuong_da",
+      "folklore": {
+        "source_tales": [
+          "tuong da — a stone guardian statue given hostile will"
+        ],
+        "regional_variants": "temple-gate guardian statues of old citadels",
+        "motifs_checked": [
+          "cong torii",
+          "trang phuc quan Thanh (cuong thi)",
+          "kimono",
+          "hanbok",
+          "co ton giao/chinh tri hien dai",
+          "chu Han vo nghia"
+        ]
+      },
+      "presentation": "asset"
+    }
+  ]
+}
