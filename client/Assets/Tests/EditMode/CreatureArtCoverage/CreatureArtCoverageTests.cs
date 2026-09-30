@@ -603,9 +603,12 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
                 }
             }
             // Shared skeleton assets per skeletal profile.
-            foreach (var profile in new[]
-                     { "monster_medium", "monster_elite", "boss_large",
-                       "world_boss" })
+            var skeletalProfiles = new[]
+            {
+                "monster_medium", "monster_elite", "boss_large",
+                "world_boss"
+            };
+            foreach (var profile in skeletalProfiles)
             {
                 var skel = AssetDatabase.LoadAssetAtPath<Object>(
                     AnimRoot + "/skeleton." + profile + ".asset");
