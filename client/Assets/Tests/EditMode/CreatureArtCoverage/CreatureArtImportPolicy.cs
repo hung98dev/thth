@@ -74,7 +74,7 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
         // Resolves the size profile by longest entity-id prefix match:
         // `asset.<entity_id>...` under Creatures, `<entity_id>[_<view>]`
         // under StyleRef. Returns null when nothing matches (foreign file).
-        private static string ProfileFor(string stem)
+        private static string? ProfileFor(string stem)
         {
             var map = CreatureArtMaterialization.LoadMap();
             if (map == null || map.entries == null)
