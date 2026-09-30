@@ -8,17 +8,17 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
     //
     // OnPreprocessTexture applies the canonical sprite import settings to
     // every PNG authored under the packet's owned art directories. Declared
-    // import metadata comes from the per-file `.importmeta` sidecar (the
-    // IMP-073 convention); StyleRef anchor/turnaround PNGs have no sidecar
-    // and import as plain ACTOR references. Everything here is scoped by
-    // path to client/Assets/Art/Actors/Creatures/ and
+    // import metadata (`asset_class=ACTOR;size_profile=<map profile>`) is
+    // resolved from the presentation map by entity id — the file name
+    // `asset.<entity_id>.<rest>.png` carries the full dotted id, and
+    // style-pack anchors/turnarounds are matched by longest entity-id
+    // prefix. Everything here is scoped by path to
+    // client/Assets/Art/Actors/Creatures/ and
     // client/Assets/Art/StyleRef/actors_creatures/.
     public sealed class CreatureArtImportPolicy : AssetPostprocessor
     {
         public const string CreaturesRoot = "Assets/Art/Actors/Creatures";
         public const string StyleRefRoot = "Assets/Art/StyleRef/actors_creatures";
-        public const string AnchorUserData =
-            "asset_class=ACTOR;detached_parts";
 
         private void OnPreprocessTexture()
         {
@@ -61,18 +61,53 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
 
         private static string UserDataFor(string path)
         {
-            var sidecar = path + ".importmeta";
-            var abs = System.IO.Path.Combine(
-                UnityEngine.Application.dataPath, "..", sidecar);
-            if (System.IO.File.Exists(abs))
+            var stem = System.IO.Path.GetFileNameWithoutExtension(path);
+            var profile = ProfileFor(stem);
+            if (profile != null)
             {
-                var content = System.IO.File.ReadAllText(abs).Trim();
-                if (content.Length > 0)
+                return "asset_class=ACTOR;size_profile=" + profile
+                    + ";detached_parts";
+            }
+            return "asset_class=ACTOR;detached_parts";
+        }
+
+        // Resolves the size profile by longest entity-id prefix match:
+        // `asset.<entity_id>...` under Creatures, `<entity_id>[_<view>]`
+        // under StyleRef. Returns null when nothing matches (foreign file).
+        private static string ProfileFor(string stem)
+        {
+            var map = CreatureArtMaterialization.LoadMap();
+            if (map == null || map.entries == null)
+            {
+                return null;
+            }
+            var fileKey = stem;
+            const string prefix = "asset.";
+            if (fileKey.StartsWith(prefix, System.StringComparison.Ordinal))
+            {
+                fileKey = fileKey.Substring(prefix.Length);
+            }
+            string? best = null;
+            string? profile = null;
+            foreach (var e in map.entries)
+            {
+                if (e == null || e.entity_id == null)
                 {
-                    return content;
+                    continue;
+                }
+                if (!fileKey.StartsWith(e.entity_id, System.StringComparison.Ordinal)
+                    || (e.entity_id.Length >= fileKey.Length
+                        && e.entity_id != fileKey))
+                {
+                    continue;
+                }
+                if (best == null || e.entity_id.Length > best.Length)
+                {
+                    best = e.entity_id;
+                    profile = e.size_profile;
                 }
             }
-            return AnchorUserData;
+            return profile;
         }
 
         private static bool IsOwnedPng(string path)

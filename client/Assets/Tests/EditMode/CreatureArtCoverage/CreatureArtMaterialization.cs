@@ -613,27 +613,44 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
                     Directory.CreateDirectory(Path.Combine(
                         Application.dataPath, "..", AnimDirFor(e.dir)));
                     controller = AnimatorController.CreateAnimatorControllerAtPath(path);
-                    var sm = controller.layers[0].stateMachine;
-                    AnimatorState? defaultState = null;
-                    foreach (var clipName in RequiredClipNames(e))
+                }
+                // Frame-by-frame clips only appear once the PNG frames are
+                // committed, so an early materialization can create an
+                // empty controller — always top it up to the required set.
+                var sm = controller.layers[0].stateMachine;
+                var have = new HashSet<string>();
+                foreach (var state in sm.states)
+                {
+                    have.Add(state.state.name);
+                }
+                AnimatorState? defaultState = null;
+                var touched = false;
+                foreach (var clipName in RequiredClipNames(e))
+                {
+                    if (have.Contains(clipName))
                     {
-                        var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(
-                            AnimDirFor(e.dir) + "/" + clipName + ".anim");
-                        if (clip == null)
-                        {
-                            continue;
-                        }
-                        var state = sm.AddState(clipName);
-                        state.motion = clip;
-                        if (clipName == "idle")
-                        {
-                            defaultState = state;
-                        }
+                        continue;
                     }
-                    if (defaultState != null)
+                    var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(
+                        AnimDirFor(e.dir) + "/" + clipName + ".anim");
+                    if (clip == null)
                     {
-                        sm.defaultState = defaultState;
+                        continue;
                     }
+                    var state = sm.AddState(clipName);
+                    state.motion = clip;
+                    if (clipName == "idle")
+                    {
+                        defaultState = state;
+                    }
+                    touched = true;
+                }
+                if (defaultState != null)
+                {
+                    sm.defaultState = defaultState;
+                }
+                if (touched)
+                {
                     EditorUtility.SetDirty(controller);
                 }
                 controllers[e.entity_id] = controller;
@@ -944,7 +961,7 @@ namespace ThinhThan.Tests.EditMode.CreatureArtCoverage
                 child.transform.SetParent(anchor.transform, false);
                 child.transform.localPosition = new Vector3(
                     (col - (columns - 1) * 0.5f) * spacing,
-                    -row * rowStride,
+                    -2.5f - row * rowStride,
                     -0.1f);
                 var sr = child.AddComponent<SpriteRenderer>();
                 sr.sprite = sprite;
